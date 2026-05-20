@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiteGate Gateway Philosophy | 为什么它不是另一个代理</title>
+    <style>
+        :root {
+            --bg: #f4f1ea;
+            --surface: rgba(255, 255, 255, 0.78);
+            --ink: #1f2c28;
+            --ink-soft: #54655f;
+            --ink-faint: #7f9089;
+            --line: rgba(31, 44, 40, 0.12);
+            --accent: #1a7f64;
+            --accent-deep: #0d5c46;
+            --blue: #2f6fcb;
+            --blue-soft: rgba(47, 111, 203, 0.1);
+            --warm-soft: rgba(196, 106, 45, 0.1);
+            --shadow: 0 22px 60px rgba(28, 35, 31, 0.08);
+            --shadow-deep: 0 30px 80px rgba(17, 28, 23, 0.12);
+            --radius-xl: 30px;
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --max: 1240px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(196, 106, 45, 0.08), transparent 26%),
+                radial-gradient(circle at right 12% top 18%, rgba(26, 127, 100, 0.12), transparent 24%),
+                linear-gradient(180deg, #faf7f1 0%, var(--bg) 100%);
+            line-height: 1.68;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        .page {
+            width: min(var(--max), calc(100% - 40px));
+            margin: 0 auto;
+            padding: 24px 0 60px;
+        }
+
+        .topbar,
+        .top-actions,
+        .hero-actions,
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .topbar {
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, var(--accent) 0%, #123d30 100%);
+            color: #f5f8f4;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+        }
+
+        .brand-text { font-size: 1.12rem; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            padding: 0 20px;
+            border-radius: 999px;
+            font-weight: 700;
+            border: 1px solid transparent;
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+
+        .btn:hover { transform: translateY(-1px); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+            color: #f7fbf8;
+            box-shadow: 0 16px 30px rgba(26, 127, 100, 0.18);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.56);
+            color: var(--ink);
+            border-color: rgba(31, 44, 40, 0.12);
+        }
+
+        .hero,
+        .section,
+        .card,
+        .quote {
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.78);
+            box-shadow: var(--shadow);
+        }
+
+        .hero {
+            padding: 34px;
+            margin-bottom: 22px;
+            background:
+                radial-gradient(circle at right top, rgba(47, 111, 203, 0.08) 0%, transparent 26%),
+                radial-gradient(circle at left bottom, rgba(26, 127, 100, 0.1) 0%, transparent 28%),
+                rgba(255, 255, 255, 0.84);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            margin-bottom: 12px;
+            color: var(--accent-deep);
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        h1, h2, h3 { margin: 0; letter-spacing: -0.04em; }
+
+        h1 {
+            max-width: 14ch;
+            font-size: clamp(2.7rem, 5vw, 4.5rem);
+            line-height: 0.98;
+        }
+
+        .hero-lead,
+        .section-head p,
+        .card p,
+        .quote p,
+        .footer-note {
+            color: var(--ink-soft);
+        }
+
+        .hero-lead {
+            margin: 18px 0 0;
+            max-width: 74ch;
+            font-size: 1.04rem;
+        }
+
+        .hero-actions { margin-top: 24px; }
+
+        .proof-grid,
+        .card-grid {
+            display: grid;
+            gap: 18px;
+        }
+
+        .proof-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            margin-top: 26px;
+        }
+
+        .card-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .card {
+            padding: 22px;
+        }
+
+        .card strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .section {
+            padding: 28px;
+            margin-bottom: 22px;
+        }
+
+        .section-head {
+            max-width: 820px;
+            margin-bottom: 22px;
+        }
+
+        .section-head h2 {
+            font-size: clamp(2rem, 4vw, 3.1rem);
+        }
+
+        .list {
+            margin: 0;
+            padding-left: 1.1rem;
+            color: var(--ink-soft);
+        }
+
+        .list li + li { margin-top: 10px; }
+
+        .quote {
+            margin-top: 20px;
+            padding: 22px;
+            background: rgba(24, 35, 31, 0.92);
+            color: #edf5ef;
+            box-shadow: var(--shadow-deep);
+        }
+
+        .quote strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            color: #f3faf6;
+        }
+
+        .quote p { margin: 0; color: rgba(237, 245, 239, 0.82); }
+
+        .footer {
+            margin-top: 26px;
+            padding-top: 22px;
+            border-top: 1px solid rgba(31, 44, 40, 0.1);
+            display: flex;
+            justify-content: space-between;
+            gap: 24px;
+            color: var(--ink-soft);
+            font-size: 0.92rem;
+        }
+
+        .footer-copy { max-width: 700px; }
+
+        .footer-copy p { margin-top: 10px; }
+
+        .footer-links h4 {
+            margin: 0 0 12px;
+            font-size: 0.86rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-faint);
+        }
+
+        .footer-links a {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 980px) {
+            .proof-grid,
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .page {
+                width: min(var(--max), calc(100% - 28px));
+                padding: 18px 0 32px;
+            }
+
+            .topbar,
+            .top-actions,
+            .hero-actions,
+            .footer,
+            .footer-links {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .hero,
+            .section,
+            .card,
+            .quote {
+                padding: 20px;
+            }
+
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a href="index.html" class="brand" aria-label="LiteGate Home">
+                <span class="brand-mark">L</span>
+                <span class="brand-text">LiteGate</span>
+            </a>
+            <div class="top-actions">
+        <a href="en/gateway-philosophy.html" class="nav-lang-switch" style="margin-right: 10px; color: var(--accent-deep); font-weight: 800;">English</a>
+                <a href="index.html" class="btn btn-secondary">Home</a>
+                <a href="deploy-flow.html" class="btn btn-secondary">Deploy Flow</a>
+                <a href="litegate.html" class="btn btn-secondary">Entry Model</a>
+                <a href="architecture.html" class="btn btn-secondary">Architecture</a>
+            </div>
+        </div>
+
+        <header class="hero">
+            <span class="eyebrow">Gateway Philosophy</span>
+            <h1>LiteGate 不是另一个代理，而是在收拢真实上线动作</h1>
+            <p class="hero-lead">
+                很多网关能转发请求，但真实团队痛的并不是“能不能反代”，而是站点上线、证书、DNS、前端发版、后端扩容、
+                服务发现、租户分流这些动作为什么总要拆成很多步。LiteGate 想做的是把这些动作重新收进一条更短的链路里。
+            </p>
+            <div class="hero-actions">
+                <a href="#what-we-learned" class="btn btn-primary">看今天验证了什么</a>
+                <a href="#why-different" class="btn btn-secondary">看它和普通网关差在哪</a>
+            </div>
+            <div class="proof-grid">
+                <div class="card">
+                    <strong>不是只讲代理</strong>
+                    <p>它在意的不只是流量进来之后怎么办，还在意上线之前和升级之后还有哪些重复动作。</p>
+                </div>
+                <div class="card">
+                    <strong>不是只讲配置</strong>
+                    <p>服务启动、入口接入、前端切版本、证书复用，这些动作应该尽量自然发生，而不是靠人补流程。</p>
+                </div>
+                <div class="card">
+                    <strong>不是只讲架构图</strong>
+                    <p>控制面可以分层，但数据面和上线动作不能为了概念优雅多走很多跳，否则最后会变成性能税和运维税。</p>
+                </div>
+            </div>
+        </header>
+
+        <section class="section" id="what-we-learned">
+            <div class="section-head">
+                <span class="eyebrow">What We Learned</span>
+                <h2>今天这些细节说明了什么</h2>
+                <p>不是功能“理论上能做”，而是很多关键链路已经在真实场景里跑通了。</p>
+            </div>
+            <div class="card-grid">
+                <article class="card">
+                    <strong>同 host 合并前后端已经跑通</strong>
+                    <p>一个 host 下，前端静态页面和后端 API 自动拼接，不再默认拆成两套域名和两层入口。</p>
+                </article>
+                <article class="card">
+                    <strong>服务注册已经带入口意图</strong>
+                    <p>服务注册不只是 IP 和端口，还带 host、path、版本和标签，服务起来就更接近“上线”而不是“待接入”。</p>
+                </article>
+                <article class="card">
+                    <strong>file server 已经很顺</strong>
+                    <p>一行 <code>lite.yaml</code> 就能把目录变成可访问文件站点，而且还能继续作为前端 ZIP 的下载源。</p>
+                </article>
+                <article class="card">
+                    <strong>前端自动升级闭环成立</strong>
+                    <p>ZIP 上传、KV 改值、LiteGate 自动拉包切版本，这已经不是目录同步，而是版本声明式发布。</p>
+                </article>
+                <article class="card">
+                    <strong>泛域名体验非常强</strong>
+                    <p>新子域名接进来时，不一定还要回到域名服务商后台，也不一定再单独申请证书，现成的泛域名证书可以直接复用。</p>
+                </article>
+                <article class="card">
+                    <strong>默认约定开始有产品感</strong>
+                    <p>例如服务名默认推导 path，复杂场景再显式覆盖。简单场景足够省事，复杂场景也仍然可控。</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section" id="why-different">
+            <div class="section-head">
+                <span class="eyebrow">Why Different</span>
+                <h2>它和普通网关真正不同的地方，不是功能数量，而是职责边界</h2>
+                <p>LiteGate 不是想取代所有系统，而是在把原本散落在网站服务器、动态代理、证书脚本、静态分发和上线流程里的动作收回来。</p>
+            </div>
+            <div class="card-grid">
+                <article class="card">
+                    <strong>普通网关更像“请求来了怎么转发”</strong>
+                    <ul class="list">
+                        <li>重点在 upstream、路由、TLS、负载均衡。</li>
+                        <li>静态站点、前端发布、服务发现接入往往要再拼别的组件。</li>
+                        <li>很多动作能做，但不是默认就顺。</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <strong>LiteGate 更像“一个服务怎么从声明走到可访问”</strong>
+                    <ul class="list">
+                        <li>站点入口、API 接入、证书、DNS、文件承接都在同一套模型里。</li>
+                        <li>服务发现和前端版本切换不是额外外挂，而是继续沿着入口模型收敛。</li>
+                        <li>更关注少手工、少跳转、少逐台操作。</li>
+                    </ul>
+                </article>
+            </div>
+            <div class="quote">
+                <strong>真正理解网关，不只是理解怎么转发请求。</strong>
+                <p>更关键的是理解一个团队在真实世界里到底会被哪些上线动作反复折腾，然后把技术和运维收进一套更统一的执行面。LiteGate 的很多设计，都是从这条主线逼出来的。</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <span class="eyebrow">What It Means</span>
+                <h2>为什么这种产品形态在现在更有意义</h2>
+                <p>现在能生成代码不难，难的是长期跑得住、升级不痛、扩容不乱、别人也能接着用。真正有价值的不是功能堆叠，而是让主路径一直顺。</p>
+            </div>
+            <div class="card-grid">
+                <article class="card">
+                    <strong>对小团队</strong>
+                    <p>没人专职运维时，最值钱的是少手工、少控制台切换、少逐台同步，而不是再多一份复杂平台。</p>
+                </article>
+                <article class="card">
+                    <strong>对中型团队</strong>
+                    <p>服务多起来以后，真正贵的是上线动作碎裂。统一入口、服务发现和版本切换能大幅降低持续交付摩擦。</p>
+                </article>
+                <article class="card">
+                    <strong>对混合云和多租户场景</strong>
+                    <p>公有云、私有云、混合云并存时，最需要的不是再多一个代理，而是更少分裂的接入和升级模型。</p>
+                </article>
+                <article class="card">
+                    <strong>对开源产品本身</strong>
+                    <p>一个项目是不是玩具，不只看功能有多少，而看它能不能在真实环境里长期承担稳定、升级、扩容和接入的责任。</p>
+                </article>
+            </div>
+        </section>
+
+        <div class="footer">
+            <div class="footer-copy">
+                <strong>LiteGate Gateway Philosophy</strong>
+                <p class="footer-note">这页记录的是一个很核心的理解：LiteGate 不是在追求“又一个网关”，而是在尝试把真实团队会反复经历的上线和升级动作收短、收顺、收成一条链路。</p>
+            </div>
+            <div class="footer-links">
+                <div>
+                    <h4>Pages</h4>
+                    <a href="index.html">Home</a>
+                    <a href="deploy-flow.html">Deploy Flow</a>
+                    <a href="litegate.html">Entry Model</a>
+                </div>
+                <div>
+                    <h4>Project</h4>
+                    <a href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+                    <a href="../docs/zh-cn/README.md">Docs</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>

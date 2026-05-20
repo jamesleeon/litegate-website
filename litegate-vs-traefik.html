@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiteGate vs Traefik | 公平比较两种不同入口抽象</title>
+    <style>
+        :root {
+            --bg: #f4f1ea;
+            --surface: rgba(255, 255, 255, 0.8);
+            --surface-strong: #ffffff;
+            --ink: #1f2c28;
+            --ink-soft: #56655f;
+            --ink-faint: #7b8a84;
+            --line: rgba(31, 44, 40, 0.12);
+            --accent: #1a7f64;
+            --accent-deep: #0d5c46;
+            --blue: #2f6fcb;
+            --warm: #c46a2d;
+            --good: #1f7a5d;
+            --shadow: 0 22px 60px rgba(28, 35, 31, 0.08);
+            --radius-xl: 30px;
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --max: 1220px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(47, 111, 203, 0.08), transparent 28%),
+                radial-gradient(circle at right 12% top 18%, rgba(26, 127, 100, 0.12), transparent 24%),
+                linear-gradient(180deg, #faf7f1 0%, var(--bg) 100%);
+            line-height: 1.68;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        code {
+            font-family: Consolas, "SFMono-Regular", "Cascadia Mono", "Liberation Mono", monospace;
+            font-size: 0.92em;
+            background: rgba(31, 44, 40, 0.06);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        .page {
+            width: min(var(--max), calc(100% - 40px));
+            margin: 0 auto;
+            padding: 24px 0 64px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, var(--accent) 0%, #123d30 100%);
+            color: #f5f8f4;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            padding: 0 20px;
+            border-radius: 999px;
+            font-weight: 700;
+            border: 1px solid transparent;
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+            color: #f7fbf8;
+            box-shadow: 0 16px 30px rgba(26, 127, 100, 0.18);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--ink);
+            border-color: var(--line);
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            border-radius: 34px;
+            border: 1px solid var(--line);
+            background:
+                radial-gradient(circle at top right, rgba(47, 111, 203, 0.12), transparent 28%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.74) 100%);
+            box-shadow: var(--shadow);
+            padding: 38px 34px 34px;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(31, 44, 40, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(31, 44, 40, 0.04) 1px, transparent 1px);
+            background-size: 46px 46px;
+            mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0.08) 100%);
+            pointer-events: none;
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.75fr);
+            gap: 24px;
+            align-items: end;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            margin-bottom: 12px;
+            color: var(--accent-deep);
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        h1, h2, h3, h4 {
+            margin: 0;
+            letter-spacing: -0.04em;
+            line-height: 1.06;
+        }
+
+        h1 {
+            font-size: clamp(2.8rem, 5vw, 4.8rem);
+            max-width: 12ch;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 3vw, 3rem);
+        }
+
+        .hero p,
+        .section-head p,
+        .card p,
+        .notes li,
+        td,
+        th,
+        .footer-note {
+            color: var(--ink-soft);
+        }
+
+        .hero-proof {
+            padding: 18px 20px;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(47, 111, 203, 0.18);
+            background: linear-gradient(135deg, rgba(47, 111, 203, 0.1) 0%, rgba(255, 255, 255, 0.72) 100%);
+        }
+
+        .hero-proof strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            color: var(--ink);
+        }
+
+        section {
+            margin-top: 24px;
+        }
+
+        .section-head {
+            max-width: 900px;
+            margin-bottom: 16px;
+        }
+
+        .summary,
+        .grid-2,
+        .grid-3 {
+            display: grid;
+            gap: 18px;
+        }
+
+        .summary,
+        .grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .card h3,
+        .card h4 {
+            margin-bottom: 12px;
+        }
+
+        .summary-strong {
+            background: linear-gradient(180deg, rgba(26, 127, 100, 0.12) 0%, rgba(255, 255, 255, 0.88) 100%);
+        }
+
+        .summary-caution {
+            background: linear-gradient(180deg, rgba(47, 111, 203, 0.08) 0%, rgba(255, 255, 255, 0.88) 100%);
+        }
+
+        .notes {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: rgba(31, 44, 40, 0.06);
+            color: var(--ink);
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .pill.good {
+            background: rgba(31, 122, 93, 0.12);
+            color: var(--good);
+        }
+
+        .pill.blue {
+            background: rgba(47, 111, 203, 0.12);
+            color: var(--blue);
+        }
+
+        .pill.warm {
+            background: rgba(196, 106, 45, 0.12);
+            color: var(--warm);
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.78);
+            box-shadow: var(--shadow);
+        }
+
+        .compare-table th,
+        .compare-table td {
+            padding: 18px 16px;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .compare-table th {
+            color: var(--ink);
+            font-size: 0.95rem;
+            background: rgba(31, 44, 40, 0.04);
+        }
+
+        .compare-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .footer-note {
+            margin-top: 16px;
+            padding: 18px 20px;
+            border-radius: var(--radius-md);
+            background: rgba(31, 44, 40, 0.04);
+            border: 1px dashed rgba(31, 44, 40, 0.16);
+        }
+
+        @media (max-width: 980px) {
+            .hero-inner,
+            .summary,
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .page {
+                width: min(var(--max), calc(100% - 24px));
+                padding-top: 16px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .top-actions {
+                width: 100%;
+            }
+
+            .top-actions .btn {
+                flex: 1 1 0;
+            }
+
+            .hero {
+                padding: 26px 20px;
+            }
+
+            .compare-table,
+            .compare-table thead,
+            .compare-table tbody,
+            .compare-table tr,
+            .compare-table th,
+            .compare-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .compare-table thead {
+                display: none;
+            }
+
+            .compare-table tr {
+                border-bottom: 1px solid var(--line);
+                padding: 10px 0;
+            }
+
+            .compare-table td {
+                border-bottom: none;
+                padding: 14px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a class="brand" href="index.html" aria-label="LiteGate Home">
+                <span class="brand-mark">L</span>
+                <span>LiteGate</span>
+            </a>
+            <div class="top-actions">
+        <a href="en/litegate-vs-traefik.html" class="nav-lang-switch" style="margin-right: 10px; color: var(--accent-deep); font-weight: 800;">English</a>
+                <a class="btn btn-secondary" href="index.html">Back Home</a>
+                <a class="btn btn-primary" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+            </div>
+        </div>
+
+        <header class="hero">
+            <div class="hero-inner">
+                <div>
+                    <p class="eyebrow">Fair Evaluation</p>
+                    <h1>LiteGate vs Traefik</h1>
+                    <p>
+                        这不是一页“谁更强”的情绪化对比，而是把 LiteGate 和 Traefik 放回各自真正的设计重心里。
+                        Traefik 的强项是原生 provider 驱动的云原生入口控制，LiteGate 的强项是把前端托管、服务发现、
+                        证书、注册即上线和统一入口治理收敛到同一执行层。
+                    </p>
+                    <div class="pill-row">
+                        <span class="pill blue">Traefik 强在原生 Docker / Kubernetes provider</span>
+                        <span class="pill good">LiteGate 强在统一入口平台抽象</span>
+                        <span class="pill warm">两者交集很大，但重心并不相同</span>
+                    </div>
+                </div>
+                <aside class="hero-proof">
+                    <strong>一句话结论</strong>
+                    <span>
+                        Traefik 更像成熟的云原生入口控制器。LiteGate 更像统一应用交付入口平台，
+                        尤其适合前后端一体、异构发现源、私有云和 SaaS 入口治理场景。
+                    </span>
+                    <div style="margin-top: 14px;">
+                        <a class="btn btn-secondary" href="litegate-7-layer-tags.html">继续看 7 层 Tag 对比</a>
+                    </div>
+                </aside>
+            </div>
+        </header>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Positioning</p>
+                <h2>先承认重叠，再承认它们已经开始分叉</h2>
+                <p>
+                    两者都能做动态反代、HTTPS、路由和自动化接入，所以当然可以比较。
+                    但从实现路径看，Traefik 更偏“直接连接生态 provider 并生成入口配置”，
+                    LiteGate 更偏“消费统一发现层并继续推导入口、证书、站点和上线意图”。
+                </p>
+            </div>
+            <div class="summary">
+                <article class="card summary-caution">
+                    <h3>Traefik 更像什么</h3>
+                    <ul class="notes">
+                        <li>原生支持 Docker、Kubernetes、Nomad、Consul Catalog 等 provider 的云原生入口控制器。</li>
+                        <li>Router、Service、Middleware 这套模型成熟，行业认知强，资料和最佳实践丰富。</li>
+                        <li>如果团队核心场景就是容器平台入口控制，Traefik 的心智非常顺手。</li>
+                    </ul>
+                </article>
+                <article class="card summary-strong">
+                    <h3>LiteGate 更像什么</h3>
+                    <ul class="notes">
+                        <li>统一站点托管、服务发现、证书自动化、SaaS 域名接入和注册即上线的应用入口层。</li>
+                        <li>前端可以通过站点 YAML 声明，后端可以通过服务注册中心元数据声明对外暴露意图。</li>
+                        <li>更适合私有云、VPS、混合环境、多租户 SaaS 和异构服务发现并存的团队。</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">DSL Layer</p>
+                <h2>真正容易被忽略的差异，是它们让用户用什么语言描述入口</h2>
+                <p>
+                    Traefik 不是只有一套配置语言，而是按接入环境分裂成多种“环境原生 DSL”。
+                    LiteGate 则更像一个统一模型，外面包着几种不同复杂度的输入外观。
+                    所以两边真正的区别，不只是功能多少，而是配置语言背后的抽象哲学不同。
+                </p>
+            </div>
+            <div class="grid-2">
+                <article class="card summary-caution">
+                    <h3>Traefik 的 DSL 形态</h3>
+                    <ul class="notes">
+                        <li>文件配置可用 YAML / TOML。</li>
+                        <li>Docker / ECS 常用 labels。</li>
+                        <li>Consul / Nomad 等常用 tags。</li>
+                        <li>Kubernetes 同时有 annotations、Ingress 和 IngressRoute CRD 这几套入口语言。</li>
+                        <li>本质上是让不同基础设施用各自“母语”接入 Traefik。</li>
+                    </ul>
+                </article>
+                <article class="card summary-strong">
+                    <h3>LiteGate 的 DSL 形态</h3>
+                    <ul class="notes">
+                        <li><code>*.lite.yaml</code> 负责简单站点和快速起站。</li>
+                        <li>完整 YAML 负责站点、路由、治理和认证的主模型。</li>
+                        <li><code>litegate.http.*</code> Tag DSL 负责动态服务接入。</li>
+                        <li>Rule DSL 负责更细的匹配表达式。</li>
+                        <li>本质上是不同输入外观最终都落回同一个入口运行时模型。</li>
+                    </ul>
+                </article>
+            </div>
+            <div class="footer-note">
+                更直白地说：Traefik 的 DSL 更像 provider-shaped DSL，
+                LiteGate 的 DSL 更像 model-shaped DSL。前者强调顺着环境接入，
+                后者强调不管入口从哪里来，最后都回到统一站点模型、统一路由模型和统一治理模型。
+            </div>
+            <div class="footer-note">
+                如果你更关心的不是 DSL 外观，而是服务注册时那些关键字本身到底在表达什么，
+                可以继续看 [LiteGate 7 层 Tag vs Traefik Labels](litegate-7-layer-tags.html)。
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Comparison</p>
+                <h2>全方位比较的关键维度</h2>
+            </div>
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>维度</th>
+                        <th>Traefik</th>
+                        <th>LiteGate</th>
+                        <th>判断</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>核心模型</strong></td>
+                        <td>Provider 直连生态，自动生成 router / service / middleware。</td>
+                        <td>站点声明、服务注册、证书、发现和入口推导在同一模型中协同工作。</td>
+                        <td>Traefik 更像云原生入口控制器；LiteGate 更像统一入口编排平台。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DSL / 配置语言</strong></td>
+                        <td>按 provider 分布为 YAML/TOML、labels、tags、annotations、CRD、KV 等多种环境原生 DSL。</td>
+                        <td>以完整 YAML 站点模型为核心，再提供 Lite Mode、Tag DSL、Rule DSL 等分层外观。</td>
+                        <td>Traefik 强在“顺着生态说母语”；LiteGate 强在“不同输入最终说同一种运行时语言”。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Docker / Kubernetes 支持方式</strong></td>
+                        <td>原生 provider，直接 watch Docker/Kubernetes。</td>
+                        <td>更适合通过 Litemesh 或外部 discovery aggregation layer 桥接接入。</td>
+                        <td>原生接入面 Traefik 更强；异构来源统一接入 LiteGate 更灵活。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>服务发现能力</strong></td>
+                        <td>发现服务对象后映射成 Traefik 自己的入口配置。</td>
+                        <td>支持 Litemesh SSE、Consul、External blocking query，并继续参与 host/path 推导与实例治理。</td>
+                        <td>LiteGate 的发现不止是 backend 列表，而是入口生成的一部分。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>异构发现聚合</strong></td>
+                        <td>强在直接对接多个 provider，但每类 provider 仍是各自模型。</td>
+                        <td>可以通过统一 blocking query 接口消费聚合后的 Docker、K8s、Consul、Nacos、Etcd 等来源。</td>
+                        <td>在“统一发现出口”这件事上，LiteGate 的抽象更靠前一层。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>反代治理</strong></td>
+                        <td>标准 middleware 模型成熟，适合通用流量处理和云原生入口习惯。</td>
+                        <td>除反代外，还叠加 selector、meta、tags、gray weight、熔断、主动健康检查等实例决策语义。</td>
+                        <td>Traefik 更标准化；LiteGate 更业务治理化。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>注册即上线</strong></td>
+                        <td>能通过 labels / annotations 自动长出入口，但本质仍是 provider 映射配置。</td>
+                        <td>服务注册元数据可直接声明 <code>litegate.ingress.host</code> / <code>path</code>，由网关自动生成入口。</td>
+                        <td>这是 LiteGate 区别于传统 ingress controller 的关键分水岭。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>证书体系</strong></td>
+                        <td>ACME 成熟，云原生场景验证广泛。</td>
+                        <td>多 provider、wildcard 一等对象、分布式锁、共享存储、按需签发与续期协同都纳入平台模型。</td>
+                        <td>自动 HTTPS 两者都强；平台化证书治理 LiteGate 更完整。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>静态文件与前端托管</strong></td>
+                        <td>不是主要卖点，重心更偏动态入口。</td>
+                        <td>静态站点、SPA、KV 前端升级、版本保留、warmup 保护和多节点同步是正式能力。</td>
+                        <td>前后端统一入口这一题，LiteGate 更完整。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>生态认知与成熟度</strong></td>
+                        <td>社区成熟，云原生入口领域认知度高。</td>
+                        <td>平台抽象更激进，但市场认知还需要继续建立。</td>
+                        <td>Traefik 在行业共识上仍然领先。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Where LiteGate Wins</p>
+                <h2>LiteGate 明显更进一步的地方</h2>
+            </div>
+            <div class="grid-3">
+                <article class="card">
+                    <h3>1. 统一发现层之后的统一入口层</h3>
+                    <p>
+                        当下游服务既可能来自 Docker、Kubernetes，也可能来自 Consul、Nacos 或自定义系统时，
+                        LiteGate 可以不必把所有 provider 逻辑硬塞进网关本体，而是消费统一 discovery 输出继续生成入口。
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>2. DSL 心智比表面上更统一</h3>
+                    <p>
+                        Lite Mode、完整 YAML、Tag DSL 和 Rule DSL 看起来像多层写法，但它们不是互相割裂的几门语言，
+                        而是同一入口模型在不同复杂度上的外观。这让系统扩展时更像升级同一模型，而不是切换阵营。
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>3. 前端托管不是“顺手带一个 file server”</h3>
+                    <p>
+                        站点 YAML、KV 升级、原子切换、历史版本保留和多节点同步，让 LiteGate 在“应用交付入口”这件事上
+                        比纯 ingress controller 更完整。
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>4. 注册本身就带上线意图</h3>
+                    <p>
+                        服务在注册中心里不只是“有一个实例地址”，还可以顺带声明 host、path、版本和标签。
+                        这样后端服务更像自描述上线，而不是等运维补一条入口配置。
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Where Traefik Still Leads</p>
+                <h2>需要承认 Traefik 更成熟的地方</h2>
+            </div>
+            <div class="grid-2">
+                <article class="card">
+                    <h3>原生云原生生态接入</h3>
+                    <p>
+                        如果团队已经深度拥抱 Kubernetes、Docker、Nomad 和标准 provider 模型，
+                        Traefik 的接入路径更短，既有经验和资料也更多。
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>行业共识和默认心智</h3>
+                    <p>
+                        在“云原生入口”这个话题上，Traefik 已经是大家熟悉的答案之一。
+                        LiteGate 要赢，不是证明自己是另一个 Traefik，而是证明自己解决的是更完整的入口问题。
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Recommendation</p>
+                <h2>什么情况下优先选谁</h2>
+            </div>
+            <div class="grid-2">
+                <article class="card">
+                    <h3>优先选 Traefik</h3>
+                    <ul class="notes">
+                        <li>核心战场就是 Kubernetes / Docker 平台入口，团队已经接受 CRD、labels、annotations 这套心智。</li>
+                        <li>更希望网关直接作为原生 provider consumer，而不是引入统一 discovery aggregation layer。</li>
+                        <li>最看重的是成熟生态、社区资料和标准化云原生入口控制。</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <h3>优先选 LiteGate</h3>
+                    <ul class="notes">
+                        <li>想把前端托管、后端发现、证书、SaaS 域名接入和升级流程收敛成一套执行模型。</li>
+                        <li>服务来源异构，希望下游 provider 越多，上游入口越统一。</li>
+                        <li>希望后端服务注册后就能自动长出入口，而不是每次再找人补网关配置。</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Final Verdict</p>
+                <h2>最公平的最终判断</h2>
+            </div>
+            <div class="grid-2">
+                <article class="card">
+                    <h3>不够准确的说法</h3>
+                    <p>
+                        “LiteGate 就是一个更强的 Traefik。”这说法太粗糙，因为它忽略了 Traefik 在云原生 provider
+                        生态和环境原生 DSL 上的成熟度，也没有说清 LiteGate 真正往前走的那一层抽象。
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>更准确的说法</h3>
+                    <p>
+                        Traefik 是成熟的云原生入口控制器，擅长让 Docker、Kubernetes 等生态用自己的语言接入。
+                        LiteGate 则更进一步，把多种输入 DSL 收敛回统一站点模型，再把服务发现、静态托管、证书、
+                        注册即上线和入口治理连成一体。
+                    </p>
+                </article>
+            </div>
+            <div class="footer-note">
+                这页的核心不是证明 LiteGate 要在所有维度“赢过” Traefik，
+                而是说明两者的抽象层级已经开始不同。Traefik 更像 provider-driven ingress，
+                LiteGate 更像 model-driven, discovery-aware unified entry。
+            </div>
+        </section>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>

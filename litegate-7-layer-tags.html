@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiteGate 7 层 Tag vs Traefik Labels | 关键字设计与运行时语义</title>
+    <style>
+        :root {
+            --bg: #f4f1ea;
+            --surface: rgba(255, 255, 255, 0.82);
+            --surface-strong: #ffffff;
+            --ink: #1f2c28;
+            --ink-soft: #56655f;
+            --line: rgba(31, 44, 40, 0.12);
+            --accent: #1a7f64;
+            --accent-deep: #0d5c46;
+            --blue: #2f6fcb;
+            --warm: #c46a2d;
+            --good: #1f7a5d;
+            --shadow: 0 22px 60px rgba(28, 35, 31, 0.08);
+            --radius-xl: 30px;
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --max: 1240px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(26, 127, 100, 0.1), transparent 28%),
+                radial-gradient(circle at right 15% top 20%, rgba(47, 111, 203, 0.1), transparent 24%),
+                linear-gradient(180deg, #faf7f1 0%, var(--bg) 100%);
+            line-height: 1.68;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        code {
+            font-family: Consolas, "SFMono-Regular", "Cascadia Mono", "Liberation Mono", monospace;
+            font-size: 0.92em;
+            background: rgba(31, 44, 40, 0.06);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        pre {
+            margin: 0;
+            padding: 18px 20px;
+            border-radius: 18px;
+            background: #15211d;
+            color: #eef6f2;
+            overflow: auto;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .page {
+            width: min(var(--max), calc(100% - 40px));
+            margin: 0 auto;
+            padding: 24px 0 72px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, var(--accent) 0%, #123d30 100%);
+            color: #f5f8f4;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            padding: 0 20px;
+            border-radius: 999px;
+            font-weight: 700;
+            border: 1px solid transparent;
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+            color: #f7fbf8;
+            box-shadow: 0 16px 30px rgba(26, 127, 100, 0.18);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--ink);
+            border-color: var(--line);
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            border-radius: 34px;
+            border: 1px solid var(--line);
+            background:
+                radial-gradient(circle at top right, rgba(47, 111, 203, 0.12), transparent 28%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.76) 100%);
+            box-shadow: var(--shadow);
+            padding: 38px 34px 34px;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(31, 44, 40, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(31, 44, 40, 0.04) 1px, transparent 1px);
+            background-size: 46px 46px;
+            mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0.08) 100%);
+            pointer-events: none;
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: minmax(0, 1.06fr) minmax(280px, 0.74fr);
+            gap: 24px;
+            align-items: end;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            margin-bottom: 12px;
+            color: var(--accent-deep);
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        h1, h2, h3, h4 {
+            margin: 0;
+            letter-spacing: -0.04em;
+            line-height: 1.08;
+        }
+
+        h1 {
+            font-size: clamp(2.8rem, 4.6vw, 4.8rem);
+            max-width: 12ch;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 3vw, 3rem);
+        }
+
+        .hero p,
+        .section-head p,
+        .card p,
+        .notes li,
+        td,
+        th,
+        .footer-note {
+            color: var(--ink-soft);
+        }
+
+        .hero-proof {
+            padding: 18px 20px;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(47, 111, 203, 0.18);
+            background: linear-gradient(135deg, rgba(47, 111, 203, 0.1) 0%, rgba(255, 255, 255, 0.72) 100%);
+        }
+
+        .hero-proof strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            color: var(--ink);
+        }
+
+        section {
+            margin-top: 24px;
+        }
+
+        .section-head {
+            max-width: 920px;
+            margin-bottom: 16px;
+        }
+
+        .grid-2,
+        .grid-3 {
+            display: grid;
+            gap: 18px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .card h3,
+        .card h4 {
+            margin-bottom: 12px;
+        }
+
+        .notes {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: rgba(31, 44, 40, 0.06);
+            color: var(--ink);
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .pill.good {
+            background: rgba(31, 122, 93, 0.12);
+            color: var(--good);
+        }
+
+        .pill.blue {
+            background: rgba(47, 111, 203, 0.12);
+            color: var(--blue);
+        }
+
+        .pill.warm {
+            background: rgba(196, 106, 45, 0.12);
+            color: var(--warm);
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.78);
+            box-shadow: var(--shadow);
+        }
+
+        .compare-table th,
+        .compare-table td {
+            padding: 18px 16px;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .compare-table th {
+            color: var(--ink);
+            font-size: 0.95rem;
+            background: rgba(31, 44, 40, 0.04);
+        }
+
+        .compare-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .duo {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .code-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .code-card h3 {
+            margin-bottom: 14px;
+        }
+
+        .footer-note {
+            margin-top: 16px;
+            padding: 18px 20px;
+            border-radius: var(--radius-md);
+            background: rgba(31, 44, 40, 0.04);
+            border: 1px dashed rgba(31, 44, 40, 0.16);
+        }
+
+        @media (max-width: 980px) {
+            .hero-inner,
+            .grid-2,
+            .grid-3,
+            .duo {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .page {
+                width: min(var(--max), calc(100% - 24px));
+                padding-top: 16px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .top-actions {
+                width: 100%;
+            }
+
+            .top-actions .btn {
+                flex: 1 1 0;
+            }
+
+            .hero {
+                padding: 26px 20px;
+            }
+
+            .compare-table,
+            .compare-table thead,
+            .compare-table tbody,
+            .compare-table tr,
+            .compare-table th,
+            .compare-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .compare-table thead {
+                display: none;
+            }
+
+            .compare-table tr {
+                border-bottom: 1px solid var(--line);
+                padding: 10px 0;
+            }
+
+            .compare-table td {
+                border-bottom: none;
+                padding: 14px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a class="brand" href="index.html" aria-label="LiteGate Home">
+                <span class="brand-mark">L</span>
+                <span>LiteGate</span>
+            </a>
+            <div class="top-actions">
+        <a href="en/litegate-7-layer-tags.html" class="nav-lang-switch" style="margin-right: 10px; color: var(--accent-deep); font-weight: 800;">English</a>
+                <a class="btn btn-secondary" href="index.html">Back Home</a>
+                <a class="btn btn-primary" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+            </div>
+        </div>
+
+        <header class="hero">
+            <div class="hero-inner">
+                <div>
+                    <p class="eyebrow">7-Layer Tags</p>
+                    <h1>LiteGate 7 层 Tag vs Traefik Labels</h1>
+                    <p>
+                        这页不比较“谁功能更多”，只比较服务注册时到底在声明什么。
+                        Traefik 的 labels 更像在生成 Traefik 自己的 router、service、middleware 对象。
+                        LiteGate 的 7 层 tag 更像在声明流量如何穿过入口系统本身。
+                    </p>
+                    <div class="pill-row">
+                        <span class="pill good">LiteGate 的关键字更接近运行时治理语义</span>
+                        <span class="pill blue">Traefik 的关键字更接近内部对象拼装语义</span>
+                        <span class="pill warm">差异不只是写法，而是建模视角不同</span>
+                    </div>
+                </div>
+                <aside class="hero-proof">
+                    <strong>一句话判断</strong>
+                    <span>
+                        LiteGate 的 7 层 tag 是有用的，而且大部分已经真实进入运行时。
+                        它最大的价值不是标签数量，而是把入口、路由、治理、上游和观测拆成了有职责边界的执行层。
+                    </span>
+                </aside>
+            </div>
+        </header>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Core Difference</p>
+                <h2>两边都在用标签，但标签表达的不是同一件事</h2>
+                <p>
+                    LiteGate 最新 tag 体系遵循 <code>litegate.[id].&lt;layer&gt;.&lt;key&gt;</code>，
+                    其中 <code>id</code> 是逻辑路由分组，<code>layer</code> 是 7 层治理模型。
+                    这意味着一个服务注册时，写的不是一堆零散开关，而是在描述完整流量执行面。
+                </p>
+            </div>
+            <div class="grid-2">
+                <article class="card">
+                    <h3>Traefik labels 在表达什么</h3>
+                    <ul class="notes">
+                        <li><code>traefik.http.routers.*</code> 定义路由对象。</li>
+                        <li><code>traefik.http.services.*</code> 定义上游服务对象。</li>
+                        <li><code>traefik.http.middlewares.*</code> 定义中间件对象。</li>
+                        <li>本质是通过标签把 Traefik 内部配置对象拼出来，再把对象连起来。</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <h3>LiteGate 7 层 tag 在表达什么</h3>
+                    <ul class="notes">
+                        <li><code>ingress</code> 定义从哪里进来。</li>
+                        <li><code>router</code> 定义如何匹配、如何分流、如何灰度。</li>
+                        <li><code>middleware</code> 定义认证、限流和请求处理链。</li>
+                        <li><code>service</code> 定义网关与后端连接治理。</li>
+                        <li><code>upstream</code> 定义物理实例属性。</li>
+                        <li><code>observability</code> 定义日志和追踪行为。</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">At A Glance</p>
+                <h2>最小例子一摆，差异就很明显</h2>
+            </div>
+            <div class="duo">
+                <article class="code-card">
+                    <h3>LiteGate</h3>
+                    <pre><code>litegate.api.ingress.host=stock.51ecp.com
+litegate.api.ingress.path=/apiv2
+litegate.api.router.strip_prefix=true
+litegate.api.service.timeout=30s
+litegate.api.observability.log=info</code></pre>
+                </article>
+                <article class="code-card">
+                    <h3>Traefik</h3>
+                    <pre><code>traefik.http.routers.api.rule=Host(`stock.51ecp.com`) &amp;&amp; PathPrefix(`/apiv2`)
+traefik.http.routers.api.middlewares=strip-api
+traefik.http.middlewares.strip-api.stripprefix.prefixes=/apiv2
+traefik.http.services.api.loadbalancer.server.port=8080</code></pre>
+                </article>
+            </div>
+            <div class="footer-note">
+                LiteGate 这边写的是“入口怎么暴露、怎么治理”。Traefik 这边写的是“创建一个 router、一个 middleware、一个 service，然后把它们连起来”。
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">7 Layers</p>
+                <h2>逐层看，这套设计到底是不是有用</h2>
+            </div>
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>层级</th>
+                        <th>LiteGate 关键字</th>
+                        <th>实际作用</th>
+                        <th>判断</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>L1 Entrypoint</strong></td>
+                        <td><code>litegate.entrypoint.bind</code></td>
+                        <td>可直接把动态服务挂到额外监听端口；若未显式声明 host/path，会联动推出 <code>0.0.0.0:&lt;port&gt;</code> 与默认 <code>/&lt;serviceName&gt;</code> 路径。</td>
+                        <td>这是实打实的动态调试入口能力。开发者给服务打一条 bind 标签，就能临时开一个独立端口联调，不必先写站点文件。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>L2 Ingress</strong></td>
+                        <td><code>litegate.[id].ingress.host</code><br><code>litegate.[id].ingress.path</code></td>
+                        <td>直接决定服务暴露到哪个 host/path，是动态站点和路由生成的核心输入。</td>
+                        <td>这是价值最高的一层，最接近“注册即上线”的本质。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>L3 Router</strong></td>
+                        <td><code>rule</code> <code>priority</code> <code>gray_weight</code> <code>lb_policy</code><br><code>selector.*</code> <code>meta.*</code> <code>methods</code> <code>headers.*</code></td>
+                        <td>既控制请求匹配，也控制灰度、分片、实例筛选、路径改写和流量策略。</td>
+                        <td>非常强，已经不只是 router，而是 traffic policy layer。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>L4 Middleware</strong></td>
+                        <td><code>auth</code> <code>auth_provider</code> <code>ratelimit</code> <code>inject_response</code></td>
+                        <td>进入 RemoteAuth、限流和身份注入链路。</td>
+                        <td>有效，但当前更偏核心治理接口，还不是广义中间件宇宙。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>L5 Service</strong></td>
+                        <td><code>timeout</code> <code>retry</code> <code>breaker*</code></td>
+                        <td>决定网关与后端之间的超时、重试和熔断策略。</td>
+                        <td>分层很合理，语义清晰，和 router/upstream 的边界也比较好。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>L6 Upstream</strong></td>
+                        <td><code>port</code> <code>weight</code> <code>gray</code><br><code>health_path</code> <code>mtls</code> <code>insecure</code></td>
+                        <td>定义实例物理属性，参与端口覆盖、灰度池划分、健康检查和后端 TLS 行为。</td>
+                        <td>很有用，尤其和 L3 的灰度、选择器配合时非常顺。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>L7 Observability</strong></td>
+                        <td><code>log</code> <code>trace</code></td>
+                        <td>影响路由级日志等级和链路追踪元数据注入。</td>
+                        <td>是实打实进运行时的，不只是装饰性标签。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Why It Matters</p>
+                <h2>这套 7 层 tag 真正值钱的地方</h2>
+            </div>
+            <div class="grid-3">
+                <article class="card">
+                    <h3>1. 标签不再是平铺开关</h3>
+                    <p>
+                        很多系统的 labels 最终只是把零散配置项塞进 provider。LiteGate 的 7 层 tag 则把标签组织成一个分层运行时模型，
+                        让每个关键字都归属于明确职责。
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>2. 一个服务可以有多条逻辑入口</h3>
+                    <p>
+                        <code>litegate.[id].*</code> 这个结构让同一服务可以同时拥有多条逻辑路由和不同治理策略，
+                        而不是被限制在单一“服务 = 单一路由”思维里。
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>3. 分层之间是可联动的</h3>
+                    <p>
+                        例如 <code>router.gray_weight</code> 和 <code>upstream.gray</code>、
+                        <code>router.selector.*</code> 和实例 metadata、<code>observability.*</code> 和 access log，
+                        都不是各自孤立存在。
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>4. L1 对开发联调尤其友好</h3>
+                    <p>
+                        <code>entrypoint.bind=0.0.0.0:9090</code> 这种写法，本质上就是“给这个服务临时拉一个可访问端口”。
+                        如果服务名是 <code>api</code>，默认路径还能直接推出 <code>/api</code>，这非常适合开发、灰度验证和临时旁路调试。
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>5. 默认就是开发者友好的透明代理</h3>
+                    <p>
+                        不显式配置时，LiteGate 默认尽量保留原始请求语义：Host 不乱改、路径不乱改，
+                        但会自动补齐 <code>X-Real-IP</code>、<code>X-Forwarded-For</code>、
+                        <code>X-Forwarded-Proto</code> 和 <code>X-Forwarded-Host</code>。
+                        这很符合后端微服务开发者的期待：能不配就不配，但后端该拿到的信息还是要自动拿到。
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Vs Traefik</p>
+                <h2>和 Traefik 相比，真正强在哪里</h2>
+            </div>
+            <div class="grid-2">
+                <article class="card">
+                    <h3>Traefik 的长处</h3>
+                    <ul class="notes">
+                        <li>标签生态成熟，Docker / Kubernetes / Consul 等环境接入体验顺滑。</li>
+                        <li>对象模型稳定，大家都熟悉 router / service / middleware 这套心智。</li>
+                        <li>如果用户只想在现有云原生环境里生成入口配置，Traefik 的标签已经足够强。</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <h3>LiteGate 的长处</h3>
+                    <ul class="notes">
+                        <li>标签直接对准网关执行层，不只是组装内部对象。</li>
+                        <li>更适合把 host、path、灰度、认证、实例选择、熔断、mTLS、观测统一收在同一模型里。</li>
+                        <li>更适合“服务注册就是上线意图声明”的平台化场景。</li>
+                        <li>在 <code>entrypoint.bind</code> 这件事上，更像给开发者一把随手可开的调试入口钥匙；Traefik 的 entryPoints 主要还是静态配置面，不能靠服务标签直接新开监听端口。</li>
+                        <li>默认行为更偏透明代理，明显更像后端开发者写给后端开发者的入口系统，而不是先逼你学一套复杂边缘配置学。</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Fair Verdict</p>
+                <h2>最公平的判断</h2>
+            </div>
+            <div class="grid-2">
+                <article class="card">
+                    <h3>不够准确的说法</h3>
+                    <p>
+                        “LiteGate 只是把 Traefik labels 换了一套名字。”这不对，因为两边标签背后的抽象并不一样。
+                        Traefik labels 更偏对象拼装，LiteGate 7 层 tag 更偏运行时分层治理。
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>更准确的说法</h3>
+                    <p>
+                        LiteGate 的 7 层 tag 体系是有用的，而且核心层大部分已经真实落进运行时。
+                        它的价值不在于“标签更多”，而在于让服务在注册时就能描述流量如何进入、如何分流、如何治理、如何观测。
+                        它背后的产品取向也很明确：优先让后端开发者在少配置甚至不配置的情况下，把服务顺手接起来。
+                    </p>
+                </article>
+            </div>
+            <div class="footer-note">
+                对比官方设计，Traefik 的 entryPoints 属于静态安装配置，路由只能引用已有 entryPoints；
+                Nginx 当然能用 <code>listen</code> 开端口，但那是手写 server block 的静态配置；
+                Caddy 也能在站点地址里直接写端口。LiteGate 这一层的特别之处在于：
+                它让“服务注册元数据”本身就能把调试端口和默认访问路径一起长出来。
+            </div>
+        </section>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>

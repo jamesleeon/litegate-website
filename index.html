@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiteGate | 从网站入口到 SaaS 网关的统一入口层</title>
+    <meta name="description" content="LiteGate 把站点托管、API 代理、自动 HTTPS、服务发现和 SaaS 入口能力收进同一个网关，适合私有云、VPS、混合云和多租户场景。">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="site-shell">
+        <nav class="nav" id="nav">
+            <div class="container nav-inner">
+                <a href="#" class="brand" aria-label="LiteGate Home">
+                    <span class="brand-mark">L</span>
+                    <span class="brand-text">LiteGate</span>
+                </a>
+                <div class="nav-links">
+                    <a href="#entry-model">Entry Model</a>
+                    <a href="#fit">Why</a>
+                    <a href="deploy-flow.html">Deploy</a>
+                    <a href="gateway-philosophy.html">Thinking</a>
+                    <a href="litegate-vs-caddy.html">vs Caddy</a>
+                    <a href="litegate-vs-traefik.html">vs Traefik</a>
+                    <a href="#frontend-release">Frontend</a>
+                    <a href="#path">Growth</a>
+                    <a href="#modes">Modes</a>
+                    <a href="#scenarios">Scenarios</a>
+                    <a href="architecture.html">Architecture</a>
+                </div>
+                <div class="nav-actions">
+                    <a href="en/index.html" class="nav-lang-switch" style="margin-right: 10px;">English</a>
+                    <a href="https://github.com/jamesleeon/LiteGate" class="nav-link-quiet">GitHub</a>
+                    <a href="#quickstart" class="btn btn-nav">Get Started</a>
+                </div>
+            </div>
+        </nav>
+
+        <header class="hero">
+            <div class="hero-grid"></div>
+            <div class="container hero-layout">
+                <div class="hero-copy">
+                    <p class="eyebrow" data-animate>Unified Entry Layer</p>
+                    <h1 data-animate>打一个 label，证书、DNS、路由就能一起就绪</h1>
+                    <p class="hero-lead" data-animate>
+                        LiteGate 不只是在流量进来之后帮你转发请求。
+                        它更适合那些已经有静态站点、后端 API、自动 HTTPS 或动态服务发现需求，希望把接入、发现、证书和 SaaS 入口一起收回到同一个执行面的团队。
+                    </p>
+                    <div class="hero-actions" data-animate>
+                        <a href="#quickstart" class="btn btn-primary">5 分钟跑起来</a>
+                        <a href="#fit" class="btn btn-secondary">看看我适不适合</a>
+                    </div>
+                    <div class="hero-note" data-animate>
+                        <span>适合私有云、VPS、Docker、混合云和多租户 SaaS 场景</span>
+                    </div>
+                    <div class="hero-microproof" data-animate>
+                        <div class="microproof-item">
+                            <strong>自动证书和自动 DNS 收敛是核心能力</strong>
+                            <span>很多网关要先手工把域名指过去，才能开始申请证书。LiteGate 可以把 A 记录同步、证书申请和 HTTPS 就绪一起收回到入口层里处理。</span>
+                        </div>
+                        <div class="microproof-item microproof-item-ai">
+                            <strong>不想翻文档，也可以先把场景说给 AI</strong>
+                            <span>LiteGate 暴露了可读可写的 MCP 工具，AI 可以读取 schema、生成配置、保存变更并验证结果。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-stack" data-animate>
+                    <section class="panel panel-code">
+                        <div class="panel-topline">
+                            <span class="panel-pill">Lite Mode</span>
+                            <span class="panel-file">sites/app.example.com.lite.yaml</span>
+                        </div>
+                        <pre><code>app.example.com:
+  /api:
+    proxy: 127.0.0.1:8080
+  /:
+    root: ./dist
+    spa: true</code></pre>
+                        <p class="panel-note-emphasis">
+                            声明一个站点后，LiteGate 还可以继续把 A 记录、证书申请和 HTTPS 就绪一起带起来。
+                        </p>
+                        <p>
+                            一个站点文件，同时承接前端资源、API 路由和 HTTPS 入口。
+                        </p>
+                    </section>
+
+                    <section class="panel panel-split">
+                        <div class="panel-topline">
+                            <span class="panel-pill panel-pill-muted">Why It Feels Better</span>
+                        </div>
+                        <div class="split-flow">
+                            <div class="split-card">
+                                <strong>Before</strong>
+                                <span class="split-emphasis">先手工改 DNS，才能开始证书流程</span>
+                                <span>Caddy / Nginx 托管站点</span>
+                                <span>另一套动态代理或注册中心</span>
+                                <span>证书、DNS、入口认证各自分散</span>
+                            </div>
+                            <div class="split-arrow">→</div>
+                            <div class="split-card split-card-strong">
+                                <strong>After</strong>
+                                <span class="split-emphasis">声明站点后自动收敛 A 记录与证书</span>
+                                <span>站点、代理、证书、发现统一在一个入口层</span>
+                                <span>简单场景先轻量，复杂场景再升级</span>
+                                <span>不需要中途推翻入口体系重来</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel panel-summary">
+                        <div class="summary-item">
+                            <span class="summary-kicker">One Model</span>
+                            <strong>静态站点、固定 upstream 和动态实例共用一套路由模型</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-kicker">Progressive</span>
+                            <strong>先从网站和 API 开始，再逐步接服务发现和 SaaS 入口</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-kicker">Private Cloud Ready</span>
+                            <strong>更适合不想一上来就进入完整 Kubernetes 体系的团队</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-kicker">MCP Ready</span>
+                            <strong>先描述场景，再让 AI 读取环境、生成配置并验证入口是否真的可用</strong>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="section section-entry-model" id="entry-model">
+                <div class="container">
+                    <div class="section-head" data-animate>
+                        <p class="eyebrow">Entry Model</p>
+                        <h2>LiteGate 不只是代理层，而是统一入口层</h2>
+                        <p>
+                            它不是单独站在 Caddy、Traefik 或 Nginx 的某一个点上，而是把网站托管、动态代理、自动证书、服务发现和身份驱动入口收进同一个执行面。
+                        </p>
+                    </div>
+                    <div class="entry-model-shell" data-animate>
+                        <div class="entry-model-lane">
+                            <div class="entry-lane-title">From Internet</div>
+                            <div class="entry-lane-stack">
+                                <div class="entry-node entry-node-accent">
+                                    <strong>app.example.com</strong>
+                                    <span>SPA / docs / marketing site</span>
+                                </div>
+                                <div class="entry-node entry-node-blue">
+                                    <strong>api.example.com</strong>
+                                    <span>API / HTTPS / WebSocket</span>
+                                </div>
+                                <div class="entry-node entry-node-warm">
+                                    <strong>stream.example.com</strong>
+                                    <span>TCP / UDP / non-HTTP</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="entry-model-core">
+                            <div class="entry-core-top">
+                                <span class="entry-core-tag">Unified Entry Layer</span>
+                                <h3>站点、路由、证书、发现和 SaaS 入口在同一个模型里协同工作</h3>
+                                <p>
+                                    这也是 LiteGate 和普通反代、纯动态网关、纯静态站点服务器最不一样的地方。
+                                </p>
+                            </div>
+                            <div class="entry-core-pill-row">
+                                <span class="entry-core-pill">Caddy-style site serving</span>
+                                <span class="entry-core-pill">Traefik-style dynamic backends</span>
+                                <span class="entry-core-pill">identity-aware SaaS entry</span>
+                            </div>
+                            <div class="entry-core-grid">
+                                <article class="entry-core-card">
+                                    <h4>站点与内容接入</h4>
+                                    <p>静态站点、SPA、Markdown 和 WebDAV 不需要再单独挂一层入口。</p>
+                                </article>
+                                <article class="entry-core-card">
+                                    <h4>动态代理与发现</h4>
+                                    <p>固定 upstream、动态实例、标签路由和服务注册变化都能留在主链路里处理。</p>
+                                </article>
+                                <article class="entry-core-card">
+                                    <h4>证书与 HTTPS 自动化</h4>
+                                    <p>DNS-01、泛域名、自动续期和 On-Demand TLS 能把手工证书流程收回到入口层。</p>
+                                </article>
+                                <article class="entry-core-card">
+                                    <h4>SaaS 入口与身份链路</h4>
+                                    <p>remote auth、OIDC、IDS、租户上下文和 sid 路由决策更贴近真实 SaaS 接入面。</p>
+                                </article>
+                            </div>
+                        </div>
+
+                        <div class="entry-model-lane">
+                            <div class="entry-lane-title">To Your Systems</div>
+                            <div class="entry-lane-stack">
+                                <div class="entry-node">
+                                    <strong>网站和前端资源</strong>
+                                    <span>/dist 直接托管，不需要额外静态站点层</span>
+                                </div>
+                                <div class="entry-node entry-node-blue">
+                                    <strong>API 和动态后端</strong>
+                                    <span>从固定 upstream 起步，再逐步接入发现能力</span>
+                                </div>
+                                <div class="entry-node entry-node-warm">
+                                    <strong>私有云、VPS 和 SaaS</strong>
+                                    <span>多域名、多环境、身份入口和集群分流</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="entry-model-proof-grid" data-animate>
+                        <article class="entry-proof-card">
+                            <h3>不是 Caddy 替代品，而是继续往前走一步</h3>
+                            <p>继承了站点接入和自动 HTTPS 的低门槛体验，但没有把入口层停留在单纯的网站服务器。</p>
+                        </article>
+                        <article class="entry-proof-card entry-proof-card-blue">
+                            <h3>不是 Traefik 同级替代，而是把入口面补完整</h3>
+                            <p>动态路由只是其中一层。LiteGate 继续把站点托管、证书自动化和身份驱动入口收回到同一个执行面里。</p>
+                        </article>
+                        <article class="entry-proof-card entry-proof-card-warm">
+                            <h3>对 Nginx 用户，这能把证书流程从手工里解放出来</h3>
+                            <p>DNS-01、泛域名和自动续期的价值，在于把申请、替换和 reload 这一类重复流程统一收回到入口层里处理。</p>
+                        </article>
+                    </div>
+                    <div class="entry-model-action" data-animate>
+                        <a href="litegate.html" class="btn btn-secondary">查看完整入口模型</a>
+                        <a href="deploy-flow.html" class="btn btn-primary">查看上线与升级流程</a>
+                        <a href="litegate-vs-caddy.html" class="btn btn-secondary">查看 LiteGate vs Caddy</a>
+                        <a href="litegate-vs-traefik.html" class="btn btn-secondary">查看 LiteGate vs Traefik</a>
+                        <a href="gateway-philosophy.html" class="btn btn-secondary">查看设计理解</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="fit">
+                <div class="container">
+                    <div class="section-head" data-animate>
+                        <p class="eyebrow">Is It For You</p>
+                        <h2>你不用先看功能，先看自己是不是现在该用 LiteGate 的人</h2>
+                        <p>
+                            官网先帮用户判断适配度，比先铺一页功能清单更重要。
+                        </p>
+                    </div>
+                    <div class="card-grid card-grid-3">
+                        <article class="info-card" data-animate>
+                            <span class="card-tag card-tag-good">很适合你</span>
+                            <h3>入口层已经开始分裂</h3>
+                            <p>你已经在用 Caddy、Nginx 或类似工具托管站点，但又需要另一套入口处理动态服务、注册中心、反向代理或认证链路。</p>
+                        </article>
+                        <article class="info-card" data-animate>
+                            <span class="card-tag card-tag-warm">可能适合你</span>
+                            <h3>现在是网站和 API，后面会继续长</h3>
+                            <p>今天只是在接静态站点和后端服务，但你已经能预见 Docker、服务发现、身份入口和多租户分流会很快进入系统。</p>
+                        </article>
+                        <article class="info-card" data-animate>
+                            <span class="card-tag card-tag-muted">暂时不用换</span>
+                            <h3>你只需要一个最简单的站点服务器</h3>
+                            <p>如果只有单静态站点，没有动态后端、注册中心或 SaaS 入口要求，LiteGate 现在不一定值得你迁移。</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section section-contrast" id="why">
+                <div class="container">
+                    <div class="section-head section-head-left" data-animate>
+                        <p class="eyebrow">Why LiteGate</p>
+                        <h2>迁移动机不该来自“功能更多”，而应该来自“分裂更少”</h2>
+                        <p>
+                            LiteGate 不是想变成一个什么都做的巨型网关，而是把原本散在站点托管、代理、证书、发现和接入治理上的职责重新收回到一个入口层里。
+                        </p>
+                    </div>
+                    <div class="contrast-grid">
+                        <div class="contrast-panel" data-animate>
+                            <h3>很多团队现在的入口层会慢慢变成这样</h3>
+                            <ul class="list">
+                                <li>站点托管在一套工具里，动态代理在另一套工具里</li>
+                                <li>证书、DNS、服务发现和身份入口散落在外围脚本或平台里</li>
+                                <li>系统一复杂，入口层先变成最难维护的地方</li>
+                            </ul>
+                        </div>
+                        <div class="contrast-panel contrast-panel-highlight" data-animate>
+                            <h3>LiteGate 的答案更简单</h3>
+                            <ul class="list">
+                                <li>用同一个站点模型承接静态资源和后端 API</li>
+                                <li>把自动 HTTPS、动态发现和入口治理放回主链路</li>
+                                <li>让系统从简单模式一路长到 SaaS 场景，而不是中途换轨</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section section-automation" id="automation-story">
+                <div class="container">
+                    <div class="section-head" data-animate>
+                        <p class="eyebrow">Automation Story</p>
+                        <h2>从一个 label 到直接上线，这条链路应该被完整看见</h2>
+                        <p>
+                            LiteGate 更强的地方，不只是能做动态路由，而是它可以把“注册服务、接入域名、配证书、完成 HTTPS”这条上线链路收成一个连续动作。
+                        </p>
+                    </div>
+                    <div class="story-grid">
+                        <article class="story-step" data-animate>
+                            <span class="story-no">01</span>
+                            <h3>声明服务或站点</h3>
+                            <p>写一个 `*.lite.yaml`，或者给容器 / 服务打上 `litegate.*` 相关 label，先把入口意图表达出来。</p>
+                        </article>
+                        <article class="story-step" data-animate>
+                            <span class="story-no">02</span>
+                            <h3>注册与发现接上</h3>
+                            <p>服务实例被注册到 Litemesh，或者通过 discovery 桥接层暴露成 LiteGate 能消费的统一发现接口。</p>
+                        </article>
+                        <article class="story-step" data-animate>
+                            <span class="story-no">03</span>
+                            <h3>DNS 与证书自动跟上</h3>
+                            <p>新域名不必再先走一轮手工 DNS 和证书流程。A 记录同步、DNS 验证和 HTTPS 就绪可以继续由入口层收敛处理。</p>
+                        </article>
+                        <article class="story-step" data-animate>
+                            <span class="story-no">04</span>
+                            <h3>服务直接对外可用</h3>
+                            <p>最后拿到的不是“配置写完了”，而是域名可访问、证书已生效、入口路由已就绪的可用结果。</p>
+                        </article>
+                    </div>
+                    <div class="story-points" data-animate>
+                        <div class="cert-point">
+                            <strong>新域名上线更顺手</strong>
+                            <span>配置站点后，A 记录和证书可以自动跟上，减少发布时忘改 DNS 的概率。</span>
+                        </div>
+                        <div class="cert-point">
+                            <strong>手工前置动作更少</strong>
+                            <span>不用再依赖“先把域名指过来，再开始申请证书”这一套前置步骤。</span>
+                        </div>
+                        <div class="cert-point">
+                            <strong>泛域名更顺手</strong>
+                            <span>DNS 验证天然更适合私有云、多域名和多环境部署，尤其是需要统一管理泛域名时。</span>
+                        </div>
+                        <div class="cert-point">
+                            <strong>证书和站点一起治理</strong>
+                            <span>域名、站点入口、证书策略和后端路由不用再拆到不同组件里分别维护。</span>
+                        </div>
+                    </div>
+                    <div class="story-note" data-animate>
+                        这也是它和很多只负责“路由到哪台机器”的动态网关不一样的地方：LiteGate 更关注一条完整的上线链路，而不是只接住其中一段。
+                    </div>
+                </div>
+            </section>
+
+            <section class="section section-automation" id="frontend-release">
+                <div class="container">
+                    <div class="section-head" data-animate>
+                        <p class="eyebrow">Frontend Release</p>
+                        <h2>前端升级不再逐台发包，提交一个版本就够了</h2>
+                        <p>
+                            这不是多一个静态文件配置项，而是把前端发布动作收敛成一次版本提交：
+                            前端构建产物打成 ZIP 上传到 OSS，把版本信息写进 Litemesh KV，
+                            LiteGate 会在所有节点自动完成下载、切换和历史版本保留。
+                        </p>
+                    </div>
+                    <div class="quickstart-shell" data-animate>
+                        <div class="terminal-card">
+                            <div class="terminal-head">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="terminal">
+                                <div class="terminal-line"><span class="comment"># 1. build frontend and upload ZIP to OSS</span></div>
+                                <div class="terminal-line"><span class="prompt">$</span><span class="cmd">oss://frontends/main-12.zip</span></div>
+                                <div class="terminal-line"><span class="comment"># 2. write one KV key</span></div>
+                                <div class="terminal-line"><span class="cmd">litegate/config/front/main</span></div>
+                                <div class="terminal-line"><span class="comment">{</span></div>
+                                <div class="terminal-line"><span class="comment">  "version": "12",</span></div>
+                                <div class="terminal-line"><span class="comment">  "url": "https://oss.example.com/front/main-12.zip",</span></div>
+                                <div class="terminal-line"><span class="comment">  "md5": "3e5a..."</span></div>
+                                <div class="terminal-line"><span class="comment">}</span></div>
+                                <div class="terminal-line"><span class="comment"># 3. LiteGate nodes auto sync and switch</span></div>
+                            </div>
+                        </div>
+                        <div class="quickstart-copy">
+                            <div class="quickstart-block">
+                                <h3>发布动作变得很短</h3>
+                                <p>你不需要登录每台节点替换静态目录，也不需要额外跑一套前端分发脚本。上传 ZIP，再更新一个 KV 键，发布动作基本就结束了。</p>
+                            </div>
+                            <div class="quickstart-block quickstart-block-ai">
+                                <h3>LiteGate 接住剩下的事情</h3>
+                                <p>节点监听 KV 变化后，会自动拉取新版本、解压到本地版本目录、切换当前服务路径，并按策略保留最近几个历史版本，回滚也更轻。</p>
+                            </div>
+                            <div class="quickstart-block">
+                                <h3>多节点会更舒服</h3>
+                                <p>新节点加入后可以自己收敛到正确前端版本，已有节点也能一起跟上。对小团队来说，这比逐台 rsync 或手工覆盖目录要顺手得多。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-grid card-grid-3" data-animate>
+                        <article class="info-card">
+                            <span class="card-tag card-tag-good">Less Ops</span>
+                            <h3>不用逐台发静态资源</h3>
+                            <p>前端升级从“分发文件”变成“声明版本”，很适合没有专职运维、主要靠开发自己上线的小团队。</p>
+                        </article>
+                        <article class="info-card">
+                            <span class="card-tag card-tag-warm">Multi-Node</span>
+                            <h3>多节点天然更一致</h3>
+                            <p>所有节点围绕同一个 KV 键收敛状态，发布不再依赖每台机器都被正确操作过一次。</p>
+                        </article>
+                        <article class="info-card">
+                            <span class="card-tag card-tag-muted">Rollback Ready</span>
+                            <h3>历史版本保留下来</h3>
+                            <p>保留最近几个版本目录后，前端回滚不需要重新构建一遍，改回版本指针会更干净。</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="discovery-architecture">
+                <div class="container">
+                    <div class="section-head" data-animate>
+                        <p class="eyebrow">Discovery Architecture</p>
+                        <h2>服务发现是分离的，你不需要为了 LiteGate 重做注册中心</h2>
+                        <p>
+                            如果你已经有 Consul、Litemesh，甚至是 Nacos、etcd 或多套异构环境，LiteGate 的接法并不是“全换掉”，而是把发现层解耦出来按场景对接。
+                        </p>
+                    </div>
+                    <div class="discovery-arch-grid">
+                        <article class="discovery-arch-card" data-animate>
+                            <h3>Built-in providers</h3>
+                            <p>适合从简单开始。先用 `static`，后面再平滑升级到 `Consul`、`Litemesh`、`external` 或 `hybrid`。</p>
+                            <div class="tag-row">
+                                <span class="tag tag-warm">static</span>
+                                <span class="tag tag-warm">Consul</span>
+                                <span class="tag tag-accent">Litemesh</span>
+                                <span class="tag">hybrid</span>
+                            </div>
+                        </article>
+                        <article class="discovery-arch-card" data-animate>
+                            <h3>litemesh-registrator-go</h3>
+                            <p>适合 Docker / Swarm。给服务打 label，registrator 自动把运行中的容器注册进发现层，LiteGate 直接消费结果。</p>
+                            <div class="tag-row">
+                                <span class="tag">Docker labels</span>
+                                <span class="tag tag-accent">auto register</span>
+                                <span class="tag tag-accent">Litemesh</span>
+                            </div>
+                        </article>
+                        <article class="discovery-arch-card" data-animate>
+                            <h3>camodns_discovery</h3>
+                            <p>适合已有异构注册中心。它把 `Nacos`、`etcd`、`k8s`、`Docker` 等来源桥接成 LiteGate 能消费的统一发现接口，并通过 blocking query 风格把变化按事件感方式推给入口层，而不是让网关自己轮询每一种来源。</p>
+                            <div class="tag-row">
+                                <span class="tag">Nacos</span>
+                                <span class="tag">etcd</span>
+                                <span class="tag">k8s</span>
+                                <span class="tag">Docker</span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section section-path" id="path">
+                <div class="container">
+                    <div class="section-head" data-animate>
+                        <p class="eyebrow">Growth Path</p>
+                        <h2>不是一上来就做复杂网关，而是先把简单事情做顺</h2>
+                        <p>
+                            LiteGate 更有说服力的地方，是它允许团队按真实复杂度往前走，而不是一开始就强迫你接受完整平台负担。
+                        </p>
+                    </div>
+                    <div class="path-grid">
+                        <article class="path-card" data-animate>
+                            <span class="path-step">Stage 01</span>
+                            <h3>网站和 API</h3>
+                            <p>先从静态站点、SPA、简单反代和自动 HTTPS 开始，把入口最基础的事情做顺。</p>
+                        </article>
+                        <article class="path-card" data-animate>
+                            <span class="path-step">Stage 02</span>
+                            <h3>动态服务</h3>
+                            <p>当实例开始频繁变化，再接入 Consul、Litemesh 或其他发现源，让路由随着服务拓扑演进。</p>
+                        </article>
+                        <article class="path-card" data-animate>
+                            <span class="path-step">Stage 03</span>
+                            <h3>SaaS 入口</h3>
+                            <p>当系统进入多租户、集群分流、身份驱动路由、灰度和专属实例阶段，入口层不需要推翻重来。</p>
+                        </article>
+                    </div>
+                    <div class="path-note" data-animate>
+                        LiteGate 的价值不只是能处理复杂场景，而是系统长大之后，你不用中途换整套入口体系。
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="modes">
+                <div class="container">
+                    <div class="section-head" data-animate>
+                        <p class="eyebrow">Lite vs Full</p>
+                        <h2>简单场景先轻量，复杂场景再升级</h2>
+                        <p>
+                            Lite 模式是最短上线路径，Full 模式是完整治理模型。两者不是两套运行时，而是同一个内核的不同输入层。
+                        </p>
+                    </div>
+                    <div class="mode-grid">
+                        <article class="mode-card" data-animate>
+                            <div class="mode-head">
+                                <h3>Lite Mode</h3>
+                                <span>给简单场景的最短路径</span>
+                            </div>
+                            <pre><code>example.com:
+  proxy: 127.0.0.1:8080</code></pre>
+                            <ul class="list">
+                                <li>适合单站点、SPA、简单反代、重定向和 WebDAV</li>
+                                <li>几行 <code>*.lite.yaml</code> 就能把站点先跑起来</li>
+                                <li>更像面向用户的简洁入口，而不是第二套配置内核</li>
+                            </ul>
+                        </article>
+                        <article class="mode-card mode-card-highlight" data-animate>
+                            <div class="mode-head">
+                                <h3>Full Mode</h3>
+                                <span>保留完整的治理与扩展能力</span>
+                            </div>
+                            <pre><code>domain: example.com
+routes:
+  - match:
+      path_prefix: /
+    action:
+      type: proxy
+      upstream:
+        - 127.0.0.1:8080</code></pre>
+                            <ul class="list">
+                                <li>适合复杂匹配、认证、中间件、发现和高级入口治理</li>
+                                <li>当系统需要更多表达能力时，直接切回完整模型即可</li>
+                                <li>Lite 配置最终会编译成标准模型，迁移路径清晰</li>
+                            </ul>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section section-scenarios" id="scenarios">
+                <div class="container">
+                    <div class="section-head" data-animate>
+                        <p class="eyebrow">Scenarios</p>
+                        <h2>这些场景下，LiteGate 会比普通反代更顺手</h2>
+                        <p>
+                            不是所有项目都需要 LiteGate，但下面这些场景会更容易感受到它的价值。
+                        </p>
+                    </div>
+                    <div class="scenario-grid">
+                        <article class="scenario-card" data-animate>
+                            <h3>官网、文档站和管理后台</h3>
+                            <p>静态站点和后端 API 放在同一个入口里，减少额外拼装和重复配置。</p>
+                        </article>
+                        <article class="scenario-card" data-animate>
+                            <h3>私有云或 VPS 上的小型产品</h3>
+                            <p>单二进制、Docker、自动 HTTPS 和 DNS 证书流程，更符合轻量部署和多域名现实。</p>
+                        </article>
+                        <article class="scenario-card" data-animate>
+                            <h3>轻量微服务入口</h3>
+                            <p>当实例开始动态变化，服务发现和标签路由能让入口继续承接复杂度。</p>
+                        </article>
+                        <article class="scenario-card" data-animate>
+                            <h3>多租户 SaaS</h3>
+                            <p>身份驱动路由、租户上下文注入和 sid 分流，更接近 SaaS 接入面真实需要的能力。</p>
+                        </article>
+                        <article class="scenario-card" data-animate>
+                            <h3>新域名上线不想再先折腾 DNS</h3>
+                            <p>声明站点后，让入口层自动处理 A 记录同步、证书申请和 HTTPS 就绪，比“先配外围再测网站”更省心。</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section section-mcp" id="mcp-example">
+                <div class="container">
+                    <div class="section-head" data-animate>
+                        <p class="eyebrow">MCP Example</p>
+                        <h2>MCP 不是一句“AI 能配”，而是它真的能替你走完一轮入口配置</h2>
+                        <p>
+                            这件事如果没有具体画面，就很容易显得空。更准确的说法应该是：你把场景说清楚，AI 通过 LiteGate MCP 去读说明、生成配置、保存并验证。
+                        </p>
+                    </div>
+                    <div class="mcp-example-shell" data-animate>
+                        <div class="mcp-example-card">
+                            <h3>你对 AI 说</h3>
+                            <pre><code>给我挂一个官网和一个 /api
+域名是 demo.example.com
+前端目录是 ./dist
+后端在 127.0.0.1:8080
+顺便把证书和 HTTPS 路径也检查一下</code></pre>
+                        </div>
+                        <div class="mcp-example-card">
+                            <h3>LiteGate MCP 可以做</h3>
+                            <ul class="list">
+                                <li>读取站点 schema 和配置说明</li>
+                                <li>生成 `*.lite.yaml` 或完整 YAML</li>
+                                <li>保存配置并执行校验</li>
+                                <li>继续检查入口是否已经可访问</li>
+                            </ul>
+                        </div>
+                        <div class="mcp-example-card">
+                            <h3>用户真正得到的是</h3>
+                            <p>不是一句抽象的“AI 辅助”，而是一轮完整的入口配置动作被压缩成自然语言任务，特别适合官网、管理后台、文档站和简单 API 接入场景。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="quickstart">
+                <div class="container">
+                    <div class="section-head section-head-left" data-animate>
+                        <p class="eyebrow">Quick Start</p>
+                        <h2>先拿到第一个响应，再决定要不要继续往下走</h2>
+                        <p>
+                            宣传站最重要的 CTA 不是让用户先读完整白皮书，而是尽快获得一次成功体验。
+                        </p>
+                    </div>
+                    <div class="quickstart-shell" data-animate>
+                        <div class="terminal-card">
+                            <div class="terminal-head">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="terminal">
+                                <div class="terminal-line"><span class="prompt">$</span><span class="cmd">litegate -hello</span></div>
+                                <div class="terminal-line"><span class="prompt">$</span><span class="cmd">curl http://localhost:8080/</span></div>
+                                <div class="terminal-line"><span class="comment"># hello world</span></div>
+                                <div class="terminal-line"><span class="prompt">$</span><span class="cmd">litegate -t</span></div>
+                                <div class="terminal-line"><span class="comment"># config check passed</span></div>
+                            </div>
+                        </div>
+                        <div class="quickstart-copy">
+                            <div class="quickstart-block">
+                                <h3>先用 Lite 模式起一个前后端同域站点</h3>
+                                <p>如果只是想快速确认 LiteGate 的使用体验，这就是最值得先试的一条路径。</p>
+                            </div>
+                            <div class="quickstart-block">
+                                <h3>接下来再决定是否升级</h3>
+                                <p>当你开始需要更复杂的 match、认证、中间件、发现和治理能力，再切到 Full 模式就够了。</p>
+                            </div>
+                            <div class="quickstart-actions">
+                                <a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/litegate_lite_quickstart.md" target="_blank" rel="noreferrer" class="btn btn-primary">阅读 Lite Quick Start</a>
+                                <a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/README.md" target="_blank" rel="noreferrer" class="btn btn-secondary">查看文档中心</a>
+                                <a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/mcp_server_and_proxy.md" target="_blank" rel="noreferrer" class="btn btn-secondary">查看 MCP 接入</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="container footer-layout">
+                <div class="footer-brand">
+                    <a href="#" class="brand brand-footer">
+                        <span class="brand-mark">L</span>
+                        <span class="brand-text">LiteGate</span>
+                    </a>
+                    <p>一个能从简单网站入口，自然长到私有云、动态服务发现和多租户 SaaS 接入的统一入口层。</p>
+                    <p class="footer-hosted">这个官网本身就由 LiteGate 托管，用来直接展示它在真实站点场景下的接入与托管能力。</p>
+                </div>
+                <div class="footer-links">
+                    <div>
+                        <h4>Project</h4>
+                        <a href="https://github.com/jamesleeon/LiteGate" target="_blank" rel="noreferrer">GitHub</a>
+                        <a href="https://github.com/jamesleeon/LiteGate/blob/master/ROADMAP.md" target="_blank" rel="noreferrer">Roadmap</a>
+                        <a href="https://github.com/jamesleeon/LiteGate/blob/master/CHANGELOG.md" target="_blank" rel="noreferrer">Changelog</a>
+                    </div>
+                    <div>
+                        <h4>Docs</h4>
+                        <a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/litegate_lite_quickstart.md" target="_blank" rel="noreferrer">Lite Quick Start</a>
+                        <a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/README.md" target="_blank" rel="noreferrer">User Guide</a>
+                        <a href="deploy-flow.html">Deploy Flow</a>
+                        <a href="litegate.html">Entry Model</a>
+                        <a href="architecture.html">Architecture</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiteGate vs Caddy | Comparing Ingress at Different Abstractions</title>
+    <style>
+        :root {
+            --bg: #f4f1ea;
+            --surface: rgba(255, 255, 255, 0.8);
+            --surface-strong: #ffffff;
+            --ink: #1f2c28;
+            --ink-soft: #56655f;
+            --ink-faint: #7b8a84;
+            --line: rgba(31, 44, 40, 0.12);
+            --accent: #1a7f64;
+            --accent-deep: #0d5c46;
+            --blue: #2f6fcb;
+            --warm: #c46a2d;
+            --good: #1f7a5d;
+            --shadow: 0 22px 60px rgba(28, 35, 31, 0.08);
+            --radius-xl: 30px;
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --max: 1220px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(196, 106, 45, 0.08), transparent 28%),
+                radial-gradient(circle at right 12% top 18%, rgba(26, 127, 100, 0.12), transparent 24%),
+                linear-gradient(180deg, #faf7f1 0%, var(--bg) 100%);
+            line-height: 1.68;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        code {
+            font-family: Consolas, "SFMono-Regular", "Cascadia Mono", "Liberation Mono", monospace;
+            font-size: 0.92em;
+            background: rgba(31, 44, 40, 0.06);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        .page {
+            width: min(var(--max), calc(100% - 40px));
+            margin: 0 auto;
+            padding: 24px 0 64px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, var(--accent) 0%, #123d30 100%);
+            color: #f5f8f4;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            padding: 0 20px;
+            border-radius: 999px;
+            font-weight: 700;
+            border: 1px solid transparent;
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+            color: #f7fbf8;
+            box-shadow: 0 16px 30px rgba(26, 127, 100, 0.18);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--ink);
+            border-color: var(--line);
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            border-radius: 34px;
+            border: 1px solid var(--line);
+            background:
+                radial-gradient(circle at top right, rgba(196, 106, 45, 0.12), transparent 28%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.74) 100%);
+            box-shadow: var(--shadow);
+            padding: 38px 34px 34px;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(31, 44, 40, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(31, 44, 40, 0.04) 1px, transparent 1px);
+            background-size: 46px 46px;
+            mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0.08) 100%);
+            pointer-events: none;
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.75fr);
+            gap: 24px;
+            align-items: end;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            margin-bottom: 12px;
+            color: var(--accent-deep);
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        h1, h2, h3, h4 {
+            margin: 0;
+            letter-spacing: -0.04em;
+            line-height: 1.06;
+        }
+
+        h1 {
+            font-size: clamp(2.8rem, 5vw, 4.8rem);
+            max-width: 11ch;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 3vw, 3rem);
+        }
+
+        .hero p,
+        .section-head p,
+        .card p,
+        .notes li,
+        td,
+        th {
+            color: var(--ink-soft);
+        }
+
+        .hero-proof {
+            padding: 18px 20px;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(26, 127, 100, 0.18);
+            background: linear-gradient(135deg, rgba(26, 127, 100, 0.1) 0%, rgba(255, 255, 255, 0.72) 100%);
+        }
+
+        .hero-proof strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            color: var(--ink);
+        }
+
+        section {
+            margin-top: 24px;
+        }
+
+        .section-head {
+            max-width: 860px;
+            margin-bottom: 16px;
+        }
+
+        .grid-2,
+        .grid-3 {
+            display: grid;
+            gap: 18px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .card h3,
+        .card h4 {
+            margin-bottom: 12px;
+        }
+
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: rgba(31, 44, 40, 0.06);
+            color: var(--ink);
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .pill.good {
+            background: rgba(31, 122, 93, 0.12);
+            color: var(--good);
+        }
+
+        .pill.blue {
+            background: rgba(47, 111, 203, 0.12);
+            color: var(--blue);
+        }
+
+        .pill.warm {
+            background: rgba(196, 106, 45, 0.12);
+            color: var(--warm);
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+            background: var(--surface-strong);
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+        }
+
+        .compare-table th,
+        .compare-table td {
+            padding: 16px 18px;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .compare-table th {
+            color: var(--ink);
+            background: rgba(31, 44, 40, 0.03);
+            font-size: 0.94rem;
+        }
+
+        .compare-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .notes {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .notes li + li {
+            margin-top: 8px;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 18px;
+        }
+
+        .summary-strong {
+            background: linear-gradient(135deg, rgba(26, 127, 100, 0.1) 0%, rgba(255, 255, 255, 0.84) 100%);
+        }
+
+        .summary-caution {
+            background: linear-gradient(135deg, rgba(196, 106, 45, 0.1) 0%, rgba(255, 255, 255, 0.84) 100%);
+        }
+
+        .footer-note {
+            margin-top: 24px;
+            padding: 18px 20px;
+            border-radius: var(--radius-md);
+            border: 1px dashed rgba(31, 44, 40, 0.18);
+            color: var(--ink-soft);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 980px) {
+            .hero-inner,
+            .summary,
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .page {
+                width: min(var(--max), calc(100% - 24px));
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .hero {
+                padding: 28px 22px;
+            }
+
+            .compare-table,
+            .compare-table thead,
+            .compare-table tbody,
+            .compare-table tr,
+            .compare-table th,
+            .compare-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .compare-table thead {
+                display: none;
+            }
+
+            .compare-table tr {
+                border-bottom: 1px solid var(--line);
+            }
+
+            .compare-table td {
+                border-bottom: none;
+                padding: 14px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a class="brand" href="index.html" aria-label="LiteGate Home">
+                <span class="brand-mark">L</span>
+                <span>LiteGate</span>
+            </a>
+            <div class="top-actions">
+        <a href="../litegate-vs-caddy.html" class="nav-lang-switch" style="margin-right: 10px; color: var(--accent-deep); font-weight: 800;">中文</a>
+                <a class="btn btn-secondary" href="index.html">Back Home</a>
+                <a class="btn btn-primary" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+            </div>
+        </div>
+
+        <header class="hero">
+            <div class="hero-inner">
+                <div>
+                    <p class="eyebrow">Fair Evaluation</p>
+                    <h1>LiteGate vs Caddy</h1>
+                    <p>
+                        This is not an emotional comparison of "who beats whom," but an objective look from implementation, abstraction levels, and scenarios to determine where LiteGate and Caddy overlap and where they diverge.
+                    </p>
+                    <div class="pill-row">
+                        <span class="pill good">Certificate capabilities ready for direct comparison</span>
+                        <span class="pill blue">Static hosting entering head-to-head competition</span>
+                        <span class="pill warm">Service Discovery operating on entirely different levels</span>
+                    </div>
+                </div>
+                <aside class="hero-proof">
+                    <strong>Summary in One Sentence</strong>
+                    <span>
+                        Caddy is a mature, general-purpose Web Server and Reverse Proxy. LiteGate is evolving into an integrated application ingress platform spanning certificates, static serving, Service Discovery, and tag-based instant launch.
+                    </span>
+                </aside>
+            </div>
+        </header>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Positioning</p>
+                <h2>Acknowledge Overlap, Then Recognize Divergence</h2>
+                <p>
+                    Both naturally handle HTTPS, static serving, and reverse proxying, representing positive functional overlap.
+                    However, looking at LiteGate's implementation, it has evolved beyond "simply a more configurable Web Server", advancing into a higher-level ingress orchestration model.
+                </p>
+            </div>
+            <div class="summary">
+                <article class="card summary-strong">
+                    <h3>What LiteGate Looks Like</h3>
+                    <ul class="notes">
+                        <li>A unified execution plane for static site hosting, dynamic proxies, certs, Service Discovery, and SaaS ingress.</li>
+                        <li>Frontends declare hosting and updates via YAML, while backends declare online intents through service metadata.</li>
+                        <li>Perfect for private clouds, VPS clusters, multi-tenant SaaS, and internal platform scenarios.</li>
+                    </ul>
+                </article>
+                <article class="card summary-caution">
+                    <h3>What Caddy Looks Like</h3>
+                    <ul class="notes">
+                        <li>A mature, stable, and highly intuitive general-purpose Web Server and Reverse Proxy.</li>
+                        <li>Extremely strong automated HTTPS with a polished standalone static web serving workflow.</li>
+                        <li>Perfect for straightforward "I just want to run my websites and APIs" requirements.</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Comparison</p>
+                <h2>Key Dimensions of Comparison</h2>
+            </div>
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Dimension</th>
+                        <th>Caddy</th>
+                        <th>LiteGate</th>
+                        <th>Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Automated HTTPS / ACME</strong></td>
+                        <td>Highly mature; exceptional standalone and regular site experience.</td>
+                        <td>Equally mature, layered with multi-provider integrations, distributed locking, on-demand TLS, SAN protection, and cluster-wide sharing.</td>
+                        <td>LiteGate stands on equal footing; no longer a weak link.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Wildcards / DNS-01</strong></td>
+                        <td>Capable and performs exceptionally well.</td>
+                        <td>Supports DNS-01 while consolidating wildcards, normalized storage, distributed renewals, and multi-node sharing under a unified model.</td>
+                        <td>LiteGate leads in platform-level wildcard domain governance.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Static File Serving</strong></td>
+                        <td>Polished general-purpose workflows: sidecar pre-compression, caching, and range requests.</td>
+                        <td>Augmented with KV frontend version switches, warmup protection, SPA handling, and small-file LRU cache.</td>
+                        <td>Both lead in generic scenarios; LiteGate excels in frontend deployment and lifecycles.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Service Discovery</strong></td>
+                        <td>Focuses primarily on dynamic upstream resolutions, like A/AAAA or SRV records.</td>
+                        <td>Integrates Litemesh, Consul, and external catalog discoveries, deriving routing rules from catalogs.</td>
+                        <td>Operating on different levels: LiteGate stands a step ahead.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tag-based Instant Launch</strong></td>
+                        <td>Not a core design; requires static entry definition first, routing traffic to dynamic backends.</td>
+                        <td>Magic Ingress allows services to declare <code>host/path</code> via labels, auto-generating entry routes at the gateway.</td>
+                        <td>This stands as the dividing watershed between LiteGate and Caddy.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Abstraction Level</strong></td>
+                        <td>High-quality general-purpose reverse proxy.</td>
+                        <td>More akin to a lightweight application ingress platform.</td>
+                        <td>Contrasting core focus; comparisons purely based on config line counts are inadequate.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Where LiteGate Wins</p>
+                <h2>Where LiteGate Has Pulled Ahead</h2>
+            </div>
+            <div class="grid-3">
+                <article class="card">
+                    <h3>1. Certificates Natively Beyond Just "Issuable"</h3>
+                    <p>
+                        Certificates under LiteGate are not side features, but baseline infrastructures collaborating with distributed locks, shared storage, on-demand TLS, DDNS, and SaaS domain ingress.
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>2. Frontend Serving in Platform Semantics</h3>
+                    <p>
+                        Static serving is not simply reading from disk, but accommodating KV pointer updates, atomic pointer swaps, historic retentions, warmup buffers, and multi-node syncs.
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>3. Service Discovery Beyond a Plain Backend List</h3>
+                    <p>
+                        LiteGate goes beyond discovering server endpoints; it derives entry host/path rules based on service tags, making registries carry native "go-live intents".
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Where Caddy Still Leads</p>
+                <h2>Acknowledging Caddy's Maturity</h2>
+            </div>
+            <div class="grid-2">
+                <article class="card">
+                    <h3>Polished Stands in Common Scenarios</h3>
+                    <p>
+                        For simple site serving, SSL setup, and simple API proxying, Caddy's default out-of-the-box experience, docs maturity, and low barriers remain highly competitive.
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>Ecosystem Adoption & Mindshare</h3>
+                    <p>
+                        Caddy has established a household brand in "modern Web Server". LiteGate scales not by imitating Caddy, but by proving its capability to resolve the larger consolidated entry problem.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Recommendation</p>
+                <h2>When to Choose Which</h2>
+            </div>
+            <div class="grid-2">
+                <article class="card">
+                    <h3>Choose Caddy If</h3>
+                    <ul class="notes">
+                        <li>You deploy standalone nodes requiring only static serving, HTTPS, and basic API proxying.</li>
+                        <li>You do not require registry-driven route generation, automated frontend updates, or SaaS ingress governance.</li>
+                        <li>Teams want a straightforward "run today" setup without introducing a unified ingress orchestration model.</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <h3>Choose LiteGate If</h3>
+                    <ul class="notes">
+                        <li>You want static hosting, dynamic discovery, SSL, ingress routing, and upgrades consolidated under a single lifecycle.</li>
+                        <li>You want downstreams to register and auto-generate routes without waiting for manual configurations.</li>
+                        <li>Multi-node, private cloud, SaaS, multi-tenant, wildcards, and on-demand TLS scenarios are distinct in your stack.</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <p class="eyebrow">Final Verdict</p>
+                <h2>The Fair Verdict</h2>
+            </div>
+            <div class="grid-2">
+                <article class="card">
+                    <h3>Imprecise Claims</h3>
+                    <p>
+                        "LiteGate is simply a stronger Caddy." This claim is too coarse: it ignores Caddy's maturity in the general-purpose Web Server space while failing to capture LiteGate's true unique values.
+                    </p>
+                </article>
+                <article class="card">
+                    <h3>Precise Explanations</h3>
+                    <p>
+                        LiteGate inherits Caddy's excellent auto-HTTPS and site access experiences, but takes a step further by consolidating certificates, static serving, Service Discovery, and Tag-based Instant Launch into a unified ingress platform.
+                    </p>
+                </article>
+            </div>
+            <div class="footer-note">
+                The verdict is not that Caddy is no longer relevant, but rather that LiteGate should not be defined solely in terms of Caddy. They have overlaps, but their primary battlegrounds have diverged.
+            </div>
+        </section>
+    </div>
+    <script src="../main.js"></script>
+</body>
+</html>
