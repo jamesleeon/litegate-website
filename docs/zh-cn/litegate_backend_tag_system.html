@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate 后端标签体系 | 最新版</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card, .panel, .mini-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3, .panel h3, .mini-card h3 { margin-top: 0; }
+.flow { display: flex; align-items: stretch; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+.flow .card { flex: 1 1 150px; }
+.steps { counter-reset: step; list-style: none; margin-left: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.steps li, .step { position: relative; padding: 14px 14px 14px 42px; margin-bottom: 0; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); }
+.steps li::before, .step .num { content: counter(step); position: absolute; left: 12px; top: 14px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.step .num { position: absolute; }
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+.taglist code { display: inline-block; margin: 2px 2px 4px 0; }
+.layer { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 12px; align-items: start; margin: 14px 0; }
+.layer .badge { justify-content: center; text-align: center; margin-top: 6px; }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two, .steps, .layer { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate Tags</div>
+    <div class="brand-sub">后端标签体系</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← 文档首页</a>
+    <a href="#overview">概览</a>
+    <a href="#shape">标签位置</a>
+    <a href="#layers">L1-L7</a>
+    <a href="#instance">实例侧标签</a>
+    <a href="#sources">发现源</a>
+    <a href="#examples">示例</a>
+    <a href="#rules">建议</a>
+    <a href="litegate_complete_introduction.html">完整介绍</a>
+    <a href="../en/litegate_backend_tag_system.html">English version</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>后端服务用标签把入口、治理和实例选择交给 LiteGate</h1>
+      <p class="lead">最新版标签体系以 <code>litegate.[id].&lt;layer&gt;.&lt;key&gt;</code> 和 <code>litegate.&lt;layer&gt;.&lt;key&gt;</code> 为主。标签可以来自 Docker labels、Consul tags/meta、Litemesh/LiteDeploy meta，或 Discovery agent 返回的 tags/metadata。</p>
+      <div class="badges"><span class="badge">最新版</span><span class="badge green">L1-L7</span><span class="badge">不含兼容标签</span><span class="badge amber">实例过滤</span></div>
+    </div>
+    <section id="shape"><h2><span class="num">1</span>标签写在哪里</h2><div class="grid"><div class="card"><h3>全局路由标签</h3><p>格式是 <code>litegate.&lt;layer&gt;.&lt;key&gt;</code>。适合一个服务只暴露一条主路由，或给多个命名路由提供默认值。</p></div><div class="card"><h3>命名路由标签</h3><p>格式是 <code>litegate.&lt;id&gt;.&lt;layer&gt;.&lt;key&gt;</code>。同一个后端可以声明多条入口，例如 <code>orders</code>、<code>admin</code>、<code>metrics</code>。</p></div><div class="card"><h3>实例侧匹配标签</h3><p><code>litegate.route.selector.*</code> 和 <code>litegate.route.meta.*</code> 放在实例 tags 或 metadata 中，用于请求期过滤后端实例，不会生成路由。</p></div></div><div class="callout ok"><span class="t">可行性判断</span><p>可行，而且已经和代码模型一致。解析器先合并全局标签和命名组标签，再生成 ServiceSpec；运行期代理把 selector、meta、tags 传给 discovery 过滤器，最后只访问命中的健康实例。</p></div></section>
+    <section id="layers"><h2><span class="num">2</span>七层标签和配置效果</h2><div class="layer"><span class="badge">L1</span><div class="card"><h3>Entrypoint 物理入口</h3><p class="taglist"><code>litegate.entrypoint.bind</code></p><p>声明入口绑定地址。未设置时走网关全局入口。</p></div></div><div class="layer"><span class="badge">L2</span><div class="card"><h3>Ingress 入口匹配</h3><p class="taglist"><code>litegate.ingress.host</code><code>litegate.ingress.path</code><code>litegate.ingress.path_prefix</code></p><p>决定外部请求用哪个域名和路径进入后端。path 是精确匹配，path_prefix 是前缀匹配。</p></div></div><div class="layer"><span class="badge">L3</span><div class="card"><h3>Router 路由和实例选择</h3><p class="taglist"><code>litegate.router.priority</code><code>litegate.router.rule</code><code>litegate.router.methods</code><code>litegate.router.lb_policy</code><code>litegate.router.strip_prefix</code><code>litegate.router.prepend_prefix</code><code>litegate.router.selector.*</code><code>litegate.router.meta.*</code><code>litegate.router.version</code><code>litegate.router.sid</code><code>litegate.router.headers.*</code><code>litegate.router.res_headers.*</code><code>litegate.router.xff_mode</code><code>litegate.router.pool_scope</code><code>litegate.router.sticky_bypass</code></p><p>控制路由优先级、匹配规则、路径重写、负载均衡和实例过滤。selector 是强过滤，meta 是带回退的偏好过滤。</p></div></div><div class="layer"><span class="badge">L4</span><div class="card"><h3>Middleware 入口治理</h3><p class="taglist"><code>litegate.middleware.auth</code><code>litegate.middleware.auth_provider</code><code>litegate.middleware.ratelimit</code><code>litegate.middleware.inject_response</code><code>litegate.middleware.ids.*</code></p><p>把认证、IDS、限流和身份头注入放在入口层完成。IDS 可动态写入 RouteSelector 和 RouteMeta。</p></div></div><div class="layer"><span class="badge">L5</span><div class="card"><h3>Service 逻辑服务和连接策略</h3><p class="taglist"><code>litegate.service.name</code><code>litegate.service.ref</code><code>litegate.service.pool</code><code>litegate.service.pool_name</code><code>litegate.service.timeout</code><code>litegate.service.retry</code><code>litegate.service.breaker_*</code></p><p>声明逻辑服务、显式上游池、请求超时、重试和熔断策略。</p></div></div><div class="layer"><span class="badge">L6</span><div class="card"><h3>Upstream 物理实例属性</h3><p class="taglist"><code>litegate.upstream.port</code><code>litegate.upstream.weight</code><code>litegate.upstream.gray</code><code>litegate.upstream.health_path</code><code>litegate.upstream.health_interval</code><code>litegate.upstream.mtls</code><code>litegate.upstream.insecure</code><code>litegate.upstream.use_host_port</code></p><p>影响具体后端节点的端口、权重、灰度身份、主动健康检查和 mTLS 访问方式。</p></div></div><div class="layer"><span class="badge">L7</span><div class="card"><h3>Observability 可观测性</h3><p class="taglist"><code>litegate.observability.log</code><code>litegate.observability.trace</code></p><p>控制路由级日志和链路追踪。log=none 会被保留为明确关闭语义。</p></div></div></section>
+    <section id="instance"><h2><span class="num">3</span>实例侧标签：请求期才参与过滤</h2><div class="two"><div class="card"><h3>强隔离 selector</h3><pre><code># 路由定义
+litegate.router.selector.sid=c1
+litegate.router.selector.region=hangzhou
+
+# 后端实例 metadata 或 tags
+litegate.route.selector.sid=c1
+litegate.route.selector.region=hangzhou</code></pre><p>所有 selector 条件都要匹配。适合租户、分片、地域等安全边界。</p></div><div class="card"><h3>软偏好 meta</h3><pre><code># 路由定义
+litegate.router.meta.env=gray
+
+# 后端实例 metadata 或 tags
+litegate.route.meta.env=gray</code></pre><p>meta 命中时优先使用；如果没有任何实例命中，会回退到 selector 已隔离的实例池。</p></div></div><div class="callout warn"><span class="t">不要混用</span><p><code>litegate.route.selector.*</code> 和 <code>litegate.route.meta.*</code> 是实例身份，不是路由定义标签。代码会刻意跳过它们，保留给运行期实例过滤。</p></div></section>
+    <section id="sources"><h2><span class="num">4</span>发现源怎么承载标签</h2><table><thead><tr><th>发现源</th><th>标签位置</th><th>效果</th></tr></thead><tbody><tr><td>Docker / Swarm</td><td>container 或 service labels</td><td>任意 <code>litegate.*</code> label 会被收集为 metadata，并以 <code>key=value</code> 形式进入 tags。</td></tr><tr><td>Consul</td><td>Service Tags 和 Meta</td><td>Tags/Meta 进入 CatalogLoader，解析成路由定义；实例侧 selector/meta 保留给后端过滤。</td></tr><tr><td>Litemesh / LiteDeploy</td><td>实例 Tags 和 Meta</td><td>支持路由标签、实例标签和 mTLS 约定。服务变更通过 watcher 推送给 LiteGate。</td></tr><tr><td>Discovery agent</td><td>返回的 tags 和 metadata</td><td>适合聚合异构注册中心。LiteGate 使用同一套标签解析和 endpoint 过滤逻辑。</td></tr></tbody></table></section>
+    <section id="examples"><h2><span class="num">5</span>常见配置示例</h2><div class="two"><div class="card"><h3>单入口服务</h3><pre><code>litegate.ingress.host=api.example.com
+litegate.ingress.path_prefix=/orders
+litegate.service.name=order-service
+litegate.service.timeout=8s
+litegate.service.retry=2
+litegate.upstream.health_path=/healthz</code></pre></div><div class="card"><h3>多路由同服务</h3><pre><code>litegate.public.ingress.host=api.example.com
+litegate.public.ingress.path_prefix=/orders
+litegate.public.middleware.ratelimit=500
+
+litegate.admin.ingress.host=admin.example.com
+litegate.admin.ingress.path_prefix=/orders
+litegate.admin.middleware.auth=oidc
+litegate.admin.middleware.auth_provider=corp</code></pre></div><div class="card"><h3>租户强隔离</h3><pre><code>litegate.ingress.host=openapi.example.com
+litegate.ingress.path_prefix=/v1
+litegate.router.selector.sid=c1
+litegate.router.selector.region=hangzhou
+
+litegate.route.selector.sid=c1
+litegate.route.selector.region=hangzhou</code></pre></div><div class="card"><h3>Litemesh mTLS</h3><pre><code>Tags:
+  - mtls
+Meta:
+  mtls_port: "8443"
+  spiffe_id: "spiffe://litemesh.local/ns/default/sa/order-service"</code></pre></div></div></section>
+    <section id="rules"><h2><span class="num">6</span>落地建议</h2><div class="grid"><div class="card"><h3>路由定义和实例属性分开</h3><p>入口、治理、连接策略写 <code>litegate.&lt;layer&gt;.*</code>；分片、租户、灰度实例身份写 <code>litegate.route.selector.*</code> 或 <code>litegate.route.meta.*</code>。</p></div><div class="card"><h3>先用 selector 做安全边界</h3><p>多租户、分片、地域隔离优先使用 <code>router.selector</code>。灰度、版本偏好、环境偏好再用 <code>router.meta</code>。</p></div><div class="card"><h3>保留少量稳定维度</h3><p><code>sid</code>、<code>version</code>、<code>region</code> 这类低基数字段适合放入路由标签。</p></div></div></section>
+    <div class="footer">LiteGate 文档 · <a class="inline" href="../en/litegate_backend_tag_system.html">English version</a></div>
+  </main>
+</div>
+
+
+<script>
+(function () {
+  const toc = document.querySelector('.toc');
+  if (!toc) return;
+
+  const links = Array.from(toc.querySelectorAll('a[href^="#"]'));
+  const items = links.map((link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    return { link, target: document.getElementById(id) };
+  }).filter((item) => item.target);
+
+  if (!items.length) return;
+
+  let activeLink = null;
+  let ticking = false;
+
+  function setActive(item) {
+    if (!item || activeLink === item.link) return;
+    links.forEach((link) => link.classList.remove('active'));
+    item.link.classList.add('active');
+    activeLink = item.link;
+
+    const tocRect = toc.getBoundingClientRect();
+    const linkRect = item.link.getBoundingClientRect();
+    if (linkRect.top < tocRect.top + 16 || linkRect.bottom > tocRect.bottom - 16) {
+      item.link.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function currentItem() {
+    if (window.scrollY < 100) return items[0];
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+
+    for (const item of items) {
+      if (item.target.offsetParent === null && item.target.id !== 'overview') continue;
+      const rect = item.target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight * 0.88;
+      if (!visible) continue;
+
+      const distance = Math.abs(rect.top - anchor);
+      if (distance < bestDistance) {
+        best = item;
+        bestDistance = distance;
+      }
+    }
+
+    if (!best) {
+      best = items[0];
+      for (const item of items) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= anchor) best = item;
+      }
+    }
+
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      best = items[items.length - 1];
+    }
+    return best;
+  }
+
+  function updateActive() {
+    ticking = false;
+    setActive(currentItem());
+  }
+
+  function requestUpdate() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateActive);
+    }
+  }
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('hashchange', requestUpdate);
+  links.forEach((link) => link.addEventListener('click', () => window.setTimeout(requestUpdate, 80)));
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', requestUpdate, { once: true });
+  } else {
+    requestUpdate();
+  }
+})();
+</script>
+</body>
+</html>

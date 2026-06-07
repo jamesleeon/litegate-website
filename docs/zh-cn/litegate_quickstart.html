@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate 快速开始 | 安装、启动与第一个站点</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.toc .group { font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); margin: 18px 0 6px 10px; font-weight: 600; }
+.toc a.ext::after { content: "↗"; font-size: 10px; margin-left: 5px; color: var(--text3); opacity: .8; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card, .panel, .mini-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3, .panel h3, .mini-card h3 { margin-top: 0; }
+.steps { counter-reset: step; list-style: none; margin-left: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.steps li { position: relative; padding: 14px 14px 14px 42px; margin-bottom: 0; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); }
+.steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 12px; top: 14px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two, .steps { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate 快速开始</div>
+    <div class="brand-sub">安装 · 启动 · 第一个站点</div>
+    <a href="#overview">概览</a>
+    <a href="#install">获取与安装</a>
+    <a href="#cli">命令行参数</a>
+    <a href="#quickstart">三步跑起来</a>
+    <a href="#first-site">第一个站点</a>
+    <a href="#lite">极简模式 .lite.yaml</a>
+    <a href="#next">下一步</a>
+    <div class="group">深入阅读</div>
+    <a class="ext" href="litegate_complete_introduction.html">完整介绍</a>
+    <a class="ext" href="litegate_config_reference.html">全局 config.yaml 参考</a>
+    <a class="ext" href="litegate_yaml_tags_reference.html">YAML 与标签参考</a>
+    <a class="ext" href="litegate_observability_deployment.html">可观测性与部署</a>
+    <a class="ext" href="index.html">文档首页</a>
+    <div class="group">语言</div>
+    <a class="ext" href="../en/litegate_quickstart.html">English version</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>五分钟跑起来：从下载到第一个站点</h1>
+      <p class="lead">LiteGate 是<strong>单二进制、零依赖</strong>的统一入口网关：不需要数据库、不需要先装 Kubernetes，拷贝一个可执行文件就能跑。本页带你完成「拿到二进制 → 初始化 → 启动 → 第一个站点」的全过程。</p>
+      <div class="badges"><span class="badge">单二进制</span><span class="badge green">零配置可启动</span><span class="badge">站点热加载</span><span class="badge amber">~50MB 常驻内存</span></div>
+    </div>
+
+    <section id="install">
+      <h2><span class="num">1</span>获取与安装</h2>
+      <p>三种方式任选其一。如果你只是想先看看效果，直接跳到 <a class="inline" href="#quickstart">三步跑起来</a> 用 <code>-hello</code> 模式即可。</p>
+
+      <h3>方式一：使用预编译二进制（最简单）</h3>
+      <p>把对应平台的 <code>litegate</code> 可执行文件放到机器上，赋予执行权限即可：</p>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code># Linux / macOS
+chmod +x litegate
+./litegate -version
+
+# Windows (PowerShell)
+.\litegate.exe -version</code></pre></div>
+
+      <h3>方式二：从源码编译</h3>
+      <p>前置要求：<strong>Go 1.22+</strong>、Git。</p>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>git clone https://github.com/jamesleeon/LiteGate.git
+cd LiteGate
+go mod download
+go build -ldflags="-s -w" -o bin/litegate ./cmd/litegate/main.go</code></pre></div>
+      <p>交叉编译到其它平台：</p>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code># Linux AMD64
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o bin/litegate-linux-amd64 ./cmd/litegate/main.go
+# Linux ARM64（树莓派等）
+CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o bin/litegate-linux-arm64 ./cmd/litegate/main.go
+# Windows
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o bin/litegate.exe ./cmd/litegate/main.go</code></pre></div>
+
+      <h3>方式三：Docker</h3>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>docker build -t litegate:latest .
+docker run -d --name litegate -p 80:80 -p 443:443 \
+  -v $PWD/config.yaml:/app/config.yaml \
+  -v $PWD/sites:/app/sites \
+  -v $PWD/certs:/app/certs \
+  litegate:latest</code></pre></div>
+      <div class="callout"><span class="t">镜像很小</span><p>Dockerfile 采用多阶段构建，最终镜像基于 Alpine，只含二进制和 CA 证书。生产部署细节见 <a class="inline" href="litegate_observability_deployment.html">可观测性与部署</a>。</p></div>
+    </section>
+
+    <section id="cli">
+      <h2><span class="num">2</span>命令行参数</h2>
+      <p>LiteGate 的全部命令行开关。日常只会用到前几个，其余用于远程引导与排障。</p>
+      <table>
+        <thead><tr><th>参数</th><th>作用</th></tr></thead>
+        <tbody>
+          <tr><td><code>-config &lt;path&gt;</code></td><td>指定配置文件路径，默认 <code>config.yaml</code>（可被环境变量 <code>LITEGATE_CONFIG</code> 覆盖）。</td></tr>
+          <tr><td><code>-init</code></td><td>生成默认 <code>config.example.yaml</code>，并创建 <code>sites/ streams/ certs/ www/</code> 四个目录。</td></tr>
+          <tr><td><code>-example</code></td><td>在 <code>sites/</code> 目录生成几个示例站点配置（hello、静态站、前后端代理）。</td></tr>
+          <tr><td><code>-hello</code></td><td>不写任何配置文件，直接在 <code>http://localhost:8080</code> 起一个临时 hello 站点。最快的体验方式。</td></tr>
+          <tr><td><code>-hash &lt;password&gt;</code></td><td>为密码生成 Bcrypt 哈希（用于 Dashboard、WebDAV SSO 等的 <code>users</code> / <code>password</code>）。</td></tr>
+          <tr><td><code>-t</code></td><td>校验配置是否正确后退出（部署前自检）。</td></tr>
+          <tr><td><code>-version</code></td><td>打印版本号后退出。</td></tr>
+          <tr><td><code>-log-level &lt;level&gt;</code></td><td>覆盖日志级别：<code>debug</code> / <code>info</code> / <code>warn</code> / <code>error</code>。</td></tr>
+          <tr><td><code>-enable-metrics</code></td><td>启用 Prometheus 指标（等价于在 config 里开 <code>metrics.enabled</code>）。</td></tr>
+          <tr><td><code>-export-lite &lt;file&gt;</code></td><td>把极简 <code>.lite.yaml</code> 编译成标准 YAML 并输出到 stdout。</td></tr>
+          <tr><td><code>-consul-addr / -litemesh-addr ...</code></td><td>从 Consul / Litemesh KV 远程引导主配置（详见配置参考）。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="quickstart">
+      <h2><span class="num">3</span>三步跑起来</h2>
+      <ol class="steps">
+        <li><strong>初始化</strong><br>生成默认配置与目录骨架。</li>
+        <li><strong>放站点</strong><br>把站点 YAML 丢进 <code>sites/</code>。</li>
+        <li><strong>启动</strong><br>运行二进制，监听即生效。</li>
+      </ol>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code># 1) 初始化：生成 config.example.yaml 和 sites/ streams/ certs/ www/
+./litegate -init
+cp config.example.yaml config.yaml      # 按需修改，零改动也能直接用
+
+# 2) 放一个站点（也可以先用 -example 生成几个示例）
+./litegate -example
+
+# 3) 启动
+./litegate -config config.yaml</code></pre></div>
+      <div class="callout ok"><span class="t">想最快看到效果？</span><p>跳过上面所有步骤，直接 <code>./litegate -hello</code>，然后浏览器打开 <code>http://localhost:8080</code> —— 不会写任何文件。</p></div>
+      <div class="callout"><span class="t">零配置也能跑</span><p>找不到 <code>config.yaml</code> 时，LiteGate 进入零配置模式，使用内置默认值启动并只加载 <code>sites/</code> 下的站点。也就是说，全局 <code>config.yaml</code> 是可选的，只有要开启自动证书、Dashboard、服务发现等能力时才需要它。</p></div>
+    </section>
+
+    <section id="first-site">
+      <h2><span class="num">4</span>第一个站点</h2>
+      <p>站点配置放在 <code>sites/</code> 目录，<strong>一个文件一个站点</strong>，改动会被自动检测并热加载，<strong>无需重启</strong>。下面是一个最常见的「前端静态托管 + 后端 API 反代」站点：</p>
+      <div class="code-wrap"><span class="lang">sites/app.yaml</span><pre><code>domain: app.example.com
+port: 80                 # 可选，默认 80 / 443
+routes:
+  # 后端 API：把 /api 反代到本地 8080，并剥离前缀
+  - name: api-backend
+    match:
+      path_prefix: /api
+    action:
+      type: proxy
+      upstream_type: static
+      upstream: ["127.0.0.1:8080"]
+      strip_prefix: /api
+
+  # 前端 SPA：其余路径走本地静态文件，找不到时回退 index.html
+  - name: frontend
+    match:
+      path_prefix: /
+    action:
+      type: serve
+      root: ./dist
+      index: index.html
+      spa: true</code></pre></div>
+      <div class="callout"><span class="t">动作类型一览</span><p><code>type</code> 支持 <code>proxy</code>（反向代理）、<code>serve</code>（静态托管）、<code>respond</code>（直接响应）、<code>redirect</code>（重定向）、<code>webdav</code>（文件服务）、<code>markdown</code>（Markdown 渲染）。每个字段的完整语义见 <a class="inline" href="litegate_yaml_tags_reference.html">YAML 与标签参考</a>。</p></div>
+      <div class="callout ok"><span class="t">热加载验证</span><p>保存 <code>sites/app.yaml</code> 后，控制台会立刻打印站点加载日志；改一行权重或路径，无需重启即时生效。底层用的是「离线构建新路由树 + 原子指针交换」，不会抖动正在传输的连接。</p></div>
+    </section>
+
+    <section id="lite">
+      <h2><span class="num">5</span>极简模式 .lite.yaml</h2>
+      <p>如果连标准 YAML 的层级都嫌啰嗦，可以用 <code>.lite.yaml</code> 极简语法——左边的写法等价于右边的标准 YAML，是<strong>同一套路由模型</strong>。</p>
+      <div class="two">
+        <div class="code-wrap"><span class="lang">lite</span><pre><code>app.example.com:
+  /api:
+    proxy: 127.0.0.1:8080
+  /:
+    root: ./dist
+    spa: true</code></pre></div>
+        <div class="code-wrap"><span class="lang">yaml</span><pre><code>domain: app.example.com
+routes:
+  - name: api
+    match: { path_prefix: /api }
+    action:
+      type: proxy
+      upstream: ["127.0.0.1:8080"]
+  - name: frontend
+    match: { path_prefix: / }
+    action:
+      type: serve
+      root: ./dist
+      spa: true</code></pre></div>
+      </div>
+      <p>想看 <code>.lite.yaml</code> 编译成什么标准 YAML，用 <code>-export-lite</code> 验证：</p>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>./litegate -export-lite app.lite.yaml</code></pre></div>
+    </section>
+
+    <section id="next">
+      <h2><span class="num">6</span>下一步</h2>
+      <div class="grid">
+        <div class="card"><h3><a href="litegate_config_reference.html">全局 config.yaml 参考 →</a></h3><p>http 端口、自动证书、Redis、Dashboard、服务发现等全局配置逐项说明。</p></div>
+        <div class="card"><h3><a href="litegate_yaml_tags_reference.html">YAML 与标签参考 →</a></h3><p>站点 YAML 字段与动态标签的完整对照大表，以及 8 个典型场景。</p></div>
+        <div class="card"><h3><a href="litegate_service_discovery.html">服务发现与动态接入 →</a></h3><p>把固定 upstream 平滑切到服务发现：打标即上线。</p></div>
+        <div class="card"><h3><a href="litegate_certificate_lifecycle.html">证书生命周期 →</a></h3><p>自动 HTTPS、按需签发，让你忘记证书文件。</p></div>
+        <div class="card"><h3><a href="litegate_observability_deployment.html">可观测性与部署 →</a></h3><p>Dashboard、访问日志、指标，以及 systemd / Docker 生产部署。</p></div>
+        <div class="card"><h3><a href="litegate_complete_introduction.html">完整介绍 →</a></h3><p>统一入口模型、请求生命周期与能力地图的全景导读。</p></div>
+      </div>
+    </section>
+
+    <div class="footer">LiteGate · 快速开始 · 单二进制零依赖统一入口网关 · <a href="index.html">返回文档首页</a></div>
+  </main>
+</div>
+<script>
+(function () {
+  const links = Array.from(document.querySelectorAll('.toc a[href^="#"]'));
+  const items = links.map(l => ({ link: l, target: document.getElementById(decodeURIComponent(l.getAttribute('href').slice(1))) })).filter(i => i.target);
+  if (!items.length) return;
+  let active = null, ticking = false;
+  function pick() {
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = items[0];
+    for (const it of items) { if (it.target.getBoundingClientRect().top <= anchor) best = it; }
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) best = items[items.length - 1];
+    if (best && best.link !== active) { links.forEach(l => l.classList.remove('active')); best.link.classList.add('active'); active = best.link; }
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(pick); } }, { passive: true });
+  pick();
+})();
+</script>
+</body>
+</html>

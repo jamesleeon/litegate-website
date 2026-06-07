@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate 文档中心 | 统一入口网关使用手册</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 48px 28px 80px; }
+.top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.brand { font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: .3px; }
+.lang a { font-size: 12.5px; color: var(--text2); text-decoration: none; }
+.lang a:hover { text-decoration: underline; }
+.hero { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 40px 36px; margin-bottom: 26px; }
+.hero h1 { font-size: 30px; font-weight: 700; letter-spacing: -.5px; margin-bottom: 12px; line-height: 1.2; }
+.hero p { font-size: 15px; color: var(--text2); max-width: 760px; margin-bottom: 16px; }
+.cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+.cta a { font-size: 13.5px; font-weight: 600; padding: 9px 18px; border-radius: 8px; text-decoration: none; }
+.cta a.primary { background: var(--accent); color: #fff; }
+.cta a.ghost { background: var(--bg2); color: var(--accent-text); border: 0.5px solid var(--border2); }
+.cta a:hover { opacity: .9; }
+.group-title { font-size: 12px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); font-weight: 700; margin: 30px 0 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+.card { display: block; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 18px; text-decoration: none; color: inherit; transition: border-color .12s, transform .12s; }
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card .k { font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--accent); font-weight: 700; }
+.card h3 { font-size: 15px; font-weight: 600; margin: 4px 0 6px; }
+.card p { font-size: 12.5px; color: var(--text2); margin: 0; }
+.badge { display:inline-block; font-size: 10.5px; padding: 1px 8px; border-radius: 20px; background: var(--green-bg); color: var(--green); font-weight: 600; margin-left: 6px; vertical-align: middle; }
+.footer { margin-top: 50px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+@media (max-width: 820px) { .grid { grid-template-columns: 1fr; } .hero { padding: 28px 20px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">LiteGate 文档中心</div>
+    <div class="lang"><a href="../en/index.html">English ↗</a></div>
+  </div>
+
+  <div class="hero">
+    <h1>LiteGate 使用手册</h1>
+    <p>单二进制、零依赖的统一入口网关：静态站点托管、动态 API 代理、自动 HTTPS、服务发现、IDS 身份治理与 mTLS，全部用同一套路由模型。从这里开始，按需深入。</p>
+    <div class="cta">
+      <a class="primary" href="litegate_quickstart.html">快速开始 →</a>
+      <a class="ghost" href="litegate_complete_introduction.html">完整介绍</a>
+      <a class="ghost" href="litegate_yaml_tags_reference.html">配置参考大表</a>
+    </div>
+  </div>
+
+  <div class="group-title">入门</div>
+  <div class="grid">
+    <a class="card" href="litegate_quickstart.html"><div class="k">Getting Started</div><h3>快速开始<span class="badge">新</span></h3><p>安装、命令行参数、三步跑起来、第一个站点、极简 .lite.yaml。</p></a>
+    <a class="card" href="litegate_complete_introduction.html"><div class="k">Overview</div><h3>完整介绍</h3><p>统一入口模型、请求生命周期、架构一览与能力地图。</p></a>
+    <a class="card" href="litegate_architecture.html"><div class="k">Architecture</div><h3>架构与请求生命周期</h3><p>反转执行流水线、控制面/数据面分离、零锁数据面与原子热重载。</p></a>
+  </div>
+
+  <div class="group-title">配置参考</div>
+  <div class="grid">
+    <a class="card" href="litegate_config_reference.html"><div class="k">Config</div><h3>全局 config.yaml 参考<span class="badge">新</span></h3><p>监听、TLS/自动证书、服务发现、缓存、身份、日志与指标逐项说明。</p></a>
+    <a class="card" href="litegate_yaml_tags_reference.html"><div class="k">Reference</div><h3>YAML 与标签参考</h3><p>站点 YAML 字段与动态标签 87 项对照大表 + 8 个典型场景。</p></a>
+    <a class="card" href="litegate_backend_tag_system.html"><div class="k">Tags</div><h3>后端标签体系</h3><p>用 litegate.&lt;layer&gt;.* 七层标签把入口、治理与实例选择交给网关。</p></a>
+  </div>
+
+  <div class="group-title">核心能力</div>
+  <div class="grid">
+    <a class="card" href="litegate_service_discovery.html"><div class="k">Discovery</div><h3>服务发现与动态接入</h3><p>litemesh / litedeploy / docker / consul / discovery，打标即上线。</p></a>
+    <a class="card" href="litegate_certificate_lifecycle.html"><div class="k">TLS</div><h3>证书生命周期</h3><p>自动 HTTPS、按需签发、多节点共享存储与分布式锁。</p></a>
+    <a class="card" href="ids_development_guide.html"><div class="k">IDS</div><h3>IDS 开发指南</h3><p>把网关变决策执行器：鉴权、选分片、注入租户头、按租户限流。</p></a>
+    <a class="card" href="litemesh_mtls_guide.html"><div class="k">mTLS</div><h3>Litemesh mTLS</h3><p>南北 + 东西双向认证，基于 SPIFFE 身份自动升级链路。</p></a>
+    <a class="card" href="litegate_mcp_autopilot.html"><div class="k">MCP / AI</div><h3>MCP 自动驾驶</h3><p>内建 MCP 服务器，AI 助手直接建站、绑服务、热重载与排障。</p></a>
+  </div>
+
+  <div class="group-title">运维与部署</div>
+  <div class="grid">
+    <a class="card" href="litegate_observability_deployment.html"><div class="k">Operations</div><h3>可观测性与部署<span class="badge">新</span></h3><p>Dashboard、访问日志、Prometheus 指标，以及 systemd / Docker 上线与生产清单。</p></a>
+    <a class="card" href="user/README.md"><div class="k">Markdown 手册</div><h3>详细使用手册（速查）</h3><p>面向开发者的 Markdown 文档树：动作、中间件、证书、发现、部署、排障逐项速查。</p></a>
+  </div>
+
+  <div class="footer">LiteGate · 单二进制零依赖统一入口网关 · 标“新”的页面为本次新增 · <a href="../en/index.html">English version ↗</a></div>
+</div>
+</body>
+</html>

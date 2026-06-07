@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate Global config.yaml Reference | Per-field Guide</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.toc .group { font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); margin: 18px 0 6px 10px; font-weight: 600; }
+.toc a.ext::after { content: "↗"; font-size: 10px; margin-left: 5px; color: var(--text3); opacity: .8; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.def { font-family: var(--mono); font-size: 11.5px; color: var(--text3); }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate Config</div>
+    <div class="brand-sub">Global config.yaml Reference</div>
+    <a href="#overview">Overview</a>
+    <a href="#http">Listeners: http / real_ip</a>
+    <a href="#ipr">Global IP restriction</a>
+    <a href="#tls">TLS &amp; auto certs</a>
+    <a href="#discovery">Registry &amp; discovery</a>
+    <a href="#cache">Cache &amp; Redis</a>
+    <a href="#identity">Identity &amp; auth</a>
+    <a href="#log">Logging &amp; observability</a>
+    <a href="#misc">Misc &amp; MCP</a>
+    <a href="#full">Full example</a>
+    <div class="group">Read more</div>
+    <a class="ext" href="litegate_quickstart.html">Quick Start</a>
+    <a class="ext" href="litegate_yaml_tags_reference.html">YAML &amp; Tag Reference</a>
+    <a class="ext" href="litegate_observability_deployment.html">Observability &amp; Deployment</a>
+    <a class="ext" href="index.html">Docs Home</a>
+    <div class="group">Language</div>
+    <a class="ext" href="../zh-cn/litegate_config_reference.html">中文版</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>Global config.yaml Reference</h1>
+      <p class="lead">The global <code>config.yaml</code> configures <strong>gateway-level</strong> capabilities: listener ports, TLS and auto-certs, service discovery, caching, the Dashboard, logging and metrics. <strong>It is optional</strong> — without it the gateway starts on built-in defaults; you only need it to enable those features. Site routes live elsewhere, in the <code>sites/</code> directory (see the <a class="inline" href="litegate_yaml_tags_reference.html">YAML &amp; Tag Reference</a>).</p>
+      <div class="badges"><span class="badge">Gateway-level</span><span class="badge green">Optional</span><span class="badge amber">Generate with <code>-init</code></span></div>
+      <div class="callout"><span class="t">Generate a template</span><p>Running <code>litegate -init</code> produces a fully commented <code>config.example.yaml</code>; this page explains each block of it. After editing, validate with <code>litegate -t</code>.</p></div>
+    </div>
+
+    <section id="http">
+      <h2><span class="num">1</span>Listeners: http / real_ip</h2>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>mode: observability        # performance (high throughput, less logging) / observability (default, full monitoring)
+
+http:
+    port: 80               # HTTP listening port (also needed for the ACME HTTP challenge)
+    https_port: 443        # HTTPS listening port
+    response_header_timeout: 30   # seconds to wait for the upstream response header
+
+real_ip:
+    trusted_proxies: ["127.0.0.1", "10.0.0.5"]   # only trust X-Forwarded-For from these proxies
+    selector_trusted_clients: ["127.0.0.1", "10.0.0.0/8"]  # trusted internal clients allowed to do east-west X-Selector-Sid routing</code></pre></div>
+      <table>
+        <thead><tr><th>Field</th><th>Default</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>mode</code></td><td class="def">observability</td><td><code>performance</code> trades logging for throughput; <code>observability</code> keeps full monitoring and access logs.</td></tr>
+          <tr><td><code>http.port</code></td><td class="def">80</td><td>HTTP listening port. The HTTP-01 challenge for auto-certs depends on it.</td></tr>
+          <tr><td><code>http.https_port</code></td><td class="def">443</td><td>HTTPS listening port. Enabled automatically once certs are ready.</td></tr>
+          <tr><td><code>http.response_header_timeout</code></td><td class="def">30</td><td>Max seconds to wait for the upstream response header.</td></tr>
+          <tr><td><code>real_ip.trusted_proxies</code></td><td class="def">["127.0.0.1"]</td><td>Only requests from these IPs/CIDRs have their <code>X-Forwarded-For</code> trusted.</td></tr>
+          <tr><td><code>real_ip.selector_trusted_clients</code></td><td class="def">—</td><td>Trusted internal clients allowed to carry <code>X-Selector-Sid</code> for physical shard routing.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="ipr">
+      <h2><span class="num">2</span>Global IP restriction</h2>
+      <p>A server-level firewall with <strong>the highest priority</strong>, applied before site matching.</p>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>ip_restriction:
+    # Whitelist: if non-empty, ONLY these IPs are allowed (use with caution)
+    # allow_ips: ["127.0.0.1", "192.168.0.0/16"]
+    # Blacklist: deny specific IPs access to any site
+    deny_ips:
+        # - "1.2.3.4"</code></pre></div>
+      <div class="callout warn"><span class="t">Mind the priority</span><p>Once <code>allow_ips</code> is non-empty it becomes "allow-list only" and blocks everything else. Prefer <code>deny_ips</code> in production. Routes also have their own <code>ip_restriction</code>, which stacks on top.</p></div>
+    </section>
+
+    <section id="tls">
+      <h2><span class="num">3</span>TLS &amp; auto certs</h2>
+      <p>Choose one of two paths: static certificates (<code>tls</code>) or automatic ACME certificates (<code>auto_cert</code>, recommended). How it works: see the <a class="inline" href="litegate_certificate_lifecycle.html">Certificate Lifecycle</a>.</p>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>tls:
+    enabled: false
+    certs_dir: ./certs
+
+auto_cert:
+    enabled: true
+    email: admin@example.com      # email for expiry notifications
+    certs_dir: ./certs
+    renew_days: 10                # renew 10 days before expiry
+    check_interval: 24            # check every 24 hours
+    use_staging: false            # set true while testing to avoid rate limits
+    propagation_dns: ["223.5.5.5", "114.114.114.114"]
+
+    # DNS providers (Aliyun/Cloudflare/Tencent/Huawei) for DNS-01 and wildcards
+    dns_providers:
+        # - name: "cf-global"
+        #   type: "cloudflare"
+        #   domains: ["*.example.com"]
+        #   config: { api_token: "..." }
+
+    # On-Demand TLS (SaaS mode): issue certs for unknown domains on the fly
+    # on_demand:
+    #    enabled: false
+    #    ask: "http://your-backend/check-domain"</code></pre></div>
+      <table>
+        <thead><tr><th>Field</th><th>Default</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>auto_cert.enabled</code></td><td class="def">true</td><td>Enable automatic HTTPS. Any domain not matched in <code>dns_providers</code> defaults to HTTP-01.</td></tr>
+          <tr><td><code>auto_cert.email</code></td><td class="def">admin@litegate.com</td><td>ACME account email, used for expiry notifications.</td></tr>
+          <tr><td><code>auto_cert.renew_days</code></td><td class="def">10</td><td>How many days before expiry to renew.</td></tr>
+          <tr><td><code>auto_cert.use_staging</code></td><td class="def">false</td><td>Use the Let's Encrypt staging environment while testing to avoid rate limits.</td></tr>
+          <tr><td><code>tls.enabled</code></td><td class="def">false</td><td>Use local static certificates (alternative to auto_cert).</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="discovery">
+      <h2><span class="num">4</span>Registry &amp; service discovery</h2>
+      <p><code>consul</code> / <code>litemesh</code> handle the gateway's own config watch, cert storage and self-registration; <code>service_discovery</code> is a <strong>separate module</strong> defining where backend services are discovered. Discovery details: see <a class="inline" href="litegate_service_discovery.html">Service Discovery</a>.</p>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>litemesh:
+    enabled: true
+    address: "192.168.1.100:8787"
+    namespace: "default"
+    roles:
+        service_register: true     # register LiteGate itself as a service
+
+service_discovery:
+    catalogs:
+        - enabled: false
+          provider: litemesh        # litemesh / litedeploy / docker / consul / discovery
+          namespace: "default"
+          default_domain: ""        # default suffix: service -> service.example.com
+        - enabled: false
+          provider: docker
+          socket_path: "/var/run/docker.sock"
+          network_mode: "internal"  # internal (container IP) / external (host IP:port)</code></pre></div>
+      <table>
+        <thead><tr><th>Field</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>litemesh.enabled / consul.enabled</code></td><td>Whether to use that registry for config watch / cert storage / self-registration.</td></tr>
+          <tr><td><code>service_discovery.catalogs[].provider</code></td><td>Discovery source: <code>litemesh</code> / <code>litedeploy</code> / <code>docker</code> / <code>consul</code> / <code>discovery</code>.</td></tr>
+          <tr><td><code>...default_domain</code></td><td>Auto-append a domain suffix to discovered services (<code>orders → orders.example.com</code>).</td></tr>
+          <tr><td><code>...network_mode</code> (docker)</td><td><code>internal</code> uses container IPs, <code>external</code> uses host-mapped ports.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><span class="t">Remote bootstrap</span><p>You can also skip the local <code>config.yaml</code> and bootstrap the main config from KV with <code>litegate -consul-addr ...</code> or <code>-litemesh-addr ...</code>; the env vars <code>LITEGATE_CONSUL_ADDR/TOKEN/KEY</code> are also supported.</p></div>
+    </section>
+
+    <section id="cache">
+      <h2><span class="num">5</span>Cache &amp; Redis</h2>
+      <p>Shared state such as IDS sessions, rate limiting and negative caching relies on Redis; without it, it falls back to local in-memory (fine for single-node).</p>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>cache:
+    local_ttl: "60s"
+    redis:
+        enabled: false
+        mode: "standalone"        # standalone / cluster
+        address: "localhost:6379"
+        db: 1
+        pool_size: 20
+
+redis:                            # global metadata store
+    enabled: false
+    mode: "standalone"
+    address: "localhost:6379"
+    db: 0</code></pre></div>
+      <table>
+        <thead><tr><th>Field</th><th>Default</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>cache.redis.enabled</code></td><td class="def">false</td><td>Enable for multi-node shared sessions/rate limiting; optional on a single node.</td></tr>
+          <tr><td><code>*.mode</code></td><td class="def">standalone</td><td><code>standalone</code> or <code>cluster</code> (cluster uses an <code>addrs</code> list).</td></tr>
+          <tr><td><code>*.address / addr</code></td><td class="def">localhost:6379</td><td>Redis address; <code>addr</code> is an alias for <code>address</code>.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="identity">
+      <h2><span class="num">6</span>Identity &amp; auth</h2>
+      <p>The global identity center, OIDC security parameters, and reusable OIDC/OAuth2 and IDS providers. IDS development: see the <a class="inline" href="ids_development_guide.html">IDS Development Guide</a>.</p>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>identity_service:
+    endpoint: "http://localhost:8080"
+    client_id: "gateway-001"
+    client_secret: "your-secret"
+    timeout: "5s"
+
+oidc_security:
+    cookie_secret: ""             # AES-256 cookie encryption key (must be >= 32 bytes if set)
+    cookie_same_site: lax         # lax / strict / none
+    max_concurrent_sessions: 10
+
+# Reusable auth providers (referenced by a route's ids.provider)
+auth_providers:
+    # google:
+    #     type: oidc
+    #     issuer: "https://accounts.google.com"
+    #     client_id: "..."
+ids_providers:
+    # dynamic-openapi:
+    #     type: ids
+    #     mode: openapi
+    #     extractor: "{header._appid}"
+    #     discovery_service: identityservice</code></pre></div>
+      <div class="callout warn"><span class="t">cookie_secret length</span><p>Once set, <code>oidc_security.cookie_secret</code> must be <strong>&gt;= 32 bytes</strong>, or startup validation fails. <code>ids_providers</code> are merged into <code>auth_providers</code> at load time for unified use.</p></div>
+    </section>
+
+    <section id="log">
+      <h2><span class="num">7</span>Logging &amp; observability</h2>
+      <p>Logs, access logs, metrics, Dashboard. Operational and troubleshooting details: see <a class="inline" href="litegate_observability_deployment.html">Observability &amp; Deployment</a>.</p>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>log:
+    level: info                   # debug / info / warn / error
+    format: console               # console / json
+    access_log:
+        enabled: true
+        stdout: true              # print access logs to the console
+        routing_detail: false     # log detailed routing decisions
+
+metrics:
+    enabled: false                # Prometheus metrics (also via -enable-metrics)
+    port: 9090
+
+pprof:
+    enabled: false
+    port: 6060
+
+dashboard:
+    enabled: false                # disabled by default for security
+    port: 9999
+    username: "admin"
+    password: ""                  # generate a Bcrypt hash with litegate -hash
+    token: "..."                  # management API token (X-API-Key)
+    allowed_origins: []           # empty = same-origin only
+    require_secure_cookie: false  # set true when the Dashboard is served over HTTPS</code></pre></div>
+      <table>
+        <thead><tr><th>Field</th><th>Default</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>log.level / format</code></td><td class="def">info / console</td><td>Level and output format (<code>json</code> recommended in production).</td></tr>
+          <tr><td><code>log.access_log.enabled</code></td><td class="def">true</td><td>Structured access-audit logging switch.</td></tr>
+          <tr><td><code>metrics.enabled / port</code></td><td class="def">false / 9090</td><td>Expose the Prometheus <code>/metrics</code> endpoint.</td></tr>
+          <tr><td><code>dashboard.enabled / port</code></td><td class="def">false / 9999</td><td>Web admin panel, off by default.</td></tr>
+          <tr><td><code>dashboard.password</code></td><td class="def">—</td><td>Must be a Bcrypt hash; generate with <code>litegate -hash "pw"</code>.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="misc">
+      <h2><span class="num">8</span>Misc &amp; MCP</h2>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>sites_dir: ./sites            # site config directory
+streams_dir: ./streams        # L4 TCP/UDP stream config directory
+disable_trace_id: false       # globally disable Trace ID injection
+
+mcp:
+    enabled: false            # built-in MCP server for AI-assisted operations
+    port: 8080
+    # token: "your-auth-token"</code></pre></div>
+      <table>
+        <thead><tr><th>Field</th><th>Default</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>sites_dir</code></td><td class="def">./sites</td><td>L7 site YAML directory, hot-reloaded.</td></tr>
+          <tr><td><code>streams_dir</code></td><td class="def">./streams</td><td>L4 TCP/UDP stream proxy config directory.</td></tr>
+          <tr><td><code>disable_trace_id</code></td><td class="def">false</td><td>Globally disable <code>X-Trace-Id</code> injection.</td></tr>
+          <tr><td><code>mcp.enabled / port</code></td><td class="def">false / 8080</td><td>MCP server; see <a class="inline" href="litegate_mcp_autopilot.html">MCP / AI Autopilot</a>.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="full">
+      <h2><span class="num">9</span>Full example</h2>
+      <p>The fully commented standard template is generated by <code>litegate -init</code>. A minimal working global config can be just a few lines:</p>
+      <div class="code-wrap"><span class="lang">config.yaml</span><pre><code>mode: observability
+http:
+    port: 80
+    https_port: 443
+auto_cert:
+    enabled: true
+    email: admin@example.com
+log:
+    level: info
+    format: json
+sites_dir: ./sites</code></pre></div>
+      <div class="callout ok"><span class="t">Validate before deploy</span><p>After editing, run <code>litegate -t</code> to validate before going live; changes to <code>sites/*.yaml</code> require no restart and hot-reload automatically.</p></div>
+    </section>
+
+    <div class="footer" style="margin-top:60px;padding-top:20px;border-top:0.5px solid var(--border2);font-size:12px;color:var(--text3);">LiteGate · Global config.yaml Reference · <a href="index.html">Back to docs home</a></div>
+  </main>
+</div>
+<script>
+(function () {
+  const links = Array.from(document.querySelectorAll('.toc a[href^="#"]'));
+  const items = links.map(l => ({ link: l, target: document.getElementById(decodeURIComponent(l.getAttribute('href').slice(1))) })).filter(i => i.target);
+  if (!items.length) return;
+  let active = null, ticking = false;
+  function pick() {
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = items[0];
+    for (const it of items) { if (it.target.getBoundingClientRect().top <= anchor) best = it; }
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) best = items[items.length - 1];
+    if (best && best.link !== active) { links.forEach(l => l.classList.remove('active')); best.link.classList.add('active'); active = best.link; }
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(pick); } }, { passive: true });
+  pick();
+})();
+</script>
+</body>
+</html>

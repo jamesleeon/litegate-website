@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate MCP / AI Autopilot | Let AI Run the Gateway</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.toc .group { font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); margin: 18px 0 6px 10px; font-weight: 600; }
+.toc a.ext::after { content: "↗"; font-size: 10px; margin-left: 5px; color: var(--text3); opacity: .8; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card, .panel, .mini-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3, .panel h3, .mini-card h3 { margin-top: 0; }
+.flow { display: flex; align-items: stretch; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+.flow .card { flex: 1 1 150px; }
+.steps { counter-reset: step; list-style: none; margin-left: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.steps li, .step { position: relative; padding: 14px 14px 14px 42px; margin-bottom: 0; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); }
+.steps li::before, .step .num { content: counter(step); position: absolute; left: 12px; top: 14px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.step .num { position: absolute; }
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+.taglist code { display: inline-block; margin: 2px 2px 4px 0; }
+.layer { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 12px; align-items: start; margin: 14px 0; }
+.layer .badge { justify-content: center; text-align: center; margin-top: 6px; }
+/* ── diagram extensions ─────────────────────────────── */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin: 20px 0 4px; }
+.stat { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px 12px; text-align: center; }
+.stat .v { font-size: 21px; font-weight: 600; color: var(--accent); letter-spacing: -.5px; line-height: 1.1; }
+.stat .l { font-size: 11.5px; color: var(--text2); margin-top: 4px; }
+.chain { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 10px 0 4px; }
+.chain code { background: var(--accent-bg); color: var(--accent-text); border-color: transparent; }
+.chain .arr { color: var(--text3); font-size: 12px; }
+.toolset { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; }
+.toolset code { font-size: 11.5px; }
+.lvl { display: inline-block; font-size: 10.5px; padding: 1px 7px; border-radius: 10px; font-weight: 600; }
+.lvl.full { background: var(--green-bg); color: var(--green); }
+.lvl.part { background: var(--amber-bg); color: var(--amber); }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two, .steps, .layer, .stats { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate MCP</div>
+    <div class="brand-sub">AI Autopilot</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← Docs Home</a>
+    <a href="#overview">Overview</a>
+    <a href="#enable">Enable &amp; Connect</a>
+    <a href="#matrix">Capability Matrix</a>
+    <a href="#loops">Typical Loops</a>
+    <a href="#coverage">Coverage</a>
+    <a href="#next">Still to Improve</a>
+    <div class="group">Read Next</div>
+    <a class="ext" href="litegate_complete_introduction.html">Complete Introduction</a>
+    <a class="ext" href="litegate_service_discovery.html">Service Discovery</a>
+    <a class="ext" href="litegate_mcp_capability_matrix.md">Full Matrix (MD)</a>
+    <div class="group">Language</div>
+    <a class="ext" href="../zh-cn/litegate_mcp_autopilot.html">中文版</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>A built-in MCP server: let AI assistants run gateway operations directly</h1>
+      <p class="lead">LiteGate ships a built-in Model Context Protocol (MCP) server, making the gateway natively integrable with AI agents. When you maintain the gateway with assistants like Cline, Cursor or Roo-Code, the AI can call the built-in toolchain directly: read the environment, validate config, hot-reload, and read live errors and certificate status — "autopilot"-grade operations. Once MCP is connected and you state your intent, you usually no longer need to supply LiteGate docs.</p>
+      <div class="badges"><span class="badge">30+ tools</span><span class="badge green">config closed-loop</span><span class="badge">validate + auto reload</span><span class="badge amber">runtime diagnostics</span></div>
+      <div class="stats">
+        <div class="stat"><div class="v">SSE</div><div class="l">transport</div></div>
+        <div class="stat"><div class="v">build</div><div class="l">gen→validate→save→verify</div></div>
+        <div class="stat"><div class="v">debug</div><div class="l">errors + status</div></div>
+        <div class="stat"><div class="v">rollback</div><div class="l">.bak restore</div></div>
+      </div>
+    </div>
+
+    <section id="enable">
+      <h2><span class="num">1</span>Enable &amp; connect</h2>
+      <p>Enable the <code>mcp</code> block in the gateway's <code>config.yaml</code>, then point your AI client's <code>mcp_settings.json</code> at the SSE endpoint.</p>
+      <div class="two">
+        <div class="code-wrap"><span class="lang">config.yaml</span><pre><code>mcp:
+  enabled: true
+  port: 8080   # MCP SSE listen port</code></pre></div>
+        <div class="code-wrap"><span class="lang">mcp_settings.json</span><pre><code>{
+  "mcpServers": {
+    "litegate-autopilot": {
+      "type": "sse",
+      "url": "http://127.0.0.1:8080/mcp/sse"
+    }
+  }
+}</code></pre></div>
+      </div>
+      <div class="callout"><span class="t">Client config location</span><p>For Cline / Roo-Code, this is typically at <code>%APPDATA%\Code\User\globalStorage\saoudrizwan.claude-dev\settings\mcp_settings.json</code>. Once connected, the AI can create sites, hot-load routes or troubleshoot via the toolset.</p></div>
+    </section>
+
+    <section id="matrix">
+      <h2><span class="num">2</span>Capability matrix</h2>
+      <p>The currently exposed tools, grouped by role. <span class="lvl full">closed-loop</span> means the group can complete autonomously; <span class="lvl part">partial</span> means human judgment is still needed.</p>
+
+      <div class="card"><h3>Environment &amp; inventory <span class="lvl full">closed-loop</span></h3>
+        <p style="color:var(--text2);font-size:12.5px;">Read the deployment environment and existing config as a pre-change baseline.</p>
+        <div class="toolset"><code>detect_environment</code><code>list_sites</code><code>get_site_config</code><code>list_streams</code><code>get_stream_config</code><code>get_gateway_config</code></div>
+      </div>
+      <div class="card" style="margin-top:14px;"><h3>Docs / Schema <span class="lvl full">closed-loop</span></h3>
+        <p style="color:var(--text2);font-size:12.5px;">The AI can read site / global / stream config guides without external docs.</p>
+        <div class="toolset"><code>get_config_guide</code><code>get_gateway_config_schema</code><code>get_stream_config_schema</code></div>
+      </div>
+      <div class="card" style="margin-top:14px;"><h3>Discovery &amp; KV <span class="lvl full">closed-loop</span></h3>
+        <p style="color:var(--text2);font-size:12.5px;">Pick upstreams for the AI; read/write KV state like dynamic frontend version pointers.</p>
+        <div class="toolset"><code>list_services</code><code>get_service_detail</code><code>get_kv</code><code>set_kv</code><code>list_kv</code></div>
+      </div>
+      <div class="card" style="margin-top:14px;"><h3>Plan / Validate / Create <span class="lvl full">closed-loop</span></h3>
+        <p style="color:var(--text2);font-size:12.5px;">From natural-language planning to landing config, all reusing the loader's strict validation.</p>
+        <div class="toolset"><code>plan_site_from_intent</code><code>explain_missing_inputs</code><code>validate_site_config</code><code>validate_stream_config</code><code>validate_gateway_config</code><code>create_proxy_site</code><code>create_static_site</code><code>bind_domain_to_service</code><code>create_stream_proxy</code></div>
+      </div>
+      <div class="card" style="margin-top:14px;"><h3>Preview / Save / Apply / Rollback <span class="lvl part">partial</span></h3>
+        <p style="color:var(--text2);font-size:12.5px;">Saving includes validation and auto-reload; preview and rollback are still coarse-grained.</p>
+        <div class="toolset"><code>preview_config_change</code><code>save_site_config</code><code>save_stream_config</code><code>save_gateway_config</code><code>reload_gateway</code><code>rollback_last_change</code></div>
+      </div>
+      <div class="card" style="margin-top:14px;"><h3>Verify &amp; diagnose <span class="lvl full">closed-loop</span></h3>
+        <p style="color:var(--text2);font-size:12.5px;">Verify with real requests; read recent errors, runtime status and certificate status.</p>
+        <div class="toolset"><code>test_upstream</code><code>verify_site</code><code>verify_stream</code><code>get_recent_errors</code><code>get_gateway_status</code><code>list_certificates_status</code><code>inspect_certificate</code></div>
+      </div>
+      <p style="margin-top:14px;font-size:12.5px;color:var(--text3);">See the full per-tool reference in the <a class="inline" href="litegate_mcp_capability_matrix.md">MCP Capability Matrix</a>.</p>
+    </section>
+
+    <section id="loops">
+      <h2><span class="num">3</span>Typical closed loops</h2>
+      <p>The AI usually runs a class of request end to end along these chains, forming a closed loop from inventory to verification.</p>
+
+      <h3>① Create a reverse-proxy site</h3>
+      <div class="chain"><code>detect_environment</code><span class="arr">→</span><code>test_upstream</code><span class="arr">→</span><code>create_proxy_site</code><span class="arr">→</span><code>preview_config_change</code><span class="arr">→</span><code>save_site_config</code><span class="arr">→</span><code>verify_site</code><span class="arr">→</span><code>get_recent_errors</code></div>
+
+      <h3>② Bind a domain to a discovered service</h3>
+      <div class="chain"><code>list_services</code><span class="arr">→</span><code>get_service_detail</code><span class="arr">→</span><code>bind_domain_to_service</code><span class="arr">→</span><code>preview_config_change</code><span class="arr">→</span><code>save_site_config</code><span class="arr">→</span><code>verify_site</code></div>
+
+      <h3>③ Create a TCP/UDP stream</h3>
+      <div class="chain"><code>test_upstream</code><span class="arr">→</span><code>create_stream_proxy</code><span class="arr">→</span><code>preview_config_change</code><span class="arr">→</span><code>save_stream_config</code><span class="arr">→</span><code>verify_stream</code><span class="arr">→</span><code>get_recent_errors</code></div>
+
+      <h3>④ Dynamic frontend ZIP sync &amp; upgrade (Serve KV)</h3>
+      <div class="chain"><code>detect_environment</code><span class="arr">→</span><code>get_gateway_config</code><span class="arr">→</span><code>set_kv</code><span class="arr">→</span><code>verify_site</code><span class="arr">→</span><code>get_recent_errors</code></div>
+      <p style="font-size:12.5px;color:var(--text2);">Write the latest frontend ZIP version, URL and MD5 to KV (e.g. <code>litegate/config/front/main</code>); the gateway hot-swaps the deployment, then a real request verifies it.</p>
+    </section>
+
+    <section id="coverage">
+      <h2><span class="num">4</span>Current coverage</h2>
+      <p>Setting auth / OIDC aside, today's MCP is already enough for the AI to complete most common site building and routine management <strong>without external docs</strong>.</p>
+      <table>
+        <thead><tr><th>Capability</th><th>Coverage</th></tr></thead>
+        <tbody>
+          <tr><td>Common site configuration</td><td><span class="lvl full">covered</span></td></tr>
+          <tr><td>Common stream configuration</td><td><span class="lvl full">covered</span></td></tr>
+          <tr><td>Pre-change validation</td><td><span class="lvl full">covered</span></td></tr>
+          <tr><td>Auto-apply after save</td><td><span class="lvl full">covered</span></td></tr>
+          <tr><td>Basic result verification</td><td><span class="lvl full">covered</span></td></tr>
+          <tr><td>Routine troubleshooting</td><td><span class="lvl full">covered</span></td></tr>
+          <tr><td>Production-grade change analysis</td><td><span class="lvl part">partial</span></td></tr>
+          <tr><td>Production-grade robust rollback</td><td><span class="lvl part">partial</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout ok"><span class="t">Why "no docs" works</span><p>MCP already exposes schema and config guides, current runtime status and existing config, and provides validation, save, rollback, verification and troubleshooting. So external docs are no longer required input for common site building — they're more of a supplement.</p></div>
+    </section>
+
+    <section id="next">
+      <h2><span class="num">5</span>Still worth strengthening</h2>
+      <ul>
+        <li><code>preview_config_change</code> impact analysis could be finer, naming affected sites, ports and listeners.</li>
+        <li><code>verify_site</code> could return stronger assertions like the matched route and final upstream.</li>
+        <li><code>verify_stream</code> could further confirm the listener is the LiteGate process itself.</li>
+        <li>The rollback path could harden error handling and status reporting when a backup fails.</li>
+      </ul>
+    </section>
+
+    <div class="footer">LiteGate Docs · <a class="inline" href="litegate_complete_introduction.html">Complete Introduction</a> · <a class="inline" href="litegate_service_discovery.html">Service Discovery</a> · <a class="inline" href="litegate_mcp_capability_matrix.md">Full Matrix</a> · <a class="inline" href="../zh-cn/litegate_mcp_autopilot.html">中文版</a></div>
+  </main>
+</div>
+
+
+<script>
+(function () {
+  const toc = document.querySelector('.toc');
+  if (!toc) return;
+
+  const links = Array.from(toc.querySelectorAll('a[href^="#"]'));
+  const items = links.map((link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    return { link, target: document.getElementById(id) };
+  }).filter((item) => item.target);
+
+  if (!items.length) return;
+
+  let activeLink = null;
+  let ticking = false;
+
+  function setActive(item) {
+    if (!item || activeLink === item.link) return;
+    links.forEach((link) => link.classList.remove('active'));
+    item.link.classList.add('active');
+    activeLink = item.link;
+
+    const tocRect = toc.getBoundingClientRect();
+    const linkRect = item.link.getBoundingClientRect();
+    if (linkRect.top < tocRect.top + 16 || linkRect.bottom > tocRect.bottom - 16) {
+      item.link.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function currentItem() {
+    if (window.scrollY < 100) return items[0];
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+
+    for (const item of items) {
+      if (item.target.offsetParent === null && item.target.id !== 'overview') continue;
+      const rect = item.target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight * 0.88;
+      if (!visible) continue;
+
+      const distance = Math.abs(rect.top - anchor);
+      if (distance < bestDistance) {
+        best = item;
+        bestDistance = distance;
+      }
+    }
+
+    if (!best) {
+      best = items[0];
+      for (const item of items) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= anchor) best = item;
+      }
+    }
+
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      best = items[items.length - 1];
+    }
+    return best;
+  }
+
+  function updateActive() {
+    ticking = false;
+    setActive(currentItem());
+  }
+
+  function requestUpdate() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateActive);
+    }
+  }
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('hashchange', requestUpdate);
+  links.forEach((link) => link.addEventListener('click', () => window.setTimeout(requestUpdate, 80)));
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', requestUpdate, { once: true });
+  } else {
+    requestUpdate();
+  }
+})();
+</script>
+</body>
+</html>

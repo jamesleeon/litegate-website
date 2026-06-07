@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate mTLS 使用指南 · 南北 + 东西流量双向认证</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+
+
+body {
+  font-family: var(--sans);
+  background: var(--bg3);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+
+/* Sidebar TOC */
+.toc {
+  position: sticky;
+  top: 0;
+  width: 240px;
+  flex-shrink: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 28px 16px 28px 24px;
+  border-right: 0.5px solid var(--border2);
+}
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a {
+  display: block;
+  padding: 5px 10px;
+  font-size: 12.5px;
+  color: var(--text2);
+  text-decoration: none;
+  border-radius: 6px;
+  margin-bottom: 1px;
+  transition: background .12s, color .12s;
+}
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+
+/* Main */
+main {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg);
+  padding: 40px 48px 80px;
+  min-height: 100vh;
+}
+
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 720px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge {
+  font-size: 11.5px; padding: 3px 11px; border-radius: 20px;
+  background: var(--accent-bg); color: var(--accent-text); font-weight: 500;
+}
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 {
+  font-size: 19px; font-weight: 600; margin-bottom: 14px;
+  padding-bottom: 8px; border-bottom: 0.5px solid var(--border2);
+}
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono); font-size: 12.5px;
+  background: var(--bg2); padding: 1.5px 6px; border-radius: 4px;
+  border: 0.5px solid var(--border); color: var(--accent-text);
+}
+a.inline { color: var(--accent); text-decoration: none; }
+a.inline:hover { text-decoration: underline; }
+
+/* Code blocks */
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang {
+  position: absolute; top: 8px; right: 10px;
+  font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px;
+  font-family: var(--mono); user-select: none;
+}
+pre {
+  background: var(--bg2);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--text);
+}
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.cm { color: var(--text3); }
+.kw { color: var(--accent); }
+.str { color: var(--green); }
+
+/* Callouts */
+.callout {
+  border-radius: var(--radius);
+  padding: 13px 16px 13px 16px;
+  margin: 16px 0;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-bg);
+  font-size: 13.5px;
+}
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.req { color: var(--red); font-weight: 600; }
+.opt { color: var(--text3); }
+.rec { color: var(--green); font-weight: 600; }
+
+/* Flow diagram */
+.flow {
+  display: flex; align-items: stretch; gap: 0; margin: 20px 0; flex-wrap: wrap;
+  background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius-lg);
+  padding: 22px 18px; overflow-x: auto;
+}
+.node {
+  flex: 1; min-width: 150px; text-align: center; padding: 14px 12px;
+  border-radius: var(--radius); background: var(--bg);
+  border: 0.5px solid var(--border2);
+}
+.node .icon { font-size: 22px; margin-bottom: 6px; }
+.node .name { font-weight: 600; font-size: 13.5px; }
+.node .desc { font-size: 11px; color: var(--text3); margin-top: 3px; }
+.arrow {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 0 14px; min-width: 130px;
+}
+.arrow .label { font-size: 11px; font-weight: 600; color: var(--accent); margin-bottom: 3px; }
+.arrow .line { font-size: 18px; color: var(--accent); line-height: 1; }
+.arrow .sub { font-size: 10px; color: var(--text3); margin-top: 3px; }
+.arrow.north .label, .arrow.north .line { color: var(--amber); }
+
+/* Step list */
+.steps { counter-reset: step; list-style: none; margin-left: 0; }
+.steps li {
+  position: relative; padding-left: 38px; margin-bottom: 14px; counter-increment: step;
+}
+.steps li::before {
+  content: counter(step);
+  position: absolute; left: 0; top: 0;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent); color: #fff; font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+
+@media (max-width: 880px) {
+  .toc { display: none; }
+  main { padding: 28px 20px 60px; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc" id="toc">
+    <div class="brand">LiteGate × Litemesh</div>
+    <div class="brand-sub">mTLS 使用指南</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← 文档首页</a>
+    <a href="#overview">概览 · 流量模型</a>
+    <a href="#how">1. mTLS 工作原理</a>
+    <a href="#cert" class="sub">证书生命周期</a>
+    <a href="#verify" class="sub">身份校验 &amp; Fail-Closed</a>
+    <a href="#backend">2. 后端双模：明文 + mTLS</a>
+    <a href="#register">3. 注册到 Litemesh（标签驱动）</a>
+    <a href="#litegate">4. 南北流量：LiteGate 配置</a>
+    <a href="#global" class="sub">全局 litemesh 配置</a>
+    <a href="#route" class="sub">路由级配置</a>
+    <a href="#eastwest">5. 东西流量：SDK 调用</a>
+    <a href="#ew-call" class="sub">服务间 mTLS 调用</a>
+    <a href="#ew-caveat" class="sub">注意事项</a>
+    <a href="#fields">6. 字段参考表</a>
+    <a href="#matrix">7. 流量边界矩阵</a>
+    <a href="#istio">8. 对比 Istio Sidecar</a>
+    <a href="#faq">9. 常见问题</a>
+    <a href="../en/litemesh_mtls_guide.html">English version</a>
+  </nav>
+
+  <main>
+    <div class="hero" id="overview">
+      <h1>LiteGate mTLS 使用指南</h1>
+      <p class="lead">
+        本文说明在 Litemesh 身份体系下，<strong>南北流量</strong>（LiteGate → 后端）与
+        <strong>东西流量</strong>（后端 ↔ 后端）如何启用 mTLS 双向认证。两侧共用同一套
+        <strong>「<code>mtls</code> 标签 + <code>mtls_port</code> 元数据」</strong>约定：后端只声明一次，
+        南北向的 LiteGate 与东西向的 SDK 都会自动改用 mTLS 访问。
+      </p>
+      <div class="badges">
+        <span class="badge">Litemesh CA</span>
+        <span class="badge">SPIFFE 身份</span>
+        <span class="badge green">证书自动轮换</span>
+        <span class="badge green">Fail-Closed</span>
+        <span class="badge amber">南北流量</span>
+        <span class="badge amber">东西流量</span>
+        <span class="badge">明文 + mTLS 双模</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="t">一句话总览</span>
+      <p>后端可同时监听明文与 mTLS 端口。开启 mTLS 后，注册到 Litemesh 时打上 <code>mtls</code> 标签并带上 <code>mtls_port</code>。从此：南北向的 <strong>LiteGate</strong> 会用 mTLS 转发流量；东西向的 <strong>Litemesh SDK</strong>（<code>CallService</code>）也会按同一标签自动用 mTLS 调用。一处声明，南北 + 东西全链路生效。</p>
+    </div>
+
+    <h3 style="margin-top:24px">南北流量（客户端 → LiteGate → 后端）</h3>
+    <div class="flow">
+      <div class="node">
+        <div class="icon">🌐</div>
+        <div class="name">客户端</div>
+        <div class="desc">浏览器 / API 调用方</div>
+      </div>
+      <div class="arrow north">
+        <div class="label">北向 North</div>
+        <div class="line">───▶</div>
+        <div class="sub">TLS（公网 / AutoCert 证书）</div>
+      </div>
+      <div class="node">
+        <div class="icon">🛡️</div>
+        <div class="name">LiteGate</div>
+        <div class="desc">持 Litemesh 工作负载证书</div>
+      </div>
+      <div class="arrow">
+        <div class="label">南向 South</div>
+        <div class="line">═══▶</div>
+        <div class="sub">mTLS（Litemesh CA 双向认证）</div>
+      </div>
+      <div class="node">
+        <div class="icon">⚙️</div>
+        <div class="name">后端服务</div>
+        <div class="desc">mtls 标签 → 要求客户端证书</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:24px">东西流量（后端 ↔ 后端，经 Litemesh SDK）</h3>
+    <div class="flow">
+      <div class="node">
+        <div class="icon">⚙️</div>
+        <div class="name">服务 A</div>
+        <div class="desc">持 Litemesh 证书 + SDK mTLS Client</div>
+      </div>
+      <div class="arrow">
+        <div class="label">东西 East-West</div>
+        <div class="line">═══▶</div>
+        <div class="sub">CallService → mTLS（按 mtls 标签自动判定）</div>
+      </div>
+      <div class="node">
+        <div class="icon">⚙️</div>
+        <div class="name">服务 B</div>
+        <div class="desc">mtls 标签 → 要求客户端证书</div>
+      </div>
+    </div>
+
+    <p>
+      适用场景：后端服务已接入 Litemesh；LiteGate 通过 <code>upstream_type: litemesh</code> 发现后端（南北）；
+      服务间通过 Litemesh SDK <code>CallService</code> 互相调用（东西）；后端希望只接受来自可信工作负载的 mTLS 请求。
+    </p>
+
+    <!-- ===================== 1 ===================== -->
+    <section id="how">
+      <h2><span class="num">1</span>mTLS 工作原理</h2>
+      <p>LiteGate 的 mTLS 完全围绕 Litemesh 的身份体系运转，分为两条主线：<strong>证书生命周期</strong>（LiteGate 自身的客户端身份）和<strong>对端身份校验</strong>（验证后端是不是真的可信）。</p>
+
+      <h3 id="cert">证书生命周期</h3>
+      <p>当 <code>litemesh.mtls: true</code> 且配置了 <code>spiffe_id</code> 时，LiteGate 启动 <code>CertManager</code>：</p>
+      <ol class="steps">
+        <li>本地生成 2048 位 RSA 密钥对（私钥永不出本进程）。</li>
+        <li>携带公钥与自身 SPIFFE ID 调用 Litemesh <code>POST /v1/ca/sign</code> 申请工作负载证书。</li>
+        <li>拉取 Litemesh Root CA（<code>GET /v1/ca/root</code>），构建带热加载回调的 <code>tls.Config</code>。</li>
+        <li>后台每小时检查，<strong>剩余寿命低于 1/3 时自动轮换</strong>（上限 30 天、下限 1 小时），失败重试 3 次，并上报 Prometheus 指标。</li>
+      </ol>
+      <div class="callout ok">
+        <span class="t">无需手动管理证书</span>
+        <p>LiteGate 不读取磁盘上的证书文件做南向 mTLS —— 证书完全由 Litemesh 动态签发与轮换。你只需保证 LiteGate 能访问 Litemesh Agent。</p>
+      </div>
+
+      <h3 id="verify">对端身份校验 &amp; Fail-Closed</h3>
+      <p>向后端发起连接时，LiteGate 在 TLS 握手中：</p>
+      <ul>
+        <li><strong>出示客户端证书</strong>：通过 <code>GetClientCertificate</code> 提供自己的 Litemesh 证书，构成"双向"。</li>
+        <li><strong>校验证书链</strong>：用 Litemesh Root CA 验证后端证书是否可信。</li>
+        <li><strong>校验 SPIFFE 身份</strong>：逐一比对后端证书 URI SAN 与期望的 SPIFFE ID，强于普通 TLS 的域名匹配。</li>
+      </ul>
+      <div class="callout danger">
+        <span class="t">两条硬性安全约束</span>
+        <p><strong>① Fail-Closed：</strong>若证书提供方不可用、客户端证书为空、Root CA 池为空，连接会<strong>立即拒绝拨号</strong>，绝不静默降级为明文。</p>
+        <p><strong>② <code>insecure_skip_verify</code> 无法绕过 mTLS：</strong>开启 mTLS 后，即便配置了跳过校验，LiteGate 仍强制执行 Root CA 与 SPIFFE 身份验证（仅打印一条警告）。</p>
+      </div>
+    </section>
+
+    <!-- ===================== 2 ===================== -->
+    <section id="backend">
+      <h2><span class="num">2</span>后端双模：明文 + mTLS</h2>
+      <p>推荐后端<strong>同时监听两个端口</strong>：一个明文 HTTP（如 <code>:8080</code>）用于内网可信场景或健康检查，一个 mTLS HTTPS（如 <code>:8443</code>）用于零信任调用。是否启用 mTLS 由后端自己决定 —— 启用后，只需在注册时打上 <code>mtls</code> 标签（见<a href="#register" class="inline">第 3 节</a>），南北向的 LiteGate 与东西向的 SDK 就会自动改走 mTLS 端口。</p>
+      <div class="callout ok">
+        <span class="t">双模的意义</span>
+        <p>同一份代码、同一个服务实例可以平滑灰度：先以明文注册（不带 <code>mtls</code> 标签）跑通链路，再加上 mTLS 监听并补上标签，调用方<strong>无需改任何代码</strong>即自动升级为双向认证。回退同理。</p>
+      </div>
+      <p>mTLS 端口要做三件事：向 Litemesh CA 申请工作负载证书、用它启动 HTTPS、要求调用方也提交由 Litemesh CA 签发的客户端证书。下面用 Go 标准库 <code>net/http</code> 示例。</p>
+      <div class="code-wrap">
+        <span class="lang">go</span>
+<pre><code>package main
+
+import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/tls"
+	"crypto/x509"
+	"fmt"
+	"log"
+	"net/http"
+
+	litemesh "github.com/james/litemesh/sdk"
+)
+
+func main() {
+	namespace := "default"
+	serviceName := "user-service"
+	mtlsAddr := ":8443"
+
+	<span class="cm">// LiteGate 默认按此格式推导后端 SPIFFE ID:</span>
+	<span class="cm">// spiffe://litemesh.local/ns/&lt;namespace&gt;/sa/&lt;service-name&gt;</span>
+	spiffeID := fmt.Sprintf("spiffe://litemesh.local/ns/%s/sa/%s", namespace, serviceName)
+
+	client := litemesh.NewClient(litemesh.Config{
+		AgentAddr: "http://127.0.0.1:8787",
+		AuthToken: "your-litemesh-token",
+	})
+
+	privateKey, _ := rsa.GenerateKey(rand.Reader, 2048)
+	certManager, err := client.WatchCertificate(spiffeID, privateKey)
+	if err != nil {
+		log.Fatalf("watch workload certificate failed: %v", err)
+	}
+	defer certManager.Close()
+
+	rootPEM, _ := client.GetRootCA()
+	rootPool := x509.NewCertPool()
+	rootPool.AppendCertsFromPEM([]byte(rootPEM))
+
+	tlsConfig := &tls.Config{
+		MinVersion:           tls.VersionTLS12,
+		GetCertificate:       certManager.GetCertificate,
+		GetClientCertificate: certManager.GetClientCertificate,
+
+		<span class="cm">// 服务端 mTLS 关键: 要求调用方提交客户端证书, 并用 Litemesh Root CA 校验</span>
+		ClientAuth: tls.RequireAndVerifyClientCert,
+		ClientCAs:  rootPool,
+		RootCAs:    rootPool,
+
+		<span class="cm">// 可选: 进一步只放行 LiteGate 的 SPIFFE ID</span>
+		VerifyConnection: allowClientSPIFFE(
+			"spiffe://litemesh.local/ns/gateway/sa/litegate",
+		),
+	}
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/users", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{"service":"user-service","mtls":true}`))
+	})
+
+	server := &http.Server{Addr: mtlsAddr, Handler: mux, TLSConfig: tlsConfig}
+	log.Printf("mTLS server on %s, spiffe_id=%s", mtlsAddr, spiffeID)
+	log.Fatal(server.ListenAndServeTLS("", ""))
+}
+
+func allowClientSPIFFE(allowed ...string) func(tls.ConnectionState) error {
+	set := make(map[string]struct{}, len(allowed))
+	for _, id := range allowed {
+		set[id] = struct{}{}
+	}
+	return func(cs tls.ConnectionState) error {
+		for _, cert := range cs.PeerCertificates {
+			for _, uri := range cert.URIs {
+				if _, ok := set[uri.String()]; ok {
+					return nil
+				}
+			}
+		}
+		return fmt.Errorf("client SPIFFE ID is not allowed")
+	}
+}</code></pre>
+      </div>
+      <div class="callout">
+        <span class="t">最小配置</span>
+        <p>若暂不想限制调用方身份，可去掉 <code>VerifyConnection</code>，但请保留 <code>ClientAuth: tls.RequireAndVerifyClientCert</code> 和 <code>ClientCAs</code>，至少保证调用方证书来自同一个 Litemesh CA。</p>
+      </div>
+    </section>
+
+    <!-- ===================== 3 ===================== -->
+    <section id="register">
+      <h2><span class="num">3</span>注册到 Litemesh（标签驱动）</h2>
+      <p>把普通端口、mTLS 端口、标签和元数据一起注册。<code>mtls</code> 标签是<strong>南北与东西两侧共用的开关</strong> —— LiteGate 和 Litemesh SDK 看到它后都会自动改走 mTLS 端口。</p>
+      <div class="callout">
+        <span class="t">一个标签，两侧生效</span>
+        <p>南向：LiteGate 的 litemesh discovery 读取 <code>mtls</code> 标签 → 用 mTLS 转发。<br>
+        东西：Litemesh SDK 的 <code>CallService</code> 通过 <code>serviceRequiresMTLS()</code> 读取同一个 <code>mtls</code> 标签 → 用 mTLS 调用。<br>
+        所以后端<strong>只需声明一次</strong>，全链路统一。</p>
+      </div>
+      <div class="code-wrap">
+        <span class="lang">go</span>
+<pre><code>err := client.Register(&litemesh.ServiceInstance{
+	ID:        "user-service-1",
+	Name:      "user-service",
+	Namespace: "default",
+	Addr:      "10.0.0.12",
+	Port:      8080,        <span class="cm">// 普通 HTTP 端口</span>
+	Protocol:  "http",
+
+	<span class="cm">// 关键: 裸标签 mtls 表示该实例要求 mTLS 访问</span>
+	Tags: []string{"mtls"},
+
+	Meta: map[string]string{
+		"mtls_port":       "8443",                                            <span class="cm">// LiteGate 访问的 mTLS 端口</span>
+		"spiffe_id":       "spiffe://litemesh.local/ns/default/sa/user-service", <span class="cm">// 可选, 显式声明</span>
+		"tls_server_name": "user-service",                                    <span class="cm">// 可选, 作为 TLS SNI</span>
+	},
+})</code></pre>
+      </div>
+      <p><strong>最小可用注册</strong>：当服务名 + 命名空间能推导出正确 SPIFFE ID 时，<code>spiffe_id</code> 可省略。</p>
+      <div class="code-wrap">
+        <span class="lang">go</span>
+<pre><code>Tags: []string{"mtls"},
+Meta: map[string]string{"mtls_port": "8443"},
+<span class="cm">// Name=user-service, Namespace=default →</span>
+<span class="cm">// 默认期望: spiffe://litemesh.local/ns/default/sa/user-service</span></code></pre>
+      </div>
+      <p>若 trust domain 不是 <code>litemesh.local</code>，加一个 <code>trust_domain</code> 即可改变默认推导前缀：</p>
+      <div class="code-wrap">
+        <span class="lang">go</span>
+<pre><code>Meta: map[string]string{
+	"mtls_port":    "8443",
+	"trust_domain": "example.internal",
+}
+<span class="cm">// 默认期望变为: spiffe://example.internal/ns/default/sa/user-service</span></code></pre>
+      </div>
+      <div class="callout ok">
+        <span class="t">统一使用裸标签 <code>mtls</code>（两侧已对齐）</span>
+        <p>南向（LiteGate）与东西向（SDK）现在<strong>只认裸标签 <code>mtls</code></strong>，判定规则已统一。请使用 <code>Tags: []string{"mtls"}</code>，建议小写 —— LiteGate 端大小写敏感、精确匹配，SDK 端则会容忍大小写和首尾空格，统一小写可保证两侧行为完全一致。</p>
+      </div>
+    </section>
+
+    <!-- ===================== 4 ===================== -->
+    <section id="litegate">
+      <h2><span class="num">4</span>南北流量：LiteGate 配置</h2>
+
+      <h3 id="global">全局 litemesh 配置（启用客户端身份）</h3>
+      <p>这是南向 mTLS 的前提：LiteGate 必须先拥有自己的 Litemesh 身份，才能向后端出示客户端证书。</p>
+      <div class="code-wrap">
+        <span class="lang">yaml</span>
+<pre><code><span class="kw">litemesh:</span>
+  <span class="kw">enabled:</span> <span class="str">true</span>
+  <span class="kw">address:</span> <span class="str">"http://127.0.0.1:8787"</span>
+  <span class="kw">token:</span> <span class="str">"your-litemesh-token"</span>
+  <span class="kw">namespace:</span> <span class="str">"default"</span>
+
+  <span class="cm"># 开启 mTLS: LiteGate 会向 Litemesh CA 申请自己的工作负载证书</span>
+  <span class="kw">mtls:</span> <span class="str">true</span>
+  <span class="kw">spiffe_id:</span> <span class="str">"spiffe://litemesh.local/ns/gateway/sa/litegate"</span>
+  <span class="kw">mtls_port:</span> <span class="str">8443</span>   <span class="cm"># 可选: 全局兜底端口, 实例 Meta.mtls_port 优先</span></code></pre>
+      </div>
+      <div class="callout warn">
+        <span class="t">必填项</span>
+        <p>南向 mTLS 要求 <code>mtls: true</code> <strong>且</strong> <code>spiffe_id</code> 非空，两者缺一则 CertManager 不会初始化，发现的 mTLS 实例将因"证书提供方不可用"而 Fail-Closed 拒绝。</p>
+      </div>
+      <p>同时确保 litemesh 被作为服务发现源启用：</p>
+      <div class="code-wrap">
+        <span class="lang">yaml</span>
+<pre><code><span class="kw">service_discovery:</span>
+  <span class="kw">catalogs:</span>
+    - <span class="kw">provider:</span> <span class="str">litemesh</span>
+      <span class="kw">enabled:</span> <span class="str">true</span>
+      <span class="kw">url:</span> <span class="str">"http://127.0.0.1:8787"</span>
+      <span class="kw">namespace:</span> <span class="str">"default"</span></code></pre>
+      </div>
+
+      <h3 id="route">路由级配置</h3>
+      <p>大多数情况只需用 litemesh 发现，由<strong>实例自己</strong>通过 <code>mtls</code> 标签声明安全访问方式 —— 路由无需额外配置：</p>
+      <div class="code-wrap">
+        <span class="lang">yaml</span>
+<pre><code><span class="kw">domain:</span> <span class="str">api.example.com</span>
+<span class="kw">routes:</span>
+  - <span class="kw">name:</span> <span class="str">user-service</span>
+    <span class="kw">match:</span>
+      <span class="kw">path_prefix:</span> <span class="str">/users</span>
+    <span class="kw">action:</span>
+      <span class="kw">type:</span> <span class="str">proxy</span>
+      <span class="kw">upstream_type:</span> <span class="str">litemesh</span>
+      <span class="kw">service_name:</span> <span class="str">user-service</span>
+      <span class="kw">namespace:</span> <span class="str">default</span></code></pre>
+      </div>
+      <p>若想在路由上<strong>强制</strong>启用 mTLS 或显式声明期望身份（覆盖实例声明），可使用：</p>
+      <div class="code-wrap">
+        <span class="lang">yaml</span>
+<pre><code>    <span class="kw">action:</span>
+      <span class="kw">type:</span> <span class="str">proxy</span>
+      <span class="kw">upstream_type:</span> <span class="str">litemesh</span>
+      <span class="kw">service_name:</span> <span class="str">user-service</span>
+      <span class="kw">namespace:</span> <span class="str">default</span>
+      <span class="kw">mtls:</span> <span class="str">true</span>                <span class="cm"># 强制本路由走 mTLS</span>
+      <span class="kw">expected_spiffe_ids:</span>      <span class="cm"># 显式声明期望的后端身份</span>
+        - <span class="str">spiffe://litemesh.local/ns/default/sa/user-service</span></code></pre>
+      </div>
+      <div class="callout">
+        <span class="t">优先级</span>
+        <p>是否启用 mTLS = <code>action.mtls</code> <strong>OR</strong> <code>实例 mtls 标签</code>。期望 SPIFFE ID 优先取路由 <code>expected_spiffe_ids</code>，其次取实例 Meta 推导值。推荐让实例自声明，路由保持简洁。</p>
+      </div>
+    </section>
+
+    <!-- ===================== 5 东西流量 ===================== -->
+    <section id="eastwest">
+      <h2><span class="num">5</span>东西流量：SDK 调用</h2>
+      <p>东西流量是<strong>后端服务之间</strong>的相互调用，由 Litemesh SDK（<code>github.com/james/litemesh/sdk</code>）直接完成，不经过 LiteGate。SDK 与 LiteGate 复用<strong>同一个 <code>mtls</code> 标签约定</strong>：调用方发现目标实例后，若目标带 <code>mtls</code> 标签，就自动切到 <code>https</code> + <code>mtls_port</code> 并用 mTLS 客户端发起请求。</p>
+
+      <h3 id="ew-call">服务间 mTLS 调用</h3>
+      <p>调用方需要做三步：① 用自己的 SPIFFE ID 拿到 Litemesh 工作负载证书；② 构建动态 mTLS 客户端并注入 SDK；③ 直接 <code>CallService</code>，mTLS 判定与端口切换由 SDK 自动完成。</p>
+      <div class="code-wrap">
+        <span class="lang">go</span>
+<pre><code>package main
+
+import (
+	"crypto/rand"
+	"crypto/rsa"
+	"log"
+
+	litemesh "github.com/james/litemesh/sdk"
+)
+
+func main() {
+	client := litemesh.NewClient(litemesh.Config{
+		AgentAddr: "http://127.0.0.1:8787",
+		AuthToken: "your-litemesh-token",
+	})
+
+	<span class="cm">// ① 拿到本服务(order-service)的工作负载证书, 自动轮换</span>
+	spiffeID := "spiffe://litemesh.local/ns/default/sa/order-service"
+	privateKey, _ := rsa.GenerateKey(rand.Reader, 2048)
+	cm, err := client.WatchCertificate(spiffeID, privateKey)
+	if err != nil {
+		log.Fatalf("watch cert failed: %v", err)
+	}
+	defer cm.Close()
+
+	<span class="cm">// ② 用动态证书 + Litemesh Root CA 构建 mTLS 客户端, 注入 SDK</span>
+	rootPEM, _ := client.GetRootCA()
+	tlsCfg, err := litemesh.BuildDynamicTLSConfig(cm, rootPEM)
+	if err != nil {
+		log.Fatalf("build tls config failed: %v", err)
+	}
+	client.SetMTLSClient(litemesh.GetMTLSClient(tlsCfg))
+
+	<span class="cm">// ③ 直接调用 user-service。若其带 mtls 标签,</span>
+	<span class="cm">//    SDK 自动用 https + mtls_port + 客户端证书发起请求。</span>
+	result, err := client.CallService("user-service", &litemesh.CallOptions{
+		Namespace: "default",
+		Method:    "GET",
+		Path:      "/api/users",
+	})
+	if err != nil {
+		log.Fatalf("call failed: %v", err)
+	}
+	log.Printf("user-service response: %#v", result)
+}</code></pre>
+      </div>
+      <div class="callout">
+        <span class="t">SDK 如何判定是否走 mTLS</span>
+        <p>SDK 内部 <code>serviceRequiresMTLS()</code> 仅在实例带裸 <code>mtls</code> 标签时返回 true（与 LiteGate 判定规则一致）。命中后 <code>resolveCallEndpoint()</code> 把协议切为 <code>https</code>、端口切到 <code>Meta["mtls_port"]</code>，再用 mTLS 客户端发起请求。</p>
+      </div>
+
+      <h3 id="ew-caveat">注意事项</h3>
+      <div class="callout danger">
+        <span class="t">生产必须先 <code>SetMTLSClient</code></span>
+        <p><code>CallService</code> 若目标是 https 但你<strong>没有</strong>通过 <code>SetMTLSClient</code> 注入 mTLS 客户端，SDK 会临时降级为 <code>InsecureSkipVerify=true</code> 以兼容自签证书 —— 这只适合本地联调。生产环境务必先注入由 <code>BuildDynamicTLSConfig</code> 构建的真实 mTLS 客户端，否则等于跳过了对端校验。</p>
+      </div>
+      <div class="callout warn">
+        <span class="t">SPIFFE 身份校验需自行扩展</span>
+        <p>SDK 的 <code>BuildDynamicTLSConfig</code> 默认只校验 Litemesh Root CA 证书链，其 <code>VerifyConnection</code> 是空实现，<strong>不</strong>像 LiteGate 那样自动比对对端 SPIFFE URI SAN。若东西向也要做身份白名单（只允许特定 SPIFFE ID 调用），需在该回调中自行实现（可参考<a href="#backend" class="inline">第 2 节</a>的 <code>allowClientSPIFFE</code>）。</p>
+      </div>
+      <div class="callout ok">
+        <span class="t">证书轮换与南北一致</span>
+        <p>SDK 的 <code>WatchCertificate</code> 与 LiteGate 采用同款自动轮换策略（剩余寿命低于 1/3 时续期，检查间隔为寿命的 1/10，最短 1 分钟、最长 1 小时），无需手动续期。</p>
+      </div>
+    </section>
+
+    <!-- ===================== 6 ===================== -->
+    <section id="fields">
+      <h2><span class="num">6</span>字段参考表</h2>
+
+      <h3>Litemesh 实例（后端注册时）</h3>
+      <table>
+        <thead><tr><th>字段</th><th>位置</th><th>必需</th><th>作用</th></tr></thead>
+        <tbody>
+          <tr><td><code>mtls</code></td><td>Tags</td><td class="req">是</td><td>启用该实例的 mTLS 访问</td></tr>
+          <tr><td><code>mtls_port</code></td><td>Meta</td><td class="rec">推荐</td><td>后端 mTLS 监听端口（不写则沿用普通 port 或全局 mtls_port）</td></tr>
+          <tr><td><code>spiffe_id</code></td><td>Meta</td><td class="opt">可选</td><td>显式声明后端期望 SPIFFE ID</td></tr>
+          <tr><td><code>trust_domain</code></td><td>Meta</td><td class="opt">可选</td><td>未写 spiffe_id 时参与默认 SPIFFE 推导，默认 litemesh.local</td></tr>
+          <tr><td><code>tls_server_name</code></td><td>Meta</td><td class="opt">可选</td><td>TLS SNI，通常写服务名或内部 DNS 名</td></tr>
+        </tbody>
+      </table>
+
+      <h3>LiteGate 全局 / 路由配置</h3>
+      <table>
+        <thead><tr><th>字段</th><th>位置</th><th>必需</th><th>作用</th></tr></thead>
+        <tbody>
+          <tr><td><code>litemesh.mtls</code></td><td>config.yaml</td><td class="req">是</td><td>启用 LiteGate 客户端身份，向 CA 申请证书</td></tr>
+          <tr><td><code>litemesh.spiffe_id</code></td><td>config.yaml</td><td class="req">是</td><td>LiteGate 自身的 SPIFFE 身份</td></tr>
+          <tr><td><code>litemesh.mtls_port</code></td><td>config.yaml</td><td class="opt">可选</td><td>全局兜底 mTLS 端口（实例 Meta 优先）</td></tr>
+          <tr><td><code>mtls</code></td><td>route action</td><td class="opt">可选</td><td>路由级强制启用 mTLS</td></tr>
+          <tr><td><code>expected_spiffe_ids</code></td><td>route action</td><td class="opt">可选</td><td>路由级显式声明期望后端身份</td></tr>
+        </tbody>
+      </table>
+
+      <h3>东西流量：SDK 调用方</h3>
+      <table>
+        <thead><tr><th>API / 字段</th><th>位置</th><th>必需</th><th>作用</th></tr></thead>
+        <tbody>
+          <tr><td><code>WatchCertificate(spiffeID, key)</code></td><td>SDK 调用方</td><td class="req">是</td><td>获取并自动轮换调用方工作负载证书</td></tr>
+          <tr><td><code>BuildDynamicTLSConfig(cm, root)</code></td><td>SDK 调用方</td><td class="req">是</td><td>用动态证书 + Root CA 构建 mTLS tls.Config</td></tr>
+          <tr><td><code>SetMTLSClient(client)</code></td><td>SDK 调用方</td><td class="req">是</td><td>注入 mTLS 客户端，生产环境必须设置</td></tr>
+          <tr><td><code>mtls</code></td><td>目标 Tags</td><td class="rec">推荐</td><td>SDK 据此判定走 mTLS（裸标签，与 LiteGate 通用）</td></tr>
+          <tr><td><code>mtls_port</code></td><td>目标 Meta</td><td class="rec">推荐</td><td>SDK 命中 mTLS 后切换到该端口</td></tr>
+        </tbody>
+      </table>
+
+      <h3>两侧发现 mTLS 实例后的行为对比</h3>
+      <table>
+        <thead><tr><th>步骤</th><th>南北（LiteGate）</th><th>东西（SDK CallService）</th></tr></thead>
+        <tbody>
+          <tr><td>协议切换</td><td>→ <code>https</code></td><td>→ <code>https</code></td></tr>
+          <tr><td>端口</td><td><code>Meta.mtls_port</code> &gt; 全局 mtls_port</td><td><code>Meta.mtls_port</code></td></tr>
+          <tr><td>客户端证书</td><td>LiteGate 工作负载证书</td><td>调用方工作负载证书</td></tr>
+          <tr><td>Root CA 链校验</td><td class="rec">✓ 强制</td><td class="rec">✓ 强制</td></tr>
+          <tr><td>SPIFFE URI SAN 校验</td><td class="rec">✓ 自动</td><td class="opt">需自行扩展 VerifyConnection</td></tr>
+          <tr><td>触发标签</td><td>仅裸 <code>mtls</code> 标签</td><td>仅裸 <code>mtls</code> 标签（已对齐）</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===================== 7 ===================== -->
+    <section id="matrix">
+      <h2><span class="num">7</span>流量边界矩阵</h2>
+      <p>明确 Litemesh mTLS 在各方向流量的覆盖范围：</p>
+      <table>
+        <thead><tr><th>方向</th><th>链路</th><th>协议</th><th>由谁提供身份</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="badge amber">北向 North</span></td>
+            <td>客户端 → LiteGate</td>
+            <td>单向 TLS（或明文）</td>
+            <td>公网证书 / AutoCert（Let's Encrypt）</td>
+          </tr>
+          <tr>
+            <td><span class="badge green">南向 South</span></td>
+            <td>LiteGate → 后端</td>
+            <td><strong>mTLS 双向认证</strong></td>
+            <td><strong>Litemesh CA + SPIFFE（自动校验身份）</strong></td>
+          </tr>
+          <tr>
+            <td><span class="badge green">东西 East-West</span></td>
+            <td>后端 ↔ 后端（SDK）</td>
+            <td><strong>mTLS 双向认证</strong></td>
+            <td><strong>Litemesh CA（SPIFFE 校验需自行扩展）</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout warn">
+        <span class="t">Litemesh mTLS 覆盖南向 + 东西，不覆盖北向</span>
+        <p>LiteGate 的<strong>入站监听不强制要求客户端证书</strong>。所以严格说北向是"客户端→网关 单向 TLS"，而非端到端 mTLS。Litemesh 的零信任身份保证存在于<strong>网关↔后端（南向）</strong>和<strong>后端↔后端（东西）</strong>之间。</p>
+        <p>若北向也需要客户端证书认证（如内网服务间调用 / 设备接入），应在入站 TLS 层另行配置 <code>ClientAuth</code>，这不属于本文覆盖范围。</p>
+      </div>
+      <div class="callout">
+        <span class="t">南北与东西的对称性</span>
+        <p>两个方向都以后端实例的 <code>mtls</code> 标签为统一开关，都用 Litemesh CA 签发并自动轮换证书。主要差异：南向（LiteGate）默认强制 SPIFFE 身份比对，东西向（SDK）默认只验 CA 链、SPIFFE 白名单需在 <code>VerifyConnection</code> 中自行实现。</p>
+      </div>
+    </section>
+
+    <!-- ===================== 8 Istio 对比 ===================== -->
+    <section id="istio">
+      <h2><span class="num">8</span>与 Istio Sidecar 方案对比</h2>
+      <p>本方案是<strong>「网关 + SDK 库内嵌」</strong>模式：mTLS 逻辑跑在 LiteGate 进程和业务进程内部（in-process）。Istio 则是<strong>「Sidecar 代理」</strong>模式：每个 Pod 注入一个 Envoy 代理，用 iptables 透明劫持所有进出流量。两者解决的是同一类问题（零信任 mTLS + 服务发现），但权衡截然不同。</p>
+
+      <h3>核心架构差异</h3>
+      <div class="flow">
+        <div class="node">
+          <div class="icon">📦</div>
+          <div class="name">本方案 (In-Process)</div>
+          <div class="desc">业务进程内嵌 SDK<br>直接 mTLS 连对端</div>
+        </div>
+        <div class="arrow">
+          <div class="label">对比</div>
+          <div class="line">vs</div>
+          <div class="sub">是否有独立代理进程</div>
+        </div>
+        <div class="node">
+          <div class="icon">🚗</div>
+          <div class="name">Istio (Sidecar)</div>
+          <div class="desc">业务 → 本地 Envoy →<br>对端 Envoy → 业务</div>
+        </div>
+      </div>
+
+      <h3>逐项对比</h3>
+      <table>
+        <thead><tr><th>维度</th><th>本方案（LiteGate + Litemesh SDK）</th><th>Istio Sidecar</th></tr></thead>
+        <tbody>
+          <tr><td>部署形态</td><td>库内嵌，无额外进程</td><td>每 Pod 一个 Envoy 代理（+ istiod 控制面）</td></tr>
+          <tr><td>代码侵入</td><td class="opt">东西向需引入 SDK、显式 <code>CallService</code></td><td class="rec">零代码，自动注入透明劫持</td></tr>
+          <tr><td>语言支持</td><td class="opt">SDK 目前主要 Go</td><td class="rec">任意语言（代理层无关业务语言）</td></tr>
+          <tr><td>流量覆盖</td><td class="opt">仅经 SDK/网关的流量；直连 TCP 不被纳管</td><td class="rec">iptables 劫持全部 TCP 流量</td></tr>
+          <tr><td>数据面跳数</td><td class="rec">0 跳，业务进程直连对端</td><td class="opt">+2 跳（本地 Envoy + 远端 Envoy）</td></tr>
+          <tr><td>资源开销</td><td class="rec">几乎为零（仅证书内存）</td><td class="opt">每 Pod ~50–150MB 内存 + CPU + 延迟</td></tr>
+          <tr><td>延迟</td><td class="rec">原生 TLS 握手，无代理转发</td><td class="opt">每跳增加 user-space 转发延迟</td></tr>
+          <tr><td>功能广度</td><td class="opt">mTLS + 发现 + 证书轮换（聚焦核心）</td><td class="rec">流量管理/熔断/重试/镜像/故障注入/策略/遥测全套</td></tr>
+          <tr><td>授权策略</td><td class="opt">SPIFFE 校验（南向自动、东西需自实现）</td><td class="rec">AuthorizationPolicy 声明式 L7 授权</td></tr>
+          <tr><td>证书/身份</td><td>Litemesh CA + SPIFFE，自动轮换</td><td>istiod/SPIRE + SDS，自动轮换</td></tr>
+          <tr><td>平台依赖</td><td class="rec">不绑定 K8s，裸机/VM/容器均可</td><td class="opt">强依赖 K8s（Ambient 之外）</td></tr>
+          <tr><td>运维复杂度</td><td class="rec">组件少、心智负担低</td><td class="opt">控制面 + Sidecar 生命周期 + CRD，较重</td></tr>
+          <tr><td>可观测性</td><td class="opt">依赖业务/网关自带指标</td><td class="rec">开箱黄金指标 + 分布式追踪</td></tr>
+          <tr><td>升级方式</td><td class="opt">改代码、重新构建发布</td><td class="rec">代理热升级（仍需滚动重启 Pod）</td></tr>
+        </tbody>
+      </table>
+
+      <h3>本方案的优势</h3>
+      <div class="callout ok">
+        <span class="t">✓ 适合什么</span>
+        <p><strong>① 高性能 / 低开销：</strong>无 Sidecar 进程、无额外网络跳数，数据面是业务进程的原生 TLS 连接，延迟与资源开销最低。<br>
+        <strong>② 部署简单：</strong>不强依赖 K8s，裸机、VM、容器都能跑，组件少、运维心智负担低。<br>
+        <strong>③ 与网关天然融合：</strong>南北向（LiteGate）与东西向（SDK）共用同一套 <code>mtls</code> 标签和 Litemesh CA，身份体系统一。<br>
+        <strong>④ 行为可控透明：</strong>mTLS 在你自己的代码里，握手、校验、错误都直观可调试，没有"魔法劫持"。</p>
+      </div>
+
+      <h3>本方案的劣势</h3>
+      <div class="callout warn">
+        <span class="t">✗ 受限于什么</span>
+        <p><strong>① 有代码侵入：</strong>东西向调用必须引入 SDK 并走 <code>CallService</code>；遗留服务或非 Go 服务接入成本高。<br>
+        <strong>② 语言绑定：</strong>SDK 目前主要面向 Go，多语言生态不如 Sidecar 透明。<br>
+        <strong>③ 覆盖靠自觉：</strong>绕过 SDK 的直连流量不会被纳管，无法像 iptables 那样"强制全量 mTLS"。<br>
+        <strong>④ 功能聚焦：</strong>没有 Istio 那样开箱的流量治理（熔断、重试、镜像、故障注入）、声明式授权策略和统一遥测，需要时得自行补齐。<br>
+        <strong>⑤ 东西向 SPIFFE 校验需自实现：</strong>SDK 的 <code>VerifyConnection</code> 默认只验 CA 链，身份白名单要自己写（见<a href="#ew-caveat" class="inline">第 5 节</a>）。</p>
+      </div>
+
+      <div class="callout">
+        <span class="t">一句话选型</span>
+        <p>追求<strong>极致性能、轻量部署、不想引入 K8s/Sidecar 复杂度</strong>，且服务以 Go 为主、能接受引 SDK —— 本方案更优。需要<strong>多语言透明接入、强制全量纳管、丰富的流量治理与声明式策略</strong>，且已重度使用 K8s —— Istio 更合适。两者也可共存：用本方案做网关南北向 + 核心 Go 服务东西向，Istio 覆盖其余异构工作负载。</p>
+      </div>
+    </section>
+
+    <!-- ===================== 9 ===================== -->
+    <section id="faq">
+      <h2><span class="num">9</span>常见问题</h2>
+
+      <h3><code>spiffe_id</code> 必须写吗？</h3>
+      <p>不必须。只要后端证书的 SPIFFE ID 符合默认格式 <code>spiffe://litemesh.local/ns/&lt;namespace&gt;/sa/&lt;service-name&gt;</code> 就能省略。</p>
+
+      <h3><code>mtls_port</code> 和 <code>port</code> 有什么区别？</h3>
+      <p><code>port</code> 是普通端口，<code>mtls_port</code> 是开启 mTLS 后实际访问的 TLS 端口。常见部署：<code>8080</code> 普通 HTTP、<code>8443</code> mTLS HTTPS。</p>
+
+      <h3><code>insecure_skip_verify</code> 能跳过 mTLS 校验吗？</h3>
+      <p><strong>不能。</strong>mTLS 模式下 LiteGate 会强制执行 Litemesh Root CA 和 SPIFFE 身份校验，即便配了 <code>insecure_skip_verify: true</code> 也只会打印一条警告，不会跳过身份验证。</p>
+
+      <h3>证书会过期吗？需要我手动续期吗？</h3>
+      <p>不需要。LiteGate 每小时检查，剩余寿命低于 1/3 时自动向 Litemesh 重新签发并热加载（上限 30 天、下限 1 小时），失败自动重试 3 次。</p>
+
+      <h3>后端如何只允许 LiteGate 调用？</h3>
+      <p>在后端 <code>tls.Config.VerifyConnection</code> 中检查客户端证书 URI SAN，只放行 LiteGate 的 SPIFFE ID（见 <a href="#backend" class="inline">第 2 节</a>示例）：</p>
+      <div class="code-wrap">
+        <span class="lang">text</span>
+<pre><code>spiffe://litemesh.local/ns/gateway/sa/litegate</code></pre>
+      </div>
+
+      <h3>连接报"cert provider unavailable / client certificate is empty"怎么办？</h3>
+      <p>这是 Fail-Closed 在生效，说明 LiteGate 未能拿到自己的工作负载证书。排查：<code>litemesh.mtls: true</code> 是否设置、<code>spiffe_id</code> 是否非空、LiteGate 能否访问 Litemesh Agent 的 <code>/v1/ca/sign</code> 与 <code>/v1/ca/root</code>。</p>
+
+      <h3>南北和东西需要分别配置吗？</h3>
+      <p>后端<strong>声明只需一次</strong>：注册时带上裸 <code>mtls</code> 标签 + <code>mtls_port</code>。南向由 LiteGate 自动识别，东西向由 SDK 自动识别。两侧的<strong>调用方</strong>各自需要持有自己的 Litemesh 证书（LiteGate 通过 <code>litemesh.mtls/spiffe_id</code> 配置，SDK 通过 <code>WatchCertificate + SetMTLSClient</code>）。</p>
+
+      <h3>用 <code>Meta["mtls"]</code> 或 <code>mtls=true</code> 标签能触发 mTLS 吗？</h3>
+      <p>不能。南北（LiteGate）与东西（SDK）现已统一为<strong>只认裸 <code>mtls</code> 标签</strong>，<code>Meta["mtls"]</code>、<code>mtls=true</code> 等写法都不再生效。请始终使用 <code>Tags: []string{"mtls"}</code>（小写）。</p>
+
+      <h3>东西向调用如何只允许特定服务访问？</h3>
+      <p>SDK 默认只验 CA 链。要做 SPIFFE 身份白名单，需在被调方的服务端 <code>VerifyConnection</code> 检查客户端证书 URI SAN（同<a href="#backend" class="inline">第 2 节</a>的 <code>allowClientSPIFFE</code>），或在调用方 <code>BuildDynamicTLSConfig</code> 的 <code>VerifyConnection</code> 中校验对端服务端身份。</p>
+    </section>
+
+    <div class="footer">
+      LiteGate × Litemesh mTLS 使用指南 · 南北（LiteGate）+ 东西（SDK）双向认证均由 Litemesh CA 提供 · 配套 Markdown 版见 <code>docs/zh-cn/user/07-discovery/litemesh-mtls.md</code>
+    </div>
+  </main>
+</div>
+
+<script>
+// Scroll-spy: highlight active TOC entry
+const links = Array.from(document.querySelectorAll('.toc a'));
+const map = {};
+links.forEach(a => {
+  const id = a.getAttribute('href').slice(1);
+  const el = document.getElementById(id);
+  if (el) map[id] = a;
+});
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const a = map[e.target.id];
+      if (a) a.classList.add('active');
+    }
+  });
+}, { rootMargin: '-10% 0px -80% 0px', threshold: 0 });
+Object.keys(map).forEach(id => {
+  const el = document.getElementById(id);
+  if (el) obs.observe(el);
+});
+</script>
+</body>
+</html>

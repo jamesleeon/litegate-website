@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate Service Discovery &amp; Dynamic Onboarding | Tag &amp; Go</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.toc .group { font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); margin: 18px 0 6px 10px; font-weight: 600; }
+.toc a.ext::after { content: "↗"; font-size: 10px; margin-left: 5px; color: var(--text3); opacity: .8; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card, .panel, .mini-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3, .panel h3, .mini-card h3 { margin-top: 0; }
+.flow { display: flex; align-items: stretch; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+.flow .card { flex: 1 1 150px; }
+.steps { counter-reset: step; list-style: none; margin-left: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.steps li, .step { position: relative; padding: 14px 14px 14px 42px; margin-bottom: 0; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); }
+.steps li::before, .step .num { content: counter(step); position: absolute; left: 12px; top: 14px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.step .num { position: absolute; }
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+.taglist code { display: inline-block; margin: 2px 2px 4px 0; }
+.layer { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 12px; align-items: start; margin: 14px 0; }
+.layer .badge { justify-content: center; text-align: center; margin-top: 6px; }
+/* ── diagram extensions ─────────────────────────────── */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin: 20px 0 4px; }
+.stat { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px 12px; text-align: center; }
+.stat .v { font-size: 21px; font-weight: 600; color: var(--accent); letter-spacing: -.5px; line-height: 1.1; }
+.stat .l { font-size: 11.5px; color: var(--text2); margin-top: 4px; }
+.rail { position: relative; margin: 22px 0 24px; padding-left: 30px; }
+.rail::before { content: ""; position: absolute; left: 10px; top: 8px; bottom: 8px; width: 2px; background: var(--border2); }
+.rail .node { position: relative; margin-bottom: 16px; }
+.rail .node:last-child { margin-bottom: 0; }
+.rail .node::before { content: ""; position: absolute; left: -25px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-shadow: 0 0 0 1px var(--border2); }
+.rail .node .k { font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px; color: var(--accent); font-weight: 600; }
+.rail .node h4 { font-size: 14px; margin: 1px 0 4px; font-weight: 600; }
+.rail .node p { font-size: 12.5px; color: var(--text2); margin: 0; }
+.rail .node.green::before { background: var(--green); }
+.rail .node.green .k { color: var(--green); }
+.layercard { border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 14px 16px; margin: 14px 0; }
+.layercard.a { background: var(--accent-bg); }
+.layercard.b { background: var(--green-bg); }
+.layercard .ttl { font-weight: 600; font-size: 13.5px; margin-bottom: 4px; }
+.layercard .sub { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two, .steps, .layer, .stats { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate Discovery</div>
+    <div class="brand-sub">Service Discovery &amp; Onboarding</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← Docs Home</a>
+    <a href="#overview">Overview</a>
+    <a href="#two-layers">Two Tag Layers</a>
+    <a href="#sources">Five Sources</a>
+    <a href="#magic">Magic Ingress</a>
+    <a href="#timeline">Register = Online</a>
+    <a href="#priority">Steering &amp; Priority</a>
+    <a href="#examples">Registration Examples</a>
+    <div class="group">Read Next</div>
+    <a class="ext" href="litegate_backend_tag_system.html">Backend Tag System</a>
+    <a class="ext" href="litegate_certificate_lifecycle.html">Certificate Lifecycle</a>
+    <a class="ext" href="litemesh_mtls_guide.html">Litemesh mTLS</a>
+    <a class="ext" href="litegate_complete_introduction.html">Complete Introduction</a>
+    <div class="group">Language</div>
+    <a class="ext" href="../zh-cn/litegate_service_discovery.html">中文版</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>Tag &amp; go: zero-config from registration to HTTPS</h1>
+      <p class="lead">In the LiteGate ecosystem, a microservice only has to "register with tags" to complete the full loop — from DNS resolution and route generation to HTTPS certificate issuance. Whether tags come from Docker labels, Consul tags, Litemesh/LiteDeploy meta, or a Discovery agent, the gateway generates entries from the same set of <code>litegate.*</code> tags.</p>
+      <div class="badges"><span class="badge">5 sources</span><span class="badge green">Magic Ingress</span><span class="badge">Two tag layers</span><span class="badge amber">Physical steering</span></div>
+      <div class="stats">
+        <div class="stat"><div class="v">~0.5s</div><div class="l">in-memory route live</div></div>
+        <div class="stat"><div class="v">~1s</div><div class="l">internal DNS ready</div></div>
+        <div class="stat"><div class="v">~60s</div><div class="l">HTTPS fully ready</div></div>
+        <div class="stat"><div class="v">0 lines</div><div class="l">of YAML to write</div></div>
+      </div>
+    </div>
+
+    <section id="two-layers">
+      <h2><span class="num">1</span>Core concept: two tag layers, distinct roles</h2>
+      <p>When registering a service you place tags in <strong>two different places</strong>. One layer defines "how to identify and route to me"; the other declares "which shard / tenant I belong to".</p>
+      <div class="layercard a">
+        <div class="ttl">Layer A · Service-definition tags (on Service Meta)</div>
+        <div class="sub">Tell the gateway how to identify me, how to authenticate, how to route to me. Set once, applies to all instances of the service. The gateway reads these and generates routes.</div>
+        <p class="taglist"><code>litegate.ingress.host</code><code>litegate.ingress.path_prefix</code><code>litegate.middleware.auth</code><code>litegate.router.sid</code><code>litegate.service.timeout</code></p>
+      </div>
+      <div style="text-align:center;color:var(--text3);font-size:13px;margin:-2px 0 6px;">↓ gateway reads them and generates routes</div>
+      <div class="layercard b">
+        <div class="ttl">Layer B · Instance-filter tags (on each instance's Meta)</div>
+        <div class="sub">Tell the gateway which shard / tenant / cluster I belong to. Each instance tags its own group, used for runtime RouteSelector filtering — these generate no routes.</div>
+        <p class="taglist"><code>sid=cluster-01</code><code>env=prod</code><code>tenant=corp_abc</code></p>
+      </div>
+      <div class="callout"><span class="t">The key distinction</span><p>Layer A's <code>litegate.router.sid = cluster-01</code> means "what I'm looking for"; Layer B's <code>sid = cluster-01</code> means "what I am". When the service definition sets <code>router.sid=cluster-01</code>, the gateway routes only to instances with <code>sid=cluster-01</code>, skipping other shards entirely. Both tag kinds coexist in one Meta object and are processed separately. See <a class="inline" href="litegate_backend_tag_system.html">Backend Tag System</a>.</p></div>
+    </section>
+
+    <section id="sources">
+      <h2><span class="num">2</span>Five discovery sources, one tag set</h2>
+      <p>There are five backend discovery sources: <code>litemesh</code>, <code>litedeploy</code>, <code>docker</code>, <code>consul</code> and <code>discovery</code>. Once inside LiteGate they are all normalized to the same <code>ServiceEndpoint</code>, then driven by the same <code>litegate.*</code> tags for routing, upstream pools, auth, IDS, mTLS and observability.</p>
+      <table>
+        <thead><tr><th>Source</th><th>Config value</th><th>Connects to</th><th>Update mode</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td>Litemesh</td><td><code>provider: litemesh</code></td><td>Litemesh Agent</td><td>SSE push</td><td>Already on Litemesh, need mTLS, frequent state changes</td></tr>
+          <tr><td>LiteDeploy</td><td><code>provider: litedeploy</code></td><td>LiteDeploy Agent or cluster</td><td>SSE push</td><td>Releases, instances and service meta managed by LiteDeploy</td></tr>
+          <tr><td>Docker</td><td><code>provider: docker</code></td><td>Docker Daemon socket</td><td>Docker event stream</td><td>Single-host Docker or Swarm; auto-onboard via container labels</td></tr>
+          <tr><td>Consul</td><td><code>provider: consul</code></td><td>Consul Agent / Catalog</td><td>Catalog sync</td><td>Existing Consul registry and health checks</td></tr>
+          <tr><td>Discovery</td><td><code>provider: discovery</code></td><td><code>camodns_discovery</code> or compatible agent</td><td>Blocking query</td><td>Aggregating heterogeneous registries (Docker/K8s/Nacos/Etcd/Litemesh together)</td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn"><span class="t">About static / external / hybrid</span><p>These are not business discovery sources: <code>static</code> is a fixed upstream (no discovery at all); <code>external</code> and <code>hybrid</code> are internal <code>upstream_type</code> names — the <code>discovery</code> source maps to <code>external</code> at runtime, and Consul + Discovery together map to <code>hybrid</code>.</p></div>
+      <div class="callout"><span class="t">What "discovery" precisely means</span><p><code>provider: discovery</code> (mapping to <code>upstream_type: external</code>) specifically refers to LiteGate connecting over HTTP blocking query to a <code>camodns_discovery</code>-style aggregation layer compatible with <code>/v1/catalog/services</code> and <code>/v1/health/service/:service_name</code>, unifying heterogeneous registries into a service catalog LiteGate understands. It is not a sixth business source.</p></div>
+    </section>
+
+    <section id="magic">
+      <h2><span class="num">3</span>Magic Ingress: Tag &amp; Forget</h2>
+      <p>Traditionally, putting a service online means six steps: deploy, configure routes, buy a domain, set public DNS, request a certificate, set internal DNS. With Magic Ingress you do one thing: <strong>deploy a tagged instance</strong>, e.g. <code>litegate.ingress.host=order.example.com</code> — the rest is automatic.</p>
+      <div class="rail">
+        <div class="node green"><div class="k">The only manual step</div><h4>Register with tags</h4><p>When starting via the Litemesh SDK (or Sidecar / Docker label / Consul registration), attach the magic tags such as <code>litegate.ingress.host</code>.</p></div>
+        <div class="node"><div class="k">Discovery</div><h4>CatalogLoader watches in real time</h4><p>Detects the new service instantly, parses the magic tags, builds a virtual <code>SiteConfig</code> in memory on the fly, and updates the Router to take over that domain's traffic immediately.</p></div>
+        <div class="node"><div class="k">Public reachability</div><h4>DDNS auto-resolution</h4><p>Detects the gateway's public egress IP and calls your DNS provider API (Aliyun / Cloudflare, etc.) to point the domain's A record at the gateway's public IP.</p></div>
+        <div class="node"><div class="k">Certificate</div><h4>AutoCert auto-issuance</h4><p>Checks Litemesh KV for an existing valid certificate; if none, acquires a cluster distributed lock, requests one from Let's Encrypt, saves it to cluster KV, and all online nodes sync and load it instantly.</p></div>
+        <div class="node"><div class="k">Internal reachability</div><h4>Split-horizon DNS</h4><p>Triggers a <code>dns_update</code> webhook to update internal DNS, pointing the domain at the gateway's internal IP. Internal users use the same domain and same valid certificate.</p></div>
+      </div>
+      <div class="callout ok"><span class="t">Net result</span><p>Zero config maintenance (no nginx.conf / gateway.yaml), zero ops (no manual resolution, no buying/uploading certs, no renewals), and a consistent internal/external experience (same domain, same HTTPS). Certificate details in <a class="inline" href="litegate_certificate_lifecycle.html">Certificate Lifecycle</a>.</p></div>
+    </section>
+
+    <section id="timeline">
+      <h2><span class="num">4</span>Register = online: expected timeline</h2>
+      <p>Taking a payment microservice registering with a <code>litegate.ingress.host</code> tag as an example, the real timeline from SDK call to HTTPS fully ready:</p>
+      <table>
+        <thead><tr><th>Time</th><th>Event</th><th>State</th></tr></thead>
+        <tbody>
+          <tr><td><code>T + 0s</code></td><td>Service calls the SDK and registers</td><td>🚀 start</td></tr>
+          <tr><td><code>T + 0.5s</code></td><td>LiteGate perceives via SSE, builds the in-memory route</td><td>🌐 internal HTTP reachable</td></tr>
+          <tr><td><code>T + 1s</code></td><td>Internal DNS (CamoDNS) resolution takes effect</td><td>📡 domain ready</td></tr>
+          <tr><td><code>T + 60s</code></td><td>Certificate issued and broadcast across the cluster</td><td>🔒 HTTPS fully ready</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><span class="t">Why this architecture is solid</span><p><strong>Decoupled</strong>: app developers don't need to know gateway config, only their own domain. <strong>Highly available</strong>: if a LiteGate node dies, internal DNS fails over to another via heartbeat. <strong>Zero-touch</strong>: certificates, resolution and routing are fully automatic — truly "Architecture as Operations".</p></div>
+    </section>
+
+    <section id="priority">
+      <h2><span class="num">5</span>Steering &amp; priority</h2>
+      <p>When physical steering (<code>token_steering</code>) is enabled, the rich metadata decoded from a token can change the routing target at runtime, overriding the static shard tagged at registration.</p>
+      <div class="code-wrap"><span class="lang">priority</span><pre><code>RouteSelector returned dynamically by SaaS / Session   ← highest priority (overridden by identity at runtime)
+    ↓ if absent, falls back to
+litegate.router.sid / router.* static tags             ← default shard set at registration</code></pre></div>
+      <p>This means one set of gateway route rules can support elastic, per-second multi-tenant physical isolation: login state decides which cluster to route to, with no need to hardcode a static <code>sid</code> at registration. Identity decisions are detailed in the <a class="inline" href="ids_development_guide.html">IDS Development Guide</a>.</p>
+    </section>
+
+    <section id="examples">
+      <h2><span class="num">6</span>Registration examples</h2>
+      <div class="two">
+        <div class="code-wrap"><span class="lang">consul json</span><pre><code>{
+  "Name": "lockd",
+  "Tags": ["raft", "dist-lock", "v1"],
+  "Port": 8080,
+  "Meta": {
+    "litegate.ingress.host": "lockd.example.com",
+    "litegate.middleware.auth": "token_steering",
+    "litegate.router.sid": "cluster-01",
+    "litegate.service.timeout": "30s",
+    "sid": "cluster-01",
+    "cluster": "prod"
+  }
+}</code></pre></div>
+        <div class="code-wrap"><span class="lang">litemesh kv</span><pre><code>litegate.ingress.host        lockd.example.com
+litegate.middleware.auth     token_steering
+litegate.router.sid          cluster-01
+litegate.service.timeout     30s
+litegate.observability.log   info
+sid                          cluster-01   # instance-side
+cluster                      prod         # instance-side</code></pre></div>
+      </div>
+      <div class="callout"><span class="t">Mind the distinction</span><p>Above, <code>litegate.*</code> prefixed keys are <strong>service-definition</strong> tags (Layer A); the trailing <code>sid</code> / <code>cluster</code> are <strong>instance-side</strong> tags (Layer B). Both coexist in one Meta and are processed separately. For hands-on Docker provider config, see the Docker Service Discovery Deployment Guide.</p></div>
+    </section>
+
+    <div class="footer">LiteGate Docs · <a class="inline" href="litegate_complete_introduction.html">Complete Introduction</a> · <a class="inline" href="litegate_backend_tag_system.html">Tag System</a> · <a class="inline" href="litegate_architecture.html">Architecture</a> · <a class="inline" href="../zh-cn/litegate_service_discovery.html">中文版</a></div>
+  </main>
+</div>
+
+
+<script>
+(function () {
+  const toc = document.querySelector('.toc');
+  if (!toc) return;
+
+  const links = Array.from(toc.querySelectorAll('a[href^="#"]'));
+  const items = links.map((link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    return { link, target: document.getElementById(id) };
+  }).filter((item) => item.target);
+
+  if (!items.length) return;
+
+  let activeLink = null;
+  let ticking = false;
+
+  function setActive(item) {
+    if (!item || activeLink === item.link) return;
+    links.forEach((link) => link.classList.remove('active'));
+    item.link.classList.add('active');
+    activeLink = item.link;
+
+    const tocRect = toc.getBoundingClientRect();
+    const linkRect = item.link.getBoundingClientRect();
+    if (linkRect.top < tocRect.top + 16 || linkRect.bottom > tocRect.bottom - 16) {
+      item.link.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function currentItem() {
+    if (window.scrollY < 100) return items[0];
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+
+    for (const item of items) {
+      if (item.target.offsetParent === null && item.target.id !== 'overview') continue;
+      const rect = item.target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight * 0.88;
+      if (!visible) continue;
+
+      const distance = Math.abs(rect.top - anchor);
+      if (distance < bestDistance) {
+        best = item;
+        bestDistance = distance;
+      }
+    }
+
+    if (!best) {
+      best = items[0];
+      for (const item of items) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= anchor) best = item;
+      }
+    }
+
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      best = items[items.length - 1];
+    }
+    return best;
+  }
+
+  function updateActive() {
+    ticking = false;
+    setActive(currentItem());
+  }
+
+  function requestUpdate() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateActive);
+    }
+  }
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('hashchange', requestUpdate);
+  links.forEach((link) => link.addEventListener('click', () => window.setTimeout(requestUpdate, 80)));
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', requestUpdate, { once: true });
+  } else {
+    requestUpdate();
+  }
+})();
+</script>
+</body>
+</html>

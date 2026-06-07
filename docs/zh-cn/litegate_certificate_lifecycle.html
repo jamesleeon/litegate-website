@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate 证书生命周期 | 自动 HTTPS 与按需签发</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card, .panel, .mini-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3, .panel h3, .mini-card h3 { margin-top: 0; }
+.flow { display: flex; align-items: stretch; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+.flow .card { flex: 1 1 150px; }
+.steps { counter-reset: step; list-style: none; margin-left: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.steps li, .step { position: relative; padding: 14px 14px 14px 42px; margin-bottom: 0; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); }
+.steps li::before, .step .num { content: counter(step); position: absolute; left: 12px; top: 14px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.step .num { position: absolute; }
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two, .steps { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate HTTPS</div>
+    <div class="brand-sub">证书生命周期</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← 文档首页</a>
+    <a href="#overview">概览</a>
+    <a href="#why">为什么单独说明</a>
+    <a href="#paths">三条证书路径</a>
+    <a href="#handshake">一次握手</a>
+    <a href="#challenge">ACME 校验</a>
+    <a href="#cluster">多节点共享</a>
+    <a href="#renew">续期与热加载</a>
+    <a href="#security">安全边界</a>
+    <a href="#nginx">和 Nginx 的差异</a>
+    <a href="#config">最小配置</a>
+    <a href="litegate_complete_introduction.html">完整介绍</a>
+    <a href="../en/litegate_certificate_lifecycle.html">English version</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>让用户忘记证书文件，把 HTTPS 变成网关的生命周期能力</h1>
+      <p class="lead">LiteGate 的目标不是让用户绕过证书规则，而是让用户不再手动申请、拷贝、续期、reload 证书。用户声明域名、DNS provider 或授权策略，LiteGate 在运行时完成证书查找、签发、存储、续期和热加载。</p>
+      <div class="badges"><span class="badge">自动 HTTPS</span><span class="badge green">On-Demand TLS</span><span class="badge">多节点存储</span><span class="badge amber">ACME</span></div>
+    </div>
+
+    <section id="why">
+      <h2><span class="num">1</span>为什么这值得单独写一篇</h2>
+      <p>在传统反向代理里，证书通常是一个外部前置动作：先用 certbot、acme.sh 或运维脚本拿到 <code>.pem</code>/<code>.key</code>，再把文件放到指定目录，最后 reload 代理进程。</p>
+      <p>LiteGate 把这件事收进入口层：TLS 握手通过 SNI 查找证书，缺失时可以触发按需签发；签发结果写入权威存储并同步到本地；续期、证书链校验、多节点锁、SaaS 域名授权都在同一个证书管理器里完成。</p>
+      <div class="callout ok"><span class="t">准确的产品表达</span><p>不是“用户不需要域名所有权”，而是“用户不需要管理证书文件”。域名解析、DNS API 凭证、HTTP-01 端口或 SaaS 授权策略仍然是安全边界的一部分。</p></div>
+    </section>
+
+    <section id="paths">
+      <h2><span class="num">2</span>三条证书路径</h2>
+      <div class="grid">
+        <div class="card"><h3>已有证书加载</h3><p><code>TLSManager</code> 扫描证书目录，读取 <code>.pem</code>/<code>.crt</code> 和 <code>.key</code>，按 CommonName 与 SAN 建立内存索引，支持通配符证书。</p></div>
+        <div class="card"><h3>启动时确保证书</h3><p>配置了静态 <code>dns_providers</code> 时，<code>AutoCertManager</code> 会在启动和周期检查中确保证书存在、SAN 正确、证书链有效，并在需要时申请或续期。</p></div>
+        <div class="card"><h3>首次访问按需签发</h3><p>开启 <code>on_demand</code> 后，如果握手时没有命中的证书，LiteGate 会先做域名授权，再通过 ACME 为这个 SNI 域名签发证书。</p></div>
+      </div>
+    </section>
+
+    <section id="handshake">
+      <h2><span class="num">3</span>一次 HTTPS 握手内部发生了什么</h2>
+      <ol class="steps">
+        <li><strong>读取 SNI</strong><br>客户端发起 TLS 握手，LiteGate 从 ClientHello 读取 <code>ServerName</code>。</li>
+        <li><strong>规范化域名</strong><br>域名转小写、做 IDNA 规范化，并拒绝非法 hostname。</li>
+        <li><strong>查找内存证书</strong><br>先精确匹配，再按一层通配符规则匹配 <code>*.example.com</code>。</li>
+        <li><strong>按需兜底</strong><br>仍未命中时调用 On-Demand handler，授权通过后申请证书并放入内存缓存。</li>
+      </ol>
+      <div class="code-wrap"><span class="lang">flow</span><pre><code>ClientHello(SNI)
+  -> TLSManager.GetCertificate
+  -> exact / wildcard memory match
+  -> OnDemandHandler
+  -> ACME obtain
+  -> storage + local disk
+  -> memory cache
+  -> handshake continues</code></pre></div>
+    </section>
+
+    <section id="challenge">
+      <h2><span class="num">4</span>ACME 校验如何处理</h2>
+      <div class="two">
+        <div class="card"><h3>HTTP-01</h3><p>LiteGate 在 HTTP 路由最前面拦截 <code>/.well-known/acme-challenge/</code>，直接返回 ACME token。使用这条路径时，公网 80 端口需要能到达 LiteGate。</p></div>
+        <div class="card"><h3>DNS-01</h3><p>配置 DNS provider 后，LiteGate 可以通过 DNS API 写入校验记录，适合通配符证书和 80 端口不可开放的环境。</p></div>
+      </div>
+      <p>如果启用了 DNS 更新，LiteGate 还可以在申请前同步域名解析，避免“服务已经注册，但 DNS 还没指向网关”的上线断点。</p>
+    </section>
+
+    <section id="cluster">
+      <h2><span class="num">5</span>多节点时证书不会各自为政</h2>
+      <p>证书可以落在本地磁盘，也可以使用 Consul 或 Litemesh 作为权威存储。权威存储成功后，LiteGate 会把证书镜像到本地证书目录，供 TLSManager 快速加载。</p>
+      <table>
+        <thead><tr><th>能力</th><th>作用</th></tr></thead>
+        <tbody>
+          <tr><td>分布式锁</td><td>多个 LiteGate 节点同时遇到同一域名时，只有一个节点负责向 CA 申请，其他节点等待并读取结果。</td></tr>
+          <tr><td>pending 状态</td><td>Litemesh 存储可标记正在申请的域名，降低脑裂或锁竞争导致的重复签发风险。</td></tr>
+          <tr><td>确定性延迟</td><td>申请和续期前加入抖动，避免集群在同一毫秒集中冲击 CA 或 DNS provider。</td></tr>
+          <tr><td>本地镜像</td><td>权威存储用于一致性，本地磁盘用于快速加载和文件变化监听。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="renew">
+      <h2><span class="num">6</span>续期与热加载</h2>
+      <p>LiteGate 周期性检查静态证书和动态域名证书。检查内容包括证书链完整性、过期时间、SAN 是否符合预期，以及 On-Demand 域名是否仍然被授权。</p>
+      <p>签发或续期成功后，证书写入权威存储并同步到本地目录，然后触发 TLSManager 重新加载。外部文件变化也会被证书目录 watcher 捕获并做防抖 reload。</p>
+      <div class="callout"><span class="t">用户真正少做了什么</span><p>不需要手动复制 PEM/KEY，不需要写 reload 脚本，不需要在每个节点重复申请，不需要单独维护证书过期巡检。</p></div>
+    </section>
+
+    <section id="security">
+      <h2><span class="num">7</span>安全边界仍然清晰</h2>
+      <div class="grid">
+        <div class="card"><h3>域名授权</h3><p>On-Demand 域名必须来自已定义站点、Litemesh KV 或 SaaS Ask URL。全局通配站点不会直接授权任意域名。</p></div>
+        <div class="card"><h3>Ask URL</h3><p>Ask 默认要求 HTTPS。需要内网 HTTP 时必须显式开启 <code>allow_insecure_ask</code>；也可以配置 <code>ask_ca</code> 校验私有 CA。</p></div>
+        <div class="card"><h3>账户密钥</h3><p><code>storage_secret</code> 可用于加密 ACME account key，推荐在共享存储场景启用，长度至少 32 字节。</p></div>
+      </div>
+    </section>
+
+    <section id="nginx">
+      <h2><span class="num">8</span>和 Nginx 的差异</h2>
+      <table>
+        <thead><tr><th>问题</th><th>Nginx 常见做法</th><th>LiteGate 做法</th></tr></thead>
+        <tbody>
+          <tr><td>证书来源</td><td>通常由 certbot/acme.sh/脚本先生成文件</td><td>网关运行时可直接申请、保存和加载</td></tr>
+          <tr><td>首次访问新域名</td><td>通常需要预先配置 server block 和证书</td><td>SNI 未命中时可走授权后的 On-Demand TLS</td></tr>
+          <tr><td>多节点</td><td>需要额外同步证书文件和 reload 编排</td><td>Consul/Litemesh 存储、分布式锁、本地镜像一起工作</td></tr>
+          <tr><td>服务发现</td><td>域名、路由、证书通常分属不同工具链</td><td>服务标签、Host、DNS、证书可以被同一入口模型串起来</td></tr>
+          <tr><td>续期</td><td>外部定时任务续期后触发 reload</td><td>证书管理器周期检查、续期、保存并触发热加载</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="config">
+      <h2><span class="num">9</span>用户最少需要配置什么</h2>
+      <div class="two">
+        <div class="card"><h3>公网固定域名</h3><pre><code>auto_cert:
+  enabled: true
+  email: ops@example.com
+  renew_days: 30
+  dns_providers:
+    - name: cloudflare
+      enabled: true
+      domains: ["app.example.com"]
+      provider_config:
+        api_token: "${CF_API_TOKEN}"</code></pre></div>
+        <div class="card"><h3>SaaS 按需域名</h3><pre><code>auto_cert:
+  enabled: true
+  email: ops@example.com
+  on_demand:
+    enabled: true
+    ask: "https://control.example.com/tls/ask"
+    saas_template_site: "tenant-template"
+  storage_secret: "${AUTOCERT_STORAGE_SECRET}"</code></pre></div>
+      </div>
+      <div class="callout warn"><span class="t">上线前检查</span><p>DNS API 凭证、80/443 端口、CA rate limit、Ask 服务可用性、共享存储权限和 <code>storage_secret</code> 管理方式，仍然需要作为生产发布清单的一部分。</p></div>
+    </section>
+
+    <div class="footer">LiteGate 文档 · <a class="inline" href="../en/litegate_certificate_lifecycle.html">English version</a></div>
+  </main>
+</div>
+
+<script>
+(function () {
+  const toc = document.querySelector('.toc');
+  if (!toc) return;
+
+  const links = Array.from(toc.querySelectorAll('a[href^="#"]'));
+  const items = links.map((link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    return { link, target: document.getElementById(id) };
+  }).filter((item) => item.target);
+
+  if (!items.length) return;
+
+  let activeLink = null;
+  let ticking = false;
+
+  function setActive(item) {
+    if (!item || activeLink === item.link) return;
+    links.forEach((link) => link.classList.remove('active'));
+    item.link.classList.add('active');
+    activeLink = item.link;
+
+    const tocRect = toc.getBoundingClientRect();
+    const linkRect = item.link.getBoundingClientRect();
+    if (linkRect.top < tocRect.top + 16 || linkRect.bottom > tocRect.bottom - 16) {
+      item.link.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function currentItem() {
+    if (window.scrollY < 100) return items[0];
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+
+    for (const item of items) {
+      if (item.target.offsetParent === null && item.target.id !== 'overview') continue;
+      const rect = item.target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight * 0.88;
+      if (!visible) continue;
+
+      const distance = Math.abs(rect.top - anchor);
+      if (distance < bestDistance) {
+        best = item;
+        bestDistance = distance;
+      }
+    }
+
+    if (!best) {
+      best = items[0];
+      for (const item of items) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= anchor) best = item;
+      }
+    }
+
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      best = items[items.length - 1];
+    }
+    return best;
+  }
+
+  function updateActive() {
+    ticking = false;
+    setActive(currentItem());
+  }
+
+  function requestUpdate() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateActive);
+    }
+  }
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('hashchange', requestUpdate);
+  links.forEach((link) => link.addEventListener('click', () => window.setTimeout(requestUpdate, 80)));
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', requestUpdate, { once: true });
+  } else {
+    requestUpdate();
+  }
+})();
+</script>
+</body>
+</html>

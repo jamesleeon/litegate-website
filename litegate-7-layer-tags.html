@@ -535,7 +535,7 @@ traefik.http.services.api.loadbalancer.server.port=8080</code></pre>
                     </tr>
                     <tr>
                         <td><strong>L3 Router</strong></td>
-                        <td><code>rule</code> <code>priority</code> <code>gray_weight</code> <code>lb_policy</code><br><code>selector.*</code> <code>meta.*</code> <code>methods</code> <code>headers.*</code></td>
+                        <td><code>rule</code> <code>priority</code> <code>gray_weight</code> <code>lb_policy</code><br><code>router.selector.*</code> <code>router.meta.*</code> <code>methods</code> <code>headers.*</code></td>
                         <td>既控制请求匹配，也控制灰度、分片、实例筛选、路径改写和流量策略。</td>
                         <td>非常强，已经不只是 router，而是 traffic policy layer。</td>
                     </tr>

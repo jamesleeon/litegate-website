@@ -631,7 +631,7 @@
         <div class="panel">
             <p style="margin:0;font-size:1.06rem;color:var(--ink-soft);">
                 <strong style="color:var(--ink);">LiteGate 是一个把站点托管、七层代理、四层代理、动态服务发现、自动 HTTPS 和接入治理整合在一起的统一入口层。</strong>
-                它既能从本地 YAML 直接起站，也能接入 Litemesh、Consul 或外部 discovery agent，把动态服务暴露成统一入口，同时继续承接证书、鉴权和入口治理。
+                它既能从本地 YAML 直接起站，也能接入 Litemesh、LiteDeploy、Docker、Consul 或 CamoDNS Discovery，把动态服务暴露成统一入口，同时继续承接证书、鉴权和入口治理。
             </p>
         </div>
     </section>
@@ -665,12 +665,13 @@
             </div>
             <div class="card">
                 <h3>动态发现</h3>
-                <p>支持静态 upstream、Consul、Litemesh 和兼容 blocking query 的外部发现层，适合从固定到动态逐步演进。</p>
+                <p>后端发现源明确分为 Litemesh、LiteDeploy、Docker、Consul 和 Discovery。Discovery 负责对接 CamoDNS Discovery 这类 blocking query 聚合层。</p>
                 <div class="tag-row">
-                    <span class="tag tag-warm">Static</span>
-                    <span class="tag tag-warm">Consul</span>
                     <span class="tag tag-warm">Litemesh</span>
-                    <span class="tag">External</span>
+                    <span class="tag tag-warm">LiteDeploy</span>
+                    <span class="tag">Docker</span>
+                    <span class="tag">Consul</span>
+                    <span class="tag">Discovery</span>
                 </div>
             </div>
             <div class="card">
@@ -728,7 +729,7 @@
                         </div>
                         <div class="node node-blue">
                             <strong>代理与服务发现</strong>
-                            <small>HTTP 代理、L4 代理、负载均衡、静态 upstream、Consul / Litemesh / External Discovery。</small>
+                            <small>HTTP 代理、L4 代理、负载均衡、静态 upstream、Litemesh / LiteDeploy / Docker / Consul / Discovery。</small>
                         </div>
                         <div class="node node-warm">
                             <strong>证书与入口治理</strong>
@@ -758,8 +759,45 @@
                     </div>
                     <div class="node node-warm">
                         <strong>服务发现与外围依赖</strong>
-                        <small>Litemesh、Consul、CamoDNS Discovery、DNS Provider、OIDC Provider、Redis</small>
+                        <small>Litemesh、LiteDeploy、Docker Engine、Consul、CamoDNS Discovery、DNS Provider、OIDC Provider、Redis</small>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-head">
+            <span class="eyebrow">Discovery Model</span>
+            <h2>服务发现不是五套路由模型，而是五种来源进入同一套标签执行面</h2>
+            <p>LiteGate 只把 provider 当作实例来源；路由、上游池、认证、IDS、mTLS 和观测继续由统一标签语义驱动。</p>
+        </div>
+        <div class="grid-3">
+            <div class="card">
+                <h3>直接发现源</h3>
+                <p>Litemesh、LiteDeploy、Docker 和 Consul 由 LiteGate 直接连接。它们分别通过 SSE、Docker event stream 或 Catalog 同步更新实例。</p>
+                <div class="tag-row">
+                    <span class="tag tag-warm">litemesh</span>
+                    <span class="tag tag-warm">litedeploy</span>
+                    <span class="tag">docker</span>
+                    <span class="tag">consul</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Discovery 聚合源</h3>
+                <p><code>provider: discovery</code> 背后连接 CamoDNS Discovery。它通过 blocking query 暴露服务目录和健康实例，把异构注册中心先聚合成统一发现层。</p>
+                <div class="tag-row">
+                    <span class="tag tag-blue">camodns_discovery</span>
+                    <span class="tag">blocking query</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>统一标签消费</h3>
+                <p>无论标签来自 Docker labels、Consul tags、Litemesh meta 还是 discovery agent，最终都会进入同一个 <code>litegate.*</code> 标签解析和运行时模型。</p>
+                <div class="tag-row">
+                    <span class="tag tag-accent">litegate.ingress.*</span>
+                    <span class="tag tag-accent">litegate.upstream.*</span>
+                    <span class="tag">litegate.middleware.*</span>
                 </div>
             </div>
         </div>
@@ -777,12 +815,16 @@
                 <p>适合静态站点、SPA、少量固定 upstream 场景。配置来源可以是本地 YAML，也可以是 Consul / Litemesh KV。这一层已经能覆盖站点托管、反向代理、L4 代理、证书、鉴权和基础治理。</p>
             </div>
             <div class="flow-item">
-                <h3>方式 2：LiteGate + litemesh-registrator-go</h3>
-                <p>适合 Docker / Swarm 动态接入。注册器会监听 Docker 事件，把带有 <code>litemesh.register=true</code> 的容器或服务自动注册到 Litemesh，并把 <code>litegate.*</code> 标签转成服务元数据，供 LiteGate 动态发现和路由使用。</p>
+                <h3>方式 2：LiteGate 直连 Docker / Consul</h3>
+                <p>适合已经有清晰实例来源，但不想再加中间注册器的场景。Docker provider 直接监听容器事件和 labels；Consul provider 直接读取 Catalog 和健康状态。</p>
             </div>
             <div class="flow-item">
-                <h3>方式 3：LiteGate + camodns_discovery</h3>
-                <p>适合已有异构注册中心的环境。CamoDNS Discovery 暴露 <code>/v1/catalog/services</code> 和 <code>/v1/health/service/:service_name</code> 这类 blocking query 接口，把 Docker、K8s、Nacos、Etcd、Litemesh 聚合成 LiteGate 可消费的统一发现层。</p>
+                <h3>方式 3：LiteGate + Litemesh / LiteDeploy</h3>
+                <p>适合服务发布、服务注册和实例元数据已经由 Litemesh 或 LiteDeploy 管理的环境。LiteGate 消费推送式服务目录，并用同一套 <code>litegate.*</code> 标签生成路由和上游池。</p>
+            </div>
+            <div class="flow-item">
+                <h3>方式 4：LiteGate + camodns_discovery</h3>
+                <p>适合已有异构注册中心的环境。CamoDNS Discovery 暴露 <code>/v1/catalog/services</code> 和 <code>/v1/health/service/:service_name</code> 这类 blocking query 接口，把 Docker、K8s、Nacos、Etcd、Litemesh 聚合成 LiteGate 可消费的 Discovery 源。</p>
             </div>
         </div>
     </section>
@@ -818,20 +860,20 @@
                 </tr>
                 <tr>
                     <td>Docker / Swarm 动态服务</td>
-                    <td class="depends">LiteGate + Litemesh</td>
-                    <td>适合容器实例频繁变动、需要自动注册和自动切换的场景。</td>
+                    <td class="depends">LiteGate Docker Provider</td>
+                    <td>适合直接从 Docker Daemon 或 Swarm 服务读取实例与 labels 的场景。</td>
                     <td>服务上线更快，入口层无需手工维护实例列表。</td>
                 </tr>
                 <tr>
-                    <td>已有 Consul / Litemesh 环境</td>
+                    <td>已有 Consul / Litemesh / LiteDeploy 环境</td>
                     <td class="depends">LiteGate 动态发现</td>
                     <td>适合已经有服务注册与健康检查体系的团队。</td>
                     <td>保留现有体系，同时统一外部入口。</td>
                 </tr>
                 <tr>
                     <td>异构注册中心并存</td>
-                    <td class="depends">LiteGate + Discovery 聚合层</td>
-                    <td>适合 Docker、K8s、Nacos、Etcd 等并存的混合环境。</td>
+                    <td class="depends">LiteGate + CamoDNS Discovery</td>
+                    <td>适合 Docker、K8s、Nacos、Etcd、Litemesh 等并存的混合环境。</td>
                     <td>减少入口层对多种注册中心的适配成本。</td>
                 </tr>
                 <tr>

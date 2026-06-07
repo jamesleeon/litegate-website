@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate 服务发现与动态接入 | 打标即上线</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.toc .group { font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); margin: 18px 0 6px 10px; font-weight: 600; }
+.toc a.ext::after { content: "↗"; font-size: 10px; margin-left: 5px; color: var(--text3); opacity: .8; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card, .panel, .mini-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3, .panel h3, .mini-card h3 { margin-top: 0; }
+.flow { display: flex; align-items: stretch; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+.flow .card { flex: 1 1 150px; }
+.steps { counter-reset: step; list-style: none; margin-left: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.steps li, .step { position: relative; padding: 14px 14px 14px 42px; margin-bottom: 0; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); }
+.steps li::before, .step .num { content: counter(step); position: absolute; left: 12px; top: 14px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.step .num { position: absolute; }
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+.taglist code { display: inline-block; margin: 2px 2px 4px 0; }
+.layer { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 12px; align-items: start; margin: 14px 0; }
+.layer .badge { justify-content: center; text-align: center; margin-top: 6px; }
+/* ── diagram extensions ─────────────────────────────── */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin: 20px 0 4px; }
+.stat { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px 12px; text-align: center; }
+.stat .v { font-size: 21px; font-weight: 600; color: var(--accent); letter-spacing: -.5px; line-height: 1.1; }
+.stat .l { font-size: 11.5px; color: var(--text2); margin-top: 4px; }
+.rail { position: relative; margin: 22px 0 24px; padding-left: 30px; }
+.rail::before { content: ""; position: absolute; left: 10px; top: 8px; bottom: 8px; width: 2px; background: var(--border2); }
+.rail .node { position: relative; margin-bottom: 16px; }
+.rail .node:last-child { margin-bottom: 0; }
+.rail .node::before { content: ""; position: absolute; left: -25px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-shadow: 0 0 0 1px var(--border2); }
+.rail .node .k { font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px; color: var(--accent); font-weight: 600; }
+.rail .node h4 { font-size: 14px; margin: 1px 0 4px; font-weight: 600; }
+.rail .node p { font-size: 12.5px; color: var(--text2); margin: 0; }
+.rail .node.red::before { background: var(--red); }
+.rail .node.green::before { background: var(--green); }
+.rail .node.amber::before { background: var(--amber); }
+.rail .node.green .k { color: var(--green); }
+.layercard { border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 14px 16px; margin: 14px 0; }
+.layercard.a { background: var(--accent-bg); }
+.layercard.b { background: var(--green-bg); }
+.layercard .ttl { font-weight: 600; font-size: 13.5px; margin-bottom: 4px; }
+.layercard .sub { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two, .steps, .layer, .stats { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate 发现</div>
+    <div class="brand-sub">服务发现与动态接入</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← 文档首页</a>
+    <a href="#overview">概览</a>
+    <a href="#two-layers">两层标签</a>
+    <a href="#sources">五种发现源</a>
+    <a href="#magic">Magic Ingress</a>
+    <a href="#timeline">注册即上线</a>
+    <a href="#priority">选路与优先级</a>
+    <a href="#examples">注册示例</a>
+    <div class="group">深入阅读</div>
+    <a class="ext" href="litegate_backend_tag_system.html">后端标签体系</a>
+    <a class="ext" href="litegate_certificate_lifecycle.html">证书生命周期</a>
+    <a class="ext" href="litemesh_mtls_guide.html">Litemesh mTLS</a>
+    <a class="ext" href="litegate_complete_introduction.html">完整介绍</a>
+    <div class="group">语言</div>
+    <a class="ext" href="../en/litegate_service_discovery.html">English version</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>打标即上线:从注册到 HTTPS 的全链路零配置</h1>
+      <p class="lead">在 LiteGate 生态里,微服务只需"打标签注册"就能完成从域名解析、路由生成到 HTTPS 证书申请的全链路闭环。无论标签来自 Docker labels、Consul tags、Litemesh/LiteDeploy meta 还是 Discovery agent,网关都用同一套 <code>litegate.*</code> 标签生成入口。</p>
+      <div class="badges"><span class="badge">5 种发现源</span><span class="badge green">Magic Ingress</span><span class="badge">两层标签</span><span class="badge amber">物理选路</span></div>
+      <div class="stats">
+        <div class="stat"><div class="v">~0.5s</div><div class="l">内存路由生效</div></div>
+        <div class="stat"><div class="v">~1s</div><div class="l">内网 DNS 就绪</div></div>
+        <div class="stat"><div class="v">~60s</div><div class="l">HTTPS 全面就绪</div></div>
+        <div class="stat"><div class="v">0 行</div><div class="l">需要写的 YAML</div></div>
+      </div>
+    </div>
+
+    <section id="two-layers">
+      <h2><span class="num">1</span>核心概念:两层标签,职责完全不同</h2>
+      <p>注册一个服务时,你在<strong>两个不同的地方</strong>贴标签。一层定义"如何识别和路由到我",一层声明"我属于哪个分片/租户"。</p>
+      <div class="layercard a">
+        <div class="ttl">层 A · 服务定义标签(贴在 Service Meta)</div>
+        <div class="sub">告诉网关:如何识别我、如何鉴权、如何路由到我。只需贴一次,对该服务所有实例生效。网关读取后生成路由。</div>
+        <p class="taglist"><code>litegate.ingress.host</code><code>litegate.ingress.path_prefix</code><code>litegate.middleware.auth</code><code>litegate.router.sid</code><code>litegate.service.timeout</code></p>
+      </div>
+      <div style="text-align:center;color:var(--text3);font-size:18px;margin:-2px 0 6px;">↓ 网关读取并生成路由</div>
+      <div class="layercard b">
+        <div class="ttl">层 B · 实例筛选标签(贴在每个实例节点的 Meta)</div>
+        <div class="sub">告诉网关:我属于哪个分片 / 租户 / 集群。每个实例按自己所属分组贴,用于运行期 RouteSelector 精准过滤,不生成路由。</div>
+        <p class="taglist"><code>sid=cluster-01</code><code>env=prod</code><code>tenant=corp_abc</code></p>
+      </div>
+      <div class="callout"><span class="t">关键区别</span><p>层 A 的 <code>litegate.router.sid = cluster-01</code> 是"我要找什么";层 B 的 <code>sid = cluster-01</code> 是"我是什么"。当服务定义写了 <code>router.sid=cluster-01</code>,网关只把流量路由到 <code>sid=cluster-01</code> 的实例,完全跳过其他分片。两类标签共存于同一个 Meta 对象,网关分别处理。详见 <a class="inline" href="litegate_backend_tag_system.html">后端标签体系</a>。</p></div>
+    </section>
+
+    <section id="sources">
+      <h2><span class="num">2</span>五种发现源,同一套标签</h2>
+      <p>后端发现源有 5 种:<code>litemesh</code>、<code>litedeploy</code>、<code>docker</code>、<code>consul</code>、<code>discovery</code>。它们进入 LiteGate 后都会被归一成同一种 <code>ServiceEndpoint</code>,再由同一套 <code>litegate.*</code> 标签驱动路由、上游池、鉴权、IDS、mTLS 和观测。</p>
+      <table>
+        <thead><tr><th>发现源</th><th>配置值</th><th>连接对象</th><th>更新方式</th><th>适合场景</th></tr></thead>
+        <tbody>
+          <tr><td>Litemesh</td><td><code>provider: litemesh</code></td><td>Litemesh Agent</td><td>SSE 推送</td><td>已接入 Litemesh、需要 mTLS、状态变化频繁</td></tr>
+          <tr><td>LiteDeploy</td><td><code>provider: litedeploy</code></td><td>LiteDeploy Agent 或集群地址</td><td>SSE 推送</td><td>由 LiteDeploy 管理发布、实例与服务元数据</td></tr>
+          <tr><td>Docker</td><td><code>provider: docker</code></td><td>Docker Daemon Socket</td><td>Docker event stream</td><td>单机 Docker 或 Swarm,容器 labels 自动接入</td></tr>
+          <tr><td>Consul</td><td><code>provider: consul</code></td><td>Consul Agent / Catalog</td><td>Catalog 同步</td><td>已有 Consul 注册中心和健康检查</td></tr>
+          <tr><td>Discovery</td><td><code>provider: discovery</code></td><td><code>camodns_discovery</code> 或兼容 agent</td><td>Blocking query</td><td>异构注册中心聚合(Docker/K8s/Nacos/Etcd/Litemesh 并存)</td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn"><span class="t">关于 static / external / hybrid</span><p>这三个不是业务发现源:<code>static</code> 是固定 upstream(完全不走发现);<code>external</code> 和 <code>hybrid</code> 是内部 <code>upstream_type</code> 名称——<code>discovery</code> 源运行时对应 <code>external</code>,而 Consul 与 Discovery 同时启用时对应 <code>hybrid</code>。</p></div>
+      <div class="callout"><span class="t">discovery 的确切含义</span><p><code>provider: discovery</code>(对应 <code>upstream_type: external</code>)特指 LiteGate 通过 HTTP blocking query 连接 <code>camodns_discovery</code> 这类兼容 <code>/v1/catalog/services</code> 与 <code>/v1/health/service/:service_name</code> 的外部聚合层,把异构注册中心统一成 LiteGate 能理解的服务目录。它不是第 6 种业务发现源。详见 <a class="inline" href="user/07-discovery/overview.md">服务发现源总览</a>。</p></div>
+    </section>
+
+    <section id="magic">
+      <h2><span class="num">3</span>Magic Ingress:Tag &amp; Forget</h2>
+      <p>传统上线一个服务要部署、配路由、买域名、配公网 DNS、申请证书、配内网 DNS——六步。Magic Ingress 下你只做一步:<strong>部署带标签的服务实例</strong>,例如 <code>litegate.ingress.host=order.example.com</code>,其余全自动。</p>
+      <div class="rail">
+        <div class="node green"><div class="k">唯一人工步骤</div><h4>服务注册并打标</h4><p>用 Litemesh SDK 启动(或 Sidecar / Docker label / Consul 注册)时,带上 <code>litegate.ingress.host</code> 等魔术标签。</p></div>
+        <div class="node"><div class="k">发现</div><h4>CatalogLoader 实时监听</h4><p>瞬间检测到新服务,解析魔术标签,在内存中即时生成虚拟 <code>SiteConfig</code>,更新 Router 立即接管该域名流量。</p></div>
+        <div class="node"><div class="k">公网连通</div><h4>DDNS 自动解析</h4><p>探测网关公网出口 IP,调用 DNS 服务商 API(阿里云 / Cloudflare 等)把域名 A 记录指向网关公网 IP。</p></div>
+        <div class="node"><div class="k">证书</div><h4>AutoCert 自动签发</h4><p>检查 Litemesh KV 是否已有有效证书;若无则获取集群分布式锁,从 Let's Encrypt 申请,成功后保存到集群 KV,所有在线节点瞬间同步加载。</p></div>
+        <div class="node"><div class="k">内网连通</div><h4>Split-Horizon DNS</h4><p>触发 <code>dns_update</code> Webhook 更新内网 DNS,把域名指向网关内网 IP。内网用户用同一域名、同一合法证书直接访问。</p></div>
+      </div>
+      <div class="callout ok"><span class="t">最终成果</span><p>零配置维护(不写 nginx.conf / gateway.yaml)、零运维(不手动配解析、不买/传证书、不处理续期)、内外网一致体验(同一域名、同一 HTTPS)。证书细节见 <a class="inline" href="litegate_certificate_lifecycle.html">证书生命周期</a>。</p></div>
+    </section>
+
+    <section id="timeline">
+      <h2><span class="num">4</span>注册即上线:预期时间线</h2>
+      <p>以 payment 微服务携带 <code>litegate.ingress.host</code> 标签注册为例,从调用 SDK 到 HTTPS 全面就绪的真实时序:</p>
+      <table>
+        <thead><tr><th>时间点</th><th>事件</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr><td><code>T + 0s</code></td><td>服务调用 SDK 完成注册</td><td>🚀 开始</td></tr>
+          <tr><td><code>T + 0.5s</code></td><td>LiteGate 通过 SSE 感知,完成内存路由构建</td><td>🌐 内网 HTTP 可访</td></tr>
+          <tr><td><code>T + 1s</code></td><td>内网 DNS(CamoDNS)解析生效</td><td>📡 域名就绪</td></tr>
+          <tr><td><code>T + 60s</code></td><td>证书申请完成并在集群内广播</td><td>🔒 HTTPS 全面就绪</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><span class="t">为什么这个架构很"硬"</span><p><strong>解耦</strong>:业务开发不需要懂网关配置,只需知道自己的域名。<strong>高可用</strong>:某个 LiteGate 节点挂了,内网 DNS 通过心跳自动切到另一节点。<strong>零操作</strong>:证书、解析、路由全自动,真正做到 "Architecture as Operations"。</p></div>
+    </section>
+
+    <section id="priority">
+      <h2><span class="num">5</span>选路与优先级</h2>
+      <p>当启用物理选路(<code>token_steering</code>)时,网关解析 Token 后的富元数据可以在运行期动态改变路由目标,覆盖服务注册时贴的静态分片。</p>
+      <div class="code-wrap"><span class="lang">priority</span><pre><code>SaaS / Session 动态返回的 RouteSelector   ← 最高优先级(运行时按身份覆盖)
+    ↓ 如不存在,则使用
+litegate.router.sid / router.* 静态标签   ← 服务注册时的默认分片</code></pre></div>
+      <p>这意味着同一套网关路由规则可以秒级支持多租户弹性物理隔离:登录态决定路由到哪个集群,无须在注册时写死静态 <code>sid</code>。身份决策详见 <a class="inline" href="ids_development_guide.html">IDS 开发指南</a>。</p>
+    </section>
+
+    <section id="examples">
+      <h2><span class="num">6</span>注册示例</h2>
+      <div class="two">
+        <div class="code-wrap"><span class="lang">consul json</span><pre><code>{
+  "Name": "lockd",
+  "Tags": ["raft", "dist-lock", "v1"],
+  "Port": 8080,
+  "Meta": {
+    "litegate.ingress.host": "lockd.example.com",
+    "litegate.middleware.auth": "token_steering",
+    "litegate.router.sid": "cluster-01",
+    "litegate.service.timeout": "30s",
+    "sid": "cluster-01",
+    "cluster": "prod"
+  }
+}</code></pre></div>
+        <div class="code-wrap"><span class="lang">litemesh kv</span><pre><code>litegate.ingress.host        lockd.example.com
+litegate.middleware.auth     token_steering
+litegate.router.sid          cluster-01
+litegate.service.timeout     30s
+litegate.observability.log   info
+sid                          cluster-01   # 实例侧
+cluster                      prod         # 实例侧</code></pre></div>
+      </div>
+      <div class="callout"><span class="t">注意区分</span><p>上例中 <code>litegate.*</code> 开头的是<strong>服务定义</strong>标签(层 A);末尾的 <code>sid</code> / <code>cluster</code> 是<strong>实例侧</strong>标签(层 B)。两者共存于同一个 Meta,网关分别处理。Docker provider 的实战配置见 <a class="inline" href="litegate_docker_provider_deployment_guide.md">Docker 服务发现部署指南</a>。</p></div>
+    </section>
+
+    <div class="footer">LiteGate 文档 · <a class="inline" href="litegate_complete_introduction.html">完整介绍</a> · <a class="inline" href="litegate_backend_tag_system.html">标签体系</a> · <a class="inline" href="litegate_architecture.html">架构</a> · <a class="inline" href="../en/litegate_service_discovery.html">English version</a></div>
+  </main>
+</div>
+
+
+<script>
+(function () {
+  const toc = document.querySelector('.toc');
+  if (!toc) return;
+
+  const links = Array.from(toc.querySelectorAll('a[href^="#"]'));
+  const items = links.map((link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    return { link, target: document.getElementById(id) };
+  }).filter((item) => item.target);
+
+  if (!items.length) return;
+
+  let activeLink = null;
+  let ticking = false;
+
+  function setActive(item) {
+    if (!item || activeLink === item.link) return;
+    links.forEach((link) => link.classList.remove('active'));
+    item.link.classList.add('active');
+    activeLink = item.link;
+
+    const tocRect = toc.getBoundingClientRect();
+    const linkRect = item.link.getBoundingClientRect();
+    if (linkRect.top < tocRect.top + 16 || linkRect.bottom > tocRect.bottom - 16) {
+      item.link.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function currentItem() {
+    if (window.scrollY < 100) return items[0];
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+
+    for (const item of items) {
+      if (item.target.offsetParent === null && item.target.id !== 'overview') continue;
+      const rect = item.target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight * 0.88;
+      if (!visible) continue;
+
+      const distance = Math.abs(rect.top - anchor);
+      if (distance < bestDistance) {
+        best = item;
+        bestDistance = distance;
+      }
+    }
+
+    if (!best) {
+      best = items[0];
+      for (const item of items) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= anchor) best = item;
+      }
+    }
+
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      best = items[items.length - 1];
+    }
+    return best;
+  }
+
+  function updateActive() {
+    ticking = false;
+    setActive(currentItem());
+  }
+
+  function requestUpdate() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateActive);
+    }
+  }
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('hashchange', requestUpdate);
+  links.forEach((link) => link.addEventListener('click', () => window.setTimeout(requestUpdate, 80)));
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', requestUpdate, { once: true });
+  } else {
+    requestUpdate();
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate Backend Tag System | Latest</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card, .panel, .mini-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3, .panel h3, .mini-card h3 { margin-top: 0; }
+.flow { display: flex; align-items: stretch; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+.flow .card { flex: 1 1 150px; }
+.steps { counter-reset: step; list-style: none; margin-left: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.steps li, .step { position: relative; padding: 14px 14px 14px 42px; margin-bottom: 0; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); }
+.steps li::before, .step .num { content: counter(step); position: absolute; left: 12px; top: 14px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.step .num { position: absolute; }
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+.taglist code { display: inline-block; margin: 2px 2px 4px 0; }
+.layer { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 12px; align-items: start; margin: 14px 0; }
+.layer .badge { justify-content: center; text-align: center; margin-top: 6px; }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two, .steps, .layer { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate Tags</div>
+    <div class="brand-sub">Backend tag system</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← Docs Home</a>
+    <a href="#overview">Overview</a>
+    <a href="#shape">Where tags live</a>
+    <a href="#layers">L1-L7</a>
+    <a href="#instance">Instance tags</a>
+    <a href="#sources">Sources</a>
+    <a href="#examples">Examples</a>
+    <a href="#rules">Guidance</a>
+    <a href="litegate_complete_introduction.html">Complete introduction</a>
+    <a href="../zh-cn/litegate_backend_tag_system.html">中文版本</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>Backend services use tags to hand entry, governance, and instance selection to LiteGate</h1>
+      <p class="lead">The latest tag system centers on <code>litegate.[id].&lt;layer&gt;.&lt;key&gt;</code> and <code>litegate.&lt;layer&gt;.&lt;key&gt;</code>. Tags can come from Docker labels, Consul tags/meta, Litemesh/LiteDeploy meta, or tags/metadata returned by a Discovery agent.</p>
+      <div class="badges"><span class="badge">Latest</span><span class="badge green">L1-L7</span><span class="badge">No legacy tags</span><span class="badge amber">Endpoint filtering</span></div>
+    </div>
+    <section id="shape">
+      <h2><span class="num">1</span>Where tags live</h2>
+      <div class="grid">
+        <div class="card"><h3>Global route tags</h3><p>Use <code>litegate.&lt;layer&gt;.&lt;key&gt;</code>. This is best for one main route or defaults shared by named routes.</p></div>
+        <div class="card"><h3>Named route tags</h3><p>Use <code>litegate.&lt;id&gt;.&lt;layer&gt;.&lt;key&gt;</code>. One backend can expose multiple entries such as <code>orders</code>, <code>admin</code>, and <code>metrics</code>.</p></div>
+        <div class="card"><h3>Instance matching tags</h3><p><code>litegate.route.selector.*</code> and <code>litegate.route.meta.*</code> belong to instance tags or metadata. They filter backend instances at request time and do not create routes.</p></div>
+      </div>
+      <div class="callout ok"><span class="t">Feasibility</span><p>This is already aligned with the code model. The parser merges global and named tags into ServiceSpec values; the proxy passes selector, meta, and tags into discovery filtering, then calls only matched healthy instances.</p></div>
+    </section>
+    <section id="layers">
+      <h2><span class="num">2</span>L1-L7 tags and effects</h2>
+      <div class="layer"><span class="badge">L1</span><div class="card"><h3>Entrypoint</h3><p class="taglist"><code>litegate.entrypoint.bind</code></p><p>Declares a physical bind address. If omitted, the gateway global entrypoint is used.</p></div></div>
+      <div class="layer"><span class="badge">L2</span><div class="card"><h3>Ingress</h3><p class="taglist"><code>litegate.ingress.host</code><code>litegate.ingress.path</code><code>litegate.ingress.path_prefix</code></p><p>Controls the external host and path used to enter the backend. path is exact, path_prefix is prefix matching.</p></div></div>
+      <div class="layer"><span class="badge">L3</span><div class="card"><h3>Router</h3><p class="taglist"><code>litegate.router.priority</code><code>rule</code><code>methods</code><code>lb_policy</code><code>strip_prefix</code><code>prepend_prefix</code><code>selector.*</code><code>meta.*</code><code>version</code><code>sid</code><code>headers.*</code><code>res_headers.*</code><code>xff_mode</code><code>pool_scope</code><code>sticky_bypass</code></p><p>Controls route priority, match rules, path rewriting, load balancing, and instance filtering. selector is strict; meta is preferred with fallback.</p></div></div>
+      <div class="layer"><span class="badge">L4</span><div class="card"><h3>Middleware</h3><p class="taglist"><code>litegate.middleware.auth</code><code>auth_provider</code><code>ratelimit</code><code>inject_response</code><code>ids.*</code></p><p>Runs authentication, IDS, rate limiting, and identity header injection at the edge. IDS can dynamically inject RouteSelector and RouteMeta.</p></div></div>
+      <div class="layer"><span class="badge">L5</span><div class="card"><h3>Service</h3><p class="taglist"><code>litegate.service.name</code><code>ref</code><code>pool</code><code>pool_name</code><code>timeout</code><code>retry</code><code>breaker_*</code></p><p>Declares logical service identity, explicit pool reuse, timeouts, retries, and circuit breaker settings.</p></div></div>
+      <div class="layer"><span class="badge">L6</span><div class="card"><h3>Upstream</h3><p class="taglist"><code>litegate.upstream.port</code><code>weight</code><code>gray</code><code>health_path</code><code>health_interval</code><code>mtls</code><code>insecure</code><code>use_host_port</code></p><p>Controls physical instance port, weight, gray identity, active health checks, and mTLS behavior.</p></div></div>
+      <div class="layer"><span class="badge">L7</span><div class="card"><h3>Observability</h3><p class="taglist"><code>litegate.observability.log</code><code>litegate.observability.trace</code></p><p>Controls route-level logging and tracing. log=none is preserved as an explicit disabled state.</p></div></div>
+    </section>
+    <section id="instance">
+      <h2><span class="num">3</span>Instance-side tags filter at request time</h2>
+      <div class="two">
+        <div class="card"><h3>Strict selector isolation</h3><pre><code># Route definition
+litegate.router.selector.sid=c1
+litegate.router.selector.region=hangzhou
+
+# Backend instance metadata or tags
+litegate.route.selector.sid=c1
+litegate.route.selector.region=hangzhou</code></pre><p>Every selector condition must match. Use this for tenant, shard, region, and other hard boundaries.</p></div>
+        <div class="card"><h3>Soft meta preference</h3><pre><code># Route definition
+litegate.router.meta.env=gray
+
+# Backend instance metadata or tags
+litegate.route.meta.env=gray</code></pre><p>Meta matches are preferred. If no instance matches meta, LiteGate falls back to the selector-isolated pool.</p></div>
+      </div>
+      <div class="callout warn"><span class="t">Keep meanings separate</span><p><code>litegate.route.selector.*</code> and <code>litegate.route.meta.*</code> are instance identity, not route definition tags. The code intentionally skips them during route generation.</p></div>
+    </section>
+    <section id="sources">
+      <h2><span class="num">4</span>How discovery sources carry tags</h2>
+      <table><thead><tr><th>Source</th><th>Tag location</th><th>Effect</th></tr></thead><tbody>
+        <tr><td>Docker / Swarm</td><td>container or service labels</td><td>Any <code>litegate.*</code> label is collected as metadata and added to tags as <code>key=value</code>.</td></tr>
+        <tr><td>Consul</td><td>Service Tags and Meta</td><td>Tags/Meta enter CatalogLoader and become route definitions; instance selector/meta stays available for endpoint filtering.</td></tr>
+        <tr><td>Litemesh / LiteDeploy</td><td>instance Tags and Meta</td><td>Supports route tags, instance tags, and the mTLS convention. Watchers push changes into LiteGate.</td></tr>
+        <tr><td>Discovery agent</td><td>returned tags and metadata</td><td>Works for aggregated heterogeneous registries. LiteGate uses the same tag parser and endpoint filter.</td></tr>
+      </tbody></table>
+    </section>
+    <section id="examples">
+      <h2><span class="num">5</span>Common examples</h2>
+      <div class="two">
+        <div class="card"><h3>Single entry service</h3><pre><code>litegate.ingress.host=api.example.com
+litegate.ingress.path_prefix=/orders
+litegate.service.name=order-service
+litegate.service.timeout=8s
+litegate.service.retry=2
+litegate.upstream.health_path=/healthz</code></pre></div>
+        <div class="card"><h3>Multiple routes, one service</h3><pre><code>litegate.public.ingress.host=api.example.com
+litegate.public.ingress.path_prefix=/orders
+litegate.public.middleware.ratelimit=500
+
+litegate.admin.ingress.host=admin.example.com
+litegate.admin.ingress.path_prefix=/orders
+litegate.admin.middleware.auth=oidc
+litegate.admin.middleware.auth_provider=corp</code></pre></div>
+        <div class="card"><h3>Tenant isolation</h3><pre><code>litegate.ingress.host=openapi.example.com
+litegate.ingress.path_prefix=/v1
+litegate.router.selector.sid=c1
+litegate.router.selector.region=hangzhou
+
+litegate.route.selector.sid=c1
+litegate.route.selector.region=hangzhou</code></pre></div>
+        <div class="card"><h3>Litemesh mTLS</h3><pre><code>Tags:
+  - mtls
+Meta:
+  mtls_port: "8443"
+  spiffe_id: "spiffe://litemesh.local/ns/default/sa/order-service"</code></pre></div>
+      </div>
+    </section>
+    <section id="rules">
+      <h2><span class="num">6</span>Operating guidance</h2>
+      <div class="grid">
+        <div class="card"><h3>Separate route definition from instance identity</h3><p>Use <code>litegate.&lt;layer&gt;.*</code> for entry, governance, and connection policy. Use <code>litegate.route.selector.*</code> or <code>litegate.route.meta.*</code> for shard, tenant, or gray instance identity.</p></div>
+        <div class="card"><h3>Use selector for safety boundaries</h3><p>Use <code>router.selector</code> for tenant, shard, or region isolation. Use <code>router.meta</code> for gray, version, or environment preference.</p></div>
+        <div class="card"><h3>Keep dimensions stable</h3><p>Low-cardinality keys such as <code>sid</code>, <code>version</code>, and <code>region</code> are good route dimensions.</p></div>
+      </div>
+    </section>
+    <div class="footer">LiteGate docs · <a class="inline" href="../zh-cn/litegate_backend_tag_system.html">中文版本</a></div>
+  </main>
+</div>
+
+
+<script>
+(function () {
+  const toc = document.querySelector('.toc');
+  if (!toc) return;
+
+  const links = Array.from(toc.querySelectorAll('a[href^="#"]'));
+  const items = links.map((link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    return { link, target: document.getElementById(id) };
+  }).filter((item) => item.target);
+
+  if (!items.length) return;
+
+  let activeLink = null;
+  let ticking = false;
+
+  function setActive(item) {
+    if (!item || activeLink === item.link) return;
+    links.forEach((link) => link.classList.remove('active'));
+    item.link.classList.add('active');
+    activeLink = item.link;
+
+    const tocRect = toc.getBoundingClientRect();
+    const linkRect = item.link.getBoundingClientRect();
+    if (linkRect.top < tocRect.top + 16 || linkRect.bottom > tocRect.bottom - 16) {
+      item.link.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function currentItem() {
+    if (window.scrollY < 100) return items[0];
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+
+    for (const item of items) {
+      if (item.target.offsetParent === null && item.target.id !== 'overview') continue;
+      const rect = item.target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight * 0.88;
+      if (!visible) continue;
+
+      const distance = Math.abs(rect.top - anchor);
+      if (distance < bestDistance) {
+        best = item;
+        bestDistance = distance;
+      }
+    }
+
+    if (!best) {
+      best = items[0];
+      for (const item of items) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= anchor) best = item;
+      }
+    }
+
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      best = items[items.length - 1];
+    }
+    return best;
+  }
+
+  function updateActive() {
+    ticking = false;
+    setActive(currentItem());
+  }
+
+  function requestUpdate() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateActive);
+    }
+  }
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('hashchange', requestUpdate);
+  links.forEach((link) => link.addEventListener('click', () => window.setTimeout(requestUpdate, 80)));
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', requestUpdate, { once: true });
+  } else {
+    requestUpdate();
+  }
+})();
+</script>
+</body>
+</html>

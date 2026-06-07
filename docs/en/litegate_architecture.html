@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate Architecture &amp; Request Lifecycle | Reversed Pipeline, Lock-Free Data Plane</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.toc .group { font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); margin: 18px 0 6px 10px; font-weight: 600; }
+.toc a.ext::after { content: "↗"; font-size: 10px; margin-left: 5px; color: var(--text3); opacity: .8; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card, .panel, .mini-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3, .panel h3, .mini-card h3 { margin-top: 0; }
+.flow { display: flex; align-items: stretch; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+.flow .card { flex: 1 1 150px; }
+.steps { counter-reset: step; list-style: none; margin-left: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.steps li, .step { position: relative; padding: 14px 14px 14px 42px; margin-bottom: 0; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); }
+.steps li::before, .step .num { content: counter(step); position: absolute; left: 12px; top: 14px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.step .num { position: absolute; }
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+.taglist code { display: inline-block; margin: 2px 2px 4px 0; }
+.layer { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 12px; align-items: start; margin: 14px 0; }
+.layer .badge { justify-content: center; text-align: center; margin-top: 6px; }
+/* ── diagram extensions ─────────────────────────────── */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin: 20px 0 4px; }
+.stat { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px 12px; text-align: center; }
+.stat .v { font-size: 21px; font-weight: 600; color: var(--accent); letter-spacing: -.5px; line-height: 1.1; }
+.stat .l { font-size: 11.5px; color: var(--text2); margin-top: 4px; }
+.rail { position: relative; margin: 22px 0 24px; padding-left: 30px; }
+.rail::before { content: ""; position: absolute; left: 10px; top: 8px; bottom: 8px; width: 2px; background: var(--border2); }
+.rail .node { position: relative; margin-bottom: 16px; }
+.rail .node:last-child { margin-bottom: 0; }
+.rail .node::before { content: ""; position: absolute; left: -25px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-shadow: 0 0 0 1px var(--border2); }
+.rail .node .k { font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px; color: var(--accent); font-weight: 600; }
+.rail .node h4 { font-size: 14px; margin: 1px 0 4px; font-weight: 600; }
+.rail .node p { font-size: 12.5px; color: var(--text2); margin: 0; }
+.rail .node.red::before { background: var(--red); }
+.rail .node.green::before { background: var(--green); }
+.rail .node.amber::before { background: var(--amber); }
+.rail .node.red .k { color: var(--red); }
+.rail .node.green .k { color: var(--green); }
+.rail .node.amber .k { color: var(--amber); }
+.planes { display: grid; grid-template-columns: 1fr; gap: 0; margin: 18px 0; }
+.plane { border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 14px 16px; }
+.plane.ctrl { background: var(--accent-bg); border-radius: var(--radius) var(--radius) 0 0; }
+.plane.data { background: var(--green-bg); border-radius: 0 0 var(--radius) var(--radius); }
+.plane .ttl { font-weight: 600; font-size: 13px; margin-bottom: 8px; }
+.plane .row { display: flex; flex-wrap: wrap; gap: 7px; }
+.plane .chip { background: var(--bg); border: 0.5px solid var(--border); border-radius: 6px; padding: 5px 10px; font-size: 11.5px; font-family: var(--mono); }
+.swap { text-align: center; color: var(--accent); font-weight: 600; font-size: 13px; padding: 8px 0; }
+/* ── Architecture Diagram Styles ─────────────────── */
+.diag-container {
+  background: var(--bg2);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin: 24px 0 32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  overflow: hidden;
+  position: relative;
+}
+@media (prefers-color-scheme: dark) {
+  .diag-container {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+}
+.diag-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.diag-card {
+  fill: var(--bg);
+  stroke: var(--border);
+  stroke-width: 1;
+  transition: all 0.25s ease;
+}
+.diag-card-accent {
+  fill: var(--accent-bg);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+.diag-card-amber {
+  fill: var(--amber-bg);
+  stroke: var(--amber);
+  stroke-width: 1.5;
+}
+.diag-group {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.diag-group:hover {
+  transform: translateY(-2px);
+}
+.diag-group:hover .diag-card {
+  fill: var(--bg2);
+  stroke: var(--accent);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
+}
+.diag-group:hover .diag-card-amber {
+  stroke-width: 2;
+  filter: drop-shadow(0 4px 12px rgba(215, 167, 58, 0.25));
+}
+.diag-title {
+  fill: var(--text);
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 13.5px;
+}
+.diag-title-white {
+  fill: #ffffff;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 14px;
+}
+.diag-subtitle {
+  fill: var(--text2);
+  font-family: var(--sans);
+  font-size: 11px;
+}
+.diag-subtitle-white {
+  fill: rgba(255,255,255,0.9);
+  font-family: var(--sans);
+  font-size: 11px;
+}
+.diag-label {
+  fill: var(--text3);
+  font-family: var(--sans);
+  font-size: 10.5px;
+}
+.diag-badge {
+  font-size: 10px;
+  font-family: var(--sans);
+  font-weight: 600;
+}
+/* Flowing lines */
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+@keyframes flow-dash-reverse {
+  to {
+    stroke-dashoffset: 40;
+  }
+}
+.flow-line {
+  stroke-width: 1.5;
+  stroke-dasharray: 6, 4;
+  animation: flow-dash 1.5s linear infinite;
+}
+.flow-accent {
+  stroke: var(--accent);
+}
+.flow-amber {
+  stroke: var(--amber);
+  stroke-width: 2;
+  animation: flow-dash 1.2s linear infinite;
+}
+.flow-amber-back {
+  stroke: var(--amber);
+  stroke-width: 1.5;
+  stroke-dasharray: 5, 5;
+  animation: flow-dash-reverse 1.8s linear infinite;
+}
+.diag-column-bg {
+  fill: var(--bg3);
+  stroke: var(--border);
+  stroke-width: 0.5;
+  opacity: 0.3;
+}
+.diag-column-title {
+  fill: var(--text2);
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.6px;
+}
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two, .steps, .layer, .stats { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate Arch</div>
+    <div class="brand-sub">Architecture &amp; Lifecycle</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← Docs Home</a>
+    <a href="#overview">Overview</a>
+    <a href="#diagram">System Diagram</a>
+    <a href="#philosophy">Design Philosophy</a>
+    <a href="#planes">Control &amp; Data Plane</a>
+    <a href="#pipeline">Reversed Pipeline</a>
+    <a href="#reload">Atomic Hot Reload</a>
+    <a href="#litemesh">Litemesh Consensus</a>
+    <a href="#stream">L4 Stream &amp; HA</a>
+    <a href="#perf">Performance &amp; Pool</a>
+    <div class="group">Read Next</div>
+    <a class="ext" href="litegate_complete_introduction.html">Complete Introduction</a>
+    <a class="ext" href="litegate_service_discovery.html">Service Discovery</a>
+    <a class="ext" href="litegate_backend_tag_system.html">Backend Tag System</a>
+    <div class="group">Language</div>
+    <a class="ext" href="../zh-cn/litegate_architecture.html">中文版</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>A reversed execution pipeline, on a lock-free data plane that hot-reloads in nanoseconds</h1>
+      <p class="lead">LiteGate targets private and hybrid clouds with heterogeneous infrastructure, running natively on bare metal, VMs and Docker without being bound to Kubernetes. Its engineering core distills to three ideas: a fully decoupled control and data plane, a physically reversed execution pipeline, and unified multi-source service discovery.</p>
+      <div class="badges"><span class="badge">Lock-free data plane</span><span class="badge green">Atomic hot reload</span><span class="badge">Reversed pipeline</span><span class="badge amber">Litemesh consensus</span></div>
+      <div class="stats">
+        <div class="stat"><div class="v">~55k</div><div class="l">RPS, single node</div></div>
+        <div class="stat"><div class="v">~50MB</div><div class="l">resident memory</div></div>
+        <div class="stat"><div class="v">85%↓</div><div class="l">Gossip bandwidth</div></div>
+        <div class="stat"><div class="v">4096</div><div class="l">idle conns / host</div></div>
+      </div>
+    </div>
+
+    <section id="diagram">
+      <h2><span class="num">0</span>System Diagram</h2>
+      <p>LiteGate features a clean three-column architecture: <strong>incoming traffic from the internet</strong> on the left resolves through custom hosts and protocols into the <strong>central LiteGate routing engine</strong>. After hitting rules and middleware chains, besides proxying to the <strong>backend infrastructure</strong> on the right, LiteGate's unique <strong>built-in Web Server</strong> handles SPA hosting, Markdown files, and WebDAV requests <strong>directly in-place</strong> for local response loops without forwarding to external nginx instances. All service discovery providers support seamless hot reloads, with Kubernetes integration currently progressing under generic protocols.</p>
+      
+      <div class="diag-container">
+        <svg class="diag-svg" viewBox="0 0 1060 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="shadow-glow" x="-10%" y="-10%" width="120%" height="120%">
+              <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="var(--accent)" flood-opacity="0.15" />
+            </filter>
+            <filter id="amber-glow" x="-10%" y="-10%" width="120%" height="120%">
+              <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="var(--amber)" flood-opacity="0.25" />
+            </filter>
+          </defs>
+
+          <!-- Columns Background -->
+          <rect class="diag-column-bg" x="15" y="20" width="220" height="480" rx="12"/>
+          <text class="diag-column-title" x="30" y="45">FROM THE INTERNET</text>
+
+          <rect class="diag-column-bg" x="265" y="20" width="480" height="480" rx="12"/>
+          <text class="diag-column-title" x="280" y="45">LITEGATE CORE ENGINE</text>
+
+          <rect class="diag-column-bg" x="775" y="20" width="270" height="480" rx="12"/>
+          <text class="diag-column-title" x="790" y="45">TO YOUR INFRASTRUCTURE</text>
+
+          <!-- Connection Lines -->
+          <!-- Background links (Left-to-Center) -->
+          <g opacity="0.25">
+            <path d="M 205,115 C 310,115 310,230 405,230" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
+            <path d="M 205,205 C 310,205 310,230 405,230" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
+            <path d="M 205,295 C 310,295 310,230 405,230" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
+            <path d="M 205,385 C 310,385 310,230 405,230" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
+          </g>
+
+          <!-- Flowing connections -->
+          <!-- api.example.com -> Routing Engine (API services) -->
+          <path d="M 205,115 C 310,115 310,230 405,230" class="flow-line flow-accent" fill="none"/>
+          <text class="diag-badge" fill="var(--accent)" x="280" y="150" text-anchor="middle">HTTPS / Edge mTLS</text>
+          
+          <!-- app.example.com -> Routing Engine -> Content & TLS -> Built-in Web Server -> app.example.com (Loopback) -->
+          <path d="M 205,205 C 310,205 310,230 405,230" class="flow-line flow-accent" fill="none"/>
+          <path d="M 605,245 C 665,245 665,305 605,305" class="flow-line flow-amber" fill="none"/>
+          <path d="M 505,305 L 445,305" class="flow-line flow-amber" fill="none"/>
+          <path d="M 290,305 C 235,305 235,205 205,205" class="flow-line flow-amber-back" fill="none"/>
+          <text class="diag-badge" fill="var(--amber)" x="225" y="255">Local Response Loop</text>
+
+          <!-- Center-to-Right links -->
+          <!-- Configuration Flow (Providers to Engine) -->
+          <path d="M 795,145 C 720,145 720,210 605,210" stroke="var(--text3)" stroke-width="1.5" stroke-dasharray="4,4" fill="none"/>
+          
+          <!-- Routing Engine to Backends -->
+          <g opacity="0.3">
+            <path d="M 605,260 C 700,260 700,345 795,345" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
+            <path d="M 605,260 C 700,260 700,425 795,425" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
+          </g>
+          <!-- Active proxy traffic -->
+          <path d="M 605,260 C 700,260 700,345 795,345" class="flow-line flow-accent" fill="none"/>
+          <text class="diag-badge" fill="var(--accent)" x="725" y="322" text-anchor="middle">SPIFFE mTLS Backhaul</text>
+
+          <!-- Left Column Nodes -->
+          <g class="diag-group">
+            <rect class="diag-card" x="30" y="80" width="175" height="70" rx="8"/>
+            <text class="diag-title" x="42" y="108">api.example.com</text>
+            <text class="diag-subtitle" x="42" y="130">HTTP/HTTPS · API Traffic</text>
+          </g>
+
+          <g class="diag-group">
+            <rect class="diag-card" x="30" y="170" width="175" height="70" rx="8"/>
+            <text class="diag-title" x="42" y="198">app.example.com</text>
+            <text class="diag-subtitle" x="42" y="220">HTTP/HTTPS · SPA/WebDAV</text>
+          </g>
+
+          <g class="diag-group">
+            <rect class="diag-card" x="30" y="260" width="175" height="70" rx="8"/>
+            <text class="diag-title" x="42" y="288">storage.example.com</text>
+            <text class="diag-subtitle" x="42" y="310">HTTP/HTTPS · Markdown Docs</text>
+          </g>
+
+          <g class="diag-group">
+            <rect class="diag-card" x="30" y="350" width="175" height="70" rx="8"/>
+            <text class="diag-title" x="42" y="378">L4 Stream Traffic</text>
+            <text class="diag-subtitle" x="42" y="400">TCP / UDP / IoT / MySQL</text>
+          </g>
+
+          <!-- Middle Column Nodes -->
+          <!-- Core: Routing Engine -->
+          <g class="diag-group" filter="url(#shadow-glow)">
+            <rect x="405" y="180" width="200" height="90" rx="12" fill="var(--accent)" stroke="var(--accent)" stroke-width="1.5"/>
+            <text class="diag-title-white" x="420" y="210">Routing Engine</text>
+            <text class="diag-subtitle-white" x="420" y="232">Trie Route · L1-L7 Reversed</text>
+            <text class="diag-subtitle-white" x="420" y="248">Lock-Free Data · Hot Reload</text>
+          </g>
+
+          <!-- 1. Security & Identity -->
+          <g class="diag-group">
+            <rect class="diag-card" x="290" y="80" width="190" height="60" rx="8"/>
+            <text class="diag-title" x="302" y="105">Security &amp; Identity</text>
+            <text class="diag-subtitle" x="302" y="125">IDS · mTLS · WAF · OIDC/SSO · IP</text>
+          </g>
+
+          <!-- 2. Traffic Management -->
+          <g class="diag-group">
+            <rect class="diag-card" x="510" y="80" width="210" height="60" rx="8"/>
+            <text class="diag-title" x="522" y="105">Traffic Management</text>
+            <text class="diag-subtitle" x="522" y="125">LB · Breaker · Retry · Canary · Rate</text>
+          </g>
+
+          <!-- 3. Content & TLS (Highlighted) -->
+          <g class="diag-group" filter="url(#amber-glow)">
+            <rect class="diag-card-amber" x="505" y="280" width="215" height="65" rx="10"/>
+            <text class="diag-title" x="517" y="305" fill="var(--amber)">★ Content &amp; TLS</text>
+            <text class="diag-subtitle" x="517" y="328">Static Sites/WebDAV · Auto TLS</text>
+          </g>
+
+          <!-- 4. Built-in Web Server -->
+          <g class="diag-group">
+            <rect class="diag-card" x="290" y="280" width="195" height="65" rx="10" stroke="var(--amber)" stroke-width="1.2"/>
+            <text class="diag-title" x="302" y="305" fill="var(--amber)">Built-in Web Server</text>
+            <text class="diag-subtitle" x="302" y="328">SPA / WebDAV / Markdown Hosting</text>
+          </g>
+
+          <!-- 5. Observability -->
+          <g class="diag-group">
+            <rect class="diag-card" x="510" y="375" width="210" height="60" rx="8"/>
+            <text class="diag-title" x="522" y="400">Observability</text>
+            <text class="diag-subtitle" x="522" y="420">Access Logs · Prometheus · Tracing</text>
+          </g>
+
+          <!-- 6. Integration -->
+          <g class="diag-group">
+            <rect class="diag-card" x="290" y="375" width="190" height="60" rx="8"/>
+            <text class="diag-title" x="302" y="400">Integration</text>
+            <text class="diag-subtitle" x="302" y="420">MCP/AI · Middleware · .lite.yaml</text>
+          </g>
+
+          <!-- Right Column Nodes -->
+          <!-- Providers -->
+          <rect class="diag-card" x="795" y="80" width="230" height="150" rx="10" stroke-dasharray="4,2"/>
+          <text class="diag-title" x="807" y="105">Service Providers</text>
+          
+          <g class="diag-group">
+            <circle cx="817" cy="130" r="4" fill="var(--accent)"/>
+            <text class="diag-subtitle" x="827" y="134">Labels &amp; Tags (Docker/Consul)</text>
+          </g>
+          <g class="diag-group">
+            <circle cx="817" cy="155" r="4" fill="var(--accent)"/>
+            <text class="diag-subtitle" x="827" y="159">Files (sites/*.yaml · VM/Bare Metal)</text>
+          </g>
+          <g class="diag-group">
+            <circle cx="817" cy="180" r="4" fill="var(--accent)"/>
+            <text class="diag-subtitle" x="827" y="184">Discovery Agent (Hetero Registry)</text>
+          </g>
+          <g class="diag-group" opacity="0.5">
+            <circle cx="817" cy="205" r="4" fill="var(--text3)"/>
+            <text class="diag-subtitle" x="827" y="209" fill="var(--text3)">Kubernetes (Roadmap / Generic)</text>
+          </g>
+
+          <!-- Backends -->
+          <rect class="diag-card" x="795" y="255" width="230" height="205" rx="10"/>
+          <text class="diag-title" x="807" y="280">Proxy Backends</text>
+
+          <g class="diag-group">
+            <rect class="diag-card" x="807" y="295" width="205" height="40" rx="6"/>
+            <text class="diag-subtitle" x="819" y="320" font-weight="600">API Service</text>
+          </g>
+          <g class="diag-group">
+            <rect class="diag-card" x="807" y="345" width="205" height="40" rx="6"/>
+            <text class="diag-subtitle" x="819" y="370" font-weight="600">Backend Server 1 / 2</text>
+          </g>
+          <g class="diag-group">
+            <rect class="diag-card" x="807" y="395" width="205" height="40" rx="6"/>
+            <text class="diag-subtitle" x="819" y="420" font-weight="600">L4 TCP/UDP Targets</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <section id="philosophy">
+      <h2><span class="num">1</span>Three core design philosophies</h2>
+      <div class="grid">
+        <div class="card"><h3>Control / data plane split</h3><p>Decoupling config flow from traffic flow lets the data plane run lock-free and allocation-free, trading for extreme throughput.</p></div>
+        <div class="card"><h3>Reversed execution pipeline</h3><p>Physical execution isn't a mechanical L1→L7 stack — network defense and quotas go first, security and identity injection in the middle, load balancing and link governance last.</p></div>
+        <div class="card"><h3>Multi-source hub &amp; in-house consensus</h3><p>Compatible with Consul and Discovery protocols, while natively integrating the minimal in-house Litemesh Gossip protocol for decentralized, efficient clustering.</p></div>
+      </div>
+    </section>
+
+    <section id="planes">
+      <h2><span class="num">2</span>Control plane and data plane</h2>
+      <p>Two highly decoupled planes collaborate to deliver "route-transparent, zero-overhead hot updates" under high concurrency.</p>
+      <div class="planes">
+        <div class="plane ctrl">
+          <div class="ttl">Control plane · config flow (orchestrated by <code>app.go</code>)</div>
+          <div class="row">
+            <span class="chip">watcher.go · fsnotify local dirs</span>
+            <span class="chip">consul_loader.go · Catalog</span>
+            <span class="chip">litemesh_loader.go · membership</span>
+            <span class="chip">external · API registry</span>
+            <span class="chip">mcp/server.go · LLM push</span>
+          </div>
+        </div>
+        <div class="swap">↓ CatalogLoader normalizes into ActiveSite / ActiveStream &nbsp;↓ atomic pointer swap</div>
+        <div class="plane data">
+          <div class="ttl">Data plane · traffic flow (lock-free, read-only)</div>
+          <div class="row">
+            <span class="chip">router.go · atomic.Value route tree</span>
+            <span class="chip">middleware/core.go · lifecycle</span>
+            <span class="chip">action/executor.go · proxy execution</span>
+            <span class="chip">proxy/pool.go · endpoint pool</span>
+          </div>
+        </div>
+      </div>
+      <div class="two">
+        <div class="card"><h3>Control plane responsibilities</h3><p><code>CatalogLoader</code> is an open adapter: it merges endpoints from static files, Consul Catalog, Litemesh container instances and external API registries <strong>indiscriminately</strong>, and can even carry the same service's Consul physical instances alongside Litemesh container instances.</p></div>
+        <div class="card"><h3>Data plane responsibilities</h3><p>The router holds a single read-only route-tree pointer with no global mutex, matching against a read-only in-memory copy; all upstreams are compiled and cached in <code>PoolManager</code>, so requests in the hot path never reflect or reallocate memory.</p></div>
+      </div>
+    </section>
+
+    <section id="pipeline">
+      <h2><span class="num">3</span>The reversed pipeline: a request's full journey</h2>
+      <p>Conceptually L1–L7, but with a deeply reversed physical order. Security and rate limiting are front-loaded so the gateway never collapses just because a backend auth service fails.</p>
+      <div class="rail">
+        <div class="node red"><div class="k">L1 · Edge defense · router.go</div><h4>Router.ServeHTTP (pre-processing)</h4><p>Before any config context applies: global IP filtering (fast-fail); stripping client-forged sensitive headers like <code>X-Tenant-ID</code>/<code>X-SID</code>; URL path normalization; zero-overhead interception of ACME challenges and <code>/_litegate/</code> system endpoints (a hit returns immediately, never entering the business layer).</p></div>
+        <div class="node"><div class="k">L2 · Route match</div><h4>GetSiteMatch</h4><p>An internal Trie tree matches Host/Path to a site <code>[id]</code> and route, injecting the matched <code>MatchedPrefix</code> into the Action Context. No Site/Route match returns 404 here.</p></div>
+        <div class="node"><div class="k">L3 · Lifecycle container · core.go</div><h4>CoreHandler (TraceID &amp; lifecycle)</h4><p>Only after a route hit is the request wrapped in CoreHandler: a W3C-compliant <code>X-Trace-Id</code> (if the client didn't supply one), panic isolation via <code>recover()</code> (a single middleware panic still only returns 500, the process never dies), and <code>logMeta</code> initialization.</p></div>
+        <div class="node"><div class="k">L4 · Middleware chain · BuildRouteHandler</div><h4>Core → plugins → CORS → IP → WAF → RateLimit → Auth → Compress</h4><p><strong>RateLimit runs before Auth</strong>: it caps the route's total throughput, both protecting backends before they crash and shielding downstream IDS auth services and Redis from invalid floods. After Auth (OIDC / IDSSession / RemoteAuth) succeeds, decrypted tenant metadata is mapped into standard headers (<code>X-Tenant-ID</code>, <code>X-SID</code>, <code>X-DB-Name</code>) for zero-intrusion context propagation.</p></div>
+        <div class="node green"><div class="k">L3/L5/L6 · Proxy execution · proxy.go</div><h4>Proxy Executor (routing &amp; rewriting)</h4><p>Path rewriting (<code>StripPrefix</code> dynamically reads MatchedPrefix / <code>PrependPrefix</code>); canary draw (per-request dice roll on <code>router.gray_weight</code>, hits route to <code>upstream.gray</code> nodes, empty canary pool falls back to the full pool); two-phase <code>FilterEndpoints</code> (hard selector + soft meta + auto fallback); LB node selection (RoundRobin / IpHash / Weighted / P2C) with timeout/retry/breaker.</p></div>
+        <div class="node green"><div class="k">Backend</div><h4>Outbound dispatch → write back</h4><p>Physically dispatches to the chosen healthy instance, receives the response and writes it back to the client.</p></div>
+        <div class="node amber"><div class="k">L7 · Observability · core.go (defer)</div><h4>Observability</h4><p>On completion, aggregates the whole pipeline: route ID, chosen backend address, auth result, per-stage latency — emitted as standardized JSON logs.</p></div>
+      </div>
+    </section>
+
+    <section id="reload">
+      <h2><span class="num">4</span>Zero-downtime hot reload: atomic pointer swap</h2>
+      <p>In production, any route reset (adding a domain, changing canary weights) must not break TCP connections in transit. LiteGate avoids jitter with an atomic pointer swap.</p>
+      <ol class="steps">
+        <li><strong>Detect change</strong><br>Watcher or KV detects a config edit / discovery change.</li>
+        <li><strong>Build offline</strong><br>Copy and parse the full config, silently build a brand-new Trie tree in memory, run validation and port-conflict checks — without touching the live data plane.</li>
+        <li><strong>Atomic swap</strong><br>Once ready, run <code>Val.Store(NewTree)</code>; the pointer switches in nanoseconds.</li>
+        <li><strong>Reclaim old tree</strong><br>The old tree has no new active references and is reclaimed by GC after draining in-flight requests.</li>
+      </ol>
+      <div class="callout ok"><span class="t">Fail-Safe</span><p>If building NewTree fails (bad format, cert conflict, etc.), the reload aborts with an error and the pointer <strong>never swaps</strong> — the old tree keeps serving stably. Ports <code>80/443</code> stay bound throughout, with no process fork or graceful port shutdown and zero system-level I/O cost.</p></div>
+    </section>
+
+    <section id="litemesh">
+      <h2><span class="num">5</span>Litemesh cluster consensus</h2>
+      <p>For multi-node clusters, LiteGate ditches heavy components like K8s / ZooKeeper, reaching eventual consistency with an improved Gossip protocol.</p>
+      <div class="two">
+        <div class="card"><h3>Notify-Pull mode</h3><p>Traditional Gossip broadcasts member detail frequently in large clusters, risking bandwidth storms. Litemesh instead broadcasts only a tiny "change ID" when a node changes; receivers decide locally, then asynchronously unicast a pull for details from the source — cutting bandwidth by about <strong>85%</strong>.</p></div>
+        <div class="card"><h3>Anti-entropy recovery</h3><p>Packet loss can cause temporary state drift. Every 5 minutes Litemesh runs a lightweight full-state check against a random node, reconciling differences to guarantee eventual consistency even after severe network partitions.</p></div>
+      </div>
+    </section>
+
+    <section id="stream">
+      <h2><span class="num">6</span>L4 Stream and elastic HA</h2>
+      <p>Beyond 7-layer web serving, LiteGate natively integrates a high-performance <strong>L4 Stream Server</strong> for non-HTTP traffic — MySQL connection pools, DNS protocol proxying, and low-level IoT TCP/UDP data. The forwarding layer embeds a closed-loop traffic governance engine for microsecond-level self-healing.</p>
+      <div class="grid">
+        <div class="card"><h3>Canary soft routing</h3><p>A per-request dice roll on <code>gray_weight</code> routes hits into the canary pool; if the whole canary pool is down, traffic auto-falls back to the full healthy pool for HA.</p></div>
+        <div class="card"><h3>Two-phase instance filter</h3><p>Phase one hard-matches <code>router.selector</code> and tenant tags — an empty isolation pool returns <code>502</code> directly, so cross-tenant traffic is never physically mixed; phase two soft-matches <code>router.meta</code> within the isolation pool, falling back if nothing matches.</p></div>
+        <div class="card"><h3>Breaker &amp; retries</h3><p>Each outbound failure, when the retry factor allows, auto-resends to a different physical node; an instance that keeps erroring past the breaker threshold is marked "subhealthy" and removed from the active pool.</p></div>
+      </div>
+    </section>
+
+    <section id="perf">
+      <h2><span class="num">7</span>Performance &amp; connection-pool tuning</h2>
+      <p>LiteGate hits ~55k RPS at ~50MB resident memory on laptop-class hardware thanks to aggressive <code>PoolManager</code> tuning. Parameters live in <code>DefaultProxyConfig()</code> in <code>internal/proxy/types.go</code>.</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code>func DefaultProxyConfig() *ProxyConfig {
+    return &ProxyConfig{
+        MaxIdleConns:        4096,             // global max idle conns
+        MaxIdleConnsPerHost: 4096,             // max idle conns per backend host
+        MaxConnsPerHost:     8192,             // max total conns per backend host
+        IdleConnTimeout:     90 * time.Second,
+
+        DefaultDialTimeout:           10 * time.Second,
+        DefaultTLSHandshakeTimeout:   10 * time.Second,
+        DefaultResponseHeaderTimeout: 30 * time.Second,
+
+        CleanupInterval:        5 * time.Minute,  // idle conn reaper
+        TransportIdleTimeout:   10 * time.Minute,
+        EnableTransportCleanup: true,
+    }
+}</code></pre></div>
+      <div class="two">
+        <div class="card"><h3>Very high idle keep-alives per host</h3><p>Caddy or standard Go proxies default to 2 or 100 idle conns per host; under load the idle pool fills instantly, forcing endless "connect → transfer → close" cycles with huge handshake cost and easy ephemeral-port exhaustion (<code>Address already in use</code>). LiteGate raises this to <strong>4096</strong>, so concurrent requests reuse long-lived connections and TLS handshake cost is amortized to zero.</p></div>
+        <div class="card"><h3>Dynamic transport cleanup &amp; self-healing</h3><p>The <code>CleanupInterval: 5m</code> background reaper sweeps the idle pool; once a backend's traffic drops or it is scaled out, those idle conns are physically closed and memory is returned smoothly to the OS, keeping resident usage at a low <strong>~50MB</strong>.</p></div>
+      </div>
+    </section>
+
+    <div class="footer">LiteGate Docs · <a class="inline" href="litegate_complete_introduction.html">Complete Introduction</a> · <a class="inline" href="litegate_service_discovery.html">Service Discovery</a> · <a class="inline" href="../zh-cn/litegate_architecture.html">中文版</a></div>
+  </main>
+</div>
+
+
+<script>
+(function () {
+  const toc = document.querySelector('.toc');
+  if (!toc) return;
+
+  const links = Array.from(toc.querySelectorAll('a[href^="#"]'));
+  const items = links.map((link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    return { link, target: document.getElementById(id) };
+  }).filter((item) => item.target);
+
+  if (!items.length) return;
+
+  let activeLink = null;
+  let ticking = false;
+
+  function setActive(item) {
+    if (!item || activeLink === item.link) return;
+    links.forEach((link) => link.classList.remove('active'));
+    item.link.classList.add('active');
+    activeLink = item.link;
+
+    const tocRect = toc.getBoundingClientRect();
+    const linkRect = item.link.getBoundingClientRect();
+    if (linkRect.top < tocRect.top + 16 || linkRect.bottom > tocRect.bottom - 16) {
+      item.link.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function currentItem() {
+    if (window.scrollY < 100) return items[0];
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+
+    for (const item of items) {
+      if (item.target.offsetParent === null && item.target.id !== 'overview') continue;
+      const rect = item.target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight * 0.88;
+      if (!visible) continue;
+
+      const distance = Math.abs(rect.top - anchor);
+      if (distance < bestDistance) {
+        best = item;
+        bestDistance = distance;
+      }
+    }
+
+    if (!best) {
+      best = items[0];
+      for (const item of items) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= anchor) best = item;
+      }
+    }
+
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      best = items[items.length - 1];
+    }
+    return best;
+  }
+
+  function updateActive() {
+    ticking = false;
+    setActive(currentItem());
+  }
+
+  function requestUpdate() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateActive);
+    }
+  }
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('hashchange', requestUpdate);
+  links.forEach((link) => link.addEventListener('click', () => window.setTimeout(requestUpdate, 80)));
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', requestUpdate, { once: true });
+  } else {
+    requestUpdate();
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate — Static YAML vs. Dynamic L1-L7 Tag Consistency Reference</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+
+
+body {
+  font-family: var(--sans);
+  background: var(--bg3);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.page-header {
+  background: var(--bg);
+  border-bottom: 0.5px solid var(--border2);
+  padding: 1.5rem 2rem 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.page-header h1 {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.page-header p {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 4px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 7px 12px 7px 32px;
+  font-size: 13px;
+  font-family: var(--sans);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius);
+  background: var(--bg2);
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s;
+}
+
+.search-box input:focus { border-color: var(--accent); }
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  pointer-events: none;
+}
+
+.filter-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.filter-btn {
+  padding: 5px 13px;
+  font-size: 12px;
+  font-family: var(--sans);
+  border: 0.5px solid var(--border2);
+  border-radius: 20px;
+  background: var(--bg2);
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.filter-btn:hover { background: var(--bg3); }
+
+.filter-btn.active {
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  border-color: var(--accent);
+  font-weight: 500;
+}
+
+.stats {
+  font-size: 12px;
+  color: var(--text3);
+  white-space: nowrap;
+  padding: 5px 0;
+  margin-left: auto;
+}
+
+.main { padding: 1.5rem 2rem 3rem; max-width: 1400px; margin: 0 auto; }
+
+.section { margin-bottom: 1rem; border-radius: var(--radius-lg); background: var(--bg); border: 0.5px solid var(--border); overflow: hidden; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: background .15s;
+}
+
+.section-header:hover { background: var(--bg2); }
+
+.layer-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+.section-header h3 { font-size: 13.5px; font-weight: 500; color: var(--text); flex: 1; }
+
+.layer-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--bg2);
+  color: var(--text3);
+  font-family: var(--mono);
+}
+
+.count-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--bg3);
+  color: var(--text2);
+}
+
+.chevron {
+  font-size: 13px;
+  color: var(--text3);
+  transition: transform .2s;
+  flex-shrink: 0;
+}
+
+.chevron.open { transform: rotate(180deg); }
+
+.section-body { border-top: 0.5px solid var(--border); overflow-x: auto; }
+.hidden { display: none !important; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  table-layout: fixed;
+  min-width: 860px;
+}
+
+col.c1 { width: 14%; }
+col.c2 { width: 13%; }
+col.c3 { width: 26%; }
+col.c4 { width: 9%; }
+col.c5 { width: 38%; }
+
+thead th {
+  background: var(--bg2);
+  color: var(--text3);
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 0.5px solid var(--border);
+  position: sticky;
+  top: 0;
+}
+
+td {
+  padding: 9px 12px;
+  border-bottom: 0.5px solid var(--border);
+  vertical-align: top;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg2); }
+
+code {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--bg2);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.tag-cell code {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--accent-text);
+  background: var(--accent-bg);
+  padding: 2px 6px;
+  word-break: break-all;
+}
+
+.tag-cell code:last-child { margin-bottom: 0; }
+
+.note { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+.node-label { font-family: var(--mono); font-size: 11px; color: var(--text2); }
+
+.badge-yes {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  background: #EAF3DE;
+  color: #3B6D11;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-yes { background: #173404; color: #C0DD97; }
+}
+
+.badge-no {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  background: #F1EFE8;
+  color: #5F5E5A;
+  white-space: nowrap;
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-no { background: #2c2c2a; color: #888780; }
+}
+
+.badge-dynamic {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  background: #E6F1FB;
+  color: #185FA5;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-dynamic { background: #042C53; color: #85B7EB; }
+}
+
+.empty-msg {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text3);
+  font-size: 14px;
+}
+
+  @media (max-width: 700px) {
+    .page-header { padding: 1rem; }
+    .main { padding: 1rem; }
+  }
+
+  /* Tab switch styles */
+  .doc-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+
+  .doc-tab-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--sans);
+    background: transparent;
+    border: none;
+    color: var(--text2);
+    cursor: pointer;
+    position: relative;
+    transition: color 0.15s;
+  }
+
+  .doc-tab-btn:hover {
+    color: var(--text);
+  }
+
+  .doc-tab-btn.active {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .doc-tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -9px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .tab-content {
+    width: 100%;
+  }
+
+  /* Scenario card styles */
+  .scenario-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+
+  .scenario-card-header {
+    padding: 14px 20px;
+    background: var(--bg2);
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .scenario-card-header h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .scenario-badge {
+    font-size: 10.5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    font-weight: 500;
+  }
+
+  .scenario-card-body {
+    padding: 20px;
+  }
+
+  .scenario-desc {
+    font-size: 12.5px;
+    color: var(--text2);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px dashed var(--border);
+    line-height: 1.6;
+  }
+
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 900px) {
+    .scenario-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .scenario-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .scenario-col h4 {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .scenario-col h4::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .code-wrapper {
+    position: relative;
+    background: var(--bg2);
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 12px;
+    overflow-x: auto;
+    flex: 1;
+  }
+
+  .code-wrapper pre {
+    margin: 0;
+    padding: 0;
+  }
+
+  .code-wrapper code {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    color: var(--text);
+    line-height: 1.55;
+    white-space: pre;
+    display: block;
+  }
+
+  .architecture-tip {
+    margin-top: 12px;
+    background: var(--accent-bg);
+    border-left: 3px solid var(--accent);
+    padding: 10px 14px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  .architecture-tip p {
+    font-size: 11.5px;
+    color: var(--accent-text);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Required/optional badge styles */
+  .badge-req {
+    display: inline-block;
+    font-size: 9.5px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: #FFEBEA;
+    color: #D32F2F;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  @media (prefers-color-scheme: dark) {
+    .badge-req { background: #3B1B1B; color: #EF5350; }
+  }
+
+  .badge-opt {
+    display: inline-block;
+    font-size: 9.5px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: #E8F0FE;
+    color: #1A73E8;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  @media (prefers-color-scheme: dark) {
+    .badge-opt { background: #1B2B4A; color: #4285F4; }
+  }
+
+  .default-val {
+    display: inline-block;
+    font-size: 9.5px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--bg2);
+    color: var(--text3);
+    border: 0.5px solid var(--border);
+    font-family: var(--mono);
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+/* LiteGate docs shell aligned with ids_development_guide.html */
+body { background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.doc-main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.page-header { position: static; padding: 0 0 22px; border-bottom: 0.5px solid var(--border2); background: transparent; }
+.page-header h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; color: var(--text); }
+.page-header p { font-size: 14px; color: var(--text2); margin-top: 10px; }
+.reference-main { padding: 22px 0 0; max-width: none; margin: 0; }
+.section { border-radius: var(--radius); border: 0.5px solid var(--border); }
+.section-header h3 { margin: 0; }
+.scenario-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); }
+.scenario-card-header, .scenario-card-body { background: transparent; }
+.doc-tabs { margin-top: 0; }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } .doc-main { padding: 28px 20px 60px; } .page-header { padding-top: 0; } }
+
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate Tags</div>
+    <div class="brand-sub">YAML &amp; Tag Reference</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← Docs Home</a>
+    <a href="litegate_complete_introduction.html">Complete Introduction</a>
+    <a href="litegate_backend_tag_system.html">Backend Tag System</a>
+    <a href="#tableTab">Field Reference Table</a>
+    <a href="#scenariosTab">Common Scenarios</a>
+    <a href="ids_development_guide.html">IDS Development Guide</a>
+  </nav>
+  <main class="doc-main">
+<header class="page-header">
+  <h1>LiteGate &mdash; Static YAML vs. Dynamic L1-L7 Tag Consistency Reference</h1>
+  <div class="toolbar">
+    <div class="search-box">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="Search by keyword, field name, or tag..." oninput="applyFilters()">
+    </div>
+    <div class="filter-btns">
+      <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+      <button class="filter-btn" onclick="setFilter('yes',this)">Tag-supported</button>
+      <button class="filter-btn" onclick="setFilter('no',this)">Static only</button>
+      <button class="filter-btn" onclick="setFilter('dynamic',this)">Dynamic only</button>
+    </div>
+    <span class="stats" id="statsLabel"></span>
+  </div>
+  <p>Tip: a consistency mapping between static YAML fields and dynamic self-registration tags.</p>
+  <p><a href="../zh-cn/litegate_yaml_tags_reference.html">Chinese version</a> · <a href="litegate_complete_introduction.html">LiteGate Complete Introduction</a></p>
+</header>
+
+<div class="reference-main">
+  <!-- Tab switch buttons: reference table / scenarios -->
+  <div class="doc-tabs">
+    <button class="doc-tab-btn active" id="btn-table" onclick="switchTab('table')">Table · Field Reference</button>
+    <button class="doc-tab-btn" id="btn-scenarios" onclick="switchTab('scenarios')">Scenarios · Examples</button>
+  </div>
+
+  <!-- Tab 1: Field reference table -->
+  <div id="tableTab" class="tab-content">
+    <div id="sections"></div>
+    <div id="emptyMsg" class="empty-msg hidden">No matching fields. Try a different keyword.</div>
+  </div>
+
+  <!-- Tab 2: Scenario examples -->
+  <div id="scenariosTab" class="tab-content hidden">
+
+    <!-- Scenario 1 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>Scenario 1: Frontend/Backend Split &amp; Microservice Co-location (SPA static hosting + dynamic API proxy — hybrid routing)</h3>
+        <span class="scenario-badge">Hybrid merge</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          This showcases one of LiteGate's <b>most powerful core capabilities</b>: <b>Hybrid Merge</b>. In this typical production setup, the static SPA frontend (index.html, etc.) is hosted directly from the local filesystem via static YAML (using the <code>type: serve</code> action), while the dynamic routing rules for backend API microservices (e.g. order-service) are driven entirely by self-registration tags that service instances report at startup. The gateway merges both into a single unified routing tree in memory — preserving edge security and control while giving development teams highly agile self-service publishing.
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>Static hosting gateway YAML (frontend-only.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: app.example.com
+port: 80              # 💡 Tip: global default listening port for the static site
+force_https: true
+
+routes:
+  # 1. Static hosting route (static-YAML-only; instances must not declare such physical paths)
+  - name: frontend-spa
+    priority: 10
+    match:
+      path_prefix: /
+    action:
+      type: serve
+      root: /var/www/dist
+      index: index.html
+      spa: true
+
+  # 💡 Tip: dynamic API proxy routes do NOT need to be declared here!
+  # Backend services report their own IP, port, and route Tags to the registry at startup.
+  # The gateway auto-detects them and performs a Hybrid Merge with this top-level domain node, enabling hot-pluggable service routes.</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>Service self-registration tags (order-service node Tags)</h4>
+            <div class="code-wrapper">
+              <pre><code># ── 1. Ingress &amp; matching ──
+# When the gateway receives a request for app.example.com (triggers Hybrid Merge and in-memory lookup)
+litegate.ingress.host=app.example.com
+# Declare prefix matching. Requests are dispatched to this instance group only when the path starts with /api
+litegate.ingress.path_prefix=/api
+# Raise priority to 100 to ensure high-priority matching and avoid being shadowed by the default SPA "/" route
+litegate.router.priority=100
+
+# ── 2. Path rewriting ──
+# Strip prefix. Removes /api before forwarding so the service receives /orders instead of /api/orders
+litegate.router.strip_prefix=/api
+
+# ── 3. Load balancing ──
+# Instance weight. This instance carries 80% of the traffic during load balancing
+litegate.upstream.weight=80</code></pre>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>Hybrid Merge:</b> a core architectural feature of LiteGate. Administrators only maintain infrastructure nodes (domain binding, SSL certs) in global static YAML, while service developers declare API routing characteristics directly in their own node Tags. At runtime the gateway merges both into one unified routing tree — preserving security while eliminating the cumbersome centralized-config bottleneck of traditional gateways.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 2 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>Scenario 2: Dynamic API Gateway (multi-instance proxy + local rate limiting &amp; circuit breaking)</h3>
+        <span class="scenario-badge">API Gateway</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          This is the most common deployment of LiteGate as a <b>pure microservice API gateway</b>. Here the gateway hosts no local static resources and focuses entirely on high-concurrency L7 reverse-proxy traffic. By combining <b>QPS rate limiting (with an adaptive algorithm option), request-timeout control and self-healing retries</b>, plus <b>per-instance circuit-breaker protection</b>, it builds a robust distributed defense layer for downstream services, isolating and intercepting cascading failures before they bring the system down.
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>Gateway static YAML (pure-api-proxy.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: api.example.com
+port: 443
+
+routes:
+  - name: api-gateway-route
+    priority: 50
+    match:
+      path_prefix: /v1
+    action:
+      type: proxy
+      service_name: payment-service
+      timeout: 5             # 💡 YAML side uses plain integer seconds, no unit
+      retry: 3
+      rate_limit: 150
+      rate_limit_policy: adaptive
+      circuit_breaker:
+        enabled: true
+        timeout: 30          # 💡 plain integer seconds
+        max_requests: 10
+        trip_threshold: 15</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>Service self-registration tags (payment-service node Tags)</h4>
+            <div class="code-wrapper">
+              <pre><code># ── 1. Ingress &amp; matching ──
+litegate.ingress.host=api.example.com
+litegate.ingress.path_prefix=/v1
+litegate.router.priority=50
+
+# ── 2. L5 Service network timeout &amp; retry ──
+# Max time to wait for the upstream response
+litegate.service.timeout=5s
+# Max retry attempts on transient network failures or 5xx errors
+litegate.service.retry=3
+
+# ── 3. L5 Service circuit-breaker config ──
+# ⚠️ Tag side uses flat breaker_*, and timeout is plain integer seconds (no s suffix)
+litegate.service.breaker=true
+litegate.service.breaker_timeout=30
+litegate.service.breaker_max_requests=10
+litegate.service.breaker_trip_threshold=15
+
+# ── 4. L4 Middleware rate limiting ──
+litegate.middleware.ratelimit=150
+# 💡 Note: rate_limit_policy (adaptive) is static-YAML-only; dynamic tags don't support it yet and treat the limit as a hard QPS cap</code></pre>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>High-availability gateway protection:</b> this scenario shows the gateway as a core shield. By simply declaring <code>litegate.service.breaker=true</code> and rate-limit rules in dynamic tags, a microservice gains elastic distributed rate limiting and automatic circuit breaking without touching any client- or server-side SDK code.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 3 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>Scenario 3: Business-level SSO &amp; Auth Context Injection (IDS Session)</h3>
+        <span class="scenario-badge">Unified identity interception</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          For complex business systems (B2B or B2C) that need high-security session verification and Claims context injection. Here the gateway mounts the <b>IDS unified identity &amp; security engine</b>, automatically extracting session credentials from inbound requests and validating them against a shared Redis cache. The gateway not only provides <b>asynchronous sliding-window session renewal</b>, but also — after a successful check — decrypts the user principal (Claims) and injects them as standard <code>X-Claim-*</code> request headers into the upstream request, freeing backend services from repetitive identity-verification code.
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>Static gateway config (internal-session-auth.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: app.example.com
+port: 443
+
+routes:
+  - name: internal-auth-api
+    priority: 200
+    match:
+      path_prefix: /api/v1
+    action:
+      type: proxy
+      service_name: biz-service
+      ids:
+        enabled: true
+        mode: verify          # 💡 Session verification runs in the verify processor; ids_session is the provider type, not a mode
+        provider: saas-auth
+        extractor: "{header.Authorization}"
+        session_ttl: 7200
+        renew_threshold: 3600
+        inject_headers: true
+        inject_claims:
+          X-User-Id: sub
+          X-User-Email: email</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>Service self-registration tags (biz-service node Tags)</h4>
+            <div class="code-wrapper">
+              <pre><code># ── 1. Ingress &amp; matching ──
+litegate.ingress.host=app.example.com
+litegate.ingress.path_prefix=/api/v1
+litegate.router.priority=200
+
+# ── 2. Middleware interception &amp; provider binding ──
+# Enable the unified IDS engine and set the verification mode to verify (session verification)
+litegate.middleware.ids.enabled=true
+litegate.middleware.ids.mode=verify
+# Bind the unified auth provider saas-auth
+litegate.middleware.ids.provider=saas-auth
+
+# ── 3. Dynamic IDSProvider parameters ──
+# The provider's underlying validation model is ids_session
+litegate.http.ids_providers.saas-auth.type=ids_session
+# Extract the session credential from the Authorization header (auto-detects Bearer / UUID format)
+litegate.http.ids_providers.saas-auth.extractor={header.Authorization}
+# Hard session lifetime (seconds)
+litegate.http.ids_providers.saas-auth.session_ttl=7200
+# Trigger async sliding renewal when the session has less than 3600 seconds left, preventing abrupt logout
+litegate.http.ids_providers.saas-auth.renew_threshold=3600
+
+# ── 4. Identity context injection ──
+# 💡 Note: inject_headers / inject_claims are static-YAML-only; dynamic tags don't support them.
+# After a successful check, the gateway decrypts Claims and injects X-Claim-* request headers uniformly.</code></pre>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>Self-healing session defense:</b> LiteGate performs session validation and on-demand async renewal at the edge. Teams no longer need to wire a Redis client and identity-filter logic into every microservice — simplifying code and avoiding the consistency disasters caused by a single service mishandling session renewal.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 4 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>Scenario 4: Open-Platform MD5 Offline Signing &amp; Dynamic Credential Fetch</h3>
+        <span class="scenario-badge">Open platform core</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          For external merchants or open-API scenarios. External clients carry a SecretKey and perform offline MD5 signature verification. The gateway dynamically resolves the AppId, fetches/aligns keys for high-concurrency signature verification behind an L1 (LRU) / L2 (Redis) two-tier cache, and establishes a <b>404 negative-cache mechanism</b> to fully de-noise and shed high-frequency malicious probing from the backend identity service (IDS). To secure the origin path, the gateway automatically attaches <code>client_id</code> and <code>client_secret</code> credentials when calling the unified identity center.
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>Static gateway config (open-api-md5.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: openapi.ai.com
+port: 443
+
+routes:
+  - name: open-orders
+    priority: 150
+    match:
+      path_prefix: /openapi/v1/orders
+    action:
+      type: proxy
+      service_name: openapi-backend
+      ids:
+        enabled: true
+        mode: openapi
+        provider: dynamic-openapi
+        extractor: "{header._appid}"
+        # Mount the remote dynamic credential-fetch engine
+        discovery_service: identityservice
+        path: /api/gate/credentials
+        client_id: litegate
+        client_secret: secret
+        negative_ttl: 60
+        fail_policy: deny</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>Service self-registration tags (openapi-backend node Tags)</h4>
+            <div class="code-wrapper">
+              <pre><code># ── 1. Dynamic business route &amp; unified IDS engine registration ──
+# Declare the business API route's matching path prefix
+litegate.http.routers.open-orders.path=/openapi/v1/orders
+# Enable the unified IDS engine in openapi (offline MD5 signature) mode
+litegate.http.routers.open-orders.ids.enabled=true
+litegate.http.routers.open-orders.ids.mode=openapi
+# Bind the associated dynamic IDS provider
+litegate.http.routers.open-orders.ids.provider=dynamic-openapi
+
+# ── 2. Dynamic IDSProvider registration ──
+# Declare the provider type as remote_auth (supports cluster dynamic origin discovery)
+litegate.http.ids_providers.dynamic-openapi.type=remote_auth
+# Declare the verification mode as openapi
+litegate.http.ids_providers.dynamic-openapi.mode=openapi
+# Extract the AppId variable from the request header
+litegate.http.ids_providers.dynamic-openapi.extractor={header._appid}
+# Declare the credential provider (the gateway dynamically dispatches the backend identityservice for origin fetch)
+litegate.http.ids_providers.dynamic-openapi.discovery_service=identityservice
+# Mount the custom credential-verification endpoint path
+litegate.http.ids_providers.dynamic-openapi.path=/api/gate/credentials
+# Bind the client credentials for the identity center (ClientID / ClientSecret)
+litegate.http.ids_providers.dynamic-openapi.client_id=litegate
+litegate.http.ids_providers.dynamic-openapi.client_secret=secret
+# 404 negative-cache block duration for invalid AppId (seconds)
+litegate.http.ids_providers.dynamic-openapi.negative_ttl=60</code></pre>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>Routing-elevation protection:</b> after signature verification passes, the gateway securely extracts <code>sid</code> internally and promotes it to the physical routing key <code>KeyRouteSelector["sid"]</code>, working with Litemesh for targeted shard routing while fully blocking <code>sid</code> from being passed downstream — keeping the edge secure.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 5 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>Scenario 5: Single-node Local Static Reverse Proxy (no service discovery)</h3>
+        <span class="scenario-badge">Single-node static (legacy)</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          The simplest single-node, micro, or traditional deployment. In this mode the <b>gateway depends on no dynamic service discovery (no Consul or Litemesh)</b> and acts purely as a front proxy, forwarding all traffic to a hard-coded local or internal IP and port (e.g. <code>127.0.0.1:8080</code>).
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>Gateway static YAML (local-static-proxy.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: api.example.com
+port: 80
+
+routes:
+  - name: local-api-route
+    priority: 100
+    match:
+      path_prefix: /v1
+    action:
+      type: proxy
+      # Force the upstream type to a static physical address list
+      upstream_type: static
+      # Hard-code the local microservice physical listening port
+      upstream:
+        - 127.0.0.1:8080</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>Service self-registration tags</h4>
+            <div class="code-wrapper" style="background:var(--bg3); display:flex; align-items:center; justify-content:center; min-height:120px;">
+              <span style="color:var(--text3); font-size:12px; font-family:var(--sans); text-align:center; padding: 20px;">
+                💡 <b>Pure static orchestration: no dynamic tags</b><br>
+                Because this scenario never goes through any registry, the gateway relies solely on the static YAML upstream for local dispatch. Instances neither need nor are able to report any dynamic tags — upholding a clean static/dynamic boundary.
+              </span>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>Registry-free minimalism:</b> ideal for micro workloads or single-node Docker-Compose rapid deployment, preserving the familiar mental model of a traditional reverse proxy (like a minimal Nginx setup).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 6 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>Scenario 6: Multi-instance Static Load-Balancing Cluster</h3>
+        <span class="scenario-badge">Internal static cluster</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          For traditional internal clusters with fixed physical machines or fixed container IPs. Still <b>without service discovery</b>, the gateway lists multiple fixed upstream IPs directly in static YAML and drives multi-node load balancing at L7 (round-robin, IP hash), backed by network-level timeout and retry for high availability.
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>Gateway static YAML (multi-static-lb.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: app.example.com
+port: 80
+
+routes:
+  - name: app-lb-route
+    priority: 100
+    match:
+      path_prefix: /
+    action:
+      type: proxy
+      upstream_type: static
+      # Round-robin load balancing (supports rr / ip_hash)
+      lb_policy: rr
+      # Bind multiple backend static IPs and ports
+      upstream:
+        - 10.0.0.21:8080
+        - 10.0.0.22:8080
+        - 10.0.0.23:8080</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>Service self-registration tags &amp; LB notes</h4>
+            <div class="code-wrapper" style="background:var(--bg3); display:flex; flex-direction:column; justify-content:center; padding: 20px; min-height:220px; gap: 12px;">
+              <div style="color:var(--text); font-size:12px; font-family:var(--sans); line-height: 1.6;">
+                ⚖️ <b>Multi-node static high availability:</b><br>
+                In static LB mode, the gateway's internal dispatcher establishes active TCP health probes to each statically configured <code>upstream</code> instance.
+                Once a node is detected offline, the gateway removes it from the healthy routing set in memory and seamlessly retries and dispatches the request to other healthy backends.
+              </div>
+              <div style="border-top: 1px dashed var(--border); padding-top: 10px; color:var(--text3); font-size:12px; font-family:var(--sans); line-height: 1.6;">
+                💡 <b>Pure static orchestration: no dynamic tags</b><br>
+                Because this scenario never goes through any registry, the gateway relies solely on the static YAML upstream for local dispatch. Instances neither need nor are able to report any dynamic tags.
+              </div>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>Registry-free cluster architecture:</b> ideal for traditional enterprise intranets, isolated private networks, or fixed VM environments where deploying Consul-style discovery is inconvenient — high availability with minimal effort.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 7 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>Scenario 7: WebDAV Static Hosting + Built-in Simple SSO Auth</h3>
+        <span class="scenario-badge">Protected static storage</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          For team intranet file sharing or personal private storage. LiteGate provides <b>out-of-the-box static WebDAV file hosting</b>, with a visual web browsing UI and read/write restrictions. To secure files, mount the <b>built-in Simple SSO auth component</b> directly on the route. No complex OIDC service certificates required — just 4 lines protect your private filesystem, with a fully customizable local login template.
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>Gateway static YAML (webdav-sso.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: storage.example.com
+port: 443
+force_https: true
+
+routes:
+  - name: secure-webdav
+    priority: 100
+    match:
+      path_prefix: /dav
+    action:
+      type: webdav
+      root: /data/share     # Local physical storage path
+      web_ui: true          # Enable the graphical web UI
+      read_only: false      # Allow upload, delete, and modify
+
+      # Mount the built-in Simple SSO defense
+      auth:
+        type: sso
+        sso_enabled: true
+        secret: "please_change_to_a_random_secret_at_least_32_bytes_long" # Session cookie signing key (production must use a random key of at least 32 bytes)
+        template: /var/litegate/login.html # Custom local login page
+        users:
+          admin: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918" # ciphertext of admin123</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>Dynamic tags &amp; CLI helper notes</h4>
+            <div class="code-wrapper" style="background:var(--bg3); display:flex; flex-direction:column; justify-content:center; padding: 20px; min-height:220px; gap: 12px;">
+              <div style="color:var(--text); font-size:12px; font-family:var(--sans); line-height: 1.6;">
+                🛠️ <b>Password-hash generator CLI:</b><br>
+                To avoid leaking config and storing plaintext, LiteGate ships a strong salted password hash. Never write plaintext under <code>users</code>.
+                In a terminal run:
+                <code style="display:block; margin: 6px 0; background:var(--bg); border: 0.5px solid var(--border); padding: 5px 10px; color:var(--accent);">litegate --hash "your_password"</code>
+                The console prints a strong SHA256 / Bcrypt ciphertext to paste straight into the config file.
+              </div>
+              <div style="border-top: 1px dashed var(--border); padding-top: 10px; color:var(--text3); font-size:12px; font-family:var(--sans); line-height: 1.6;">
+                💡 <b>Static-only protection note:</b><br>
+                WebDAV's <code>root</code>, <code>web_ui</code>, and <code>read_only</code> are site-level physical-storage orchestration. By LiteGate's product boundary, <b>dynamic tags neither provide nor are allowed to declare such local mount paths</b>, eliminating filesystem-state inconsistency across multi-node container deployments at the source.
+              </div>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>The leverage of built-in SSO:</b> instead of configuring an external OIDC identity center, LiteGate's built-in SSO needs only a few lines to deliver enterprise-grade interception and cookie sliding renewal — extremely portable for team collaboration and intranet storage projects.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 8 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>Scenario 8: Legacy Domain 301 Migration + Legacy Root-Path 302 Redirect Fix</h3>
+        <span class="scenario-badge">Legacy self-healing &amp; migration</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          In real production it's common to perform <b>seamless old-to-new domain migration</b> (e.g. moving <code>sales.old-example.com</code> to <code>a.example.com</code>). At the same time, because the legacy system's routing was poorly written, users hitting the root path <code>/</code> often can't open the page, so you need to <b>force a 302 redirect to the sub-app <code>/sys</code> entry at the gateway ingress</b> while proxying other traffic unchanged. LiteGate offers readable redirect directives with template-variable substitution, sparing you cryptic Nginx regex rewrites.
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>File 1: New domain config (a.example.yaml — self-healing proxy)</h4>
+            <div class="code-wrapper" style="margin-bottom: 12px;">
+              <pre><code>domain: a.example.com
+port: 80              # 💡 Optional. Defaults to 80/443 if omitted
+force_https: true
+
+routes:
+  # ── 1. Fix the legacy broken root route: exact-match root, 302 to the sub-app ──
+  - name: root-to-sys-redirect
+    priority: 100     # 💡 High priority to precisely intercept before the fuzzy "/" match
+    match:
+      path: /         # Exact match for "/"
+    action:
+      type: redirect
+      location: /sys  # 302 force-redirect to the real sub-app entry
+      status: 302
+
+  # ── 2. Reverse-proxy all other sub-path traffic to the legacy machine ──
+  - name: legacy-system-proxy
+    priority: 10      # Lower priority
+    match:
+      path_prefix: /  # LPM prefix match for all other traffic (e.g. /sys/login)
+    action:
+      type: proxy
+      upstream_type: static
+      upstream:
+        - "http://10.0.0.10:8080"</code></pre>
+            </div>
+            <h4>File 2: Legacy domain redirect (sales.old-domain.yaml — smooth migration)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: sales.old-example.com
+port: 80
+
+routes:
+  # ── 3. 301 permanent redirect to the new domain, preserving path &amp; query via a template var ──
+  - name: global-domain-migration
+    match:
+      path_prefix: /
+    action:
+      type: redirect
+      # 💡 Uses the ReplaceVars template variable {uri} to pass through path and query unchanged!
+      location: "https://a.example.com{uri}"
+      status: 301</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>Legacy self-healing &amp; smooth migration notes</h4>
+            <div class="code-wrapper" style="background:var(--bg3); display:flex; flex-direction:column; justify-content:center; padding: 20px; min-height:360px; gap: 14px;">
+              <div style="color:var(--text); font-size:12px; font-family:var(--sans); line-height: 1.6;">
+                🔄 <b>301 seamless domain migration:</b><br>
+                By using the built-in variable <code>{uri}</code> in Location (e.g. <code>https://a.example.com{uri}</code>), the gateway automatically captures and reattaches the original path and query string.
+                For example, visiting <code>http://sales.old-example.com/sys/login?user=admin</code> permanently redirects (301) to <code>https://a.example.com/sys/login?user=admin</code>, protecting old bookmarks and remaining SEO-friendly.
+              </div>
+              <div style="border-top: 1px dashed var(--border); padding-top: 12px; color:var(--text); font-size:12px; font-family:var(--sans); line-height: 1.6;">
+                🛠️ <b>Zero-intrusion legacy root (LPM) self-healing:</b><br>
+                Because the legacy app routing is poorly written, hitting <code>/</code> directly errors out or shows a blank page.
+                LiteGate declares <code>path: /</code> with <b><code>priority: 100</code></b> high priority to redirect root traffic to <code>/sys</code> first, while the rest (e.g. <code>/sys/login</code>) — having a longer prefix — is captured by the second <code>path_prefix: /</code> route and still proxied to the physical machine <code>10.0.0.10:8080</code>, avoiding the huge cost and risk of refactoring the business app.
+              </div>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>No more Nginx config headaches:</b> in Nginx you'd configure multiple Server blocks and write cryptic Rewrite regex for 301 migration and 302 fixes (error-prone and hard to maintain). LiteGate's YAML is clear and intuitive, and all redirect policies hot-reload and take effect instantly with no restart.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+  </main>
+</div>
+
+<script>
+const SECTIONS = [
+  {
+    id:"l12", title:"Site & Ingress Layer Configuration", layer:"L1-L2 Ingress", color:"#185FA5",
+    rows:[
+      ["Top-level","domain","The public logical domain bound to this site.","yes","litegate.ingress.host=openapi.example.com",""],
+      ["Top-level","port","The physical port this site listens on.","yes","litegate.entrypoint.bind=0.0.0.0:9660","The bind tag declares IP and port together"],
+      ["Top-level","force_https","Force a 301 redirect of all HTTP requests to the HTTPS port.","no","","Not applicable"],
+      ["Top-level","description","Human-readable description of the site.","no","","Not applicable (self-registered instances have no description semantics)"],
+      ["Top-level","defaults.timeout","Global default timeout (seconds) for the site.","no","","Not applicable (control per-instance at the service level instead)"],
+      ["Top-level","disable_trace_id","Globally disable Trace ID injection for this site.","no","","Not applicable"],
+      ["Top-level","ip_restriction","Site-wide client IP allow/deny access control.","no","","Not applicable"],
+      ["Top-level","middlewares","Map of site-wide middleware definitions.","no","","Not applicable"],
+    ]
+  },
+  {
+    id:"l3router", title:"Route Matching & Priority Control", layer:"L3 Router", color:"#0F6E56",
+    rows:[
+      ["routes[i]","name","Unique identifier for this route rule.","no","","Not applicable"],
+      ["routes[i]","priority","Match priority; higher values match first.","yes","litegate.router.priority=200 (default 0)",""],
+      ["routes[i]","middlewares","Route-level middleware list (comma-separated).","yes","litegate.router.middlewares=cors,ratelimit",""],
+      ["routes[i].match","rule","Expressive Traefik-style routing DSL rule literal.","yes","litegate.router.rule=Method(\"GET\") && Header(\"X-Beta\")",""],
+      ["routes[i].match","path","Exact path match. The route matches only when the request path equals this value exactly.","yes","litegate.ingress.path=/api/v1/orders",""],
+      ["routes[i].match","path_prefix","Prefix path match. Matches all requests starting with this path.","yes","litegate.ingress.path_prefix=/api/v2",""],
+      ["routes[i].match","method","Restrict the route to these HTTP methods (comma-separated).","yes","litegate.router.methods=GET,POST",""],
+      ["routes[i].match","header","Map of required request-header match conditions.","no","","Not applicable"],
+      ["routes[i]","version","Specify the route version.","yes","litegate.router.version=v1.0","Parsed as spec.Router.Version for version filtering"],
+      ["routes[i]","sid","Statically bind traffic to a specific tenant or shard instance.","yes","litegate.router.sid=c1-node","Static tenant/shard selector used to lock routing"],
+      ["routes[i].action","route_selector","Instance hard-feature selector. Only instances whose metadata contains this key/value can serve this route.","yes","litegate.router.selector.region=hangzhou","`litegate.router.selector.zone=z1`   hard-feature selector for matching service instances"],
+      ["routes[i].action","route_meta","Instance soft-feature match. Used as a soft reference in dynamic scheduling.","yes","litegate.router.meta.version=green","`litegate.router.meta.env=gray`   soft-feature selector used as a scheduling hint"],
+    ]
+  },
+  {
+    id:"l36action", title:"Request Rewriting & Upstream Selection", layer:"L3 Action / L6 Upstream", color:"#993C1D",
+    rows:[
+      ["routes[i].action","strip_prefix","Strip the matched prefix path before forwarding to the upstream.","yes","litegate.router.strip_prefix=/api/v2",""],
+      ["routes[i].action","prepend_prefix","Prepend a path segment before forwarding to the upstream.","yes","litegate.router.prepend_prefix=/v2",""],
+      ["routes[i].action","headers","Request-header rewrite/injection. Modify or add headers passed to the upstream.","yes","litegate.router.headers.X-Env=prod","`litegate.router.headers.X-Gateway=litegate`"],
+      ["routes[i].action","res_headers","Response-header rewrite/injection. Intercept and append HTTP response headers returned to the client.","yes","litegate.router.res_headers.Access-Control-Max-Age=3600",""],
+      ["routes[i].action","host","Override the Host header sent to the upstream.","no","","Not applicable"],
+      ["routes[i].action","proto","Set the upstream proxy protocol (http/https/ws/wss).","no","","Not applicable"],
+      ["routes[i].action","lb_policy","Load-balancing policy for this instance group (e.g. rr, ip_hash).","yes","litegate.router.lb_policy=ip_hash",""],
+      ["routes[i].action","log_level","Enable a custom log level for this route's proxy behavior.","yes","litegate.observability.log=debug","Supports \"none\" to suppress log output"],
+      ["routes[i].action","enable_tracing","Whether to enable distributed tracing for this route.","yes","litegate.observability.trace=true",""],
+    ]
+  },
+  {
+    id:"l4mid", title:"Unified Authentication & Rate Limiting", layer:"L4 Middleware", color:"#533AB7",
+    rows:[
+      ["routes[i].action","rate_limit","Route-level QPS rate-limit threshold (static adaptive or hard limit).","yes","litegate.middleware.ratelimit=150",""],
+      ["routes[i].action","rate_limit_policy","Rate-limit algorithm/policy selection.","no","","Not applicable"],
+      ["routes[i].action","waf","Whether to enable WAF filtering for this route.","no","","Not applicable"],
+      ["routes[i].action","cors","Inline CORS interception and header-injection config for this route.","no","","Not applicable"],
+      ["routes[i].action.ids","enabled","Whether to enable the unified IDS authentication engine.","yes","litegate.middleware.ids.enabled=true",""],
+      ["routes[i].action.ids","mode","Governance mode (issue, verify, refresh, revoke, openapi).","yes","litegate.middleware.ids.mode=openapi",""],
+      ["routes[i].action.ids","provider","Name of the linked global or dynamic IDS provider.","yes","litegate.middleware.ids.provider=google-oidc",""],
+      ["routes[i].action.ids","extractor","Credential extraction template (e.g. from a request header).","yes","litegate.middleware.ids.extractor={header.Authorization}","First-class field; recommended"],
+      ["routes[i].action.ids","request_extractor","Input session-credential template.","yes","litegate.middleware.ids.request_extractor={header._appid}","Backward-compatible; prefer extractor"],
+      ["routes[i].action.ids","response_extractor","Output session-credential template.","yes","litegate.middleware.ids.response_extractor={body.token}","Backward-compatible; prefer extractor"],
+      ["routes[i].action.ids","discovery_service","Discovery service used for the credential-validation origin.","yes","litegate.middleware.ids.discovery_service=user-auth-service","First-class field; replaces the legacy service field"],
+      ["routes[i].action.ids","ttl","Session lifetime (seconds).","yes","litegate.middleware.ids.ttl=3600",""],
+      ["routes[i].action.ids","url","Physical origin URL of the identity center.","yes","litegate.middleware.ids.url=http://192.168.10.10:9091",""],
+      ["routes[i].action.ids","path","Verification endpoint path on the identity center.","yes","litegate.middleware.ids.path=/api/ids/verify",""],
+      ["routes[i].action.ids","client_id","Client ID for accessing the identity center.","yes","litegate.middleware.ids.client_id=test-ids-client",""],
+      ["routes[i].action.ids","client_secret","Client secret for accessing the identity center.","yes","litegate.middleware.ids.client_secret=test-ids-secret",""],
+      ["routes[i].action.ids","enforce","Whether to force a redirect to the provider login page on auth failure.","no","","Not applicable"],
+      ["routes[i].action.ids","inject_claims","Map of claims to decrypt and inject into request headers after successful auth.","no","","Not applicable"],
+      ["routes[i].action.ids","inject_headers","Whether to auto-inject common identity metadata into upstream request headers after success.","no","","Not applicable"],
+      ["routes[i].action.ids","inject_response","Whether to mirror identity metadata back to the client as HTTP response headers.","yes","litegate.middleware.inject_response=true","Flattened at the middleware layer; no ids segment"],
+      ["Dynamic provider","ids_providers[i].type","Register a dynamic IDS provider type.","yes","litegate.http.ids_providers.myids.type=ids","Supports ids / ids_session / oidc, etc."],
+      ["Dynamic provider","ids_providers[i].enabled","Whether to enable this dynamic provider.","yes","litegate.http.ids_providers.myids.enabled=true",""],
+      ["Dynamic provider","ids_providers[i].issuer","OIDC issuer URL.","yes","litegate.http.ids_providers.myids.issuer=https://okta.com",""],
+      ["Dynamic provider","ids_providers[i].client_id","Client ID credential for the provider.","yes","litegate.http.ids_providers.myids.client_id=client123",""],
+      ["Dynamic provider","ids_providers[i].client_secret","Client secret credential for the provider.","yes","litegate.http.ids_providers.myids.client_secret=secret123",""],
+      ["Dynamic provider","ids_providers[i].scopes","Requested OAuth scopes (comma-separated).","yes","litegate.http.ids_providers.myids.scopes=openid,email",""],
+      ["Dynamic provider","ids_providers[i].session_prefix","Redis session key prefix.","yes","litegate.http.ids_providers.myids.session_prefix=auth:orders: (default session:)",""],
+      ["Dynamic provider","ids_providers[i].session_ttl","Session cache lifetime in seconds.","yes","litegate.http.ids_providers.myids.session_ttl=7200 (default 7200)",""],
+      ["Dynamic provider","ids_providers[i].renew_threshold","Remaining-seconds threshold that triggers async sliding renewal.","yes","litegate.http.ids_providers.myids.renew_threshold=3600 (default 3600)",""],
+      ["Dynamic provider","ids_providers[i].negative_ttl","Negative-cache TTL (seconds) for invalid AppId 404 to block high-frequency probing.","yes","litegate.http.ids_providers.myids.negative_ttl=60",""],
+      ["Dynamic provider","ids_providers[i].fail_policy","Security policy on auth failure (e.g. deny to block, bypass to pass through).","yes","litegate.http.ids_providers.myids.fail_policy=deny",""],
+      ["Dynamic provider","ids_providers[i].url","Absolute URL of the remote validation endpoint.","yes","litegate.http.ids_providers.myids.url=http://192.168.10.10:9091",""],
+      ["Dynamic provider","ids_providers[i].discovery_service","Backend discovery service name used for origin lookup.","yes","litegate.http.ids_providers.myids.discovery_service=identityservice",""],
+      ["Dynamic middleware","middlewares[i].type","Register a dynamic middleware instance type.","yes","litegate.http.middlewares.m1.type=headers","Dynamic middleware: supports headers / ratelimit / cors / ip_restriction, etc."],
+      ["Dynamic middleware","middlewares[i].config","Custom config map for the middleware instance type.","yes","litegate.http.middlewares.m1.response.X-Test=true","`litegate.http.middlewares.m2.qps=10`"],
+    ]
+  },
+  {
+    id:"l5svc", title:"Timeout, Retry & Circuit Breaker", layer:"L5 Service", color:"#854F0B",
+    rows:[
+      ["routes[i].action","timeout","Max seconds to wait for the upstream response at the network layer.","yes","litegate.service.timeout=10s (💡 Note: tags accept a unit-bearing Duration format)",""],
+      ["routes[i].action","retry","Max retry attempts on transient network failures or 5xx errors.","yes","litegate.service.retry=3",""],
+      ["routes[i].action.circuit_breaker","enabled","Whether to enable the circuit breaker for this route's upstream instance group.","yes","litegate.service.breaker=true","Note: flat name breaker, no sub-level dot"],
+      ["routes[i].action.circuit_breaker","timeout","Seconds to cool down in the Open state before transitioning to Half-Open.","yes","litegate.service.breaker_timeout=30","Note: flat breaker_timeout; integer seconds only, no s suffix"],
+      ["routes[i].action.circuit_breaker","max_requests","Max probe requests allowed in the Half-Open state.","yes","litegate.service.breaker_max_requests=10","Note: flat name breaker_max_requests"],
+      ["routes[i].action.circuit_breaker","trip_threshold","Consecutive-failure threshold that trips the breaker.","yes","litegate.service.breaker_trip_threshold=15","Note: flat name breaker_trip_threshold"],
+    ]
+  },
+  {
+    id:"static", title:"Static-only keys not supported by dynamic tags", layer:"Static only", color:"#5F5E5A",
+    rows:[
+      ["routes[i].action","type","Route action type. Values serve, respond, redirect, webdav, markdown are static-YAML-only.","no","","Not supported (dynamic tags are hard-coded to the proxy action)"],
+      ["routes[i].action","root","Local filesystem root for static hosting.","no","","Not supported (instances must not declare local physical paths, preventing path traversal)"],
+      ["routes[i].action","index","Default index file for static hosting (e.g. index.html).","no","","Not supported"],
+      ["routes[i].action","spa","Whether to enable SPA HTML5 routing fallback.","no","","Not supported"],
+      ["routes[i].action","status","HTTP status code in respond mode.","no","","Not supported"],
+      ["routes[i].action","body","Response body rendered and returned in respond mode.","no","","Not supported"],
+      ["routes[i].action","location","Target redirect URL in redirect mode.","no","","Not supported"],
+      ["routes[i].action","web_ui","Whether WebDAV exposes a graphical web browser UI.","no","","Not supported"],
+      ["routes[i].action","read_only","Whether WebDAV is forced read-only for safety.","no","","Not supported"],
+    ]
+  },
+  {
+    id:"dynamic_only", title:"Dynamic-only tags not available in static YAML", layer:"Dynamic only", color:"#1F4E79",
+    rows:[
+      ["Dynamic-only","(no static inline)","Override the instance's physical working port for proxied traffic.","dynamic","litegate.upstream.port=8080","Instance port: overrides default registration"],
+      ["Dynamic-only","(no static inline)","Traffic weight for this backend instance in RR (round-robin) load balancing.","dynamic","litegate.upstream.weight=80","Higher weight carries a larger share of traffic"],
+      ["Dynamic-only","(no static inline)","Mark this backend instance as a canary node, prioritized for L7 gray-routing shards.","dynamic","litegate.upstream.gray=true",""],
+      ["Dynamic-only","(no static inline)","Declare that this instance requires mTLS; the gateway must connect with a client certificate.","dynamic","litegate.upstream.mtls=true",""],
+      ["Dynamic-only","(no static inline)","When the instance listens on https with an untrusted cert, whether the gateway skips cert verification.","dynamic","litegate.upstream.insecure=true","Security: ignores untrusted backend certs"],
+      ["Dynamic-only","(no static inline)","Active health-check path for this instance.","dynamic","litegate.upstream.health_path=/healthz","Instance self-check endpoint the gateway probes"],
+      ["Dynamic-only","(no static inline)","Active health-check probe interval.","dynamic","litegate.upstream.health_interval=10s","Instance self-check: supports Duration format"],
+      ["Dynamic-only","(no static inline)","Load-balancing policy for the service group this instance belongs to.","dynamic","litegate.upstream.lb_policy=ip_hash","LB policy; available for selector scheduling, default rr"],
+    ]
+  }
+];
+
+let currentFilter = 'all';
+let searchTerm = '';
+
+function badgeHTML(s) {
+  if (s==='yes') return '<span class="badge-yes">Yes</span>';
+  if (s==='no') return '<span class="badge-no">No</span>';
+  if (s==='dynamic') return '<span class="badge-dynamic">Dynamic only</span>';
+  return '';
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function toggleSection(id) {
+  const body = document.getElementById('body-'+id);
+  const chev = document.getElementById('chev-'+id);
+  const hidden = body.classList.toggle('hidden');
+  chev.classList.toggle('open', !hidden);
+}
+
+function applyFilters() {
+  searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+  let total = 0, shown = 0;
+
+  SECTIONS.forEach(sec => {
+    const secEl = document.getElementById('sec-'+sec.id);
+    const tbody = document.getElementById('tbody-'+sec.id);
+    const badge = document.getElementById('badge-'+sec.id);
+    let visible = 0;
+
+    tbody.querySelectorAll('tr').forEach((tr, i) => {
+      const row = sec.rows[i];
+      const filterOk = currentFilter === 'all' || row[3] === currentFilter;
+      const searchOk = !searchTerm || row.some(c => String(c).toLowerCase().includes(searchTerm));
+      const show = filterOk && searchOk;
+      tr.classList.toggle('hidden', !show);
+      if (show) { visible++; shown++; }
+      total++;
+    });
+
+    badge.textContent = visible + ' items';
+    secEl.classList.toggle('hidden', visible === 0);
+    if (visible > 0 && (searchTerm || currentFilter !== 'all')) {
+      document.getElementById('body-'+sec.id).classList.remove('hidden');
+      document.getElementById('chev-'+sec.id).classList.add('open');
+    }
+  });
+
+  document.getElementById('statsLabel').textContent = shown + ' / ' + total + ' items';
+  document.getElementById('emptyMsg').classList.toggle('hidden', shown > 0);
+}
+
+function renderDesc(desc, note, key) {
+  let isRequired = false;
+  let defaultVal = '';
+
+  // 1. Decide whether the key is required
+  switch (key) {
+    case 'domain':
+      isRequired = true;
+      break;
+    case 'port':
+      isRequired = false;
+      defaultVal = '80 (HTTP) / 443 (HTTPS)';
+      break;
+    case 'force_https':
+      isRequired = false;
+      defaultVal = 'true';
+      break;
+    case 'routes[i].action.ids.provider':
+    case 'routes[i].action.ids.extractor':
+      isRequired = true;
+      desc += ' <span style="color:var(--text3); font-size:10.5px;">(required when ids is enabled)</span>';
+      break;
+    case 'routes[i].action.type':
+    case 'routes[i].action.status':
+    case 'routes[i].action.location':
+      isRequired = true;
+      break;
+    case 'routes[i].action.root':
+      isRequired = true;
+      desc += ' <span style="color:var(--text3); font-size:10.5px;">(required for static/WebDAV hosting)</span>';
+      break;
+    case 'routes[i].action.auth.type':
+      isRequired = true;
+      desc += ' <span style="color:var(--text3); font-size:10.5px;">(required when auth is enabled)</span>';
+      break;
+    case 'routes[i].action.auth.secret':
+      isRequired = true;
+      desc += ' <span style="color:var(--text3); font-size:10.5px;">(required when auth.type is sso)</span>';
+      break;
+    default:
+      isRequired = false;
+      break;
+  }
+
+  // 2. Try to extract a default value from the note
+  if (!isRequired && !defaultVal) {
+    if (note && /default/i.test(note)) {
+      const match = note.match(/default\s+([^\s,.;]+)/i);
+      if (match) defaultVal = match[1];
+    } else if (/default/i.test(desc)) {
+      const match = desc.match(/default\s+([^\s,.;]+)/i);
+      if (match) defaultVal = match[1];
+    }
+  }
+
+  // 3. Assign defaults for common control keys
+  if (!isRequired && !defaultVal) {
+    if (key.includes('enabled') || key.includes('disable') || key.includes('verify') || key.includes('tracing')) {
+      defaultVal = 'false';
+    } else if (key.includes('timeout')) {
+      defaultVal = '10s';
+    } else if (key.includes('retry')) {
+      defaultVal = '0';
+    } else if (key.includes('priority')) {
+      defaultVal = '0';
+    } else if (key.includes('lb_policy')) {
+      defaultVal = 'rr';
+    } else if (key.includes('log_level')) {
+      defaultVal = 'info';
+    } else if (key.includes('session_ttl')) {
+      defaultVal = '7200';
+    } else if (key.includes('renew_threshold')) {
+      defaultVal = '3600';
+    } else if (key.includes('inject_headers')) {
+      defaultVal = 'true';
+    } else if (key.includes('inject_response')) {
+      defaultVal = 'false';
+    } else if (key.includes('session_prefix')) {
+      defaultVal = 'session:';
+    }
+  }
+
+  // 4. Build the constraint markup
+  let constraintHTML = '';
+  if (isRequired) {
+    constraintHTML = '<span class="badge-req">Required</span>';
+  } else {
+    const defStr = defaultVal ? `<span class="default-val">Default: ${escH(defaultVal)}</span>` : '';
+    constraintHTML = `<span class="badge-opt">Optional</span>${defStr}`;
+  }
+
+  return `<div style="margin-bottom: 4px; display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">${constraintHTML}</div><div style="line-height: 1.55;">${escH(desc)}</div>`;
+}
+
+function build() {
+  const container = document.getElementById('sections');
+  SECTIONS.forEach((sec, si) => {
+    const isOpen = si < 2;
+    const div = document.createElement('div');
+    div.className = 'section';
+    div.id = 'sec-'+sec.id;
+
+    const rows = sec.rows.map(row => {
+      const tags = row[4]
+        ? row[4].split('\n').map(t => `<code>${escH(t)}</code>`).join('')
+        : '<span style="color:var(--text3)">--</span>';
+      const note = row[5] ? `<div class="note">${escH(row[5])}</div>` : '';
+      return `<tr>
+        <td class="node-label">${escH(row[0])}</td>
+        <td><code>${escH(row[1])}</code></td>
+        <td>${renderDesc(row[2], row[5], row[1])}${note}</td>
+        <td>${badgeHTML(row[3])}</td>
+        <td class="tag-cell">${tags}</td>
+      </tr>`;
+    }).join('');
+
+    div.innerHTML = `
+      <div class="section-header" onclick="toggleSection('${sec.id}')">
+        <div class="layer-dot" style="background:${sec.color}"></div>
+        <h3>${escH(sec.title)}</h3>
+        <span class="layer-tag">${escH(sec.layer)}</span>
+        <span class="count-badge" id="badge-${sec.id}">${sec.rows.length} items</span>
+        <svg class="chevron ${isOpen?'open':''}" id="chev-${sec.id}" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="section-body ${isOpen?'':'hidden'}" id="body-${sec.id}">
+        <table>
+          <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup>
+          <thead><tr>
+            <th>YAML Path</th><th>YAML Key</th><th>Meaning</th><th>Tag Support</th><th>Dynamic Tag</th>
+          </tr></thead>
+          <tbody id="tbody-${sec.id}">${rows}</tbody>
+        </table>
+      </div>`;
+    container.appendChild(div);
+  });
+  applyFilters();
+}
+
+function escH(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+build();
+
+function switchTab(name) {
+  const toolbar = document.querySelector('.toolbar');
+  const hint = document.querySelector('.page-header p');
+  if (name === 'table') {
+    document.getElementById('tableTab').classList.remove('hidden');
+    document.getElementById('scenariosTab').classList.add('hidden');
+    document.getElementById('btn-table').classList.add('active');
+    document.getElementById('btn-scenarios').classList.remove('active');
+    if (toolbar) toolbar.style.display = 'flex';
+    if (hint) hint.style.display = 'block';
+  } else {
+    document.getElementById('tableTab').classList.add('hidden');
+    document.getElementById('scenariosTab').classList.remove('hidden');
+    document.getElementById('btn-table').classList.remove('active');
+    document.getElementById('btn-scenarios').classList.add('active');
+    if (toolbar) toolbar.style.display = 'none';
+    if (hint) hint.style.display = 'none';
+  }
+}
+</script>
+
+
+<script>
+(function () {
+  const toc = document.querySelector('.toc');
+  if (!toc) return;
+
+  const links = Array.from(toc.querySelectorAll('a[href^="#"]'));
+  const items = links.map((link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    return { link, target: document.getElementById(id) };
+  }).filter((item) => item.target);
+
+  if (!items.length) return;
+
+  let activeLink = null;
+  let ticking = false;
+
+  function setActive(item) {
+    if (!item || activeLink === item.link) return;
+    links.forEach((link) => link.classList.remove('active'));
+    item.link.classList.add('active');
+    activeLink = item.link;
+
+    const tocRect = toc.getBoundingClientRect();
+    const linkRect = item.link.getBoundingClientRect();
+    if (linkRect.top < tocRect.top + 16 || linkRect.bottom > tocRect.bottom - 16) {
+      item.link.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function currentItem() {
+    if (window.scrollY < 100) return items[0];
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+
+    for (const item of items) {
+      if (item.target.offsetParent === null && item.target.id !== 'overview') continue;
+      const rect = item.target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight * 0.88;
+      if (!visible) continue;
+
+      const distance = Math.abs(rect.top - anchor);
+      if (distance < bestDistance) {
+        best = item;
+        bestDistance = distance;
+      }
+    }
+
+    if (!best) {
+      best = items[0];
+      for (const item of items) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= anchor) best = item;
+      }
+    }
+
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      best = items[items.length - 1];
+    }
+    return best;
+  }
+
+  function updateActive() {
+    ticking = false;
+    setActive(currentItem());
+  }
+
+  function requestUpdate() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateActive);
+    }
+  }
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('hashchange', requestUpdate);
+  links.forEach((link) => link.addEventListener('click', () => window.setTimeout(requestUpdate, 80)));
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', requestUpdate, { once: true });
+  } else {
+    requestUpdate();
+  }
+})();
+</script>
+</body>
+</html>

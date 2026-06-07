@@ -630,7 +630,7 @@
         <div class="panel">
             <p style="margin:0;font-size:1.06rem;color:var(--ink-soft);">
                 <strong style="color:var(--ink);">LiteGate is a unified entry layer that consolidates website hosting, L7 proxying, L4 proxying, dynamic service discovery, auto HTTPS, and ingress governance.</strong>
-                It can spin up sites directly from local YAML or connect to Litemesh, Consul, or external discovery agents to expose dynamic backends while managing certs, auth, and routing.
+                It can spin up sites directly from local YAML or connect to Litemesh, LiteDeploy, Docker, Consul, or CamoDNS Discovery to expose dynamic backends while managing certs, auth, and routing.
             </p>
         </div>
     </section>
@@ -664,12 +664,13 @@
             </div>
             <div class="card">
                 <h3>Dynamic Discovery</h3>
-                <p>Supports static upstreams, Consul, Litemesh, and block-query external discovery for a smooth path from static to dynamic.</p>
+                <p>Backend discovery is explicit: Litemesh, LiteDeploy, Docker, Consul, and Discovery. Discovery connects to blocking-query aggregators such as CamoDNS Discovery.</p>
                 <div class="tag-row">
-                    <span class="tag tag-warm">Static</span>
-                    <span class="tag tag-warm">Consul</span>
                     <span class="tag tag-warm">Litemesh</span>
-                    <span class="tag">External</span>
+                    <span class="tag tag-warm">LiteDeploy</span>
+                    <span class="tag">Docker</span>
+                    <span class="tag">Consul</span>
+                    <span class="tag">Discovery</span>
                 </div>
             </div>
             <div class="card">
@@ -727,7 +728,7 @@
                         </div>
                         <div class="node node-blue">
                             <strong>Proxying & Service Discovery</strong>
-                            <small>HTTP proxying, L4 proxying, load balancing, static upstreams, and Consul/Litemesh/External Discovery.</small>
+                            <small>HTTP proxying, L4 proxying, load balancing, static upstreams, and Litemesh / LiteDeploy / Docker / Consul / Discovery.</small>
                         </div>
                         <div class="node node-warm">
                             <strong>Certs & Ingress Governance</strong>
@@ -757,8 +758,45 @@
                     </div>
                     <div class="node node-warm">
                         <strong>Service Registries & Ingress Dependencies</strong>
-                        <small>Litemesh、Consul、CamoDNS Discovery、DNS Provider、OIDC Provider、Redis</small>
+                        <small>Litemesh, LiteDeploy, Docker Engine, Consul, CamoDNS Discovery, DNS Provider, OIDC Provider, Redis</small>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-head">
+            <span class="eyebrow">Discovery Model</span>
+            <h2>Five Sources Enter One Tag-Driven Execution Plane</h2>
+            <p>LiteGate treats providers as instance sources. Routing, upstream pools, auth, IDS, mTLS, and observability are still driven by one tag semantics layer.</p>
+        </div>
+        <div class="grid-3">
+            <div class="card">
+                <h3>Direct Sources</h3>
+                <p>Litemesh, LiteDeploy, Docker, and Consul are connected directly by LiteGate. They update instances through SSE, Docker event streams, or catalog synchronization.</p>
+                <div class="tag-row">
+                    <span class="tag tag-warm">litemesh</span>
+                    <span class="tag tag-warm">litedeploy</span>
+                    <span class="tag">docker</span>
+                    <span class="tag">consul</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Discovery Aggregator</h3>
+                <p><code>provider: discovery</code> connects to CamoDNS Discovery. It exposes service catalogs and healthy instances through blocking-query APIs.</p>
+                <div class="tag-row">
+                    <span class="tag tag-blue">camodns_discovery</span>
+                    <span class="tag">blocking query</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Unified Tag Consumption</h3>
+                <p>Whether tags come from Docker labels, Consul tags, Litemesh metadata, or a discovery agent, they end up in the same <code>litegate.*</code> parser and runtime model.</p>
+                <div class="tag-row">
+                    <span class="tag tag-accent">litegate.ingress.*</span>
+                    <span class="tag tag-accent">litegate.upstream.*</span>
+                    <span class="tag">litegate.middleware.*</span>
                 </div>
             </div>
         </div>
@@ -776,12 +814,16 @@
                 <p>Perfect for static web assets, SPAs, and small sets of static upstreams. Configs can be fed via local YAML or Consul/Litemesh KV. This tier handles site serving, reverse proxying, L4 TCP/UDP, TLS certs, basic auth, and routing.</p>
             </div>
             <div class="flow-item">
-                <h3>Option 2: LiteGate + litemesh-registrator-go</h3>
-                <p>Optimized for Docker/Swarm dynamic onboarding. The registrator watches Docker engine events, registering containers with the <code>litemesh.register=true</code> tag into Litemesh, converting <code>litegate.*</code> labels into service metadata for dynamic discovery and routing.</p>
+                <h3>Option 2: LiteGate Directly Connects Docker / Consul</h3>
+                <p>Best when there is already a clear instance source and you do not want an extra registrator. Docker provider reads container events and labels; Consul provider reads Catalog entries and health states.</p>
             </div>
             <div class="flow-item">
-                <h3>Option 3: LiteGate + camodns_discovery</h3>
-                <p>Ideal for heterogeneous registry environments. CamoDNS Discovery bridges Docker, K8s, Nacos, etcd, and Litemesh, pushing catalog changes to LiteGate.</p>
+                <h3>Option 3: LiteGate + Litemesh / LiteDeploy</h3>
+                <p>Best when release, service registration, and instance metadata are already managed by Litemesh or LiteDeploy. LiteGate consumes the pushed catalog and uses the same <code>litegate.*</code> tags to build routes and upstream pools.</p>
+            </div>
+            <div class="flow-item">
+                <h3>Option 4: LiteGate + camodns_discovery</h3>
+                <p>Ideal for heterogeneous registry environments. CamoDNS Discovery exposes blocking-query APIs such as <code>/v1/catalog/services</code> and <code>/v1/health/service/:service_name</code>, aggregating Docker, K8s, Nacos, etcd, and Litemesh into one Discovery source.</p>
             </div>
         </div>
     </section>
@@ -817,20 +859,20 @@
                 </tr>
                 <tr>
                     <td>Docker / Swarm dynamic services</td>
-                    <td class="depends">LiteGate + Litemesh</td>
-                    <td>Ideal for container environments where instances churn rapidly and require automated onboarding and balancing.</td>
+                    <td class="depends">LiteGate Docker Provider</td>
+                    <td>Ideal when LiteGate should read instances and labels directly from Docker Daemon or Swarm services.</td>
                     <td>Faster service launches; no manual server list maintenance in the entry plane.</td>
                 </tr>
                 <tr>
-                    <td>Existing Consul / Litemesh environments</td>
+                    <td>Existing Consul / Litemesh / LiteDeploy environments</td>
                     <td class="depends">LiteGate Dynamic Discovery</td>
                     <td>Teams with mature service registries and health-check workflows.</td>
                     <td>Consolidate external ingress while keeping your existing catalog.</td>
                 </tr>
                 <tr>
                     <td>Heterogeneous registries coexisting</td>
-                    <td class="depends">LiteGate + Discovery bridging</td>
-                    <td>Hybrid deployments running Docker, Kubernetes, Nacos, or etcd simultaneously.</td>
+                    <td class="depends">LiteGate + CamoDNS Discovery</td>
+                    <td>Hybrid deployments running Docker, Kubernetes, Nacos, etcd, or Litemesh simultaneously.</td>
                     <td>Reduces the cost of adapting the ingress layer to multiple registries.</td>
                 </tr>
                 <tr>
@@ -893,7 +935,7 @@
             <div>
                 <h4>Project</h4>
                 <a href="https://github.com/jamesleeon/LiteGate">GitHub</a>
-                <a href="../../../docs/en/README.md">Docs</a>
+                <a href="../../docs/en/README.md">Docs</a>
             </div>
         </div>
     </div>

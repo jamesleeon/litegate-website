@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate mTLS Guide | North-south and east-west authentication with Litemesh</title>
+<style>
+:root{--bg:#f7f9fb;--paper:#fff;--ink:#172033;--muted:#5e6b7d;--line:#dfe6ee;--teal:#0f8796;--blue:#2563eb;--green:#138a61;--amber:#a16207;--red:#b42318;--code:#0f172a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 Inter,Segoe UI,Arial,sans-serif}a{color:var(--blue);text-decoration:none}code{font-family:Consolas,Menlo,monospace;background:#edf2f7;border:1px solid #d8e0ea;border-radius:5px;padding:1px 5px}pre{overflow:auto;background:var(--code);color:#e5edf7;border-radius:8px;padding:16px;border:1px solid #1e293b}pre code{background:transparent;border:0;color:inherit;padding:0}.shell{display:grid;grid-template-columns:280px minmax(0,1fr);min-height:100vh}.toc{position:sticky;top:0;height:100vh;overflow:auto;background:#fff;border-right:1px solid var(--line);padding:28px 22px}.brand{font-size:18px;font-weight:800}.subbrand{margin:2px 0 20px;color:var(--muted);font-size:13px}.toc a{display:block;padding:7px 0;color:#26384f}.toc a.sub{padding-left:14px;color:#66758a;font-size:13px}.main{padding:40px 48px 70px}.page{max-width:1120px;margin:0 auto}.hero,.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(15,23,42,.05)}.hero{padding:34px;margin-bottom:24px}.eyebrow{margin:0 0 8px;color:var(--teal);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:12px}h1{margin:0;font-size:38px;line-height:1.12}h2{margin:34px 0 12px;font-size:26px}h3{margin:24px 0 10px;font-size:19px}.lead{font-size:18px;color:#405066;max-width:900px}.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:12px;align-items:center;margin:22px 0}.node{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;text-align:center;box-shadow:0 8px 22px rgba(15,23,42,.05)}.node strong{display:block;font-size:17px}.arrow{font-weight:900;color:var(--muted)}.badge{display:inline-block;border-radius:999px;padding:4px 10px;background:#e8f7f4;color:#087064;font-weight:800;font-size:12px}.card{padding:24px;margin:18px 0}.callout{border-left:4px solid var(--blue);background:#eef5ff;padding:14px 16px;border-radius:8px;margin:16px 0}.callout.ok{border-color:var(--green);background:#eefaf5}.callout.warn{border-color:var(--amber);background:#fff7e6}.callout.danger{border-color:var(--red);background:#fff1f0}table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}th,td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}th{background:#f2f6fb}@media(max-width:900px){.shell{display:block}.toc{position:relative;height:auto}.main{padding:24px}.flow{grid-template-columns:1fr}.arrow{text-align:center;transform:rotate(90deg)}} 
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="toc">
+  <div class="brand">LiteGate x Litemesh</div>
+  <div class="subbrand">mTLS Guide</div>
+  <a href="index.html" style="font-weight:600;color:var(--accent);">← Docs Home</a>
+  <a href="#overview">Overview</a>
+  <a href="#how">1. How mTLS works</a>
+  <a href="#backend">2. Backend dual mode</a>
+  <a href="#register">3. Register with Litemesh</a>
+  <a href="#litegate">4. North-south LiteGate config</a>
+  <a href="#eastwest">5. East-west SDK calls</a>
+  <a href="#fields">6. Field reference</a>
+  <a href="#matrix">7. Traffic boundary matrix</a>
+  <a href="#istio">8. Compared with Istio sidecars</a>
+  <a href="#faq">9. FAQ</a>
+  <a href="../zh-cn/litemesh_mtls_guide.html">Chinese version</a>
+</aside>
+<main class="main"><div class="page">
+<section class="hero" id="overview">
+  <p class="eyebrow">Mutual TLS</p>
+  <h1>LiteGate mTLS Guide</h1>
+  <p class="lead">This guide explains how backend services enable Litemesh mTLS, how they register mTLS metadata, and how LiteGate and the Litemesh SDK automatically switch to secure traffic using the same <code>mtls</code> tag and <code>mtls_port</code> metadata.</p>
+  <p><span class="badge">Plain HTTP + mTLS dual mode</span> <span class="badge">SPIFFE identity</span> <span class="badge">Fail-closed by default</span></p>
+</section>
+
+<section class="card">
+  <h3>North-south traffic: client -> LiteGate -> backend</h3>
+  <div class="flow">
+    <div class="node"><strong>Client</strong><span>Normal HTTPS to public domain</span></div>
+    <div class="arrow">-></div>
+    <div class="node"><strong>LiteGate</strong><span>Presents Litemesh client certificate</span></div>
+    <div class="arrow">mTLS</div>
+    <div class="node"><strong>Backend</strong><span>Requires Litemesh client cert</span></div>
+  </div>
+  <h3>East-west traffic: backend -> backend through Litemesh SDK</h3>
+  <div class="flow">
+    <div class="node"><strong>Service A</strong><span>SDK mTLS client</span></div>
+    <div class="arrow">CallService</div>
+    <div class="node"><strong>Litemesh discovery</strong><span>Reads target tags</span></div>
+    <div class="arrow">mTLS</div>
+    <div class="node"><strong>Service B</strong><span><code>mtls</code> + <code>mtls_port</code></span></div>
+  </div>
+</section>
+
+<section id="how">
+  <h2>1. How mTLS works</h2>
+  <p>LiteGate mTLS is built around Litemesh workload identity. LiteGate obtains its own client certificate from Litemesh CA, then verifies backend certificates against the Litemesh root CA and the expected SPIFFE identity.</p>
+  <ul>
+    <li><b>Certificate lifecycle:</b> certificates are issued and rotated dynamically by Litemesh. LiteGate does not need static client certificate files for downstream mTLS.</li>
+    <li><b>Identity verification:</b> backend URI SAN must match the expected SPIFFE ID.</li>
+    <li><b>Fail-closed:</b> if the certificate provider is unavailable or identity verification fails, mTLS traffic is rejected.</li>
+  </ul>
+  <div class="callout danger">In mTLS mode, <code>insecure_skip_verify</code> does not bypass Litemesh root CA and SPIFFE identity verification.</div>
+</section>
+
+<section id="backend">
+  <h2>2. Backend dual mode: plain HTTP + mTLS</h2>
+  <p>The recommended backend deployment listens on two ports: a plain HTTP port such as <code>:8080</code> and an mTLS HTTPS port such as <code>:8443</code>. The service can first run without the <code>mtls</code> tag, then add the mTLS listener and tag when ready.</p>
+<pre><code>tlsConfig := &tls.Config{
+    MinVersion: tls.VersionTLS12,
+    GetCertificate: certManager.GetCertificate,
+    GetClientCertificate: certManager.GetClientCertificate,
+    ClientAuth: tls.RequireAndVerifyClientCert,
+    ClientCAs: rootPool,
+    RootCAs: rootPool,
+    VerifyConnection: allowClientSPIFFE(
+        "spiffe://litemesh.local/ns/gateway/sa/litegate",
+    ),
+}
+
+server := &http.Server{
+    Addr: ":8443",
+    Handler: mux,
+    TLSConfig: tlsConfig,
+}
+log.Fatal(server.ListenAndServeTLS("", ""))</code></pre>
+  <p>You can remove the SPIFFE allow-list during early testing, but production backends should usually restrict which workload identities may call them.</p>
+</section>
+
+<section id="register">
+  <h2>3. Register with Litemesh</h2>
+  <p>Register the normal port, mTLS port, tags, and metadata together. The bare <code>mtls</code> tag is the shared switch used by both LiteGate and the Litemesh SDK.</p>
+<pre><code>err := client.Register(&litemesh.ServiceInstance{
+    ID: "user-service-1",
+    Name: "user-service",
+    Namespace: "default",
+    Addr: "10.0.0.12",
+    Port: 8080,
+    Protocol: "http",
+    Tags: []string{"mtls"},
+    Meta: map[string]string{
+        "mtls_port": "8443",
+        "spiffe_id": "spiffe://litemesh.local/ns/default/sa/user-service",
+        "tls_server_name": "user-service",
+    },
+})</code></pre>
+  <div class="callout ok"><b>One declaration, two directions.</b> LiteGate discovery reads the same <code>mtls</code> tag for north-south proxying, and the Litemesh SDK reads it for east-west <code>CallService</code> traffic.</div>
+</section>
+
+<section id="litegate">
+  <h2>4. North-south LiteGate configuration</h2>
+  <h3>Global Litemesh identity</h3>
+<pre><code>litemesh:
+  enabled: true
+  address: "http://127.0.0.1:8787"
+  mtls: true
+  spiffe_id: "spiffe://litemesh.local/ns/gateway/sa/litegate"</code></pre>
+  <p><code>mtls: true</code> and a non-empty <code>spiffe_id</code> are required for LiteGate to initialize its certificate manager.</p>
+  <h3>Route configuration</h3>
+<pre><code>domain: api.example.com
+routes:
+  - name: user-service
+    match:
+      path_prefix: /users
+    action:
+      type: proxy
+      upstream_type: litemesh
+      service_name: user-service
+      namespace: default</code></pre>
+  <p>In most cases, the route does not need to mention mTLS. The backend instance declares its security mode through Litemesh tags.</p>
+  <h3>Force mTLS on a route</h3>
+<pre><code>action:
+  type: proxy
+  upstream_type: litemesh
+  service_name: user-service
+  namespace: default
+  mtls: true
+  expected_spiffe_ids:
+    - spiffe://litemesh.local/ns/default/sa/user-service</code></pre>
+</section>
+
+<section id="eastwest">
+  <h2>5. East-west SDK calls</h2>
+  <p>East-west traffic is backend-to-backend and does not pass through LiteGate. The SDK discovers the target service, sees the bare <code>mtls</code> tag, switches protocol to HTTPS, uses <code>mtls_port</code>, and sends the request using the injected mTLS client.</p>
+<pre><code>cm, _ := client.WatchCertificate(
+    "spiffe://litemesh.local/ns/default/sa/order-service",
+    privateKey,
+)
+root, _ := client.GetRootCA()
+tlsConfig := litemesh.BuildDynamicTLSConfig(cm, root)
+mtlsClient := &http.Client{Transport: &http.Transport{TLSClientConfig: tlsConfig}}
+client.SetMTLSClient(mtlsClient)
+
+resp, err := client.CallService(ctx, "user-service", "/api/users", nil)</code></pre>
+  <div class="callout warn">For production SDK calls, inject a real mTLS client with <code>SetMTLSClient</code>. The SDK fallback for self-signed HTTPS is for local testing only.</div>
+</section>
+
+<section id="fields">
+  <h2>6. Field reference</h2>
+  <table><thead><tr><th>Field</th><th>Location</th><th>Required</th><th>Meaning</th></tr></thead><tbody>
+    <tr><td><code>mtls</code></td><td>Litemesh Tags</td><td>Yes</td><td>Marks this instance as requiring mTLS.</td></tr>
+    <tr><td><code>mtls_port</code></td><td>Litemesh Meta</td><td>Recommended</td><td>Backend TLS port used when mTLS is enabled.</td></tr>
+    <tr><td><code>spiffe_id</code></td><td>Litemesh Meta</td><td>Optional</td><td>Expected backend SPIFFE ID. If omitted, LiteGate derives it from trust domain, namespace, and service name.</td></tr>
+    <tr><td><code>trust_domain</code></td><td>Litemesh Meta</td><td>Optional</td><td>Trust domain used for derived SPIFFE IDs.</td></tr>
+    <tr><td><code>tls_server_name</code></td><td>Litemesh Meta</td><td>Optional</td><td>SNI server name.</td></tr>
+    <tr><td><code>litemesh.mtls</code></td><td>config.yaml</td><td>Yes for LiteGate mTLS</td><td>Enables LiteGate workload certificate management.</td></tr>
+    <tr><td><code>litemesh.spiffe_id</code></td><td>config.yaml</td><td>Yes for LiteGate mTLS</td><td>LiteGate's own workload identity.</td></tr>
+  </tbody></table>
+</section>
+
+<section id="matrix">
+  <h2>7. Traffic boundary matrix</h2>
+  <table><thead><tr><th>Direction</th><th>Path</th><th>mTLS?</th><th>Notes</th></tr></thead><tbody>
+    <tr><td>North</td><td>Client -> LiteGate</td><td>No, normal TLS</td><td>Public clients usually use standard HTTPS and do not present Litemesh client certificates.</td></tr>
+    <tr><td>South</td><td>LiteGate -> Backend</td><td>Yes</td><td>LiteGate presents its Litemesh certificate and verifies backend SPIFFE identity.</td></tr>
+    <tr><td>East-west</td><td>Backend -> Backend</td><td>Yes</td><td>The SDK uses the same <code>mtls</code> tag and <code>mtls_port</code> metadata.</td></tr>
+  </tbody></table>
+</section>
+
+<section id="istio">
+  <h2>8. Compared with Istio sidecars</h2>
+  <p>This approach is an in-process gateway plus SDK model. Istio uses sidecar proxies such as Envoy and iptables interception. Both solve service identity and mTLS, but with different tradeoffs.</p>
+  <table><thead><tr><th>Dimension</th><th>LiteGate + Litemesh SDK</th><th>Istio sidecar</th></tr></thead><tbody>
+    <tr><td>Runtime model</td><td>mTLS logic is inside LiteGate and service processes.</td><td>Transparent traffic interception through sidecar proxies.</td></tr>
+    <tr><td>Operational weight</td><td>Lightweight, explicit, easy to debug.</td><td>More powerful but heavier control plane and proxy fleet.</td></tr>
+    <tr><td>Coverage</td><td>SDK paths are protected; direct bypasses are not automatically captured.</td><td>Can enforce broad traffic capture at the pod level.</td></tr>
+    <tr><td>Feature breadth</td><td>Focused on mTLS, discovery, and certificate rotation.</td><td>Full mesh traffic management, telemetry, policy, and resilience.</td></tr>
+  </tbody></table>
+</section>
+
+<section id="faq">
+  <h2>9. FAQ</h2>
+  <h3>Must I set <code>spiffe_id</code>?</h3>
+  <p>No, if your service follows the default format <code>spiffe://litemesh.local/ns/&lt;namespace&gt;/sa/&lt;service-name&gt;</code>. Set it explicitly when your identity format differs.</p>
+  <h3>What is the difference between <code>port</code> and <code>mtls_port</code>?</h3>
+  <p><code>port</code> is the plain service port. <code>mtls_port</code> is the TLS port used after mTLS is enabled.</p>
+  <h3>Can <code>insecure_skip_verify</code> skip mTLS verification?</h3>
+  <p>No. LiteGate still enforces Litemesh root CA and SPIFFE identity checks in mTLS mode.</p>
+  <h3>Do north-south and east-west need separate backend declarations?</h3>
+  <p>No. The backend declares <code>Tags: []string{"mtls"}</code> and <code>Meta["mtls_port"]</code> once. LiteGate and the SDK both consume that declaration.</p>
+</section>
+</div></main>
+</div>
+</body>
+</html>

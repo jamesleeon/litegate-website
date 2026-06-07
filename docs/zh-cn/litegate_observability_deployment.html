@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate 可观测性与部署 | Dashboard、日志、指标与上线</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.toc .group { font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); margin: 18px 0 6px 10px; font-weight: 600; }
+.toc a.ext::after { content: "↗"; font-size: 10px; margin-left: 5px; color: var(--text3); opacity: .8; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3 { margin-top: 0; }
+.check { list-style: none; margin-left: 0; }
+.check li { position: relative; padding-left: 26px; }
+.check li::before { content: "✓"; position: absolute; left: 4px; color: var(--green); font-weight: 700; }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate 运维</div>
+    <div class="brand-sub">可观测性与部署</div>
+    <a href="#overview">概览</a>
+    <a href="#dashboard">Web Dashboard</a>
+    <a href="#access-log">访问日志</a>
+    <a href="#metrics">Prometheus 指标</a>
+    <a href="#pprof">pprof 性能剖析</a>
+    <a href="#systemd">systemd 部署</a>
+    <a href="#docker">Docker 部署</a>
+    <a href="#checklist">生产清单</a>
+    <div class="group">深入阅读</div>
+    <a class="ext" href="litegate_quickstart.html">快速开始</a>
+    <a class="ext" href="litegate_config_reference.html">全局 config.yaml 参考</a>
+    <a class="ext" href="litegate_certificate_lifecycle.html">证书生命周期</a>
+    <a class="ext" href="index.html">文档首页</a>
+    <div class="group">语言</div>
+    <a class="ext" href="../en/litegate_observability_deployment.html">English version</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>可观测性与部署</h1>
+      <p class="lead">把 LiteGate 稳妥地放到生产环境：用 <strong>Web Dashboard</strong> 实时看状态、用<strong>结构化访问日志</strong>审计流量、用 <strong>Prometheus 指标</strong>接监控告警，再用 <strong>systemd / Docker</strong> 做进程守护与开机自启。</p>
+      <div class="badges"><span class="badge">Dashboard</span><span class="badge green">访问日志</span><span class="badge">Prometheus</span><span class="badge amber">systemd / Docker</span></div>
+    </div>
+
+    <section id="dashboard">
+      <h2><span class="num">1</span>Web Dashboard</h2>
+      <p>内置的可视化控制面板：在浏览器里看网关状态、在线改站点配置、查服务发现后端、看实时日志。出于安全<strong>默认关闭</strong>，需在 <code>config.yaml</code> 显式开启。</p>
+      <div class="code-wrap"><span class="lang">config.yaml</span><pre><code>dashboard:
+    enabled: true
+    port: 9999
+    username: "admin"
+    password: "$2a$..."          # 必须是 Bcrypt 哈希，用 litegate -hash 生成
+    token: "tk_xxx"              # 管理 API 的 X-API-Key
+    allowed_origins: []          # 为空 = 仅同源；跨域访问时填具体来源
+    require_secure_cookie: false # Dashboard 走 HTTPS 时设 true</code></pre></div>
+      <p>生成密码哈希：</p>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>./litegate -hash "your_strong_password"</code></pre></div>
+      <div class="two">
+        <div class="card"><h3>实时指标</h3><p>CPU、内存、Goroutines；RPS、累计请求、在线连接；所有域名证书过期倒计时。</p></div>
+        <div class="card"><h3>站点管理</h3><p>浏览器内直接编辑站点 <code>.yaml</code> 即时生效；每个站点的报错率与延迟。</p></div>
+        <div class="card"><h3>服务发现</h3><p>查看 Litemesh/Consul 在线服务，确认路由后端真实绑定的 IP 列表。</p></div>
+        <div class="card"><h3>日志分析</h3><p>实时访问日志流，关键错误定位与搜索。</p></div>
+      </div>
+      <div class="callout danger"><span class="t">生产安全三条</span><p>① 改掉默认用户名 <code>admin</code>；② 设置高强度 Bcrypt 密码；③ 限制 Dashboard 端口访问 IP（可在外层再套一层 <code>ip_restriction</code>，或只绑定内网）。</p></div>
+    </section>
+
+    <section id="access-log">
+      <h2><span class="num">2</span>访问日志</h2>
+      <p>结构化审计日志，记录每个请求的路由 ID、最终上游地址、鉴权结果与各阶段耗时。可输出到 stdout，也可批量推送到外部收集端。</p>
+      <div class="code-wrap"><span class="lang">config.yaml</span><pre><code>log:
+    level: info
+    format: json                 # 生产建议 json，便于采集
+    access_log:
+        enabled: true
+        stdout: true             # 是否打到控制台
+        routing_detail: false    # 是否记录详细选路决策（排障时开）
+        webhook:
+            enabled: false
+            url: "http://mq-gateway:8080/access-log"
+            batch_size: 100
+            interval: "1s"</code></pre></div>
+      <div class="callout"><span class="t">与日志告警配合</span><p><code>log.webhook</code>（区别于 <code>access_log.webhook</code>）可把 <code>error/fatal/panic</code> 级别日志推送到 Slack / 飞书 / 钉钉。两者一个面向「全量访问审计」，一个面向「关键告警」。</p></div>
+    </section>
+
+    <section id="metrics">
+      <h2><span class="num">3</span>Prometheus 指标</h2>
+      <p>暴露标准 Prometheus <code>/metrics</code> 端点，接入 Grafana 看板。</p>
+      <div class="code-wrap"><span class="lang">config.yaml</span><pre><code>metrics:
+    enabled: true
+    port: 9090</code></pre></div>
+      <p>或者启动时临时开启（不改配置）：</p>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>./litegate -enable-metrics</code></pre></div>
+      <div class="code-wrap"><span class="lang">prometheus.yml</span><pre><code>scrape_configs:
+  - job_name: litegate
+    static_configs:
+      - targets: ["127.0.0.1:9090"]</code></pre></div>
+    </section>
+
+    <section id="pprof">
+      <h2><span class="num">4</span>pprof 性能剖析</h2>
+      <p>需要排查 CPU / 内存 / Goroutine 问题时，开启 Go pprof 端点。</p>
+      <div class="code-wrap"><span class="lang">config.yaml</span><pre><code>pprof:
+    enabled: true
+    port: 6060</code></pre></div>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>go tool pprof http://127.0.0.1:6060/debug/pprof/profile?seconds=30</code></pre></div>
+      <div class="callout warn"><span class="t">仅限内网</span><p>pprof 与 metrics 端口都不应直接暴露到公网，务必绑定内网或加防火墙。</p></div>
+    </section>
+
+    <section id="systemd">
+      <h2><span class="num">5</span>systemd 部署（Linux）</h2>
+      <p>把 LiteGate 装成 systemd 服务，实现开机自启与进程守护。</p>
+      <h3>1) 安装二进制与目录</h3>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>sudo cp litegate /usr/local/bin/
+sudo chmod +x /usr/local/bin/litegate
+sudo mkdir -p /opt/litegate/{sites,streams,certs}
+sudo cp config.yaml /opt/litegate/</code></pre></div>
+      <h3>2) 创建服务单元</h3>
+      <div class="code-wrap"><span class="lang">/etc/systemd/system/litegate.service</span><pre><code>[Unit]
+Description=LiteGate - Cloud-Native API Gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/litegate -config /opt/litegate/config.yaml
+WorkingDirectory=/opt/litegate
+Restart=always
+RestartSec=5
+LimitNOFILE=65535
+
+# 安全加固
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/litegate/certs /opt/litegate/sites
+
+# 日志
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=litegate
+
+[Install]
+WantedBy=multi-user.target</code></pre></div>
+      <h3>3) 启用并启动</h3>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>sudo systemctl daemon-reload
+sudo systemctl enable litegate
+sudo systemctl start litegate
+sudo systemctl status litegate
+sudo journalctl -u litegate -f          # 跟踪日志</code></pre></div>
+      <div class="callout"><span class="t">监听 80/443 的权限</span><p>不要用 root 跑。给二进制加特权端口能力即可：<code>sudo setcap 'cap_net_bind_service=+ep' /usr/local/bin/litegate</code></p></div>
+      <div class="callout ok"><span class="t">更新无需改单元</span><p>升级时停服务、替换二进制、再启动即可。<strong>站点 <code>sites/*.yaml</code> 的改动不需要重启</strong>，LiteGate 会自动热加载。</p></div>
+    </section>
+
+    <section id="docker">
+      <h2><span class="num">6</span>Docker 部署</h2>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>docker build -t litegate:latest .
+
+docker run -d --name litegate \
+  -p 80:80 -p 443:443 \
+  -v $PWD/config.yaml:/app/config.yaml \
+  -v $PWD/sites:/app/sites \
+  -v $PWD/certs:/app/certs \
+  --restart unless-stopped \
+  litegate:latest</code></pre></div>
+      <div class="callout"><span class="t">持久化证书</span><p>务必把 <code>certs/</code> 挂成卷，否则容器重建会丢失已签发的证书、触发重复申请。多副本时改用共享存储（Litemesh/Consul KV）统一证书，详见 <a class="inline" href="litegate_certificate_lifecycle.html">证书生命周期</a>。</p></div>
+    </section>
+
+    <section id="checklist">
+      <h2><span class="num">7</span>生产上线清单</h2>
+      <div class="two">
+        <div class="card">
+          <h3>上线前</h3>
+          <ul class="check">
+            <li><code>litegate -t</code> 校验配置通过</li>
+            <li><code>log.format: json</code>、级别设为 <code>info</code></li>
+            <li>Dashboard 改默认用户名 + 强密码 + 限 IP</li>
+            <li><code>auto_cert.use_staging: false</code>（正式证书）</li>
+            <li><code>real_ip.trusted_proxies</code> 配置正确</li>
+            <li><code>LimitNOFILE</code> / setcap 已就位</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>上线后</h3>
+          <ul class="check">
+            <li>Prometheus 抓到 <code>/metrics</code></li>
+            <li>证书过期倒计时正常、自动续期生效</li>
+            <li>访问日志正常落地 / 推送</li>
+            <li>metrics / pprof 端口未暴露公网</li>
+            <li>多副本证书共享一致</li>
+            <li>关键日志告警 webhook 已联通</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout ok"><span class="t">零抖动热重载</span><p>新增域名、改灰度权重等都通过「离线构建新路由树 + 原子指针交换」生效，<code>80/443</code> 始终保持监听，正在传输的连接不受影响——不需要优雅重启。</p></div>
+    </section>
+
+    <div class="footer" style="margin-top:60px;padding-top:20px;border-top:0.5px solid var(--border2);font-size:12px;color:var(--text3);">LiteGate · 可观测性与部署 · <a href="index.html">返回文档首页</a></div>
+  </main>
+</div>
+<script>
+(function () {
+  const links = Array.from(document.querySelectorAll('.toc a[href^="#"]'));
+  const items = links.map(l => ({ link: l, target: document.getElementById(decodeURIComponent(l.getAttribute('href').slice(1))) })).filter(i => i.target);
+  if (!items.length) return;
+  let active = null, ticking = false;
+  function pick() {
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = items[0];
+    for (const it of items) { if (it.target.getBoundingClientRect().top <= anchor) best = it; }
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) best = items[items.length - 1];
+    if (best && best.link !== active) { links.forEach(l => l.classList.remove('active')); best.link.classList.add('active'); active = best.link; }
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(pick); } }, { passive: true });
+  pick();
+})();
+</script>
+</body>
+</html>

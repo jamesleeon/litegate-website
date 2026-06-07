@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate Observability &amp; Deployment | Dashboard, Logs, Metrics &amp; Go-Live</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.toc .group { font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); margin: 18px 0 6px 10px; font-weight: 600; }
+.toc a.ext::after { content: "↗"; font-size: 10px; margin-left: 5px; color: var(--text3); opacity: .8; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3 { margin-top: 0; }
+.check { list-style: none; margin-left: 0; }
+.check li { position: relative; padding-left: 26px; }
+.check li::before { content: "✓"; position: absolute; left: 4px; color: var(--green); font-weight: 700; }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate Ops</div>
+    <div class="brand-sub">Observability &amp; Deployment</div>
+    <a href="#overview">Overview</a>
+    <a href="#dashboard">Web Dashboard</a>
+    <a href="#access-log">Access logs</a>
+    <a href="#metrics">Prometheus metrics</a>
+    <a href="#pprof">pprof profiling</a>
+    <a href="#systemd">systemd deploy</a>
+    <a href="#docker">Docker deploy</a>
+    <a href="#checklist">Production checklist</a>
+    <div class="group">Read more</div>
+    <a class="ext" href="litegate_quickstart.html">Quick Start</a>
+    <a class="ext" href="litegate_config_reference.html">Global config.yaml Reference</a>
+    <a class="ext" href="litegate_certificate_lifecycle.html">Certificate Lifecycle</a>
+    <a class="ext" href="index.html">Docs Home</a>
+    <div class="group">Language</div>
+    <a class="ext" href="../zh-cn/litegate_observability_deployment.html">中文版</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>Observability &amp; Deployment</h1>
+      <p class="lead">Put LiteGate into production safely: watch state in real time with the <strong>Web Dashboard</strong>, audit traffic with <strong>structured access logs</strong>, wire monitoring and alerts with <strong>Prometheus metrics</strong>, then use <strong>systemd / Docker</strong> for process supervision and auto-start.</p>
+      <div class="badges"><span class="badge">Dashboard</span><span class="badge green">Access logs</span><span class="badge">Prometheus</span><span class="badge amber">systemd / Docker</span></div>
+    </div>
+
+    <section id="dashboard">
+      <h2><span class="num">1</span>Web Dashboard</h2>
+      <p>A built-in visual control panel: see gateway state in the browser, edit site configs online, inspect discovery backends, and tail live logs. It is <strong>off by default</strong> for security and must be enabled explicitly in <code>config.yaml</code>.</p>
+      <div class="code-wrap"><span class="lang">config.yaml</span><pre><code>dashboard:
+    enabled: true
+    port: 9999
+    username: "admin"
+    password: "$2a$..."          # must be a Bcrypt hash; generate with litegate -hash
+    token: "tk_xxx"             # X-API-Key for the management API
+    allowed_origins: []          # empty = same-origin only; set explicit origins for cross-origin
+    require_secure_cookie: false # set true when the Dashboard is served over HTTPS</code></pre></div>
+      <p>Generate the password hash:</p>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>./litegate -hash "your_strong_password"</code></pre></div>
+      <div class="two">
+        <div class="card"><h3>Live metrics</h3><p>CPU, memory, goroutines; RPS, total requests, live connections; expiry countdown for every domain's certificate.</p></div>
+        <div class="card"><h3>Site management</h3><p>Edit a site's <code>.yaml</code> in the browser with instant effect; per-site error rate and latency.</p></div>
+        <div class="card"><h3>Service discovery</h3><p>View online Litemesh/Consul services and confirm the real backend IPs a route binds to.</p></div>
+        <div class="card"><h3>Log analysis</h3><p>Live access-log stream, with key-error lookup and search.</p></div>
+      </div>
+      <div class="callout danger"><span class="t">Three production-security rules</span><p>① Change the default <code>admin</code> username; ② set a strong Bcrypt password; ③ restrict access to the Dashboard port by IP (add an outer <code>ip_restriction</code>, or bind it to an internal network only).</p></div>
+    </section>
+
+    <section id="access-log">
+      <h2><span class="num">2</span>Access logs</h2>
+      <p>Structured audit logs recording each request's route ID, final upstream address, auth result, and per-stage latency. They can go to stdout or be batched to an external collector.</p>
+      <div class="code-wrap"><span class="lang">config.yaml</span><pre><code>log:
+    level: info
+    format: json                 # json recommended in production for ingestion
+    access_log:
+        enabled: true
+        stdout: true             # print to console
+        routing_detail: false    # log detailed routing decisions (enable when debugging)
+        webhook:
+            enabled: false
+            url: "http://mq-gateway:8080/access-log"
+            batch_size: 100
+            interval: "1s"</code></pre></div>
+      <div class="callout"><span class="t">Pairs with alert logging</span><p><code>log.webhook</code> (distinct from <code>access_log.webhook</code>) can push <code>error/fatal/panic</code>-level logs to Slack / Feishu / DingTalk. One is for full access auditing, the other for key alerts.</p></div>
+    </section>
+
+    <section id="metrics">
+      <h2><span class="num">3</span>Prometheus metrics</h2>
+      <p>Exposes a standard Prometheus <code>/metrics</code> endpoint for Grafana dashboards.</p>
+      <div class="code-wrap"><span class="lang">config.yaml</span><pre><code>metrics:
+    enabled: true
+    port: 9090</code></pre></div>
+      <p>Or enable temporarily at startup (without editing config):</p>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>./litegate -enable-metrics</code></pre></div>
+      <div class="code-wrap"><span class="lang">prometheus.yml</span><pre><code>scrape_configs:
+  - job_name: litegate
+    static_configs:
+      - targets: ["127.0.0.1:9090"]</code></pre></div>
+    </section>
+
+    <section id="pprof">
+      <h2><span class="num">4</span>pprof profiling</h2>
+      <p>When you need to diagnose CPU / memory / goroutine issues, enable the Go pprof endpoint.</p>
+      <div class="code-wrap"><span class="lang">config.yaml</span><pre><code>pprof:
+    enabled: true
+    port: 6060</code></pre></div>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>go tool pprof http://127.0.0.1:6060/debug/pprof/profile?seconds=30</code></pre></div>
+      <div class="callout warn"><span class="t">Internal only</span><p>Neither the pprof nor the metrics port should be exposed to the public internet — bind them internally or firewall them.</p></div>
+    </section>
+
+    <section id="systemd">
+      <h2><span class="num">5</span>systemd deployment (Linux)</h2>
+      <p>Install LiteGate as a systemd service for auto-start and process supervision.</p>
+      <h3>1) Install the binary and directories</h3>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>sudo cp litegate /usr/local/bin/
+sudo chmod +x /usr/local/bin/litegate
+sudo mkdir -p /opt/litegate/{sites,streams,certs}
+sudo cp config.yaml /opt/litegate/</code></pre></div>
+      <h3>2) Create the service unit</h3>
+      <div class="code-wrap"><span class="lang">/etc/systemd/system/litegate.service</span><pre><code>[Unit]
+Description=LiteGate - Cloud-Native API Gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/litegate -config /opt/litegate/config.yaml
+WorkingDirectory=/opt/litegate
+Restart=always
+RestartSec=5
+LimitNOFILE=65535
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/litegate/certs /opt/litegate/sites
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=litegate
+
+[Install]
+WantedBy=multi-user.target</code></pre></div>
+      <h3>3) Enable and start</h3>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>sudo systemctl daemon-reload
+sudo systemctl enable litegate
+sudo systemctl start litegate
+sudo systemctl status litegate
+sudo journalctl -u litegate -f          # tail logs</code></pre></div>
+      <div class="callout"><span class="t">Binding 80/443</span><p>Don't run as root. Grant the binary the privileged-port capability instead: <code>sudo setcap 'cap_net_bind_service=+ep' /usr/local/bin/litegate</code></p></div>
+      <div class="callout ok"><span class="t">Updates don't touch the unit</span><p>To upgrade, stop the service, replace the binary, and start again. <strong>Changes to <code>sites/*.yaml</code> need no restart</strong> — LiteGate hot-reloads them automatically.</p></div>
+    </section>
+
+    <section id="docker">
+      <h2><span class="num">6</span>Docker deployment</h2>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>docker build -t litegate:latest .
+
+docker run -d --name litegate \
+  -p 80:80 -p 443:443 \
+  -v $PWD/config.yaml:/app/config.yaml \
+  -v $PWD/sites:/app/sites \
+  -v $PWD/certs:/app/certs \
+  --restart unless-stopped \
+  litegate:latest</code></pre></div>
+      <div class="callout"><span class="t">Persist certificates</span><p>Always mount <code>certs/</code> as a volume, otherwise rebuilding the container loses issued certs and triggers re-issuance. For multiple replicas, switch to shared storage (Litemesh/Consul KV) for unified certs — see the <a class="inline" href="litegate_certificate_lifecycle.html">Certificate Lifecycle</a>.</p></div>
+    </section>
+
+    <section id="checklist">
+      <h2><span class="num">7</span>Production go-live checklist</h2>
+      <div class="two">
+        <div class="card">
+          <h3>Before go-live</h3>
+          <ul class="check">
+            <li><code>litegate -t</code> passes config validation</li>
+            <li><code>log.format: json</code>, level set to <code>info</code></li>
+            <li>Dashboard: changed username + strong password + IP-restricted</li>
+            <li><code>auto_cert.use_staging: false</code> (real certs)</li>
+            <li><code>real_ip.trusted_proxies</code> configured correctly</li>
+            <li><code>LimitNOFILE</code> / setcap in place</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>After go-live</h3>
+          <ul class="check">
+            <li>Prometheus scrapes <code>/metrics</code></li>
+            <li>Cert expiry countdown healthy, auto-renew working</li>
+            <li>Access logs land / push correctly</li>
+            <li>metrics / pprof ports not exposed publicly</li>
+            <li>Certs consistent across replicas</li>
+            <li>Key-log alert webhook connected</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout ok"><span class="t">Jitter-free hot reload</span><p>Adding domains, changing canary weights, etc. all take effect via "build a new routing tree off-line + atomic pointer swap". <code>80/443</code> stay listening the whole time and in-flight connections are unaffected — no graceful restart needed.</p></div>
+    </section>
+
+    <div class="footer" style="margin-top:60px;padding-top:20px;border-top:0.5px solid var(--border2);font-size:12px;color:var(--text3);">LiteGate · Observability &amp; Deployment · <a href="index.html">Back to docs home</a></div>
+  </main>
+</div>
+<script>
+(function () {
+  const links = Array.from(document.querySelectorAll('.toc a[href^="#"]'));
+  const items = links.map(l => ({ link: l, target: document.getElementById(decodeURIComponent(l.getAttribute('href').slice(1))) })).filter(i => i.target);
+  if (!items.length) return;
+  let active = null, ticking = false;
+  function pick() {
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = items[0];
+    for (const it of items) { if (it.target.getBoundingClientRect().top <= anchor) best = it; }
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) best = items[items.length - 1];
+    if (best && best.link !== active) { links.forEach(l => l.classList.remove('active')); best.link.classList.add('active'); active = best.link; }
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(pick); } }, { passive: true });
+  pick();
+})();
+</script>
+</body>
+</html>

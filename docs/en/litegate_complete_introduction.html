@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate Complete Introduction | Unified Entry Layer</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.toc .group { font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); margin: 18px 0 6px 10px; font-weight: 600; }
+.toc a.ext::after { content: "↗"; font-size: 10px; margin-left: 5px; color: var(--text3); opacity: .8; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card, .panel, .mini-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3, .panel h3, .mini-card h3 { margin-top: 0; }
+.card.link { transition: border-color .12s, transform .12s; }
+.card.link:hover { border-color: var(--accent); transform: translateY(-1px); }
+.card.link a { font-weight: 600; }
+.card.link p { color: var(--text2); font-size: 12.5px; margin-bottom: 0; }
+.flow { display: flex; align-items: stretch; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+.flow .card { flex: 1 1 150px; }
+.steps { counter-reset: step; list-style: none; margin-left: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.steps li, .step { position: relative; padding: 14px 14px 14px 42px; margin-bottom: 0; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); }
+.steps li::before, .step .num { content: counter(step); position: absolute; left: 12px; top: 14px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.step .num { position: absolute; }
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+.taglist code { display: inline-block; margin: 2px 2px 4px 0; }
+.layer { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 12px; align-items: start; margin: 14px 0; }
+.layer .badge { justify-content: center; text-align: center; margin-top: 6px; }
+/* ── diagram extensions ─────────────────────────────── */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin: 20px 0 4px; }
+.stat { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px 12px; text-align: center; }
+.stat .v { font-size: 21px; font-weight: 600; color: var(--accent); letter-spacing: -.5px; line-height: 1.1; }
+.stat .l { font-size: 11.5px; color: var(--text2); margin-top: 4px; }
+.rail { position: relative; margin: 22px 0 24px; padding-left: 30px; }
+.rail::before { content: ""; position: absolute; left: 10px; top: 8px; bottom: 8px; width: 2px; background: var(--border2); }
+.rail .node { position: relative; margin-bottom: 16px; }
+.rail .node:last-child { margin-bottom: 0; }
+.rail .node::before { content: ""; position: absolute; left: -25px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-shadow: 0 0 0 1px var(--border2); }
+.rail .node .k { font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px; color: var(--accent); font-weight: 600; }
+.rail .node h4 { font-size: 14px; margin: 1px 0 4px; font-weight: 600; }
+.rail .node p { font-size: 12.5px; color: var(--text2); margin: 0; }
+.rail .node.red::before { background: var(--red); }
+.rail .node.green::before { background: var(--green); }
+.rail .node.amber::before { background: var(--amber); }
+.rail .node.red .k { color: var(--red); }
+.rail .node.green .k { color: var(--green); }
+.rail .node.amber .k { color: var(--amber); }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two, .steps, .layer, .stats { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate</div>
+    <div class="brand-sub">Complete Introduction</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← Docs Home</a>
+    <a href="#overview">Overview</a>
+    <a href="#start">Minimal Entry</a>
+    <a href="#lifecycle">Request Lifecycle</a>
+    <a href="#arch">Architecture</a>
+    <a href="#capabilities">Capability Map</a>
+    <a href="#perf">Performance</a>
+    <div class="group">Read Next</div>
+    <a class="ext" href="litegate_architecture.html">Architecture &amp; Lifecycle</a>
+    <a class="ext" href="litegate_service_discovery.html">Service Discovery</a>
+    <a class="ext" href="litegate_backend_tag_system.html">Backend Tag System</a>
+    <a class="ext" href="litegate_certificate_lifecycle.html">Certificate Lifecycle</a>
+    <a class="ext" href="litegate_mcp_autopilot.html">MCP / AI Autopilot</a>
+    <a class="ext" href="ids_development_guide.html">IDS Development</a>
+    <a class="ext" href="litemesh_mtls_guide.html">Litemesh mTLS</a>
+    <a class="ext" href="litegate_yaml_tags_reference.html">YAML &amp; Tags Reference</a>
+    <div class="group">Language</div>
+    <a class="ext" href="../zh-cn/litegate_complete_introduction.html">中文版</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>One entry model for sites, APIs, service discovery, certificates, identity and mTLS</h1>
+      <p class="lead">LiteGate is more than a reverse proxy. It folds Caddy-style site onboarding and Traefik-style dynamic backends into a single gateway: host static sites, proxy APIs, discover dynamic services, auto-issue certificates, run IDS identity decisions, and reach backends securely over Litemesh mTLS — all on a lock-free data plane that hot-reloads in nanoseconds.</p>
+      <div class="badges"><span class="badge">Sites + APIs</span><span class="badge green">Dynamic discovery</span><span class="badge">Auto HTTPS</span><span class="badge">IDS decisions</span><span class="badge amber">mTLS</span><span class="badge green">MCP autopilot</span></div>
+      <div class="stats">
+        <div class="stat"><div class="v">~55k</div><div class="l">RPS, single node</div></div>
+        <div class="stat"><div class="v">~50MB</div><div class="l">resident memory</div></div>
+        <div class="stat"><div class="v">nanosecond</div><div class="l">atomic hot reload</div></div>
+        <div class="stat"><div class="v">5</div><div class="l">discovery sources</div></div>
+      </div>
+      <div class="callout"><span class="t">Who it's for</span><p>Teams where static sites and backend APIs must coexist, who want auto HTTPS, who prefer starting with fixed upstreams and later sliding into service discovery, who deploy as a single binary or Docker rather than reaching for Kubernetes first, or who need SaaS entry features (remote auth, tenant context injection, <code>sid</code>-based steering).</p></div>
+    </div>
+
+    <section id="start">
+      <h2><span class="num">1</span>Start from the minimal viable entry</h2>
+      <p>LiteGate can run from static YAML first, then progressively switch to service discovery, auto certificates, IDS and mTLS. On the left is Lite mode (<code>.lite.yaml</code>); on the right, the equivalent standard mode — same routing model.</p>
+      <div class="two">
+        <div class="code-wrap"><span class="lang">lite</span><pre><code>app.example.com:
+  /api:
+    proxy: 127.0.0.1:8080
+  /:
+    root: ./dist
+    spa: true</code></pre></div>
+        <div class="code-wrap"><span class="lang">yaml</span><pre><code>domain: app.example.com
+routes:
+  - name: api
+    match: { path_prefix: /api }
+    action:
+      type: proxy
+      upstream: ["127.0.0.1:8080"]
+  - name: frontend
+    match: { path_prefix: / }
+    action:
+      type: serve
+      root: ./dist
+      spa: true</code></pre></div>
+      </div>
+      <div class="callout ok"><span class="t">Same routing model throughout</span><p>You can later switch seamlessly to Litemesh, LiteDeploy, Docker, Consul or Discovery sources, and add IDS and mTLS — without rewriting your mental model of configuration.</p></div>
+    </section>
+
+    <section id="lifecycle">
+      <h2><span class="num">2</span>How a request flows through the gateway</h2>
+      <p>LiteGate is conceptually L1–L7, but its <strong>physical execution order is reversed and optimized</strong>: network defense and rate limiting first, security and identity injection in the middle, load balancing and link governance last. So even if a backend auth service misbehaves, invalid traffic can't take the gateway down.</p>
+      <div class="rail">
+        <div class="node red"><div class="k">L1 · Edge defense</div><h4>Router.ServeHTTP</h4><p>Global IP filtering (fast-fail), stripping of client-forged identity headers like <code>X-Tenant-ID</code>/<code>X-SID</code>, path normalization, and interception of ACME challenges and <code>/_litegate/</code> system paths.</p></div>
+        <div class="node"><div class="k">L2 · Route match</div><h4>Site Match</h4><p>A read-only Trie tree matches Host/Path to a site <code>[id]</code> and a specific route, injecting <code>MatchedPrefix</code> into the execution context. No match returns 404.</p></div>
+        <div class="node"><div class="k">L3 · Lifecycle container</div><h4>CoreHandler</h4><p>Generates a W3C-compliant <code>X-Trace-Id</code>, mounts panic recovery, and initializes the structured log container. A single middleware panic returns 500 — the process never crashes.</p></div>
+        <div class="node"><div class="k">L4 · Middleware chain</div><h4>CORS → IP → WAF → RateLimit → Auth → Compress</h4><p>Rate limiting runs <strong>before</strong> auth, protecting downstream IDS/Redis from high-frequency invalid requests. On success, Auth injects tenant metadata (<code>X-Tenant-ID</code>, <code>X-SID</code>, <code>X-DB-Name</code>) into headers and context.</p></div>
+        <div class="node green"><div class="k">L5/L6 · Proxy execution</div><h4>Proxy Executor</h4><p>Path rewriting (Strip/Prepend), canary draw, two-phase instance filtering (hard selector + soft meta), LB scheduling (P2C/RR/Weighted/IpHash), and timeout/retry/breaker governance.</p></div>
+        <div class="node green"><div class="k">Backend</div><h4>Dispatch &amp; write back</h4><p>Sends to a healthy matched instance; if mTLS is declared, the hop is upgraded to Litemesh mTLS.</p></div>
+        <div class="node amber"><div class="k">L7 · Observability</div><h4>Observability (defer)</h4><p>On completion, aggregates the whole pipeline: route ID, final upstream address, auth result, per-stage latency — emitted as structured JSON logs.</p></div>
+      </div>
+      <div class="callout"><span class="t">Want the full pipeline?</span><p>The reversed pipeline, control/data plane split, atomic hot reload and connection-pool tuning are fully diagrammed in <a class="inline" href="litegate_architecture.html">Architecture &amp; Request Lifecycle</a>.</p></div>
+    </section>
+
+    <section id="arch">
+      <h2><span class="num">3</span>Architecture at a glance</h2>
+      <div class="grid">
+        <div class="card"><h3>Control plane</h3><p>The <code>loader</code> normalizes local files (<code>fsnotify</code>), Consul Catalog, Litemesh membership, external API registries and MCP pushes into <code>ActiveSite</code> / <code>ActiveStream</code>. Config flow and traffic flow are fully decoupled.</p></div>
+        <div class="card"><h3>Data plane</h3><p>The router holds a single read-only route-tree pointer (<code>atomic.Value</code>), no global mutex. All upstreams are compiled and cached into <code>PoolManager</code>, so the data plane runs lock-free and allocation-free for maximum throughput.</p></div>
+        <div class="card"><h3>Atomic hot reload</h3><p>Adding a domain or changing canary weights builds a brand-new Trie tree offline, then swaps it in via an <strong>atomic pointer swap</strong>. If the build fails, the pointer never swaps and the old tree keeps serving — enterprise-grade fail-safe.</p></div>
+      </div>
+      <div class="callout ok"><span class="t">No jitter</span><p>No process fork, no graceful port shutdown. Ports <code>80/443</code> stay bound throughout; the old tree is reclaimed by GC after draining in-flight requests, so connections in transit are never disrupted.</p></div>
+    </section>
+
+    <section id="capabilities">
+      <h2><span class="num">4</span>Capability map</h2>
+      <p>Every capability has its own deep-dive doc — click through to go deeper.</p>
+      <div class="grid">
+        <div class="card link"><h3>Static sites &amp; assets</h3><p>Host SPAs, docs, downloads and WebDAV, with Markdown rendering, directory listing, redirects and direct responses.</p></div>
+        <div class="card link"><h3>Backend API proxy</h3><p>Proxy HTTP, WebSocket, TCP/UDP; upstreams may be fixed addresses or come from service discovery.</p></div>
+        <div class="card link"><a href="litegate_service_discovery.html">Service Discovery &amp; Onboarding →</a><p>Five sources — litemesh / litedeploy / docker / consul / discovery — tag-and-go onboarding, and zero-YAML Magic Ingress.</p></div>
+        <div class="card link"><a href="litegate_backend_tag_system.html">Backend Tag System →</a><p>Hand entry, governance, connection policy and instance selection to the gateway with seven-layer <code>litegate.&lt;layer&gt;.*</code> tags.</p></div>
+        <div class="card link"><a href="litegate_certificate_lifecycle.html">Certificate Lifecycle →</a><p>Auto HTTPS, On-Demand TLS, multi-node shared storage and distributed locks — let users forget cert files.</p></div>
+        <div class="card link"><a href="ids_development_guide.html">IDS identity decisions →</a><p>Turn the gateway into a decision executor: auth, shard selection, tenant header injection, per-tenant rate limiting.</p></div>
+        <div class="card link"><a href="litemesh_mtls_guide.html">Litemesh mTLS →</a><p>Once a backend declares a bare <code>mtls</code> tag, the gateway-to-backend hop is upgraded to SPIFFE-identity mTLS.</p></div>
+        <div class="card link"><a href="litegate_mcp_autopilot.html">MCP / AI Autopilot →</a><p>Built-in MCP server lets AI assistants create sites, bind services, hot-reload and troubleshoot directly.</p></div>
+        <div class="card link"><a href="litegate_yaml_tags_reference.html">YAML &amp; Tags Reference →</a><p>The complete field reference, handy while configuring.</p></div>
+      </div>
+    </section>
+
+    <section id="perf">
+      <h2><span class="num">5</span>Why it's fast and frugal</h2>
+      <p>LiteGate reaches ~55k RPS at ~50MB resident memory on laptop-class hardware, thanks to aggressive tuning of the proxy connection pool (<code>PoolManager</code>) and a lock-free, allocation-free data plane.</p>
+      <table>
+        <thead><tr><th>Tuning</th><th>Approach</th><th>Payoff</th></tr></thead>
+        <tbody>
+          <tr><td>Idle keep-alives per host</td><td><code>MaxIdleConnsPerHost: 4096</code> (typical gateways use 2–100)</td><td>Reuses long-lived connections under load, amortizing TLS/TCP handshakes to zero and avoiding ephemeral-port exhaustion</td></tr>
+          <tr><td>Lock-free data plane</td><td>Read-only route tree via <code>atomic.Value</code>, no global mutex</td><td>No lock contention during high-concurrency routing</td></tr>
+          <tr><td>Zero-allocation dispatch</td><td>Upstreams pre-compiled and cached in PoolManager</td><td>No reflection or memory reallocation in the hot path</td></tr>
+          <tr><td>Dynamic transport cleanup</td><td>Background reaper every 5 minutes</td><td>Memory is returned smoothly after scale-down, keeping resident usage low</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><span class="t">Go deeper</span><p>Full pool parameters, the Gossip "Notify-Pull" consensus and the L4 Stream server are covered in <a class="inline" href="litegate_architecture.html">Architecture &amp; Request Lifecycle</a>.</p></div>
+    </section>
+
+    <div class="footer">
+      LiteGate Docs ·
+      <a class="inline" href="litegate_architecture.html">Architecture</a> ·
+      <a class="inline" href="litegate_service_discovery.html">Discovery</a> ·
+      <a class="inline" href="litegate_backend_tag_system.html">Tags</a> ·
+      <a class="inline" href="litegate_certificate_lifecycle.html">Certificates</a> ·
+      <a class="inline" href="litegate_mcp_autopilot.html">MCP</a> ·
+      <a class="inline" href="ids_development_guide.html">IDS</a> ·
+      <a class="inline" href="litemesh_mtls_guide.html">mTLS</a> ·
+      <a class="inline" href="litegate_yaml_tags_reference.html">YAML Reference</a> ·
+      <a class="inline" href="../zh-cn/litegate_complete_introduction.html">中文</a>
+    </div>
+  </main>
+</div>
+
+
+<script>
+(function () {
+  const toc = document.querySelector('.toc');
+  if (!toc) return;
+
+  const links = Array.from(toc.querySelectorAll('a[href^="#"]'));
+  const items = links.map((link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    return { link, target: document.getElementById(id) };
+  }).filter((item) => item.target);
+
+  if (!items.length) return;
+
+  let activeLink = null;
+  let ticking = false;
+
+  function setActive(item) {
+    if (!item || activeLink === item.link) return;
+    links.forEach((link) => link.classList.remove('active'));
+    item.link.classList.add('active');
+    activeLink = item.link;
+
+    const tocRect = toc.getBoundingClientRect();
+    const linkRect = item.link.getBoundingClientRect();
+    if (linkRect.top < tocRect.top + 16 || linkRect.bottom > tocRect.bottom - 16) {
+      item.link.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function currentItem() {
+    if (window.scrollY < 100) return items[0];
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+
+    for (const item of items) {
+      if (item.target.offsetParent === null && item.target.id !== 'overview') continue;
+      const rect = item.target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight * 0.88;
+      if (!visible) continue;
+
+      const distance = Math.abs(rect.top - anchor);
+      if (distance < bestDistance) {
+        best = item;
+        bestDistance = distance;
+      }
+    }
+
+    if (!best) {
+      best = items[0];
+      for (const item of items) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= anchor) best = item;
+      }
+    }
+
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      best = items[items.length - 1];
+    }
+    return best;
+  }
+
+  function updateActive() {
+    ticking = false;
+    setActive(currentItem());
+  }
+
+  function requestUpdate() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateActive);
+    }
+  }
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('hashchange', requestUpdate);
+  links.forEach((link) => link.addEventListener('click', () => window.setTimeout(requestUpdate, 80)));
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', requestUpdate, { once: true });
+  } else {
+    requestUpdate();
+  }
+})();
+</script>
+</body>
+</html>

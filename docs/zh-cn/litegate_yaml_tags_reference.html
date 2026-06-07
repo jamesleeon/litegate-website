@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate 静态 YAML 与动态 L1-L7 标签一致性对照参考大表</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+
+
+body {
+  font-family: var(--sans);
+  background: var(--bg3);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.page-header {
+  background: var(--bg);
+  border-bottom: 0.5px solid var(--border2);
+  padding: 1.5rem 2rem 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.page-header h1 {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.page-header p {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 4px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 7px 12px 7px 32px;
+  font-size: 13px;
+  font-family: var(--sans);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius);
+  background: var(--bg2);
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s;
+}
+
+.search-box input:focus { border-color: var(--accent); }
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  pointer-events: none;
+}
+
+.filter-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.filter-btn {
+  padding: 5px 13px;
+  font-size: 12px;
+  font-family: var(--sans);
+  border: 0.5px solid var(--border2);
+  border-radius: 20px;
+  background: var(--bg2);
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.filter-btn:hover { background: var(--bg3); }
+
+.filter-btn.active {
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  border-color: var(--accent);
+  font-weight: 500;
+}
+
+.stats {
+  font-size: 12px;
+  color: var(--text3);
+  white-space: nowrap;
+  padding: 5px 0;
+  margin-left: auto;
+}
+
+.main { padding: 1.5rem 2rem 3rem; max-width: 1400px; margin: 0 auto; }
+
+.section { margin-bottom: 1rem; border-radius: var(--radius-lg); background: var(--bg); border: 0.5px solid var(--border); overflow: hidden; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: background .15s;
+}
+
+.section-header:hover { background: var(--bg2); }
+
+.layer-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+.section-header h3 { font-size: 13.5px; font-weight: 500; color: var(--text); flex: 1; }
+
+.layer-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--bg2);
+  color: var(--text3);
+  font-family: var(--mono);
+}
+
+.count-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--bg3);
+  color: var(--text2);
+}
+
+.chevron {
+  font-size: 13px;
+  color: var(--text3);
+  transition: transform .2s;
+  flex-shrink: 0;
+}
+
+.chevron.open { transform: rotate(180deg); }
+
+.section-body { border-top: 0.5px solid var(--border); overflow-x: auto; }
+.hidden { display: none !important; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  table-layout: fixed;
+  min-width: 860px;
+}
+
+col.c1 { width: 14%; }
+col.c2 { width: 13%; }
+col.c3 { width: 26%; }
+col.c4 { width: 9%; }
+col.c5 { width: 38%; }
+
+thead th {
+  background: var(--bg2);
+  color: var(--text3);
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 0.5px solid var(--border);
+  position: sticky;
+  top: 0;
+}
+
+td {
+  padding: 9px 12px;
+  border-bottom: 0.5px solid var(--border);
+  vertical-align: top;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg2); }
+
+code {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--bg2);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.tag-cell code {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--accent-text);
+  background: var(--accent-bg);
+  padding: 2px 6px;
+  word-break: break-all;
+}
+
+.tag-cell code:last-child { margin-bottom: 0; }
+
+.note { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+.node-label { font-family: var(--mono); font-size: 11px; color: var(--text2); }
+
+.badge-yes {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  background: #EAF3DE;
+  color: #3B6D11;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-yes { background: #173404; color: #C0DD97; }
+}
+
+.badge-no {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  background: #F1EFE8;
+  color: #5F5E5A;
+  white-space: nowrap;
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-no { background: #2c2c2a; color: #888780; }
+}
+
+.badge-dynamic {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  background: #E6F1FB;
+  color: #185FA5;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-dynamic { background: #042C53; color: #85B7EB; }
+}
+
+.empty-msg {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text3);
+  font-size: 14px;
+}
+
+  @media (max-width: 700px) {
+    .page-header { padding: 1rem; }
+    .main { padding: 1rem; }
+  }
+
+  /* ���������� �啣� Tab 撖潸⏛�瑕� ���������� */
+  .doc-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+
+  .doc-tab-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--sans);
+    background: transparent;
+    border: none;
+    color: var(--text2);
+    cursor: pointer;
+    position: relative;
+    transition: color 0.15s;
+  }
+
+  .doc-tab-btn:hover {
+    color: var(--text);
+  }
+
+  .doc-tab-btn.active {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .doc-tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -9px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .tab-content {
+    width: 100%;
+  }
+
+  /* ���������� �啣��箸艶撅閧內�∠��瑕� ���������� */
+  .scenario-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+
+  .scenario-card-header {
+    padding: 14px 20px;
+    background: var(--bg2);
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .scenario-card-header h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .scenario-badge {
+    font-size: 10.5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    font-weight: 500;
+  }
+
+  .scenario-card-body {
+    padding: 20px;
+  }
+
+  .scenario-desc {
+    font-size: 12.5px;
+    color: var(--text2);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px dashed var(--border);
+    line-height: 1.6;
+  }
+
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 900px) {
+    .scenario-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .scenario-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .scenario-col h4 {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .scenario-col h4::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .code-wrapper {
+    position: relative;
+    background: var(--bg2);
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 12px;
+    overflow-x: auto;
+    flex: 1;
+  }
+
+  .code-wrapper pre {
+    margin: 0;
+    padding: 0;
+  }
+
+  .code-wrapper code {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    color: var(--text);
+    line-height: 1.55;
+    white-space: pre;
+    display: block;
+  }
+
+  .architecture-tip {
+    margin-top: 12px;
+    background: var(--accent-bg);
+    border-left: 3px solid var(--accent);
+    padding: 10px 14px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  .architecture-tip p {
+    font-size: 11.5px;
+    color: var(--accent-text);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* ���������� �啣�蝥行�銝𡡞�霈文�� Badge �瑕� ���������� */
+  .badge-req {
+    display: inline-block;
+    font-size: 9.5px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: #FFEBEA;
+    color: #D32F2F;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  @media (prefers-color-scheme: dark) {
+    .badge-req { background: #3B1B1B; color: #EF5350; }
+  }
+
+  .badge-opt {
+    display: inline-block;
+    font-size: 9.5px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: #E8F0FE;
+    color: #1A73E8;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  @media (prefers-color-scheme: dark) {
+    .badge-opt { background: #1B2B4A; color: #4285F4; }
+  }
+
+  .default-val {
+    display: inline-block;
+    font-size: 9.5px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--bg2);
+    color: var(--text3);
+    border: 0.5px solid var(--border);
+    font-family: var(--mono);
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+/* LiteGate docs shell aligned with ids_development_guide.html */
+body { background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.doc-main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.page-header { position: static; padding: 0 0 22px; border-bottom: 0.5px solid var(--border2); background: transparent; }
+.page-header h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; color: var(--text); }
+.page-header p { font-size: 14px; color: var(--text2); margin-top: 10px; }
+.reference-main { padding: 22px 0 0; max-width: none; margin: 0; }
+.section { border-radius: var(--radius); border: 0.5px solid var(--border); }
+.section-header h3 { margin: 0; }
+.scenario-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); }
+.scenario-card-header, .scenario-card-body { background: transparent; }
+.doc-tabs { margin-top: 0; }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } .doc-main { padding: 28px 20px 60px; } .page-header { padding-top: 0; } }
+
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate Tags</div>
+    <div class="brand-sub">YAML 与标签参考</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← 文档首页</a>
+    <a href="litegate_complete_introduction.html">完整介绍</a>
+    <a href="litegate_backend_tag_system.html">后端标签体系</a>
+    <a href="#tableTab">栏位对照大表</a>
+    <a href="#scenariosTab">典型场景</a>
+    <a href="ids_development_guide.html">IDS 开发指南</a>
+  </nav>
+  <main class="doc-main">
+<header class="page-header">
+  <h1>LiteGate &mdash; 静态 YAML 与动态 L1-L7 标签一致性对照参考大表</h1>
+  <div class="toolbar">
+    <div class="search-box">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="输入关键字、字段名或标签写法搜索..." oninput="applyFilters()">
+    </div>
+    <div class="filter-btns">
+      <button class="filter-btn active" onclick="setFilter('all',this)">全部</button>
+      <button class="filter-btn" onclick="setFilter('yes',this)">支持动态标签</button>
+      <button class="filter-btn" onclick="setFilter('no',this)">仅限静态</button>
+      <button class="filter-btn" onclick="setFilter('dynamic',this)">动态独享</button>
+    </div>
+    <span class="stats" id="statsLabel"></span>
+  </div>
+  <p>提示：支持静态 YAML 字段与动态自注册标签（Tags）的一致性对照</p>
+  <p><a href="../en/litegate_yaml_tags_reference.html">English version</a> · <a href="litegate_complete_introduction.html">LiteGate 完整介绍</a></p>
+</header>
+
+<div class="reference-main">
+  <!-- 典型场景及大表 Tab 切换按钮 -->
+  <div class="doc-tabs">
+    <button class="doc-tab-btn active" id="btn-table" onclick="switchTab('table')">表 栏位对照大表</button>
+    <button class="doc-tab-btn" id="btn-scenarios" onclick="switchTab('scenarios')">景 典型场景配置示例</button>
+  </div>
+
+  <!-- Tab 1: 栏位对照大表 -->
+  <div id="tableTab" class="tab-content">
+    <div id="sections"></div>
+    <div id="emptyMsg" class="empty-msg hidden">没有找到匹配的栏位，请更换关键字重试</div>
+  </div>
+
+  <!-- Tab 2: 典型场景配置示例 -->
+  <div id="scenariosTab" class="tab-content hidden">
+    
+    <!-- 场景 1 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>场景一：前后端分离/微服务混部场景 (SPA 静态托管 + API 动态代理 - 混合路由架构)</h3>
+        <span class="scenario-badge">混合路由合并场景</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          这是 LiteGate <b>最强大的核心能力</b>之一：<b>混合路由合并 (Hybrid Merge)</b>。在这一典型生产场景中，前端静态 SPA 页面（如 index.html 等）完全由网关的静态 YAML 配置（使用 type: serve 动作）进行高效的本地文件系统托管；而后端业务 API 微服务（如 order-service）的动态选路规则，则完全由微服务开发实例在启动时自动上报的动态自注册标签（Tags）驱动。网关会在内存中自动将两者合成为一套统一的选路树，既保障了网络边缘的安全与管控，又赋予了开发团队极度敏捷的微服务自注册发布能力。
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>静态托管网关 YAML 配置 (frontend-only.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: app.example.com
+port: 80              # 💡 提示：静态站点的全局默认监听端口
+force_https: true
+
+routes:
+  # 1. 静态托管路由 (静态 YAML 专属，动态实例禁止声明此类物理路径)
+  - name: frontend-spa
+    priority: 10
+    match:
+      path_prefix: /
+    action:
+      type: serve
+      root: /var/www/dist
+      index: index.html
+      spa: true
+
+  # 💡 提示：微服务 API 动态代理路由无需在此声明！
+  # 后端业务微服务启动时，会自动将自身的 IP、端口及注册路由 Tags 上报到注册中心。
+  # 网关会自动感知并与这里的顶级 domain 节点进行 Hybrid Merge，实现热插拔 of 微服务路由。</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>微服务自注册动态标签写法 (order-service 节点 Tags)</h4>
+            <div class="code-wrapper">
+              <pre><code># ── 1. 路由 Ingress 与匹配 ──
+# 网关接收到包含 app.example.com 的请求时 (触发 Hybrid Merge 并开始在内存中检索)
+litegate.ingress.host=app.example.com
+# 声明路由前缀匹配。只有当请求路径前缀为 /api 时，才会将请求分发给该实例组
+litegate.ingress.path_prefix=/api
+# 提升优先级至 100，确保高优先匹配，防止被默认的前端 SPA 静态路由 "/" 覆盖
+litegate.router.priority=100
+
+# ── 2. 报文改写与路径重写 ──
+# 剥离前缀。在转发至后端前剥离 /api 路径，使微服务内接到的实际路径为 /orders 而非 /api/orders
+litegate.router.strip_prefix=/api
+
+# ── 3. 负载均衡与健康调度 ──
+# 实例权重。在负载均衡调度时，该物理实例承担 80% 的流量分发
+litegate.upstream.weight=80</code></pre>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>混合路由合并机制 (Hybrid Merge)：</b>这是 LiteGate 极为核心的架构特点。网关管理员仅需在全局静态 YAML 中维护域名绑定、SSL 证书等基础设施节点，微服务开发者则在其自身的物理节点 Tags 中直接声明 API 选路特征。网关运行时会自动将两者合成为一套统一的路由树，既保障了安全，又排除了传统网关繁琐 of 集中配置变更漏斗。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 场景 2 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>场景二：微服务 API 动态网关场景 (多实例动态代理 + 局部限流与熔断保护)</h3>
+        <span class="scenario-badge">API Gateway 场景</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          这是 LiteGate 作为 <b>纯粹的微服务 API 动态网关</b> 最常见的部署形态。网关在这一场景下不涉及任何本地静态 resource 托管，而是专注于承载 high 并发的七层反向代理流量。它通过整合 <b>QPS 速率限制（支持自适应 Adaptive 算法）、请求超时控制与重试自愈机制</b>，以及 <b>后端物理实例级的断路熔断保护</b>，为下游微服务构建起一套坚固的分布式主动防御层，能有效隔离并拦截底层服务雪崩引发的 system 连锁瘫痪。
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>网关静态 YAML 配置 (pure-api-proxy.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: api.example.com
+port: 443
+
+routes:
+  - name: api-gateway-route
+    priority: 50
+    match:
+      path_prefix: /v1
+    action:
+      type: proxy
+      service_name: payment-service
+      timeout: 5             # 💡 YAML 侧为纯整数秒，不带单位
+      retry: 3
+      rate_limit: 150
+      rate_limit_policy: adaptive
+      circuit_breaker:
+        enabled: true
+        timeout: 30          # 💡 纯整数秒
+        max_requests: 10
+        trip_threshold: 15</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>微服务自注册动态标签写法 (payment-service 节点 Tags)</h4>
+            <div class="code-wrapper">
+              <pre><code># ── 1. 路由 Ingress 与匹配 ──
+litegate.ingress.host=api.example.com
+litegate.ingress.path_prefix=/v1
+litegate.router.priority=50
+
+# ── 2. L5 Service 网络级超时与重试 ──
+# 等待上游服务响应的最大超时时间
+litegate.service.timeout=5s
+# 遇到网络闪退或 5xx 错误时的最大重试尝试次数
+litegate.service.retry=3
+
+# ── 3. L5 Service 熔断保护配置 ──
+# ⚠️ 标签端为平铺式 breaker_*，且 timeout 为纯整数秒（无 s 单位）
+litegate.service.breaker=true
+litegate.service.breaker_timeout=30
+litegate.service.breaker_max_requests=10
+litegate.service.breaker_trip_threshold=15
+
+# ── 4. L4 Middleware 限流配置 ──
+litegate.middleware.ratelimit=150
+# 💡 注: rate_limit_policy (adaptive) 为静态 YAML 专属，动态标签暂不支持；标签端仅按硬限流 QPS 处理</code></pre>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>高可用网关防护：</b>本场景展示了网关作为核心屏障的威力。通过在动态标签中简单声明 <code>litegate.service.breaker=true</code> 和限流规则，微服务便能在不需要侵入任何客户端或服务端 SDK 代码的前提下，获得高弹性的分布式限流与自动断路切流能力。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 场景 3 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>场景三：业务级单点登录与鉴权上下文注入场景 (IDS Session)</h3>
+        <span class="scenario-badge">统一身份拦截场景</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          面向 B 端或 C 端需要高安全 Session 验证与 Claims 上下文注入的复杂业务系统。网关在这一场景下挂载 <b>IDS 统一身份与安全认证引擎</b>，从入站请求中自动提取 Session 会话凭证，与后置的 Redis 共享缓存进行高效校验。网关不仅提供<b>异步滑动窗口式自动续期（Session Renewal）机制</b>，还能在校验通过后，将用户主体信息（Claims）解密并自动作为标准的 <code>X-Claim-*</code> 请求头注入到下游请求中，使后端微服务免去繁琐的重复身份验证代码。
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>静态网关配置 (internal-session-auth.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: app.example.com
+port: 443
+
+routes:
+  - name: internal-auth-api
+    priority: 200
+    match:
+      path_prefix: /api/v1
+    action:
+      type: proxy
+      service_name: biz-service
+      ids:
+        enabled: true
+        mode: verify          # 💡 会话校验走 verify 处理器；ids_session 是 Provider 的 type，不是 mode
+        provider: saas-auth
+        extractor: "{header.Authorization}"
+        session_ttl: 7200
+        renew_threshold: 3600
+        inject_headers: true
+        inject_claims:
+          X-User-Id: sub
+          X-User-Email: email</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>微服务自注册动态标签写法 (biz-service 节点 Tags)</h4>
+            <div class="code-wrapper">
+              <pre><code># ── 1. 路由 Ingress 与匹配 ──
+litegate.ingress.host=app.example.com
+litegate.ingress.path_prefix=/api/v1
+litegate.router.priority=200
+
+# ── 2. 中间件安全拦截与提供商绑定 ──
+# 启用大一统安全认证控制引擎并指定校验模式为 verify (会话校验)
+litegate.middleware.ids.enabled=true
+litegate.middleware.ids.mode=verify
+# 关联统一的认证授权提供商 saas-auth
+litegate.middleware.ids.provider=saas-auth
+
+# ── 3. 动态身份校验提供者 (IDSProvider) 参数配置 ──
+# 指定提供商的底层校验模型为 ids_session
+litegate.http.ids_providers.saas-auth.type=ids_session
+# 从 Authorization 请求头中提取会话凭证（支持 Bearer / UUID 格式自动识别）
+litegate.http.ids_providers.saas-auth.extractor={header.Authorization}
+# 会话的强制生存时间（秒）
+litegate.http.ids_providers.saas-auth.session_ttl=7200
+# 当会话剩余时间小于 3600 秒时，触发异步滑动续签，防止用户登录态突然中断
+litegate.http.ids_providers.saas-auth.renew_threshold=3600
+
+# ── 4. 身份信息上下文注入 ──
+# 💡 注: inject_headers / inject_claims 为静态 YAML 专属，动态标签不支持；
+# 会话校验通过后由网关统一完成 Claims 解密并注入 X-Claim-* 请求头</code></pre>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>全自愈会话防线：</b>LiteGate 会在边缘层完成 Session 自动校验与按需异步续期。开发团队无需在每个底层 microservice 中单独接入 Redis 客户端并开发身份校验过滤逻辑，不仅简化了代码结构，还规避了由于单个微服务未正确维护 Session 续签所产生的一致性灾难。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 场景 4 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>场景四：开放平台 MD5 离线签名与动态回源拉取</h3>
+        <span class="scenario-badge">开放平台核心场景</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          面向外部商户或开放 API 场景。外部客户端携带密钥（SecretKey）执行离线 MD5 签名校验。网关动态解析 AppId，在 L1 (LRU) / L2 (Redis) 双层缓存防守下，异步对齐或拉取密钥进行高并发验签，同时建立<b>404 负缓存 (Negative Cache) 机制</b>彻底降噪，卸载后端拉取微服务（IDS）高频恶意穿透探针。为了保障回源链路安全，网关在回源时自动挂载 <code>client_id</code> 与 <code>client_secret</code> 双向凭证对齐统一身份中心。
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>静态网关配置 (open-api-md5.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: openapi.ai.com
+port: 443
+
+routes:
+  - name: open-orders
+    priority: 150
+    match:
+      path_prefix: /openapi/v1/orders
+    action:
+      type: proxy
+      service_name: openapi-backend
+      ids:
+        enabled: true
+        mode: openapi
+        provider: dynamic-openapi
+        extractor: "{header._appid}"
+        # 挂载远程动态拉取凭证引擎
+        discovery_service: identityservice
+        path: /api/gate/credentials
+        client_id: litegate
+        client_secret: secret
+        negative_ttl: 60
+        fail_policy: deny</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>微服务自注册动态标签写法 (openapi-backend 节点 Tags)</h4>
+            <div class="code-wrapper">
+              <pre><code># ── 1. 动态业务路由及大一统 IDS 引擎注册 ──
+# 声明业务 API 路由的匹配路径前缀
+litegate.http.routers.open-orders.path=/openapi/v1/orders
+# 启用大一统安全认证引擎并设置为 openapi (离线 MD5 验签) 模式
+litegate.http.routers.open-orders.ids.enabled=true
+litegate.http.routers.open-orders.ids.mode=openapi
+# 关联绑定的动态安全认证提供者
+litegate.http.routers.open-orders.ids.provider=dynamic-openapi
+
+# ── 2. 动态身份校验提供者 (IDSProvider) 注册 ──
+# 声明身份服务提供商类型为 remote_auth (支持集群动态回源发现)
+litegate.http.ids_providers.dynamic-openapi.type=remote_auth
+# 声明身份验证模式为 openapi
+litegate.http.ids_providers.dynamic-openapi.mode=openapi
+# 从请求头提取应用标识 AppId 变量
+litegate.http.ids_providers.dynamic-openapi.extractor={header._appid}
+# 声明身份发放提供者（由网关动态调度后端 identityservice 完成物理回源）
+litegate.http.ids_providers.dynamic-openapi.discovery_service=identityservice
+# 挂载局部自定义凭证校验接口路径
+litegate.http.ids_providers.dynamic-openapi.path=/api/gate/credentials
+# 绑定接入身份中心的客户端凭证 (ClientID / ClientSecret)
+litegate.http.ids_providers.dynamic-openapi.client_id=litegate
+litegate.http.ids_providers.dynamic-openapi.client_secret=secret
+# 非法 AppId 404 负缓存强力阻断时间 (秒)
+litegate.http.ids_providers.dynamic-openapi.negative_ttl=60</code></pre>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>选路提升防护：</b>验签通过后，网关在网关内部安全提取 <code>sid</code> 并自动提升为物理选路键 <code>KeyRouteSelector["sid"]</code> 交互 Litemesh 进行定向分片路由，同时彻底屏蔽向下游的 <code>sid</code> 透传，确保边缘安全。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 场景 5 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>场景五：单机静态本地反向代理 (Single-node Local Static Proxy - 无服务发现)</h3>
+        <span class="scenario-badge">单机静态传统场景</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          这是最纯粹的单机、微型或传统部署场景。在这种部署模式下，<b>网关不依赖 Consul 或 Litemesh 等任何动态服务发现机制</b>，而是完全作为前置代理，直接将所有流量硬编码转发给本地或指定内网 IP 的特定物理端口（如 <code>127.0.0.1:8080</code>）。
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>网关静态 YAML 配置 (local-static-proxy.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: api.example.com
+port: 80
+
+routes:
+  - name: local-api-route
+    priority: 100
+    match:
+      path_prefix: /v1
+    action:
+      type: proxy
+      # 强制声明上游类型为静态物理地址列表
+      upstream_type: static
+      # 直接硬编码指向本地微服务物理监听端口
+      upstream:
+        - 127.0.0.1:8080</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>动态服务自注册标签 (Tags)</h4>
+            <div class="code-wrapper" style="background:var(--bg3); display:flex; align-items:center; justify-content:center; min-height:120px;">
+              <span style="color:var(--text3); font-size:12px; font-family:var(--sans); text-align:center; padding: 20px;">
+                💡 <b>纯静态编排：无动态标签写法</b><br>
+                由于本场景完全不经过任何注册中心，网关仅依赖静态 YAML 的 upstream 进行本地分发，微服务实例无需且无法上报任何动态自注册 Tags，贯彻“理性的动静分离”边界。
+              </span>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>免注册极简架构：</b>最适合微型业务或单机 Docker-Compose 极速部署，保持了传统反向代理（如 Nginx 极简反代）原汁原味的心智模型。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 场景 6 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>场景六：多实例静态负载均衡集群 (Multi-instance Static Load Balancing)</h3>
+        <span class="scenario-badge">内网集群静态场景</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          适用于传统内网固定物理机或固定容器 IP 的集群部署。在同样<b>无服务发现</b>的情况下，网关通过在静态 YAML 中直接配置多个固定上游 IP 列表，并在网关七层直接驱动多节点负载均衡分发算法（如轮询、IP Hash），配合网络级超时重试来保障高可用。
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>网关静态 YAML 配置 (multi-static-lb.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: app.example.com
+port: 80
+
+routes:
+  - name: app-lb-route
+    priority: 100
+    match:
+      path_prefix: /
+    action:
+      type: proxy
+      upstream_type: static
+      # 轮询负载均衡算法 (支持 rr / ip_hash)
+      lb_policy: rr
+      # 绑定后端多实例静态 IP 与端口
+      upstream:
+        - 10.0.0.21:8080
+        - 10.0.0.22:8080
+        - 10.0.0.23:8080</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>动态服务自注册标签 (Tags) 与负载均衡说明</h4>
+            <div class="code-wrapper" style="background:var(--bg3); display:flex; flex-direction:column; justify-content:center; padding: 20px; min-height:220px; gap: 12px;">
+              <div style="color:var(--text); font-size:12px; font-family:var(--sans); line-height: 1.6;">
+                ⚖️ <b>多节点静态高可用：</b><br>
+                在静态负载均衡模式下，LiteGate 内部路由分配器（Dispatcher）会对静态配置的多个 <code>upstream</code> 实例建立主动的 TCP 探活连接。
+                一旦探测到某个物理节点离线，网关会在内存中自动剔除其健康路由状态，同时将请求无感重试并派发至其他健康存活的后端节点。
+              </div>
+              <div style="border-top: 1px dashed var(--border); padding-top: 10px; color:var(--text3); font-size:12px; font-family:var(--sans); line-height: 1.6;">
+                💡 <b>纯静态编排：无动态标签写法</b><br>
+                由于本场景完全不经过任何注册中心，网关仅依赖静态 YAML 的 upstream 进行本地分发，微服务实例无需且无法上报任何动态自注册 Tags，贯彻“理性的动静分离”边界。
+              </div>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>免注册集群架构：</b>适用于不方便部署 Consul 动态服务发现的传统企业内网、隔离的专网物理集群，或者是固定的虚拟机环境，以极简的方式提供高可用保障。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 场景 7 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>场景七：WebDAV 静态托管 + 内置简易 SSO 认证 (WebDAV + SSO Auth)</h3>
+        <span class="scenario-badge">静态存储防卫场景</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          面向团队内网文件共享或个人私有存储场景。LiteGate 提供了<b>开箱即用的静态 WebDAV 文件托管服务</b>，支持可视化网页浏览界面与文件读写限制。为了保证文件安全，我们直接在网关路由挂载<b>内置的简易 SSO 鉴权组件 (Simple SSO)</b>。用户无需申请复杂的 OIDC 服务证书，仅需 4 行配置即可保护私有文件系统，并允许渲染完全自定义的本地登录模板。
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>网关静态 YAML 配置 (webdav-sso.yaml)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: storage.example.com
+port: 443
+force_https: true
+
+routes:
+  - name: secure-webdav
+    priority: 100
+    match:
+      path_prefix: /dav
+    action:
+      type: webdav
+      root: /data/share     # 本地物理存储路径
+      web_ui: true          # 开启图形化网页界面
+      read_only: false      # 允许文件上传与删除修改
+      
+      # 挂载内置 SSO 简易安全防御
+      auth:
+        type: sso
+        sso_enabled: true
+        secret: "please_change_to_a_random_secret_at_least_32_bytes_long" # 会话 Cookie 签名密钥 (生产必须使用随机且不小于 32 字节的强密钥)
+        template: /var/litegate/login.html # 自定义本地登录页面
+        users:
+          admin: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918" # admin123 密文</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>动态自注册标签 (Tags) 与命令行辅助说明</h4>
+            <div class="code-wrapper" style="background:var(--bg3); display:flex; flex-direction:column; justify-content:center; padding: 20px; min-height:220px; gap: 12px;">
+              <div style="color:var(--text); font-size:12px; font-family:var(--sans); line-height: 1.6;">
+                🛠️ <b>密码哈希生成器命令行：</b><br>
+                为了防止配置泄露和明文落盘风险，LiteGate 内置了强密码加盐哈希保护。切勿在 <code>users</code> 下写入明文。
+                在终端执行：
+                <code style="display:block; margin: 6px 0; background:var(--bg); border: 0.5px solid var(--border); padding: 5px 10px; color:var(--accent);">litegate --hash "your_password"</code>
+                控制台将直接输出高强度 SHA256 / Bcrypt 防御密文，直接贴入配置文件即可。
+              </div>
+              <div style="border-top: 1px dashed var(--border); padding-top: 10px; color:var(--text3); font-size:12px; font-family:var(--sans); line-height: 1.6;">
+                💡 <b>静态专属防护说明：</b><br>
+                WebDAV 的 <code>root</code>、<code>web_ui</code>、<code>read_only</code> 属性均属于站点级物理存储编排。根据 LiteGate 产品边界设计，<b>动态标签不提供且禁止声明此类本地物理挂载路径</b>，从源头上杜绝多机容器部署时文件系统状态不一致所产生的漏洞与逻辑灾难。
+              </div>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>内置 SSO 的降维优势：</b>相比于繁琐地配置外部 OIDC 身份中心，LiteGate 的内置 SSO 仅需数行配置，便能实现企业级的拦截防卫与 Cookie 滑动续订机制，对于团队协作及内网存储项目来说极其便携。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 场景 8 -->
+    <div class="scenario-card">
+      <div class="scenario-card-header">
+        <h3>场景八：老域名 301 永久平移 + 老系统根路径 302 重定向修正 (Legacy System Steering & Domain Migration)</h3>
+        <span class="scenario-badge">老系统自愈与迁移场景</span>
+      </div>
+      <div class="scenario-card-body">
+        <div class="scenario-desc">
+          在实际生产部署中，经常需要对老系统进行<b>新老域名无感平移</b>（如老域名 <code>sales.old-example.com</code> 迁移到 <code>a.example.com</code>）。同时，由于老系统早期路由没有写好，用户直接访问根路径 <code>/</code> 时往往无法打开页面，需要<b>在网关物理入口层强制 302 重定向到子系统 <code>/sys</code> 入口</b>，其他流量则继续原样反代。LiteGate 提供了高可读性的重定向指令与模板变量替换机制，免去了繁琐晦涩的 Nginx 正则重写配置。
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <h4>文件 1：新域名配置 (a.example.yaml - 路由自愈反代)</h4>
+            <div class="code-wrapper" style="margin-bottom: 12px;">
+              <pre><code>domain: a.example.com
+port: 80              # 💡 可选。不配置默认也是 80/443
+force_https: true
+
+routes:
+  # ── 1. 修复老系统路由未写好问题：根路径精确匹配，302 跳转至子系统 ──
+  - name: root-to-sys-redirect
+    priority: 100     # 💡 高优先级，确保在模糊匹配 "/" 前精准截获
+    match:
+      path: /         # 精确匹配 "/"
+    action:
+      type: redirect
+      location: /sys  # 302 强制重定向到真实的子应用入口
+      status: 302
+
+  # ── 2. 将其他所有子路径流量反向代理转发至老物理机 ──
+  - name: legacy-system-proxy
+    priority: 10      # 较低优先级
+    match:
+      path_prefix: /  # LPM 前缀模糊匹配其他所有流量 (如 /sys/login)
+    action:
+      type: proxy
+      upstream_type: static
+      upstream:
+        - "http://10.0.0.10:8080"</code></pre>
+            </div>
+            <h4>文件 2：老域名重定向 (sales.old-domain.yaml - 平滑平移)</h4>
+            <div class="code-wrapper">
+              <pre><code>domain: sales.old-example.com
+port: 80
+
+routes:
+  # ── 3. 301 永久重定向到新域名，利用模板变量原样保留路径与参数 ──
+  - name: global-domain-migration
+    match:
+      path_prefix: /
+    action:
+      type: redirect
+      # 💡 完美使用 ReplaceVars 模板变量 {uri}，原样透传路径与参数！
+      location: "https://a.example.com{uri}"
+      status: 301</code></pre>
+            </div>
+          </div>
+          <div class="scenario-col">
+            <h4>老系统自愈与平滑迁移机制说明</h4>
+            <div class="code-wrapper" style="background:var(--bg3); display:flex; flex-direction:column; justify-content:center; padding: 20px; min-height:360px; gap: 14px;">
+              <div style="color:var(--text); font-size:12px; font-family:var(--sans); line-height: 1.6;">
+                🔄 <b>老域名 301 无感平移：</b><br>
+                通过在 Location 中使用内置变量 <code>{uri}</code>（例如：<code>https://a.example.com{uri}</code>），网关会自动捕获并原样拼接老域名的后续路径和 Query 查询参数。
+                例如，当客户端访问 <code>http://sales.old-example.com/sys/login?user=admin</code> 时，会自动永久跳转（301）至 <code>https://a.example.com/sys/login?user=admin</code>，保护老用户历史收藏夹，对搜索引擎 SEO 极其友好。
+              </div>
+              <div style="border-top: 1px dashed var(--border); padding-top: 12px; color:var(--text); font-size:12px; font-family:var(--sans); line-height: 1.6;">
+                🛠️ <b>老系统根路由（LPM）零侵入自愈：</b><br>
+                由于老系统应用层路由编写不善，直接访问 <code>/</code> 时会报错或显示空页面。
+                LiteGate 通过在网关层声明 <code>path: /</code> 并设定 <b><code>priority: 100</code></b> 高优先级，率先把访问根目录的流量重定向至 <code>/sys</code>，而其余的流量（如 <code>/sys/login</code>）由于更长的前缀，会被第二条 <code>path_prefix: /</code> 路由精准捕获，依然照常代理给物理机 <code>10.0.0.10:8080</code>，免除了业务应用重构的巨大成本与风险。
+              </div>
+            </div>
+            <div class="architecture-tip">
+              <p>💡 <b>免除 Nginx 复杂配置的烦恼：</b>在 Nginx 中，你需要为 301 域名平移和 302 路由修正配置多个 Server 模块并编写晦涩的 Rewrite 正则匹配（易错且难以维护）。LiteGate 的 YAML 直观清晰，所有跳转策略热加载、即刻生效，无需 reload 重启。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+  </main>
+</div>
+
+<script>
+const SECTIONS = [
+  {
+    id:"l12", title:"站点与 Ingress 网口层配置", layer:"L1-L2 Ingress", color:"#185FA5",
+    rows:[
+      ["顶级节点","domain","指定当前站点绑定的外网逻辑域名。","yes","litegate.ingress.host=openapi.example.com",""],
+      ["顶级节点","port","指定当前站点监听的物理端口。","yes","litegate.entrypoint.bind=0.0.0.0:9660","采用 bind 标签将 IP 和端口合并声明"],
+      ["顶级节点","force_https","强制将所有 HTTP 请求 301 重定向至 HTTPS 端口。","no","","不适用"],
+      ["顶级节点","description","站点的可读描述信息。","no","","不适用 (自注册实例无描述语义)"],
+      ["顶级节点","defaults.timeout","站点的全局默认超时秒数。","no","","不适用 (建议在各实例的 service 级独立控制)"],
+      ["顶级节点","disable_trace_id","全局禁用在此站点下的 Trace ID 注入。","no","","不适用"],
+      ["顶级节点","ip_restriction","站点全局的客户端 IP 访问控制黑白名单。","no","","不适用"],
+      ["顶级节点","middlewares","站点全局绑定的中间件配置定义 Map。","no","","不适用"],
+    ]
+  },
+  {
+    id:"l3router", title:"路由匹配与优先级控制配置", layer:"L3 Router", color:"#0F6E56",
+    rows:[
+      ["routes[i]","name","当前路由规则的唯一英文标识。","no","","不适用"],
+      ["routes[i]","priority","匹配优先级数值，值越大越优先被匹配。","yes","litegate.router.priority=200 (缺省为 0)",""],
+      ["routes[i]","middlewares","当前路由绑定的局部中间件列表（英文逗号分隔）。","yes","litegate.router.middlewares=cors,ratelimit",""],
+      ["routes[i].match","rule","强表现力的 Traefik 式选路 DSL 规则字面量。","yes","litegate.router.rule=Method(\"GET\") && Header(\"X-Beta\")",""],
+      ["routes[i].match","path","精确路径匹配。只有请求路径与此值 100% 符合时路由才匹配成功。","yes","litegate.ingress.path=/api/v1/orders",""],
+      ["routes[i].match","path_prefix","前缀路径匹配。匹配以此路径开头的所有请求。","yes","litegate.ingress.path_prefix=/api/v2",""],
+      ["routes[i].match","method","限制该路由匹配的 HTTP 请求方法列表（以英文逗号分隔）。","yes","litegate.router.methods=GET,POST",""],
+      ["routes[i].match","header","限制请求头必须携带的匹配条件 Map。","no","","不适用"],
+      ["routes[i]","version","指定路由版本。","yes","litegate.router.version=v1.0","解析为 spec.Router.Version 路由版本过滤"],
+      ["routes[i]","sid","指定将流量静态绑定到特定的租户或分片实例。","yes","litegate.router.sid=c1-node","静态租户/实例分片选择器，用于选路锁定"],
+      ["routes[i].action","route_selector","实例强特征选择器。只有 metadata 包含该键值对的物理实例才能承载此路由流量。","yes","litegate.router.selector.region=hangzhou","`litegate.router.selector.zone=z1`   动态提取的微服务实例强特征匹配选择器"],
+      ["routes[i].action","route_meta","实例软特征匹配。结合动态调度策略作为软参考的实例特征。","yes","litegate.router.meta.version=green","`litegate.router.meta.env=gray`   物理实例软特征选择器，作为调度软参考"],
+    ]
+  },
+  {
+    id:"l36action", title:"报文修改、重写与后端实例选路配置", layer:"L3 Action / L6 Upstream", color:"#993C1D",
+    rows:[
+      ["routes[i].action","strip_prefix","在代理转发至上游前，剥离匹配到的前缀路径。","yes","litegate.router.strip_prefix=/api/v2",""],
+      ["routes[i].action","prepend_prefix","在代理转发至上游前，在前部追加指定的改写路径。","yes","litegate.router.prepend_prefix=/v2",""],
+      ["routes[i].action","headers","请求头重写注入。修改或追加传递给下游微服务的请求头。","yes","litegate.router.headers.X-Env=prod","`litegate.router.headers.X-Gateway=litegate`"],
+      ["routes[i].action","res_headers","响应头重写注入。拦截并追加返回给客户端的 HTTP 响应头。","yes","litegate.router.res_headers.Access-Control-Max-Age=3600",""],
+      ["routes[i].action","host","改写代理请求中传递给上游微服务的 Host 请求头。","no","","不适用"],
+      ["routes[i].action","proto","设置与上游微服务代理的协议类型（http/https/ws/wss）。","no","","不适用"],
+      ["routes[i].action","lb_policy","指定本组物理实例的负载均衡策略（如 rr 轮询、ip_hash 等）。","yes","litegate.router.lb_policy=ip_hash",""],
+      ["routes[i].action","log_level","对此特定路由的代理行为启用自定义日志级别。","yes","litegate.observability.log=debug","支持 \"none\" 原样传递以抑制日志输出"],
+      ["routes[i].action","enable_tracing","是否启用对此路由请求的全链路追踪 Trace 上报。","yes","litegate.observability.trace=true",""],
+    ]
+  },
+  {
+    id:"l4mid", title:"大一统安全认证与流量限流配置", layer:"L4 Middleware", color:"#533AB7",
+    rows:[
+      ["routes[i].action","rate_limit","对此路由进行限流的局部 QPS 阀值（静态 Adaptive 或动态硬限）。","yes","litegate.middleware.ratelimit=150",""],
+      ["routes[i].action","rate_limit_policy","限流算法与策略类型选择。","no","","不适用"],
+      ["routes[i].action","waf","当前路由是否开启 Web 应用防火墙强过滤。","no","","不适用"],
+      ["routes[i].action","cors","当前代理路由内联 CORS 跨域拦截与头部响应注入配置。","no","","不适用"],
+      ["routes[i].action.ids","enabled","是否启用大一统安全认证控制引擎。","yes","litegate.middleware.ids.enabled=true",""],
+      ["routes[i].action.ids","mode","安全控制模式（issue、verify、refresh、revoke、openapi）。","yes","litegate.middleware.ids.mode=openapi",""],
+      ["routes[i].action.ids","provider","关联全局或动态认证提供商（IDS Provider）的名称。","yes","litegate.middleware.ids.provider=google-oidc",""],
+      ["routes[i].action.ids","extractor","身份凭证的提取解析模板（如从 HTTP 请求头等位置提取）。","yes","litegate.middleware.ids.extractor={header.Authorization}","一等公民字段，推荐优先使用"],
+      ["routes[i].action.ids","request_extractor","输入会话凭证变量参数模板。","yes","litegate.middleware.ids.request_extractor={header._appid}","向下兼容，建议优先使用 extractor"],
+      ["routes[i].action.ids","response_extractor","输出会话凭证变量参数模板。","yes","litegate.middleware.ids.response_extractor={body.token}","向下兼容，建议优先使用 extractor"],
+      ["routes[i].action.ids","discovery_service","会话校验回源绑定的动态发现微服务名称。","yes","litegate.middleware.ids.discovery_service=user-auth-service","一等公民字段，替代旧版 service 字段"],
+      ["routes[i].action.ids","ttl","会话生存期长度（秒）。","yes","litegate.middleware.ids.ttl=3600",""],
+      ["routes[i].action.ids","url","身份凭证中心物理回源服务器地址。","yes","litegate.middleware.ids.url=http://192.168.10.10:9091",""],
+      ["routes[i].action.ids","path","身份凭证中心回源验证接口路径。","yes","litegate.middleware.ids.path=/api/ids/verify",""],
+      ["routes[i].action.ids","client_id","接入身份验证中心的主体客户端 Id。","yes","litegate.middleware.ids.client_id=test-ids-client",""],
+      ["routes[i].action.ids","client_secret","接入身份验证中心的主体客户端密匙。","yes","litegate.middleware.ids.client_secret=test-ids-secret",""],
+      ["routes[i].action.ids","enforce","当会话鉴权失败时，是否强制跳转到 Provider 登录页。","no","","不适用"],
+      ["routes[i].action.ids","inject_claims","用户身份验证成功后，将 Claims 荷载解密注入到请求头的映射关系。","no","","不适用"],
+      ["routes[i].action.ids","inject_headers","会话成功后是否自动将通用身份元数据注入到下游请求头。","no","","不适用"],
+      ["routes[i].action.ids","inject_response","是否同步将身份凭证元数据以 HTTP 响应头形式返回给客户端。","yes","litegate.middleware.inject_response=true","物理平铺于 middleware 层，没有 ids 中断段"],
+      ["动态提供商","ids_providers[i].type","注册专属动态身份提供商类型。","yes","litegate.http.ids_providers.myids.type=ids","支持 ids / ids_session / oidc 等类型"],
+      ["动态提供商","ids_providers[i].enabled","是否启用此动态身份提供商。","yes","litegate.http.ids_providers.myids.enabled=true",""],
+      ["动态提供商","ids_providers[i].issuer","OIDC 身份发行方 URL 地址。","yes","litegate.http.ids_providers.myids.issuer=https://okta.com",""],
+      ["动态提供商","ids_providers[i].client_id","接入提供商的客户端 ID 凭证。","yes","litegate.http.ids_providers.myids.client_id=client123",""],
+      ["动态提供商","ids_providers[i].client_secret","接入提供商的客户端密匙凭证。","yes","litegate.http.ids_providers.myids.client_secret=secret123",""],
+      ["动态提供商","ids_providers[i].scopes","请求认证时的 scope 作用域（逗号分隔）。","yes","litegate.http.ids_providers.myids.scopes=openid,email",""],
+      ["动态提供商","ids_providers[i].session_prefix","缓存于 Redis 中的 Session 主键前缀。","yes","litegate.http.ids_providers.myids.session_prefix=auth:orders: (缺省为 session:)",""],
+      ["动态提供商","ids_providers[i].session_ttl","会话缓存存活生存秒数。","yes","litegate.http.ids_providers.myids.session_ttl=7200 (缺省为 7200)",""],
+      ["动态提供商","ids_providers[i].renew_threshold","触发会话异步滑动续签的剩余秒数阀值。","yes","litegate.http.ids_providers.myids.renew_threshold=3600 (缺省为 3600)",""],
+      ["动态提供商","ids_providers[i].negative_ttl","非法 AppId 404 负缓存强力拦截防高频穿透的时间（秒）。","yes","litegate.http.ids_providers.myids.negative_ttl=60",""],
+      ["动态提供商","ids_providers[i].fail_policy","接口鉴权失败时的安全策略（如 deny 直接拦截、bypass 放行）。","yes","litegate.http.ids_providers.myids.fail_policy=deny",""],
+      ["动态提供商","ids_providers[i].url","远程物理服务验证接口的绝对 URL 路径。","yes","litegate.http.ids_providers.myids.url=http://192.168.10.10:9091",""],
+      ["动态提供商","ids_providers[i].discovery_service","用于物理回源发现的后端微服务注册名称。","yes","litegate.http.ids_providers.myids.discovery_service=identityservice",""],
+      ["动态中间件","middlewares[i].type","动态向网关注册专属中间件实例类型。","yes","litegate.http.middlewares.m1.type=headers","动态中间件: 支持 headers / ratelimit / cors / ip_restriction 等"],
+      ["动态中间件","middlewares[i].config","对应中间件实例类型的私有自定义配置 Map。","yes","litegate.http.middlewares.m1.response.X-Test=true","`litegate.http.middlewares.m2.qps=10`"],
+    ]
+  },
+  {
+    id:"l5svc", title:"超时、重试与熔断保护配置", layer:"L5 Service", color:"#854F0B",
+    rows:[
+      ["routes[i].action","timeout","代理请求在网络层等待上游微服务响应的最大超时秒数。","yes","litegate.service.timeout=10s (💡 注: 标签端支持带单位的 Duration 格式)",""],
+      ["routes[i].action","retry","代理请求遇到网络闪断或 5xx 错误时的最大重试尝试次数。","yes","litegate.service.retry=3",""],
+      ["routes[i].action.circuit_breaker","enabled","是否针对本路由下游微服务实例组开启主动保护熔断断路器。","yes","litegate.service.breaker=true","纠错: 平铺命名为 breaker，无子层级点"],
+      ["routes[i].action.circuit_breaker","timeout","断路器处于开启（Open）状态后，等待冷却并转入半开的秒数。","yes","litegate.service.breaker_timeout=30","纠错: 平铺为 breaker_timeout，且仅支持纯 int 秒数整数字面量，无 s 单位"],
+      ["routes[i].action.circuit_breaker","max_requests","断路器半开（Half-Open）状态下，允许放行探测健康度的最大请求数。","yes","litegate.service.breaker_max_requests=10","纠错: 平铺命名为 breaker_max_requests"],
+      ["routes[i].action.circuit_breaker","trip_threshold","触发熔断断开的连续物理错误次数上限阈值。","yes","litegate.service.breaker_trip_threshold=15","纠错: 平铺命名为 breaker_trip_threshold"],
+    ]
+  },
+  {
+    id:"static", title:"动态标签明确不支持的静态专属关键字", layer:"静态专属", color:"#5F5E5A",
+    rows:[
+      ["routes[i].action","type","指定路由的动作。当值为 serve、respond、redirect、webdav、markdown 时，属于静态 YAML 专属。","no","","不支持 (动态标签强制硬编码为 proxy 动作)"],
+      ["routes[i].action","root","静态网页文件托管的本地物理根路径。","no","","不支持 (动态实例严禁声明本地物理路径，防止安全穿透)"],
+      ["routes[i].action","index","静态网页托管的默认索引文件名（如 index.html）。","no","","不支持"],
+      ["routes[i].action","spa","是否启用单页应用（SPA）的 HTML5 路由 Fallback 兜底重定向。","no","","不支持"],
+      ["routes[i].action","status","直接响应 respond 模式下的 HTTP 返回状态码。","no","","不支持"],
+      ["routes[i].action","body","直接响应 respond 模式下直接渲染并返回的 Response 报文主体。","no","","不支持"],
+      ["routes[i].action","location","URL 重定向 redirect 动作下的重定向目标目的 URL。","no","","不支持"],
+      ["routes[i].action","web_ui","WebDAV 文件服务是否开启图形化浏览器 Web 端访问界面。","no","","不支持"],
+      ["routes[i].action","read_only","WebDAV 文件服务是否强制设为只读模式以确保安全。","no","","不支持"],
+    ]
+  },
+  {
+    id:"dynamic_only", title:"静态 YAML 明确不支持的动态专属标签", layer:"动态专属", color:"#1F4E79",
+    rows:[
+      ["动态独享","(不支持静态内联)","指定反代流量时强制覆盖或指定的实例特定的物理工作端口。","dynamic","litegate.upstream.port=8080","实例端口: 覆盖默认册信息"],
+      ["动态独享","(不支持静态内联)","指定当前后端物理实例节点在网关负载均衡 RR (轮询) 调度时的物理流量分配权重。","dynamic","litegate.upstream.weight=80","实例权重越大，承载的流量比例越高"],
+      ["动态独享","(不支持静态内联)","声明当前后端微服务物理实例节点为“灰度节点”，接受网关七层灰度匹配分片的优先调度。","dynamic","litegate.upstream.gray=true",""],
+      ["动态独享","(不支持静态内联)","声明当前物理微服务实例本身开启了 mTLS 双向证书监听，要求网关代理以安全证书与之建立连接。","dynamic","litegate.upstream.mtls=true",""],
+      ["动态独享","(不支持静态内联)","微服务实例开启 https 监听且使用非信任证书时，网关在代理时是否忽略其证书校验。","dynamic","litegate.upstream.insecure=true","安全控制: 忽略物理后端不安全证书"],
+      ["动态独享","(不支持静态内联)","指明当前物理实例节点自身的主动健康检查路径特征。","dynamic","litegate.upstream.health_path=/healthz","实例自检: 网关物理发包健康检查的接口"],
+      ["动态独享","(不支持静态内联)","指明主动健康检查网关发包的采样频率。","dynamic","litegate.upstream.health_interval=10s","实例自检: 探测频率支持 Duration 格式"],
+      ["动态独享","(不支持静态内联)","声明此物理实例所属服务组的专属负载均衡调度策略。","dynamic","litegate.upstream.lb_policy=ip_hash","均衡策略: 可供 selector 调度匹配，缺省为 rr"],
+    ]
+  }
+];
+
+let currentFilter = 'all';
+let searchTerm = '';
+
+function badgeHTML(s) {
+  if (s==='yes') return '<span class="badge-yes">支持</span>';
+  if (s==='no') return '<span class="badge-no">不支持</span>';
+  if (s==='dynamic') return '<span class="badge-dynamic">动态独享</span>';
+  return '';
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function toggleSection(id) {
+  const body = document.getElementById('body-'+id);
+  const chev = document.getElementById('chev-'+id);
+  const hidden = body.classList.toggle('hidden');
+  chev.classList.toggle('open', !hidden);
+}
+
+function applyFilters() {
+  searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+  let total = 0, shown = 0;
+
+  SECTIONS.forEach(sec => {
+    const secEl = document.getElementById('sec-'+sec.id);
+    const tbody = document.getElementById('tbody-'+sec.id);
+    const badge = document.getElementById('badge-'+sec.id);
+    let visible = 0;
+
+    tbody.querySelectorAll('tr').forEach((tr, i) => {
+      const row = sec.rows[i];
+      const filterOk = currentFilter === 'all' || row[3] === currentFilter;
+      const searchOk = !searchTerm || row.some(c => String(c).toLowerCase().includes(searchTerm));
+      const show = filterOk && searchOk;
+      tr.classList.toggle('hidden', !show);
+      if (show) { visible++; shown++; }
+      total++;
+    });
+
+    badge.textContent = visible + ' 项';
+    secEl.classList.toggle('hidden', visible === 0);
+    if (visible > 0 && (searchTerm || currentFilter !== 'all')) {
+      document.getElementById('body-'+sec.id).classList.remove('hidden');
+      document.getElementById('chev-'+sec.id).classList.add('open');
+    }
+  });
+
+  document.getElementById('statsLabel').textContent = shown + ' / ' + total + ' 项';
+  document.getElementById('emptyMsg').classList.toggle('hidden', shown > 0);
+}
+
+function renderDesc(desc, note, key) {
+  let isRequired = false;
+  let defaultVal = '';
+
+  // 1. 判定节点关键字是否必填
+  switch (key) {
+    case 'domain':
+      isRequired = true;
+      break;
+    case 'port':
+      isRequired = false;
+      defaultVal = '80 (HTTP) / 443 (HTTPS)';
+      break;
+    case 'force_https':
+      isRequired = false;
+      defaultVal = 'true';
+      break;
+    case 'routes[i].action.ids.provider':
+    case 'routes[i].action.ids.extractor':
+      isRequired = true; 
+      desc += ' <span style="color:var(--text3); font-size:10.5px;">(当启用 ids 时必填)</span>';
+      break;
+    case 'routes[i].action.type':
+    case 'routes[i].action.status':
+    case 'routes[i].action.location':
+      isRequired = true;
+      break;
+    case 'routes[i].action.root':
+      isRequired = true; 
+      desc += ' <span style="color:var(--text3); font-size:10.5px;">(托管静态或WebDAV时必填)</span>';
+      break;
+    case 'routes[i].action.auth.type':
+      isRequired = true; 
+      desc += ' <span style="color:var(--text3); font-size:10.5px;">(当启用 auth 时必填)</span>';
+      break;
+    case 'routes[i].action.auth.secret':
+      isRequired = true; 
+      desc += ' <span style="color:var(--text3); font-size:10.5px;">(auth.type 为 sso 时必填)</span>';
+      break;
+    default:
+      isRequired = false;
+      break;
+  }
+
+  // 2. 从备注中尝试提取默认值
+  if (!isRequired && !defaultVal) {
+    if (note && note.includes('默认')) {
+      const match = note.match(/默认\s*([^\s，、。；]+)/);
+      if (match) defaultVal = match[1];
+    } else if (note && note.includes('缺省为')) {
+      const match = note.match(/缺省为\s*([^\s，、。；]+)/);
+      if (match) defaultVal = match[1];
+    } else if (desc.includes('默认')) {
+      const match = desc.match(/默认[为]?\s*([^\s，、。；]+)/);
+      if (match) defaultVal = match[1];
+    }
+  }
+
+  // 3. 为特定常见控制关键字赋予默认值
+  if (!isRequired && !defaultVal) {
+    if (key.includes('enabled') || key.includes('disable') || key.includes('verify') || key.includes('tracing')) {
+      defaultVal = 'false';
+    } else if (key.includes('timeout')) {
+      defaultVal = '10s';
+    } else if (key.includes('retry')) {
+      defaultVal = '0';
+    } else if (key.includes('priority')) {
+      defaultVal = '0';
+    } else if (key.includes('lb_policy')) {
+      defaultVal = 'rr';
+    } else if (key.includes('log_level')) {
+      defaultVal = 'info';
+    } else if (key.includes('session_ttl')) {
+      defaultVal = '7200';
+    } else if (key.includes('renew_threshold')) {
+      defaultVal = '3600';
+    } else if (key.includes('inject_headers')) {
+      defaultVal = 'true';
+    } else if (key.includes('inject_response')) {
+      defaultVal = 'false';
+    } else if (key.includes('session_prefix')) {
+      defaultVal = 'session:';
+    }
+  }
+
+  // 4. 构建约束标记 HTML
+  let constraintHTML = '';
+  if (isRequired) {
+    constraintHTML = '<span class="badge-req">必填</span>';
+  } else {
+    const defStr = defaultVal ? `<span class="default-val">默认: ${escH(defaultVal)}</span>` : '';
+    constraintHTML = `<span class="badge-opt">可选</span>${defStr}`;
+  }
+
+  return `<div style="margin-bottom: 4px; display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">${constraintHTML}</div><div style="line-height: 1.55;">${escH(desc)}</div>`;
+}
+
+function build() {
+  const container = document.getElementById('sections');
+  SECTIONS.forEach((sec, si) => {
+    const isOpen = si < 2;
+    const div = document.createElement('div');
+    div.className = 'section';
+    div.id = 'sec-'+sec.id;
+
+    const rows = sec.rows.map(row => {
+      const tags = row[4]
+        ? row[4].split('\n').map(t => `<code>${escH(t)}</code>`).join('')
+        : '<span style="color:var(--text3)">--</span>';
+      const note = row[5] ? `<div class="note">${escH(row[5])}</div>` : '';
+      return `<tr>
+        <td class="node-label">${escH(row[0])}</td>
+        <td><code>${escH(row[1])}</code></td>
+        <td>${renderDesc(row[2], row[5], row[1])}${note}</td>
+        <td>${badgeHTML(row[3])}</td>
+        <td class="tag-cell">${tags}</td>
+      </tr>`;
+    }).join('');
+
+    div.innerHTML = `
+      <div class="section-header" onclick="toggleSection('${sec.id}')">
+        <div class="layer-dot" style="background:${sec.color}"></div>
+        <h3>${escH(sec.title)}</h3>
+        <span class="layer-tag">${escH(sec.layer)}</span>
+        <span class="count-badge" id="badge-${sec.id}">${sec.rows.length} 项</span>
+        <svg class="chevron ${isOpen?'open':''}" id="chev-${sec.id}" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="section-body ${isOpen?'':'hidden'}" id="body-${sec.id}">
+        <table>
+          <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup>
+          <thead><tr>
+            <th>YAML 配置层级节点</th><th>YAML 关键字字段</th><th>功能物理语义</th><th>是否支持</th><th>动态标签写法 (Tags)</th>
+          </tr></thead>
+          <tbody id="tbody-${sec.id}">${rows}</tbody>
+        </table>
+      </div>`;
+    container.appendChild(div);
+  });
+  applyFilters();
+}
+
+function escH(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+build();
+
+function switchTab(name) {
+  const toolbar = document.querySelector('.toolbar');
+  const hint = document.querySelector('.page-header p');
+  if (name === 'table') {
+    document.getElementById('tableTab').classList.remove('hidden');
+    document.getElementById('scenariosTab').classList.add('hidden');
+    document.getElementById('btn-table').classList.add('active');
+    document.getElementById('btn-scenarios').classList.remove('active');
+    if (toolbar) toolbar.style.display = 'flex';
+    if (hint) hint.style.display = 'block';
+  } else {
+    document.getElementById('tableTab').classList.add('hidden');
+    document.getElementById('scenariosTab').classList.remove('hidden');
+    document.getElementById('btn-table').classList.remove('active');
+    document.getElementById('btn-scenarios').classList.add('active');
+    if (toolbar) toolbar.style.display = 'none';
+    if (hint) hint.style.display = 'none';
+  }
+}
+</script>
+
+
+<script>
+(function () {
+  const toc = document.querySelector('.toc');
+  if (!toc) return;
+
+  const links = Array.from(toc.querySelectorAll('a[href^="#"]'));
+  const items = links.map((link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    return { link, target: document.getElementById(id) };
+  }).filter((item) => item.target);
+
+  if (!items.length) return;
+
+  let activeLink = null;
+  let ticking = false;
+
+  function setActive(item) {
+    if (!item || activeLink === item.link) return;
+    links.forEach((link) => link.classList.remove('active'));
+    item.link.classList.add('active');
+    activeLink = item.link;
+
+    const tocRect = toc.getBoundingClientRect();
+    const linkRect = item.link.getBoundingClientRect();
+    if (linkRect.top < tocRect.top + 16 || linkRect.bottom > tocRect.bottom - 16) {
+      item.link.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function currentItem() {
+    if (window.scrollY < 100) return items[0];
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+
+    for (const item of items) {
+      if (item.target.offsetParent === null && item.target.id !== 'overview') continue;
+      const rect = item.target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight * 0.88;
+      if (!visible) continue;
+
+      const distance = Math.abs(rect.top - anchor);
+      if (distance < bestDistance) {
+        best = item;
+        bestDistance = distance;
+      }
+    }
+
+    if (!best) {
+      best = items[0];
+      for (const item of items) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= anchor) best = item;
+      }
+    }
+
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      best = items[items.length - 1];
+    }
+    return best;
+  }
+
+  function updateActive() {
+    ticking = false;
+    setActive(currentItem());
+  }
+
+  function requestUpdate() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateActive);
+    }
+  }
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('hashchange', requestUpdate);
+  links.forEach((link) => link.addEventListener('click', () => window.setTimeout(requestUpdate, 80)));
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', requestUpdate, { once: true });
+  } else {
+    requestUpdate();
+  }
+})();
+</script>
+</body>
+</html>

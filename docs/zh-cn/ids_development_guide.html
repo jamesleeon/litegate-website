@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate IDS 开发指南 · 一个返回 JSON 的中间服务，就是一套鉴权 + 选路 + 限流引擎</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 760px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline { color: var(--accent); text-decoration: none; }
+a.inline:hover { text-decoration: underline; }
+
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.cm { color: var(--text3); }
+.kw { color: var(--accent); }
+.str { color: var(--green); }
+
+.callout { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.req { color: var(--red); font-weight: 600; }
+.opt { color: var(--text3); }
+.rec { color: var(--green); font-weight: 600; }
+
+.flow { display: flex; align-items: stretch; gap: 0; margin: 20px 0; flex-wrap: wrap; background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 22px 18px; overflow-x: auto; }
+.node { flex: 1; min-width: 120px; text-align: center; padding: 14px 12px; border-radius: var(--radius); background: var(--bg); border: 0.5px solid var(--border2); }
+.node.ids { border-color: var(--accent); background: var(--accent-bg); }
+.node.be { border-color: var(--green); background: var(--green-bg); }
+.node .icon { font-size: 22px; margin-bottom: 6px; }
+.node .name { font-weight: 600; font-size: 13.5px; }
+.node .desc { font-size: 11px; color: var(--text3); margin-top: 3px; }
+.arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 10px; min-width: 110px; }
+.arrow .label { font-size: 11px; font-weight: 600; color: var(--accent); margin-bottom: 3px; text-align: center; }
+.arrow .line { font-size: 18px; color: var(--accent); line-height: 1; }
+.arrow .sub { font-size: 10px; color: var(--text3); margin-top: 3px; text-align: center; }
+.stack { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 120px; }
+.stack .node { flex: none; }
+
+.steps { counter-reset: step; list-style: none; margin-left: 0; }
+.steps li { position: relative; padding-left: 38px; margin-bottom: 14px; counter-increment: step; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+
+@media (max-width: 880px) { .toc { display: none; } main { padding: 28px 20px 60px; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc" id="toc">
+    <div class="brand">LiteGate × IDS</div>
+    <div class="brand-sub">IDS 开发指南</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← 文档首页</a>
+    <a href="#overview">概览 · IDS 是什么</a>
+    <a href="#roles" class="sub">IDS ≠ 后端服务</a>
+    <a href="#contract">1. 请求 / 响应契约</a>
+    <a href="#req" class="sub">网关发给你的请求</a>
+    <a href="#resp" class="sub">四段式 JSON</a>
+    <a href="#minimal">2. 最小可用 IDS（40 行）</a>
+    <a href="#backend">3. 后端服务长什么样</a>
+    <a href="#segments">4. 四段详解</a>
+    <a href="#auth" class="sub">auth · 验签策略</a>
+    <a href="#route" class="sub">route · 物理选路</a>
+    <a href="#head" class="sub">head · 下游注入</a>
+    <a href="#ratelimit" class="sub">ratelimit · 租户限流</a>
+    <a href="#modes">5. 鉴权模式</a>
+    <a href="#md5">6. MD5 签名（openapi）</a>
+    <a href="#shard">7. 物理分片选路</a>
+    <a href="#wire">8. 接入 LiteGate</a>
+    <a href="#cache">9. 缓存与拒绝策略</a>
+    <a href="#fields">10. 字段参考表</a>
+    <a href="#test">11. 自测清单</a>
+    <a href="#faq">12. 常见问题</a>
+    <a href="../en/ids_development_guide.html">English version</a>
+  </nav>
+
+  <main>
+    <div class="hero" id="overview">
+      <h1>LiteGate IDS 开发指南</h1>
+      <p class="lead">IDS（Identity / Decision Service）不是什么重型框架，也<strong>不是你的后端</strong>——它本质上就是一个返回特定 JSON 的<strong>中间决策服务</strong>。LiteGate 在每个被保护的请求上侧路调用它，由它回答四件事：<strong>① 这个调用方是谁（怎么验）、② 流量该去哪个物理分片、③ 给下游注入什么头部、④ 对这个调用方/租户限多少流</strong>。然后网关据此把<strong>真实流量打到你的后端服务</strong>。本指南用能跑的示例，让你一眼看懂如何开发自己的 IDS。</p>
+      <div class="badges">
+        <span class="badge">协议：HTTP + JSON</span>
+        <span class="badge green">最小实现 ~40 行</span>
+        <span class="badge amber">语言无关</span>
+        <span class="badge">四段决策</span>
+      </div>
+
+      <div id="roles" class="callout warn" style="margin-top:20px">
+        <span class="t">先分清两个角色（最容易误解的点）</span>
+        <p><strong>IDS = 决策服务（中间）</strong>：网关问它"这个人怎么处理"，它只回 JSON，<strong>流量不进它</strong>。<br>
+        <strong>Backend Server = 真后端</strong>：你的实际业务服务，网关把流量真正打到这里，并带上 IDS 让注入的头。<br>
+        换句话说：<code>调用方 → 网关 →（侧路问 IDS 拿决策）→ 打到后端服务</code>。IDS 和后端是<strong>两个独立的程序</strong>。</p>
+      </div>
+    </div>
+
+    <section id="contract">
+      <h2><span class="num">1</span>请求 / 响应契约</h2>
+      <p>这是 IDS 开发的<strong>唯一核心</strong>：搞清楚网关发什么、你回什么，剩下都是细节。注意 IDS 是被<strong>侧路调用</strong>的，真实流量去的是后端服务。</p>
+
+      <div class="flow">
+        <div class="node"><div class="icon">📱</div><div class="name">调用方</div><div class="desc">带凭证（_appid+签名）</div></div>
+        <div class="arrow"><div class="label">① 请求</div><div class="line">→</div><div class="sub">命中受保护路由</div></div>
+        <div class="node ids"><div class="icon">🚪🧠</div><div class="name">LiteGate</div><div class="desc">侧路问 IDS 拿决策<br>验签·选路·注入·限流</div></div>
+        <div class="arrow"><div class="label">④ 转发真实流量</div><div class="line">→</div><div class="sub">按 sid 选中分片<br>+ 注入 head</div></div>
+        <div class="stack">
+          <div class="node be"><div class="icon">🖥️</div><div class="name">后端 c1</div><div class="desc">sid=c1</div></div>
+          <div class="node be"><div class="icon">🖥️</div><div class="name">后端 c2</div><div class="desc">sid=c2</div></div>
+        </div>
+      </div>
+      <p style="text-align:center;color:var(--text3);font-size:12.5px;margin-top:-6px">②③ LiteGate 在中间侧路调用 <strong>你的 IDS</strong>（<code>GET ?client_id=app-c1</code>）拿到四段决策 → 据此处理 → 才转发到真后端</p>
+
+      <h3 id="req">网关发给你的请求</h3>
+      <div class="code-wrap"><span class="lang">http</span><pre><code>GET /api/gate/credentials?client_id=app-c1 HTTP/1.1
+X-Gateway-ID: litegate          <span class="cm"># 网关身份（来自 provider.client_id）</span>
+X-Gateway-Secret: secret        <span class="cm"># 网关密钥（来自 provider.client_secret）</span></code></pre></div>
+      <ul>
+        <li><code>client_id</code> = 网关从请求里<strong>提取出的凭证</strong>（由 provider 的 <code>lookup/extractor</code> 决定从哪取，如 <code>{header._appid}</code>）。</li>
+        <li><code>X-Gateway-ID</code> / <code>X-Gateway-Secret</code> = <strong>网关自报家门</strong>，让你的 IDS 能确认"这是我信任的网关在问"。</li>
+        <li>路径 <code>/api/gate/credentials</code> 可在 provider 的 <code>path</code> 里自定义。</li>
+      </ul>
+
+      <h3 id="resp">你要返回的四段式 JSON</h3>
+      <p>HTTP 状态码始终 <code>200</code>，业务结果放在 body 的 <code>code</code> 里。<code>code: 1</code> 表示成功，其它（如 <code>404001</code>）表示拒绝。</p>
+      <div class="code-wrap"><span class="lang">json</span><pre><code>{
+  <span class="str">"code"</span>: 1,
+  <span class="str">"message"</span>: <span class="str">"ok"</span>,
+  <span class="str">"data"</span>: {
+    <span class="str">"auth"</span>:      { <span class="str">"type"</span>: <span class="str">"md5"</span>, <span class="str">"secret"</span>: <span class="str">"secret-c1"</span>, <span class="str">"ttl"</span>: <span class="str">"300"</span> },        <span class="cm"># ① 验签策略</span>
+    <span class="str">"route"</span>:     { <span class="str">"selector"</span>: { <span class="str">"sid"</span>: <span class="str">"c1"</span> }, <span class="str">"meta"</span>: { <span class="str">"lane"</span>: <span class="str">"stable"</span> } },  <span class="cm"># ② 物理选路</span>
+    <span class="str">"head"</span>:      { <span class="str">"X-Tenant-ID"</span>: <span class="str">"tenant-c1"</span> },                        <span class="cm"># ③ 下游注入头</span>
+    <span class="str">"ratelimit"</span>: { <span class="str">"qps"</span>: <span class="str">"10"</span>, <span class="str">"limit_key"</span>: <span class="str">"tenant-c1"</span> }            <span class="cm"># ④ 租户限流</span>
+  }
+}</code></pre></div>
+      <div class="callout ok"><span class="t">记住这四段</span><p><strong>auth</strong>（怎么验调用方）+ <strong>route</strong>（流量去哪个分片）+ <strong>head</strong>（给下游塞什么）+ <strong>ratelimit</strong>（对这个人/租户限多少）。一个 IDS 的全部职责就在这四段里——<strong>每段都可选，按需返回</strong>。</p></div>
+    </section>
+
+    <section id="minimal">
+      <h2><span class="num">2</span>最小可用 IDS（40 行）</h2>
+      <p>下面是一个<strong>能直接跑通</strong>的 IDS（Go），就是本指南实测用的版本。注意它<strong>只返回 JSON 决策，不处理业务流量</strong>。</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">package</span> main
+
+<span class="kw">import</span> (<span class="str">"encoding/json"</span>; <span class="str">"log"</span>; <span class="str">"net/http"</span>)
+
+<span class="cm">// 商户表：appid → 密钥 + 物理分片 + 配额</span>
+<span class="kw">var</span> merchant = <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">struct</span>{ secret, sid, qps <span class="kw">string</span> }{
+    <span class="str">"app-c1"</span>: {<span class="str">"secret-c1"</span>, <span class="str">"c1"</span>, <span class="str">"10"</span>},   <span class="cm">// 免费版 10 QPS</span>
+    <span class="str">"app-c2"</span>: {<span class="str">"secret-c2"</span>, <span class="str">"c2"</span>, <span class="str">"100"</span>},  <span class="cm">// 付费版 100 QPS</span>
+}
+
+<span class="kw">func</span> main() {
+    http.HandleFunc(<span class="str">"/api/gate/credentials"</span>, <span class="kw">func</span>(w http.ResponseWriter, r *http.Request) {
+        <span class="cm">// （建议）校验网关身份：r.Header.Get("X-Gateway-ID") == "litegate" ...</span>
+        m, ok := merchant[r.URL.Query().Get(<span class="str">"client_id"</span>)]
+        w.Header().Set(<span class="str">"Content-Type"</span>, <span class="str">"application/json"</span>)
+        <span class="kw">if</span> !ok {
+            json.NewEncoder(w).Encode(<span class="kw">map</span>[<span class="kw">string</span>]any{<span class="str">"code"</span>: 404001, <span class="str">"message"</span>: <span class="str">"merchant not found"</span>})
+            <span class="kw">return</span>
+        }
+        json.NewEncoder(w).Encode(<span class="kw">map</span>[<span class="kw">string</span>]any{
+            <span class="str">"code"</span>: 1, <span class="str">"message"</span>: <span class="str">"ok"</span>,
+            <span class="str">"data"</span>: <span class="kw">map</span>[<span class="kw">string</span>]any{
+                <span class="str">"auth"</span>:      <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"type"</span>: <span class="str">"md5"</span>, <span class="str">"secret"</span>: m.secret, <span class="str">"ttl"</span>: <span class="str">"300"</span>},
+                <span class="str">"route"</span>:     <span class="kw">map</span>[<span class="kw">string</span>]any{<span class="str">"selector"</span>: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"sid"</span>: m.sid}},
+                <span class="str">"head"</span>:      <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"X-Tenant-ID"</span>: <span class="str">"tenant-"</span> + m.sid},
+                <span class="str">"ratelimit"</span>: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"qps"</span>: m.qps, <span class="str">"limit_key"</span>: <span class="str">"tenant-"</span> + m.sid},
+            },
+        })
+    })
+    log.Fatal(http.ListenAndServe(<span class="str">":19091"</span>, <span class="kw">nil</span>))
+}</code></pre></div>
+      <div class="callout"><span class="t">就这样</span><p>没有 SDK、没有框架。<strong>查个表，返回四段 JSON</strong>，IDS 就完成了。真实系统里把 <code>merchant</code> 换成你的商户库/会话库即可。</p></div>
+    </section>
+
+    <section id="backend">
+      <h2><span class="num">3</span>后端服务长什么样（它不是 IDS）</h2>
+      <p>这是<strong>真正接流量的后端</strong>，跟 IDS 是<strong>两个独立程序</strong>。它不用懂任何鉴权——身份已经被网关在边缘解析好、以 head 形式注入进来了，后端直接读头即可。下面这个 echo 后端打印它收到的注入头，跑两份（<code>c1</code> / <code>c2</code>）就能配合分片选路。</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">package</span> main
+
+<span class="kw">import</span> (<span class="str">"fmt"</span>; <span class="str">"log"</span>; <span class="str">"net/http"</span>; <span class="str">"os"</span>)
+
+<span class="kw">func</span> main() {
+    sid := os.Args[1]   <span class="cm">// "c1" 或 "c2"，标识这是哪个分片实例</span>
+    port := os.Args[2]  <span class="cm">// 如 18101 / 18102</span>
+    http.HandleFunc(<span class="str">"/"</span>, <span class="kw">func</span>(w http.ResponseWriter, r *http.Request) {
+        <span class="cm">// 后端无需鉴权，直接读网关注入的身份头</span>
+        fmt.Fprintf(w, <span class="str">"我是后端 %s ｜ 租户=%s ｜ 路径=%s"</span>,
+            sid, r.Header.Get(<span class="str">"X-Tenant-ID"</span>), r.URL.Path)
+    })
+    log.Printf(<span class="str">"backend %s on :%s"</span>, sid, port)
+    log.Fatal(http.ListenAndServe(<span class="str">"0.0.0.0:"</span>+port, <span class="kw">nil</span>))
+    <span class="cm">// 真实部署时，这个后端会带 Meta{sid: "c1"} 注册到服务发现（litemesh/consul），</span>
+    <span class="cm">// 网关才能按 IDS 返回的 selector.sid 选中它。见第 7 节。</span>
+}</code></pre></div>
+      <div class="callout"><span class="t">完整拓扑（三个独立程序）</span><p><code>md5client</code>（调用方，签名）→ <code>litegate</code>（网关）→ 侧路问 <code>idsservice</code>（IDS 决策）→ 打到 <code>backend c1</code> / <code>backend c2</code>（真后端）。<br>仓库 <code>examples/ids-md5-lab/</code> 就是这套：<code>md5client</code> / <code>idsservice</code> / <code>apiserver</code>（=后端，可起 c1、c2 两份）。</p></div>
+    </section>
+
+    <section id="segments">
+      <h2><span class="num">4</span>四段详解</h2>
+
+      <h3 id="auth">auth · 验签策略</h3>
+      <p>告诉网关"拿到这个调用方的凭证后，<strong>怎么验它是真的</strong>"。</p>
+      <table>
+        <thead><tr><th>字段</th><th>含义</th></tr></thead>
+        <tbody>
+          <tr><td><code>type</code></td><td>验签方式：<code>md5</code>（标准签名）/ <code>md5-secure</code>（加 nonce 防重放）/ <code>none</code>（不验签，仅选路+注入+限流）</td></tr>
+          <tr><td><code>secret</code></td><td>该调用方密钥。网关用它<strong>本地复算签名</strong>并比对。<span class="req">type=md5 时必填</span>，否则报 "empty secret"。</td></tr>
+          <tr><td><code>ttl</code></td><td>本次凭证结果的缓存秒数。网关在 TTL 内不再问你，降低 IDS 压力。</td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="route">route · 物理选路（selector 硬隔离 + meta 软回退）</h3>
+      <p>告诉网关"这个调用方的流量<strong>该打到哪个后端实例</strong>"——IDS 最有价值的能力。<code>route</code> 下有两个维度，<strong>语义完全不同，别用反</strong>：</p>
+      <table>
+        <thead><tr><th>维度</th><th>语义</th><th>找不到实例时</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td><code>selector</code></td><td><span class="req">硬隔离</span>：必须命中</td><td>返回空 → 拒绝（no healthy upstream），<strong>绝不跨界</strong></td><td>租户物理隔离（如 <code>sid</code>）</td></tr>
+          <tr><td><code>meta</code></td><td><span class="rec">软偏好</span>：优先命中</td><td><strong>回退到 selector 池</strong>，照常服务</td><td>灰度 / 版本引导（如 <code>version</code>）</td></tr>
+        </tbody>
+      </table>
+      <p><strong>匹配顺序</strong>：先用 <code>selector</code> 把候选锁死在硬边界内（命中不了直接淘汰）；再在这个池子里用 <code>meta</code> 做软筛选——<strong>meta 有命中就只走命中的；meta 一个都没命中，就回退用整个 selector 池</strong>。</p>
+
+      <div class="callout ok">
+        <span class="t">用它做灰度（金丝雀）发布</span>
+        <p>A 集群 10 个实例（都注册 <code>sid=A</code>），其中 8 个跑稳定版、2 个跑新版（额外带 <code>version=v2</code>）：</p>
+        <ul>
+          <li>IDS 对<strong>灰度租户</strong>返回 <code>selector:{sid:A}</code>（硬锁 A 集群）+ <code>meta:{version:v2}</code>（软偏好新版）→ 优先打到那 2 个新版实例；</li>
+          <li>万一新版实例挂了/下线，<code>meta</code> 没匹配 → <strong>自动回退到 8 个稳定实例</strong>，灰度租户照常被服务，不会因为新版没了就 503；</li>
+          <li>对其它租户不返回 meta → 走全集群稳定版。</li>
+        </ul>
+        <p style="margin-top:8px"><strong>放量只需 IDS 改一句 JSON（多放几个租户走 v2），不碰网关、不重启。</strong></p>
+      </div>
+
+      <div class="callout warn"><span class="t">selector 与 meta 别用反</span><p>需要<strong>绝不能泄漏</strong>的边界（租户数据隔离）→ 用 <code>selector</code>（宁可空也不跨界）。需要<strong>优雅降级</strong>的偏好（灰度/版本）→ 用 <code>meta</code>（软，回退保命）。用反了：拿 meta 做隔离会在实例缺失时漏到别的池；拿 selector 做灰度会在新版没起来时直接拒绝。</p></div>
+
+      <p>不需要选路就省略 <code>route</code>，流量走默认负载均衡。后端如何带 <code>sid</code>/<code>version</code> 标签注册见 <a href="#shard" class="inline">第 7 节</a>。</p>
+
+      <h3 id="head">head · 下游注入</h3>
+      <p>告诉网关"把这些头<strong>注入到转发给后端的请求里</strong>"。后端无需解析凭证，直接读这些头拿身份上下文。</p>
+      <div class="code-wrap"><span class="lang">json</span><pre><code><span class="str">"head"</span>: { <span class="str">"X-Tenant-ID"</span>: <span class="str">"tenant-c1"</span>, <span class="str">"X-User-Role"</span>: <span class="str">"admin"</span> }</code></pre></div>
+      <p>实测中后端确实收到这些头（<code>X-Tenant-ID: tenant-c1</code>）——这是"身份在网关层解析、下游零负担"的核心机制。</p>
+
+      <h3 id="ratelimit">ratelimit · 租户/调用方限流（第四段，按选路结果再限流）</h3>
+      <p>选路之后，网关还能<strong>针对这个调用方/租户单独限流</strong>——而且配额由 IDS 动态返回（免费版 10 QPS、付费版 100 QPS，IDS 说了算）。这跟路由上写死的静态 <code>rate_limit</code>（整条路由全局共享一个桶）<strong>是两回事</strong>。</p>
+      <table>
+        <thead><tr><th>字段</th><th>含义</th></tr></thead>
+        <tbody>
+          <tr><td><code>qps</code> / <code>rate</code> / <code>limit</code></td><td>限流值（每秒请求数）。三个 key 任取其一（按此顺序优先）。≤0 或不返回 = 不限流。</td></tr>
+          <tr><td><code>limit_key</code></td><td>限流<strong>维度</strong>。显式给则用它——<strong>同一个 key 的调用方共享一个配额</strong>（比如填租户 ID，则该租户下所有用户合用一份 QPS）。</td></tr>
+        </tbody>
+      </table>
+      <p>若不给 <code>limit_key</code>，网关按此顺序<strong>回退</strong>取维度：<code>head["tenantId"]</code> → <code>head["userId"]</code> → <code>head["app"]</code> → 客户端 IP。限流桶实际按 <code>站点:路由:dyn:&lt;limit_key&gt;</code> 隔离，超限返回 <code>429 Too Many Requests (Quota Exceeded)</code>。</p>
+      <div class="callout"><span class="t">典型用法</span><p>SaaS 多租户：<code>limit_key</code> 填租户 ID，<code>qps</code> 按套餐返回。于是<strong>免费租户被限 10 QPS、付费租户 100 QPS，且各租户配额互不影响</strong>——全由 IDS 一句 JSON 决定，不用改任何网关配置。</p></div>
+    </section>
+
+    <section id="modes">
+      <h2><span class="num">5</span>鉴权模式</h2>
+      <p>IDS 引擎按 <code>mode</code> 分派处理器。provider 配置里<strong>必须指定 <code>mode</code></strong>，否则报 "processor not found for the specified mode"。</p>
+      <table>
+        <thead><tr><th>mode</th><th>用途</th><th>典型场景</th></tr></thead>
+        <tbody>
+          <tr><td><code>openapi</code> <span class="rec">★ 最常用</span></td><td>开放平台调用：提取 appid → 问 IDS 拿密钥 → 本地 MD5 验签 → 选路+注入+限流</td><td>对外 OpenAPI、电商签名调用</td></tr>
+          <tr><td><code>verify</code></td><td>会话/令牌校验：用已有 token 换取身份与选路</td><td>登录后业务接口、Session 鉴权</td></tr>
+          <tr><td><code>issue</code></td><td>签发：登录成功后注册新的 token/session 选路映射</td><td>登录入口（login steering）</td></tr>
+          <tr><td><code>refresh</code></td><td>刷新：续期已有凭证</td><td>长会话续租</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><span class="t">本指南以 <code>openapi</code> 为主线</span><p><code>openapi</code> 是经过完整端到端实测的模式（验签→放行→head 注入→分片选路→租户限流全通）。<code>verify/issue/refresh</code> 是会话/令牌生命周期的不同阶段，四段式契约一致，区别在网关侧对 token 的处理时机。先把 <code>openapi</code> 跑通，其它同构理解。</p></div>
+    </section>
+
+    <section id="md5">
+      <h2><span class="num">6</span>MD5 签名（openapi 模式）</h2>
+      <p>当 <code>auth.type=md5</code> 时，<strong>调用方</strong>必须对请求签名，网关用 IDS 返回的 <code>secret</code> 本地复算并比对。你的 IDS <strong>不负责验签</strong>——只负责把 secret 给网关，验签是网关做的。</p>
+      <h3>签名公式</h3>
+      <div class="code-wrap"><span class="lang">text</span><pre><code>sign = md5( secret + appid + method + timestamp + body + secret )</code></pre></div>
+      <p>调用方请求头里带：<code>_appid</code>、<code>_timestamp</code>（Unix 秒）、<code>_method</code>、<code>_sign</code>（md5 十六进制）；<code>md5-secure</code> 另加 <code>_nonce</code> 随机串防重放。</p>
+      <div class="callout ok"><span class="t">实测结论</span><p>正确签名 → <code>200</code> + head 注入；错误 secret/签名 → <code>401</code>（"Invalid signature"）；非法 appid → <code>401</code>（负缓存）；空 appid → <code>401</code>。</p></div>
+      <div class="callout"><span class="t">现成客户端</span><p>仓库 <code>examples/ids-md5-lab/md5client/md5apiclient</code> 就是可复用的签名客户端，照它实现调用方即可。</p></div>
+    </section>
+
+    <section id="shard">
+      <h2><span class="num">7</span>物理分片选路（IDS 的杀手锏）</h2>
+      <p>IDS 返回 <code>route.selector.sid=c1</code> 后，网关<strong>只把流量路由到带 <code>sid=c1</code> 标签的后端实例</strong>——实现租户级物理隔离。</p>
+      <p>网关按以下优先级匹配后端实例（任一命中即可）：</p>
+      <table>
+        <thead><tr><th>实例侧</th><th>匹配键</th></tr></thead>
+        <tbody>
+          <tr><td>Metadata</td><td><code>sid</code> ／ <code>litegate.route.sid</code> ／ <code>litegate.route.selector.sid</code></td></tr>
+          <tr><td>Tags</td><td><code>sid=c1</code> ／ <code>litegate.route.sid=c1</code> ／ 字面量 <code>c1</code></td></tr>
+        </tbody>
+      </table>
+      <p>所以<strong>后端服务</strong>注册到发现源时带上 <code>Meta: {sid: "c1"}</code> 即可被选中（见第 3 节后端示例尾部注释）。</p>
+      <div class="callout ok"><span class="t">实测结论</span><p>起两个后端(sid=c1 / sid=c2)，IDS 对 app-c1 返回 sid=c1、对 app-c2 返回 sid=c2 —— 各请求 6 次，<strong>6/6 精确命中对应分片后端，零泄漏</strong>。这就是"IDS 决策真正控制了物理流量去向"的证据。</p></div>
+      <div class="callout warn"><span class="t">前提</span><p>静态单实例 upstream 配 selector 会被过滤光（报 no healthy upstream）。<strong>分片选路要配合服务发现</strong>（litemesh/consul/docker）+ 后端实例带 sid 标签使用。</p></div>
+    </section>
+
+    <section id="wire">
+      <h2><span class="num">8</span>接入 LiteGate</h2>
+      <p>两步：① 全局声明一个 <code>ids</code> 类型 auth provider；② 路由上引用它。</p>
+      <h3>① 全局 config.yaml</h3>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>auth_providers:
+  my-ids:
+    type: ids
+    mode: openapi                      <span class="cm"># 必填：选模式</span>
+    lookup: <span class="str">"{header._appid}"</span>          <span class="cm"># 从哪提取凭证（=client_id）</span>
+    url: <span class="str">"http://127.0.0.1:19091"</span>     <span class="cm"># 你的 IDS 地址</span>
+    path: /api/gate/credentials        <span class="cm"># IDS 端点路径</span>
+    fail_policy: deny                  <span class="cm"># IDS 不可达/拒绝时：deny（默认）或 allow</span>
+    client_id: litegate                <span class="cm"># → X-Gateway-ID</span>
+    client_secret: secret              <span class="cm"># → X-Gateway-Secret</span></code></pre></div>
+      <h3>② 路由 action 上引用</h3>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>routes:
+  - name: open-api
+    match: { path_prefix: /openapi }
+    action:
+      type: proxy
+      upstream_type: litemesh          <span class="cm"># 分片选路需要发现源</span>
+      service_name: order-service      <span class="cm"># 你的后端服务名（c1/c2 都注册成这个名）</span>
+      namespace: default
+      ids:
+        enabled: true
+        provider: my-ids</code></pre></div>
+      <div class="callout"><span class="t">提取别名说明</span><p><code>lookup</code> 是 <code>extractor</code> 的兼容别名，二者等价（运行时统一投射到 <code>request_extractor</code>）。新配置建议直接用 <code>extractor</code>。</p></div>
+    </section>
+
+    <section id="cache">
+      <h2><span class="num">9</span>缓存与拒绝策略</h2>
+      <ul>
+        <li><strong>正向缓存</strong>：<code>auth.ttl</code> 秒内，网关缓存你的返回，不重复调用 IDS。</li>
+        <li><strong>负缓存</strong>：返回 <code>code=404001</code>（appid 无效）时，网关按 <code>negative_ttl</code>（默认 60s）缓存"此 appid 无效"，避免无效请求反复打 IDS。</li>
+        <li><strong>失败策略</strong>：<code>fail_policy: deny</code>（默认）= IDS 不可达就拒绝（fail-closed，安全）；<code>allow</code> = 放行（fail-open，慎用）。</li>
+      </ul>
+      <div class="callout danger"><span class="t">安全默认</span><p>鉴权组件请保持 <code>fail_policy: deny</code>。IDS 挂了就 fail-open 放行，等于鉴权形同虚设。</p></div>
+    </section>
+
+    <section id="fields">
+      <h2><span class="num">10</span>字段参考表</h2>
+      <h3>响应 data 四段</h3>
+      <table>
+        <thead><tr><th>字段</th><th>段</th><th>必填</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>auth.type</code></td><td>auth</td><td class="rec">建议</td><td>md5 / md5-secure / none</td></tr>
+          <tr><td><code>auth.secret</code></td><td>auth</td><td class="req">md5 时必填</td><td>验签密钥</td></tr>
+          <tr><td><code>auth.ttl</code></td><td>auth</td><td class="opt">可选</td><td>正向缓存秒数</td></tr>
+          <tr><td><code>route.selector</code></td><td>route</td><td class="opt">可选</td><td><strong>硬隔离</strong>，如 <code>{sid: c1}</code>，无匹配即拒绝（不回退）</td></tr>
+          <tr><td><code>route.meta</code></td><td>route</td><td class="opt">可选</td><td><strong>软偏好</strong>（灰度/版本），无匹配时回退 selector 池</td></tr>
+          <tr><td><code>head</code></td><td>head</td><td class="opt">可选</td><td>注入下游的头部 map</td></tr>
+          <tr><td><code>ratelimit.qps</code></td><td>ratelimit</td><td class="opt">可选</td><td>限流值（每秒），亦可用 <code>rate</code>/<code>limit</code></td></tr>
+          <tr><td><code>ratelimit.limit_key</code></td><td>ratelimit</td><td class="opt">可选</td><td>限流维度（同 key 共享配额）；缺省回退 tenantId/userId/app/IP</td></tr>
+        </tbody>
+      </table>
+      <h3>provider 配置项</h3>
+      <table>
+        <thead><tr><th>键</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>type</code></td><td>固定 <code>ids</code></td></tr>
+          <tr><td><code>mode</code></td><td><span class="req">必填</span>：openapi / verify / issue / refresh</td></tr>
+          <tr><td><code>lookup</code> / <code>extractor</code></td><td>凭证提取表达式，如 <code>{header._appid}</code></td></tr>
+          <tr><td><code>url</code> / <code>service</code></td><td>IDS 地址（直连 URL 或 discovery 服务名）</td></tr>
+          <tr><td><code>path</code></td><td>IDS 端点路径，默认 <code>/api/gate/credentials</code></td></tr>
+          <tr><td><code>client_id</code> / <code>client_secret</code></td><td>网关身份 → <code>X-Gateway-ID</code> / <code>X-Gateway-Secret</code></td></tr>
+          <tr><td><code>negative_ttl</code></td><td>负缓存秒数，默认 60</td></tr>
+          <tr><td><code>fail_policy</code></td><td>deny（默认）/ allow</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="test">
+      <h2><span class="num">11</span>自测清单</h2>
+      <ol class="steps">
+        <li><strong>启动 IDS</strong>，curl：<code>curl "http://127.0.0.1:19091/api/gate/credentials?client_id=app-c1"</code> → 应返回四段式 JSON、<code>code:1</code>。</li>
+        <li><strong>非法 appid</strong>：<code>client_id=app-bad</code> → 应返回 <code>code:404001</code>。</li>
+        <li><strong>起两个后端</strong>（c1/c2，各带 <code>Meta{sid}</code> 注册到发现源）。</li>
+        <li><strong>正确签名</strong>请求受保护路由 → <code>200</code>，且<strong>后端</strong>回显收到 <code>X-Tenant-ID</code> 注入头。</li>
+        <li><strong>错误签名</strong> → <code>401</code>；<strong>空/非法 appid</strong> → <code>401</code>。</li>
+        <li><strong>分片验证</strong>：app-c1 多次请求全部命中后端 c1，app-c2 全部命中 c2。</li>
+        <li><strong>限流验证</strong>：让 IDS 对某 appid 返回 <code>ratelimit.qps=2</code>，快速请求 → 超过部分返回 <code>429</code>。</li>
+      </ol>
+      <div class="callout ok"><span class="t">参考实现</span><p>仓库 <code>examples/ids-md5-lab/</code> 有完整三件套：<code>idsservice</code>（IDS）、<code>apiserver</code>（后端，可起 c1/c2）、<code>md5client</code>（签名调用方）。本指南契约与之对齐。</p></div>
+    </section>
+
+    <section id="faq">
+      <h2><span class="num">12</span>常见问题</h2>
+      <h3>IDS 就是后端服务吗？</h3>
+      <p><strong>不是。</strong>IDS 是<strong>侧路的决策服务</strong>——网关问它"这个人怎么处理"，它只回 JSON，业务流量<strong>不进 IDS</strong>。真正接流量的是你的<strong>后端服务（backend server）</strong>，网关把流量打到那里并带上 IDS 让注入的头。两者是两个独立程序。</p>
+
+      <h3>IDS 需要连数据库 / Redis 吗？</h3>
+      <p>不强制。最小实现就是查内存表的 HTTP 端点。生产里你通常连自己的商户/会话库，但那是<strong>你的业务存储</strong>，跟 IDS 协议无关。网关侧的缓存/限流由网关自己处理。</p>
+
+      <h3>静态 rate_limit 和 IDS 的 ratelimit 有什么区别？</h3>
+      <p>路由上的静态 <code>rate_limit</code> 是<strong>整条路由一个全局桶</strong>；IDS 返回的 <code>ratelimit</code> 是<strong>按调用方/租户动态限流</strong>，配额由 IDS 实时决定、各租户互相隔离。两者可叠加。</p>
+
+      <h3>报 "processor not found for the specified mode"？</h3>
+      <p>provider 漏了 <code>mode</code>，补上 <code>mode: openapi</code>。</p>
+
+      <h3>报 "empty secret returned from identity service"？</h3>
+      <p><code>auth.type=md5</code> 但没返回 <code>secret</code>。要么返回 secret，要么改 <code>type: none</code>。</p>
+
+      <h3>合法 appid 却 502 / no healthy upstream？</h3>
+      <p>返回了 <code>route.selector.sid</code>，但 upstream 是静态单实例、没 sid 标签，被过滤光了。分片选路要配合<strong>服务发现 + 带 sid 标签的后端</strong>（见第 7 节）。</p>
+
+      <h3>IDS 用什么语言写？</h3>
+      <p>任何能起 HTTP 服务、返回 JSON 的语言都行——协议无关。用 Go 只因它最短。</p>
+    </section>
+
+    <div class="footer">
+      LiteGate IDS 开发指南 · 契约与示例基于 <code>internal/middleware</code>（ids_governance / ids_mode_processors / identity_client / dynamic_ratelimit）与 <code>examples/ids-md5-lab</code>，经端到端实测验证。
+    </div>
+  </main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var map = {};
+  links.forEach(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) map[id] = a;
+  });
+  var ids = Object.keys(map);
+  function onScroll() {
+    var pos = window.scrollY + 120;
+    var current = ids[0];
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && el.offsetTop <= pos) current = id;
+    });
+    links.forEach(function (a) { a.classList.remove('active'); });
+    if (map[current]) map[current].classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>

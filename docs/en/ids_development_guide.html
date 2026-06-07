@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate IDS Development Guide | JSON decisions for auth, routing, headers, and limits</title>
+<style>
+:root{--bg:#f6f8fb;--paper:#fff;--ink:#172033;--muted:#5c687a;--line:#dfe5ee;--blue:#1967d2;--teal:#128194;--green:#15805a;--amber:#9a6400;--red:#b42318;--code:#0f172a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 Inter,Segoe UI,Arial,sans-serif}a{color:var(--blue);text-decoration:none}code{font-family:Consolas,Menlo,monospace;background:#edf2f7;border:1px solid #d8e0ea;border-radius:5px;padding:1px 5px}pre{overflow:auto;background:var(--code);color:#e5edf7;border-radius:8px;padding:16px;border:1px solid #1e293b}pre code{background:transparent;border:0;color:inherit;padding:0}.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:100vh}.toc{position:sticky;top:0;height:100vh;overflow:auto;background:#fff;border-right:1px solid var(--line);padding:28px 22px}.brand{font-size:18px;font-weight:800}.subbrand{margin:2px 0 20px;color:var(--muted);font-size:13px}.toc a{display:block;padding:7px 0;color:#26384f}.toc a.sub{padding-left:14px;color:#66758a;font-size:13px}.main{padding:40px 48px 70px}.page{max-width:1080px;margin:0 auto}.hero,.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(15,23,42,.05)}.hero{padding:34px;margin-bottom:24px}.eyebrow{margin:0 0 8px;color:var(--teal);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:12px}h1{margin:0;font-size:38px;line-height:1.12}h2{margin:34px 0 12px;font-size:26px}h3{margin:24px 0 10px;font-size:19px}.lead{font-size:18px;color:#405066;max-width:900px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}.pill{border:1px solid var(--line);border-radius:8px;padding:13px;background:#fbfdff}.pill b{display:block}.diagram{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:center;margin:20px 0}.node{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;text-align:center;box-shadow:0 8px 22px rgba(15,23,42,.05)}.node strong{display:block;font-size:17px}.arrow{text-align:center;color:var(--muted);font-weight:800}.card{padding:24px;margin:18px 0}.callout{border-left:4px solid var(--blue);background:#eef5ff;padding:14px 16px;border-radius:8px;margin:16px 0}.callout.ok{border-color:var(--green);background:#eefaf5}.callout.warn{border-color:var(--amber);background:#fff7e6}.callout.danger{border-color:var(--red);background:#fff1f0}table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}th,td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}th{background:#f2f6fb}.tag{display:inline-block;border-radius:999px;padding:2px 8px;font-size:12px;background:#eaf7f5;color:#08706f;font-weight:700}@media(max-width:900px){.shell{display:block}.toc{position:relative;height:auto}.main{padding:24px}.grid,.diagram{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}} 
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="toc">
+  <div class="brand">LiteGate x IDS</div>
+  <div class="subbrand">Development Guide</div>
+  <a href="index.html" style="font-weight:600;color:var(--accent);">← Docs Home</a>
+  <a href="#overview">Overview</a>
+  <a href="#contract">1. Request and response contract</a>
+  <a href="#minimal">2. Minimal IDS</a>
+  <a href="#backend">3. Backend shape</a>
+  <a href="#segments">4. Four decision segments</a>
+  <a href="#modes">5. Modes</a>
+  <a href="#md5">6. MD5 signing</a>
+  <a href="#shard">7. Physical shard routing</a>
+  <a href="#wire">8. Wire into LiteGate</a>
+  <a href="#cache">9. Cache and denial policy</a>
+  <a href="#fields">10. Field reference</a>
+  <a href="#test">11. Test checklist</a>
+  <a href="#faq">12. FAQ</a>
+  <a href="../zh-cn/ids_development_guide.html">Chinese version</a>
+</aside>
+<main class="main"><div class="page">
+<section class="hero" id="overview">
+  <p class="eyebrow">Identity / Decision Service</p>
+  <h1>LiteGate IDS Development Guide</h1>
+  <p class="lead">IDS is not a heavy framework and it is not your backend service. It is a sidecar-style decision endpoint that returns JSON. LiteGate asks it how to authenticate the caller, where to route the request, which headers to inject, and what rate limit to apply.</p>
+  <div class="grid">
+    <div class="pill"><b>Auth</b><span>How should LiteGate verify this caller?</span></div>
+    <div class="pill"><b>Route</b><span>Which physical shard or lane should receive traffic?</span></div>
+    <div class="pill"><b>Head</b><span>Which trusted headers should be injected downstream?</span></div>
+    <div class="pill"><b>RateLimit</b><span>Which caller or tenant quota should be enforced?</span></div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="diagram">
+    <div class="node"><strong>Client</strong><span>Signed request, app id, token, or session</span></div>
+    <div class="arrow">LiteGate asks IDS for a decision</div>
+    <div class="node"><strong>Backend Server</strong><span>Receives real traffic plus trusted injected headers</span></div>
+  </div>
+  <div class="callout ok"><b>Keep the boundary clear.</b> Real business traffic does not enter IDS. IDS returns decisions; LiteGate executes them; backend services handle business requests.</div>
+</section>
+
+<section id="contract">
+  <h2>1. Request and response contract</h2>
+  <p>The contract is the core of IDS development: LiteGate sends a request with gateway credentials and a caller identifier; IDS returns a normalized decision envelope.</p>
+  <h3>Request from LiteGate</h3>
+<pre><code>GET /api/gate/credentials?client_id=app-c1&amp;type=remote_auth
+X-Gateway-ID: litegate-prod
+X-Gateway-Secret: shared-secret</code></pre>
+  <p><code>X-Gateway-ID</code> and <code>X-Gateway-Secret</code> let your IDS confirm that the query comes from a trusted gateway.</p>
+  <h3>Response from IDS</h3>
+<pre><code>{
+  "code": 1,
+  "message": "ok",
+  "data": {
+    "auth": { "type": "md5", "secret": "secret-c1", "ttl": "300" },
+    "route": { "selector": { "sid": "c1" }, "meta": { "lane": "stable" } },
+    "head": { "X-Tenant-ID": "tenant-c1" },
+    "ratelimit": { "qps": "100", "limit_key": "tenant-c1" }
+  }
+}</code></pre>
+</section>
+
+<section id="minimal">
+  <h2>2. Minimal IDS</h2>
+  <p>A working IDS can be a small HTTP handler that looks up the caller and emits the four-part JSON decision.</p>
+<pre><code>func credentials(w http.ResponseWriter, r *http.Request) {
+    appID := r.URL.Query().Get("client_id")
+    merchant, ok := merchants[appID]
+    if !ok {
+        json.NewEncoder(w).Encode(map[string]any{
+            "code": 404001, "message": "appid disabled or not found",
+        })
+        return
+    }
+    json.NewEncoder(w).Encode(map[string]any{
+        "code": 1,
+        "data": map[string]any{
+            "auth": map[string]string{"type": "md5", "secret": merchant.Secret, "ttl": "300"},
+            "route": map[string]any{"selector": map[string]string{"sid": merchant.SID}},
+            "head": map[string]string{"X-Tenant-ID": merchant.TenantID},
+            "ratelimit": map[string]string{"qps": merchant.QPS, "limit_key": merchant.TenantID},
+        },
+    })
+}</code></pre>
+  <div class="callout">No special SDK is required. Replace the in-memory table with your merchant, tenant, app, or session store.</div>
+</section>
+
+<section id="backend">
+  <h2>3. What the backend looks like</h2>
+  <p>The backend is a separate program. It receives traffic after LiteGate has verified the caller, selected a shard, and injected trusted headers.</p>
+<pre><code>func handler(w http.ResponseWriter, r *http.Request) {
+    tenant := r.Header.Get("X-Tenant-ID")
+    verified := r.Header.Get("X-Lito-Verified")
+    fmt.Fprintf(w, "tenant=%s verified=%s", tenant, verified)
+}</code></pre>
+  <p>For shard routing, register backend instances through discovery with tags such as <code>sid=c1</code> and <code>sid=c2</code>. LiteGate can then match <code>route.selector.sid</code> against the actual instance metadata.</p>
+</section>
+
+<section id="segments">
+  <h2>4. Four decision segments</h2>
+  <h3>auth</h3>
+  <p>Defines how LiteGate verifies the caller locally. Common values are <code>none</code>, <code>md5</code>, <code>md5-secure</code>, and <code>jwt</code>.</p>
+  <h3>route</h3>
+  <p><code>selector</code> is hard isolation. If it says <code>sid=c1</code>, LiteGate only sends traffic to instances carrying <code>sid=c1</code>. <code>meta</code> is a softer preference for lane, version, or canary metadata.</p>
+  <h3>head</h3>
+  <p>Headers in this section are trusted headers injected by the gateway. LiteGate removes untrusted client-supplied copies before injecting them.</p>
+  <h3>ratelimit</h3>
+  <p>Dynamic per-caller or per-tenant quota. This differs from a static route-level limit, which is shared by the entire route.</p>
+</section>
+
+<section id="modes">
+  <h2>5. IDS modes</h2>
+  <table><thead><tr><th>Mode</th><th>Purpose</th><th>Typical use</th></tr></thead><tbody>
+    <tr><td><code>openapi</code> <span class="tag">recommended first</span></td><td>Extract app id, fetch credentials, verify signature locally, inject routing and headers.</td><td>Partner API, merchant API, signed requests.</td></tr>
+    <tr><td><code>issue</code></td><td>Login entry. Ask IDS for tenant-level pre-routing, then bind the backend-issued token to Redis.</td><td>SaaS login.</td></tr>
+    <tr><td><code>verify</code></td><td>Extract token, read Redis decision, inject route and headers.</td><td>Authenticated business APIs.</td></tr>
+    <tr><td><code>refresh</code> / <code>revoke</code></td><td>Move or delete token mappings during refresh and logout.</td><td>Session lifecycle.</td></tr>
+  </tbody></table>
+</section>
+
+<section id="md5">
+  <h2>6. MD5 signing in openapi mode</h2>
+  <p>When <code>auth.type=md5</code>, the client signs the request. IDS only returns the secret; LiteGate verifies the signature locally.</p>
+<pre><code>sign = md5(method + "\n" + path + "\n" + body_md5 + "\n" + timestamp + "\n" + secret)</code></pre>
+</section>
+
+<section id="shard">
+  <h2>7. Physical shard routing</h2>
+  <p>IDS can control the physical traffic target by returning <code>route.selector.sid</code>.</p>
+<pre><code>{
+  "route": { "selector": { "sid": "c1" } }
+}</code></pre>
+  <p>If the backend discovery pool contains instances tagged <code>sid=c1</code> and <code>sid=c2</code>, this caller is pinned to <code>c1</code>. This is the core mechanism for tenant-level physical isolation.</p>
+  <div class="callout warn">Do not use shard selectors with a single static upstream that has no metadata. Discovery-backed instances must carry the tags that IDS returns.</div>
+</section>
+
+<section id="wire">
+  <h2>8. Wire IDS into LiteGate</h2>
+<pre><code>ids:
+  providers:
+    openapi-main:
+      mode: openapi
+      url: "http://127.0.0.1:19091"
+      path: /api/gate/credentials
+      fail_policy: deny
+      negative_ttl: 60</code></pre>
+<pre><code>routes:
+  - name: openapi-orders
+    match:
+      path_prefix: /openapi/orders
+    action:
+      type: proxy
+      service_name: orders-service
+      ids:
+        enabled: true
+        provider: openapi-main
+        request_extractor: "{header._appid}"</code></pre>
+</section>
+
+<section id="cache">
+  <h2>9. Cache and denial policy</h2>
+  <ul>
+    <li><b>Positive cache:</b> controlled by <code>auth.ttl</code>.</li>
+    <li><b>Negative cache:</b> invalid app ids such as <code>code=404001</code> are cached to reduce IDS pressure.</li>
+    <li><b>Fail policy:</b> keep <code>fail_policy: deny</code> for authentication paths unless you intentionally accept fail-open behavior.</li>
+  </ul>
+</section>
+
+<section id="fields">
+  <h2>10. Field reference</h2>
+  <table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+    <tr><td><code>auth.type</code></td><td>Signer or verifier type used by LiteGate.</td></tr>
+    <tr><td><code>auth.secret</code></td><td>Secret used for local signature verification.</td></tr>
+    <tr><td><code>route.selector</code></td><td>Hard isolation metadata, commonly <code>sid</code>.</td></tr>
+    <tr><td><code>route.meta</code></td><td>Soft metadata used for lane, canary, or version preference.</td></tr>
+    <tr><td><code>head</code></td><td>Trusted downstream request headers.</td></tr>
+    <tr><td><code>ratelimit.qps</code></td><td>Dynamic quota for this caller or tenant.</td></tr>
+    <tr><td><code>ratelimit.limit_key</code></td><td>Bucket key, usually tenant id or app id.</td></tr>
+  </tbody></table>
+</section>
+
+<section id="test">
+  <h2>11. Test checklist</h2>
+  <ul>
+    <li>Call IDS directly and confirm it returns <code>code: 1</code> and a four-part <code>data</code> object.</li>
+    <li>Send a correctly signed request through LiteGate and confirm <code>200</code>.</li>
+    <li>Send a bad signature and confirm <code>401</code> or <code>403</code>.</li>
+    <li>Run two backend instances with different <code>sid</code> tags and verify that each app id lands on the intended shard.</li>
+    <li>Return a small dynamic <code>ratelimit.qps</code> and verify that excess requests return <code>429</code>.</li>
+  </ul>
+</section>
+
+<section id="faq">
+  <h2>12. FAQ</h2>
+  <h3>Is IDS the backend server?</h3>
+  <p>No. IDS is the side decision service. The backend server receives real traffic.</p>
+  <h3>Does IDS need a database or Redis?</h3>
+  <p>Not by protocol. Production IDS usually reads your app, tenant, merchant, or session store.</p>
+  <h3>Why do I see "processor not found for the specified mode"?</h3>
+  <p>The provider has no valid <code>mode</code>. Set <code>mode: openapi</code>, <code>issue</code>, <code>verify</code>, <code>refresh</code>, or <code>revoke</code>.</p>
+  <h3>Why does a valid app id return no healthy upstream?</h3>
+  <p>Your IDS returned a selector, but the upstream pool has no instance carrying the matching tag. Use discovery-backed instances with matching metadata.</p>
+</section>
+</div></main>
+</div>
+</body>
+</html>

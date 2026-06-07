@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate Documentation | Unified Ingress Gateway Manual</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 48px 28px 80px; }
+.top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.brand { font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: .3px; }
+.lang a { font-size: 12.5px; color: var(--text2); text-decoration: none; }
+.lang a:hover { text-decoration: underline; }
+.hero { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 40px 36px; margin-bottom: 26px; }
+.hero h1 { font-size: 30px; font-weight: 700; letter-spacing: -.5px; margin-bottom: 12px; line-height: 1.2; }
+.hero p { font-size: 15px; color: var(--text2); max-width: 760px; margin-bottom: 16px; }
+.cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+.cta a { font-size: 13.5px; font-weight: 600; padding: 9px 18px; border-radius: 8px; text-decoration: none; }
+.cta a.primary { background: var(--accent); color: #fff; }
+.cta a.ghost { background: var(--bg2); color: var(--accent-text); border: 0.5px solid var(--border2); }
+.cta a:hover { opacity: .9; }
+.group-title { font-size: 12px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); font-weight: 700; margin: 30px 0 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+.card { display: block; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 18px; text-decoration: none; color: inherit; transition: border-color .12s, transform .12s; }
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card .k { font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--accent); font-weight: 700; }
+.card h3 { font-size: 15px; font-weight: 600; margin: 4px 0 6px; }
+.card p { font-size: 12.5px; color: var(--text2); margin: 0; }
+.badge { display:inline-block; font-size: 10.5px; padding: 1px 8px; border-radius: 20px; background: var(--green-bg); color: var(--green); font-weight: 600; margin-left: 6px; vertical-align: middle; }
+.footer { margin-top: 50px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+@media (max-width: 820px) { .grid { grid-template-columns: 1fr; } .hero { padding: 28px 20px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">LiteGate Documentation</div>
+    <div class="lang"><a href="../zh-cn/index.html">中文 ↗</a></div>
+  </div>
+
+  <div class="hero">
+    <h1>LiteGate Manual</h1>
+    <p>A single-binary, zero-dependency unified ingress gateway: static site hosting, dynamic API proxying, automatic HTTPS, service discovery, IDS identity governance, and mTLS — all on one routing model. Start here, then go as deep as you need.</p>
+    <div class="cta">
+      <a class="primary" href="litegate_quickstart.html">Quick Start →</a>
+      <a class="ghost" href="litegate_complete_introduction.html">Complete Introduction</a>
+      <a class="ghost" href="litegate_yaml_tags_reference.html">Configuration Reference</a>
+    </div>
+  </div>
+
+  <div class="group-title">Getting started</div>
+  <div class="grid">
+    <a class="card" href="litegate_quickstart.html"><div class="k">Getting Started</div><h3>Quick Start<span class="badge">new</span></h3><p>Install, CLI flags, run in 3 steps, your first site, and lite .lite.yaml.</p></a>
+    <a class="card" href="litegate_complete_introduction.html"><div class="k">Overview</div><h3>Complete Introduction</h3><p>The unified ingress model, request lifecycle, architecture tour, and capability map.</p></a>
+    <a class="card" href="litegate_architecture.html"><div class="k">Architecture</div><h3>Architecture &amp; Request Lifecycle</h3><p>The inverted execution pipeline, control/data plane split, lock-free data plane, atomic hot reload.</p></a>
+  </div>
+
+  <div class="group-title">Configuration reference</div>
+  <div class="grid">
+    <a class="card" href="litegate_config_reference.html"><div class="k">Config</div><h3>Global config.yaml Reference<span class="badge">new</span></h3><p>Per-field guide to listeners, TLS/auto-certs, discovery, cache, identity, logging and metrics.</p></a>
+    <a class="card" href="litegate_yaml_tags_reference.html"><div class="k">Reference</div><h3>YAML &amp; Tag Reference</h3><p>87-row site-YAML vs. dynamic-tag mapping table + 8 common scenarios.</p></a>
+    <a class="card" href="litegate_backend_tag_system.html"><div class="k">Tags</div><h3>Backend Tag System</h3><p>Use litegate.&lt;layer&gt;.* seven-layer tags to hand ingress, governance and instance selection to the gateway.</p></a>
+  </div>
+
+  <div class="group-title">Core capabilities</div>
+  <div class="grid">
+    <a class="card" href="litegate_service_discovery.html"><div class="k">Discovery</div><h3>Service Discovery</h3><p>litemesh / litedeploy / docker / consul / discovery — tag and forget.</p></a>
+    <a class="card" href="litegate_certificate_lifecycle.html"><div class="k">TLS</div><h3>Certificate Lifecycle</h3><p>Automatic HTTPS, on-demand issuance, multi-node shared storage and distributed locking.</p></a>
+    <a class="card" href="ids_development_guide.html"><div class="k">IDS</div><h3>IDS Development Guide</h3><p>Turn the gateway into a decision executor: auth, shard selection, tenant-header injection, per-tenant rate limiting.</p></a>
+    <a class="card" href="litemesh_mtls_guide.html"><div class="k">mTLS</div><h3>Litemesh mTLS</h3><p>North-south + east-west mutual auth, auto-upgraded links based on SPIFFE identity.</p></a>
+    <a class="card" href="litegate_mcp_autopilot.html"><div class="k">MCP / AI</div><h3>MCP Autopilot</h3><p>Built-in MCP server: AI assistants create sites, bind services, hot-reload and troubleshoot.</p></a>
+  </div>
+
+  <div class="group-title">Operations &amp; deployment</div>
+  <div class="grid">
+    <a class="card" href="litegate_observability_deployment.html"><div class="k">Operations</div><h3>Observability &amp; Deployment<span class="badge">new</span></h3><p>Dashboard, access logs, Prometheus metrics, plus systemd / Docker go-live and a production checklist.</p></a>
+    <a class="card" href="user/README.md"><div class="k">Markdown Manual</div><h3>Detailed Manual (quick lookup)</h3><p>Developer-oriented Markdown tree: actions, middleware, certificates, discovery, deployment, troubleshooting.</p></a>
+  </div>
+
+  <div class="footer">LiteGate · Single-binary, zero-dependency unified ingress gateway · Pages marked "new" were added in this round · <a href="../zh-cn/index.html">中文版 ↗</a></div>
+</div>
+</body>
+</html>
