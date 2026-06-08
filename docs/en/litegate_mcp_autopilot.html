@@ -200,7 +200,7 @@ td code { font-size: 12px; }
 
       <h3>④ Dynamic frontend ZIP sync &amp; upgrade (Serve KV)</h3>
       <div class="chain"><code>detect_environment</code><span class="arr">→</span><code>get_gateway_config</code><span class="arr">→</span><code>set_kv</code><span class="arr">→</span><code>verify_site</code><span class="arr">→</span><code>get_recent_errors</code></div>
-      <p style="font-size:12.5px;color:var(--text2);">Write the latest frontend ZIP version, URL and MD5 to KV (e.g. <code>litegate/config/front/main</code>); the gateway hot-swaps the deployment, then a real request verifies it.</p>
+      <p style="font-size:12.5px;color:var(--text2);">Write the latest frontend ZIP version, URL and SHA256 to KV (e.g. <code>litegate/config/front/main</code>); the gateway hot-swaps the deployment, then a real request verifies it.</p>
     </section>
 
     <section id="coverage">

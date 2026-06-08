@@ -14,31 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return normalizePathname(pathname).includes("/en/") ? "en" : "zh";
     };
 
-    const getBrowserLocale = () => {
-        const languages = Array.isArray(window.navigator.languages) && window.navigator.languages.length > 0
-            ? window.navigator.languages
-            : [window.navigator.language || "zh-CN"];
-
-        return languages.some((language) => String(language).toLowerCase().startsWith("zh")) ? "zh" : "en";
-    };
-
-    const getLocalizedPathname = (pathname, targetLocale) => {
-        const normalizedPath = normalizePathname(pathname);
-
-        if (targetLocale === "en") {
-            if (normalizedPath.includes("/en/")) {
-                return normalizedPath;
-            }
-
-            const lastSlashIndex = normalizedPath.lastIndexOf("/");
-            const basePath = normalizedPath.slice(0, lastSlashIndex);
-            const fileName = normalizedPath.slice(lastSlashIndex + 1);
-            return `${basePath}/en/${fileName}`.replace(/\/{2,}/g, "/");
-        }
-
-        return normalizedPath.replace("/en/", "/");
-    };
-
     const persistLanguageChoice = (locale) => {
         try {
             window.localStorage.setItem(LANGUAGE_STORAGE_KEY, locale);
@@ -47,33 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    const resolvePreferredLocale = () => {
-        try {
-            const storedLocale = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
-            if (storedLocale === "zh" || storedLocale === "en") {
-                return storedLocale;
-            }
-        } catch (error) {
-            // Ignore storage failures and fall back to browser language.
-        }
-
-        return getBrowserLocale();
-    };
-
-    const currentPathname = normalizePathname(window.location.pathname);
-    const currentLocale = getLocaleFromPathname(currentPathname);
-    const preferredLocale = resolvePreferredLocale();
-
-    if (preferredLocale !== currentLocale) {
-        const targetPathname = getLocalizedPathname(currentPathname, preferredLocale);
-
-        if (targetPathname !== currentPathname) {
-            const nextUrl = `${targetPathname}${window.location.search}${window.location.hash}`;
-            window.location.replace(nextUrl);
-            return;
-        }
-    }
-
+    // Language switching is manual: we persist the user's choice when they click the
+    // language link, but never auto-redirect on load (avoids any redirect flash/loop).
     document.querySelectorAll(".nav-lang-switch, [data-lang-switch]").forEach((anchor) => {
         anchor.addEventListener("click", () => {
             const href = anchor.getAttribute("href");

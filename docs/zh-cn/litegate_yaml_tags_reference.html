@@ -611,6 +611,11 @@ routes:
       root: /var/www/dist
       index: index.html
       spa: true
+      # 💡 可选：启用 Serve KV 自动化同步模式
+      # kv_mode: true
+      # kv_provider: litemesh
+      # kv_key: litegate/config/front/main
+      # keep_versions: 3
 
   # 💡 提示：微服务 API 动态代理路由无需在此声明！
   # 后端业务微服务启动时，会自动将自身的 IP、端口及注册路由 Tags 上报到注册中心。
@@ -1221,6 +1226,10 @@ const SECTIONS = [
       ["routes[i].action","location","URL 重定向 redirect 动作下的重定向目标目的 URL。","no","","不支持"],
       ["routes[i].action","web_ui","WebDAV 文件服务是否开启图形化浏览器 Web 端访问界面。","no","","不支持"],
       ["routes[i].action","read_only","WebDAV 文件服务是否强制设为只读模式以确保安全。","no","","不支持"],
+      ["routes[i].action","kv_mode","是否启用 Serve KV 自动化同步模式。若为 true，LiteGate 会自动监控 KV 版本并拉取发布。","no","","不支持"],
+      ["routes[i].action","kv_provider","指定 Serve KV 的数据源提供商驱动（支持：litemesh、consul、http）。","no","","不支持"],
+      ["routes[i].action","kv_key","指定同步监听的 KV 键名。如果 provider 是 http，则此处填写完整的 GET API 地址。","no","","不支持"],
+      ["routes[i].action","keep_versions","指定各节点本地目录保留的历史版本数量（多余的历史版本会自动清理）。默认保留最近 3 个版本。","no","","不支持"],
     ]
   },
   {
@@ -1332,6 +1341,16 @@ function renderDesc(desc, note, key) {
     case 'routes[i].action.auth.secret':
       isRequired = true; 
       desc += ' <span style="color:var(--text3); font-size:10.5px;">(auth.type 为 sso 时必填)</span>';
+      break;
+    case 'routes[i].action.kv_mode':
+    case 'routes[i].action.kv_provider':
+    case 'routes[i].action.kv_key':
+      isRequired = true;
+      desc += ' <span style="color:var(--text3); font-size:10.5px;">(当启用 kv_mode 时必填)</span>';
+      break;
+    case 'routes[i].action.keep_versions':
+      isRequired = false;
+      defaultVal = '3';
       break;
     default:
       isRequired = false;

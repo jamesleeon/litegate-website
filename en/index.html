@@ -3,9 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LiteGate | The Unified Entry Layer from Site Hosting to SaaS Gateway</title>
-    <meta name="description" content="LiteGate aggregates site hosting, API proxy, automatic HTTPS, service discovery, and SaaS entry into a single gateway, ideal for private clouds, VPS, hybrid clouds, and multi-tenant scenarios.">
+    <title>LiteGate | One gateway for sites, certs, discovery and SaaS entry</title>
+    <meta name="description" content="LiteGate folds site hosting, API proxy, automatic HTTPS, dynamic DNS, service discovery and SaaS identity entry into a single gateway. Single-binary deployment, built for private clouds, VPS and multi-tenant scenarios.">
     <link rel="stylesheet" href="../style.css">
+    <style>
+    /* ── Homepage architecture diagram (self-contained scope, ported from litegate_architecture.html) ── */
+    .arch-figure {
+      --bg: #ffffff;
+      --bg2: #faf7f1;
+      --bg3: #f4f1ea;
+      --border: rgba(31, 44, 40, 0.12);
+      --border2: rgba(31, 44, 40, 0.18);
+      --text: #1f2c28;
+      --text2: #54655f;
+      --text3: #7f9089;
+      --accent: #1a7f64;
+      --accent-bg: rgba(26, 127, 100, 0.1);
+      --amber: #c46a2d;
+      --amber-bg: rgba(196, 106, 45, 0.1);
+      --sans: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      margin: 0 auto;
+    }
+    .arch-figure .diag-container {
+      background: var(--bg2);
+      border: 0.5px solid var(--border2);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .arch-figure .diag-svg { width: 100%; height: auto; display: block; }
+    .arch-figure .diag-card { fill: var(--bg); stroke: var(--border); stroke-width: 1; transition: all 0.25s ease; }
+    .arch-figure .diag-card-amber { fill: var(--amber-bg); stroke: var(--amber); stroke-width: 1.5; }
+    .arch-figure .diag-group { cursor: default; transition: transform 0.2s ease; }
+    .arch-figure .diag-group:hover { transform: translateY(-2px); }
+    .arch-figure .diag-group:hover .diag-card { fill: var(--bg2); stroke: var(--accent); filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08)); }
+    .arch-figure .diag-group:hover .diag-card-amber { stroke-width: 2; filter: drop-shadow(0 4px 12px rgba(196, 106, 45, 0.25)); }
+    .arch-figure .diag-title { fill: var(--text); font-family: var(--sans); font-weight: 600; font-size: 13.5px; }
+    .arch-figure .diag-title-white { fill: #ffffff; font-family: var(--sans); font-weight: 600; font-size: 14px; }
+    .arch-figure .diag-subtitle { fill: var(--text2); font-family: var(--sans); font-size: 11px; }
+    .arch-figure .diag-subtitle-white { fill: rgba(255,255,255,0.9); font-family: var(--sans); font-size: 11px; }
+    .arch-figure .diag-badge { font-size: 10px; font-family: var(--sans); font-weight: 600; }
+    @keyframes arch-flow-dash { to { stroke-dashoffset: -40; } }
+    @keyframes arch-flow-dash-reverse { to { stroke-dashoffset: 40; } }
+    .arch-figure .flow-line { stroke-width: 1.5; stroke-dasharray: 6, 4; animation: arch-flow-dash 1.5s linear infinite; }
+    .arch-figure .flow-accent { stroke: var(--accent); }
+    .arch-figure .flow-amber { stroke: var(--amber); stroke-width: 2; animation: arch-flow-dash 1.2s linear infinite; }
+    .arch-figure .flow-amber-back { stroke: var(--amber); stroke-width: 1.5; stroke-dasharray: 5, 5; animation: arch-flow-dash-reverse 1.8s linear infinite; }
+    .arch-figure .diag-column-bg { fill: var(--bg3); stroke: var(--border); stroke-width: 0.5; opacity: 0.3; }
+    .arch-figure .diag-column-title { fill: var(--text2); font-family: var(--sans); font-weight: 600; font-size: 11px; letter-spacing: 0.6px; }
+    .arch-figure .arch-caption { margin: 18px 0 0; text-align: center; color: var(--ink-soft); font-size: 0.95rem; }
+    @media (prefers-reduced-motion: reduce) {
+      .arch-figure .flow-line, .arch-figure .flow-amber, .arch-figure .flow-amber-back { animation: none; }
+    }
+    </style>
 </head>
 <body>
     <div class="site-shell">
@@ -16,19 +68,13 @@
                     <span class="brand-text">LiteGate</span>
                 </a>
                 <div class="nav-links">
-                    <a href="#entry-model">Entry Model</a>
-                    <a href="#fit">Why</a>
-                    <a href="deploy-flow.html">Deploy</a>
-                    <a href="gateway-philosophy.html">Thinking</a>
-                    <a href="#frontend-release">Frontend</a>
-                    <a href="#path">Growth</a>
-                    <a href="#modes">Modes</a>
+                    <a href="#what">What</a>
+                    <a href="#capabilities">Capabilities</a>
                     <a href="#scenarios">Scenarios</a>
-                    <a href="architecture.html">Architecture</a>
                     <a href="../docs/en/index.html" style="font-weight: 600; color: var(--accent);">Docs</a>
                 </div>
                 <div class="nav-actions">
-                    <a href="../index.html" class="nav-lang-switch" style="margin-right: 10px;">Chinese</a>
+                    <a href="../index.html" class="nav-lang-switch" style="margin-right: 10px;">中文</a>
                     <a href="https://github.com/jamesleeon/LiteGate" class="nav-link-quiet">GitHub</a>
                     <a href="#quickstart" class="btn btn-nav">Get Started</a>
                 </div>
@@ -39,28 +85,20 @@
             <div class="hero-grid"></div>
             <div class="container hero-layout">
                 <div class="hero-copy">
-                    <p class="eyebrow" data-animate>Unified Entry Layer</p>
-                    <h1 data-animate>Just one label, certificates, DNS, and routes are all ready at once</h1>
+                    <p class="eyebrow" data-animate>Unified Entry Gateway · Single Binary</p>
+                    <h1 data-animate>One gateway for your whole entry layer</h1>
                     <p class="hero-lead" data-animate>
-                        LiteGate does more than just proxy requests after traffic arrives. 
-                        It is built for teams who need static sites, backend APIs, automatic HTTPS, or dynamic service discovery, and want to consolidate access, discovery, certificates, and SaaS entry into a single, unified execution plane.
+                        Site hosting, API proxy, automatic HTTPS, dynamic DNS, service discovery, frontend releases
+                        and SaaS identity entry used to live across several components. LiteGate folds them into one
+                        gateway behind a single routing model — go live in a few lines of YAML, scale up when things
+                        get complex, no re-platforming halfway.
                     </p>
                     <div class="hero-actions" data-animate>
-                        <a href="#quickstart" class="btn btn-primary">Get Started in 5 Mins</a>
-                        <a href="#fit" class="btn btn-secondary">Am I a Good Fit?</a>
+                        <a href="#quickstart" class="btn btn-primary">Get started in 5 min</a>
+                        <a href="#capabilities" class="btn btn-secondary">See what it does</a>
                     </div>
                     <div class="hero-note" data-animate>
-                        <span>Perfect for private cloud, VPS, Docker, hybrid cloud, and multi-tenant SaaS</span>
-                    </div>
-                    <div class="hero-microproof" data-animate>
-                        <div class="microproof-item">
-                            <strong>Automatic Certs & DNS Convergence is Core</strong>
-                            <span>Many gateways require manually pointing DNS before starting the certificate process. LiteGate brings A-record synchronization, certificate requests, and HTTPS readiness together directly in the entry layer.</span>
-                        </div>
-                        <div class="microproof-item microproof-item-ai">
-                            <strong>Don't want to read docs? Just describe your scenario to AI</strong>
-                            <span>LiteGate exposes read-write MCP tools. AI can inspect the schema, generate configurations, save changes, and verify results for you.</span>
-                        </div>
+                        Built for private cloud, VPS, Docker, hybrid cloud and multi-tenant SaaS · This very site is served by LiteGate.
                     </div>
                 </div>
 
@@ -71,462 +109,230 @@
                             <span class="panel-file">sites/app.example.com.lite.yaml</span>
                         </div>
                         <pre><code>app.example.com:
-  /api:
-    proxy: 127.0.0.1:8080
   /:
     root: ./dist
-    spa: true</code></pre>
+    spa: true
+  /api:
+    proxy: 127.0.0.1:8080</code></pre>
                         <p class="panel-note-emphasis">
-                            Once a site is declared, LiteGate automatically provisions A-records, certificate requests, and HTTPS readiness.
+                            One site file carries frontend assets, API routes and the HTTPS entry — certificates,
+                            DNS and routing all come up together.
                         </p>
                         <p>
-                            A single site configuration file handles frontend assets, API routing, and the HTTPS entry all at once.
+                            When things get complex, switch to full mode (standard <code>.yaml</code>) on the same core.
                         </p>
-                    </section>
-
-                    <section class="panel panel-split">
-                        <div class="panel-topline">
-                            <span class="panel-pill panel-pill-muted">Why It Feels Better</span>
-                        </div>
-                        <div class="split-flow">
-                            <div class="split-card">
-                                <strong>Before</strong>
-                                <span class="split-emphasis">Manually modify DNS first, then start certificate process</span>
-                                <span>Host sites via Caddy / Nginx</span>
-                                <span>Another dynamic proxy or service registry</span>
-                                <span>Scattered certs, DNS, and access authentication</span>
-                            </div>
-                            <div class="split-arrow">→</div>
-                            <div class="split-card split-card-strong">
-                                <strong>After</strong>
-                                <span class="split-emphasis">Automatically converge A-records & certs upon site declaration</span>
-                                <span>Sites, proxies, certs, and discovery unified in one entry layer</span>
-                                <span>Start lightweight for simple cases, upgrade seamlessly for complexity</span>
-                                <span>No need to tear down and rebuild your entry infrastructure halfway</span>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section class="panel panel-summary">
-                        <div class="summary-item">
-                            <span class="summary-kicker">One Model</span>
-                            <strong>Shared routing model for static sites, static upstreams, and dynamic instances</strong>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-kicker">Progressive</span>
-                            <strong>Start with sites and APIs, then scale progressively to service discovery and SaaS gateways</strong>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-kicker">Private Cloud Ready</span>
-                            <strong>Better suited for teams who want to avoid the full burden of Kubernetes at early stages</strong>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-kicker">MCP Ready</span>
-                            <strong>Describe your scenario, then let AI inspect environments, generate config, and verify real entry availability</strong>
-                        </div>
                     </section>
                 </div>
             </div>
         </header>
 
         <main>
-            <section class="section section-entry-model" id="entry-model">
+            <section class="section section-entry-model" id="what">
                 <div class="container">
                     <div class="section-head" data-animate>
-                        <p class="eyebrow">Entry Model</p>
-                        <h2>LiteGate is Not Just a Proxy, It is a Unified Entry Layer</h2>
+                        <p class="eyebrow">What it is</p>
+                        <h2>Not just a reverse proxy — a unified entry layer</h2>
                         <p>
-                            It doesn't just stand on a single spot like Caddy, Traefik, or Nginx. It integrates website hosting, dynamic proxying, automatic HTTPS, service discovery, and identity-driven access control into one single execution plane.
+                            Internet traffic enters on the left, passes through the LiteGate core engine for matching
+                            and governance in the middle, then reaches your backend infrastructure on the right.
+                            Site hosting, dynamic proxy, automatic certificates, service discovery and identity entry
+                            all live on one execution plane.
                         </p>
                     </div>
-                    <div class="entry-model-shell" data-animate>
-                        <div class="entry-model-lane">
-                            <div class="entry-lane-title">From Internet</div>
-                            <div class="entry-lane-stack">
-                                <div class="entry-node entry-node-accent">
-                                    <strong>app.example.com</strong>
-                                    <span>SPA / docs / marketing site</span>
-                                </div>
-                                <div class="entry-node entry-node-blue">
-                                    <strong>api.example.com</strong>
-                                    <span>API / HTTPS / WebSocket</span>
-                                </div>
-                                <div class="entry-node entry-node-warm">
-                                    <strong>stream.example.com</strong>
-                                    <span>TCP / UDP / non-HTTP</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="arch-figure" data-animate>
+                        <div class="diag-container">
+                            <svg class="diag-svg" viewBox="0 0 1060 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <filter id="shadow-glow" x="-10%" y="-10%" width="120%" height="120%">
+                                        <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="var(--accent)" flood-opacity="0.15" />
+                                    </filter>
+                                    <filter id="amber-glow" x="-10%" y="-10%" width="120%" height="120%">
+                                        <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="var(--amber)" flood-opacity="0.25" />
+                                    </filter>
+                                </defs>
 
-                        <div class="entry-model-core">
-                            <div class="entry-core-top">
-                                <span class="entry-core-tag">Unified Entry Layer</span>
-                                <h3>Sites, routing, certs, discovery, and SaaS entry collaborate in a single model</h3>
-                                <p>
-                                    This is what sets LiteGate apart from standard reverse proxies, pure dynamic gateways, and simple static web servers.
-                                </p>
-                            </div>
-                            <div class="entry-core-pill-row">
-                                <span class="entry-core-pill">Caddy-style site serving</span>
-                                <span class="entry-core-pill">Traefik-style dynamic backends</span>
-                                <span class="entry-core-pill">identity-aware SaaS entry</span>
-                            </div>
-                            <div class="entry-core-grid">
-                                <article class="entry-core-card">
-                                    <h4>Sites & Content Access</h4>
-                                    <p>Static sites, SPAs, Markdown, and WebDAV no longer require a separate ingress layer.</p>
-                                </article>
-                                <article class="entry-core-card">
-                                    <h4>Dynamic Proxy & Discovery</h4>
-                                    <p>Static upstreams, dynamic instances, tag-based routing, and registry changes are handled natively inside the main pipeline.</p>
-                                </article>
-                                <article class="entry-core-card">
-                                    <h4>Certs & HTTPS Automation</h4>
-                                    <p>DNS-01, wildcard domains, auto-renewal, and On-Demand TLS consolidate manual cert operations into the entry layer.</p>
-                                </article>
-                                <article class="entry-core-card">
-                                    <h4>SaaS Ingress & Identity Pipeline</h4>
-                                    <p>Remote auth, OIDC, IDS, tenant context, and sid routing decisions align closer to real-world SaaS access requirements.</p>
-                                </article>
-                            </div>
-                        </div>
+                                <rect class="diag-column-bg" x="15" y="20" width="220" height="480" rx="12"/>
+                                <text class="diag-column-title" x="30" y="45">FROM THE INTERNET</text>
 
-                        <div class="entry-model-lane">
-                            <div class="entry-lane-title">To Your Systems</div>
-                            <div class="entry-lane-stack">
-                                <div class="entry-node">
-                                    <strong>Websites & Frontend Assets</strong>
-                                    <span>Host /dist directly without extra static hosting layer</span>
-                                </div>
-                                <div class="entry-node entry-node-blue">
-                                    <strong>API & Dynamic Backends</strong>
-                                    <span>Start from static upstreams, then gradually plug in discovery</span>
-                                </div>
-                                <div class="entry-node entry-node-warm">
-                                    <strong>Private Cloud, VPS & SaaS</strong>
-                                    <span>Multi-domain, multi-environment, identity gateways, and cluster routing</span>
-                                </div>
-                            </div>
+                                <rect class="diag-column-bg" x="265" y="20" width="480" height="480" rx="12"/>
+                                <text class="diag-column-title" x="280" y="45">LITEGATE CORE ENGINE</text>
+
+                                <rect class="diag-column-bg" x="775" y="20" width="270" height="480" rx="12"/>
+                                <text class="diag-column-title" x="790" y="45">TO YOUR INFRASTRUCTURE</text>
+
+                                <g opacity="0.25">
+                                    <path d="M 205,115 C 310,115 310,230 405,230" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
+                                    <path d="M 205,205 C 310,205 310,230 405,230" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
+                                    <path d="M 205,295 C 310,295 310,230 405,230" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
+                                    <path d="M 205,385 C 310,385 310,230 405,230" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
+                                </g>
+
+                                <path d="M 205,115 C 310,115 310,230 405,230" class="flow-line flow-accent" fill="none"/>
+                                <text class="diag-badge" fill="var(--accent)" x="280" y="150" text-anchor="middle">HTTPS / North-South mTLS</text>
+
+                                <path d="M 205,205 C 310,205 310,230 405,230" class="flow-line flow-accent" fill="none"/>
+                                <path d="M 605,245 C 665,245 665,305 605,305" class="flow-line flow-amber" fill="none"/>
+                                <path d="M 505,305 L 445,305" class="flow-line flow-amber" fill="none"/>
+                                <path d="M 290,305 C 235,305 235,205 205,205" class="flow-line flow-amber-back" fill="none"/>
+                                <text class="diag-badge" fill="var(--amber)" x="225" y="255">Local Response</text>
+
+                                <path d="M 795,145 C 720,145 720,210 605,210" stroke="var(--text3)" stroke-width="1.5" stroke-dasharray="4,4" fill="none"/>
+
+                                <g opacity="0.3">
+                                    <path d="M 605,260 C 700,260 700,345 795,345" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
+                                    <path d="M 605,260 C 700,260 700,425 795,425" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
+                                </g>
+                                <path d="M 605,260 C 700,260 700,345 795,345" class="flow-line flow-accent" fill="none"/>
+                                <text class="diag-badge" fill="var(--accent)" x="725" y="322" text-anchor="middle">mTLS upstream (SPIFFE)</text>
+
+                                <g class="diag-group">
+                                    <rect class="diag-card" x="30" y="80" width="175" height="70" rx="8"/>
+                                    <text class="diag-title" x="42" y="108">api.example.com</text>
+                                    <text class="diag-subtitle" x="42" y="130">HTTP/HTTPS · API traffic</text>
+                                </g>
+                                <g class="diag-group">
+                                    <rect class="diag-card" x="30" y="170" width="175" height="70" rx="8"/>
+                                    <text class="diag-title" x="42" y="198">app.example.com</text>
+                                    <text class="diag-subtitle" x="42" y="220">HTTP/HTTPS · SPA hosting / WebDAV</text>
+                                </g>
+                                <g class="diag-group">
+                                    <rect class="diag-card" x="30" y="260" width="175" height="70" rx="8"/>
+                                    <text class="diag-title" x="42" y="288">storage.example.com</text>
+                                    <text class="diag-subtitle" x="42" y="310">HTTP/HTTPS · Markdown docs</text>
+                                </g>
+                                <g class="diag-group">
+                                    <rect class="diag-card" x="30" y="350" width="175" height="70" rx="8"/>
+                                    <text class="diag-title" x="42" y="378">L4 Stream traffic</text>
+                                    <text class="diag-subtitle" x="42" y="400">TCP / UDP / IoT / MySQL</text>
+                                </g>
+
+                                <g class="diag-group" filter="url(#shadow-glow)">
+                                    <rect x="405" y="180" width="200" height="90" rx="12" fill="var(--accent)" stroke="var(--accent)" stroke-width="1.5"/>
+                                    <text class="diag-title-white" x="420" y="210">Routing Engine</text>
+                                    <text class="diag-subtitle-white" x="420" y="232">Trie routing · inverted L1–L7 pipeline</text>
+                                    <text class="diag-subtitle-white" x="420" y="248">lock-free data plane · atomic hot reload</text>
+                                </g>
+
+                                <g class="diag-group">
+                                    <rect class="diag-card" x="290" y="80" width="190" height="60" rx="8"/>
+                                    <text class="diag-title" x="302" y="105">Security &amp; Identity</text>
+                                    <text class="diag-subtitle" x="302" y="125">IDS · mTLS · WAF · OIDC/SSO · IP rules</text>
+                                </g>
+                                <g class="diag-group">
+                                    <rect class="diag-card" x="510" y="80" width="210" height="60" rx="8"/>
+                                    <text class="diag-title" x="522" y="105">Traffic Management</text>
+                                    <text class="diag-subtitle" x="522" y="125">LB · circuit breaking · retry · canary · rate limit</text>
+                                </g>
+                                <g class="diag-group" filter="url(#amber-glow)">
+                                    <rect class="diag-card-amber" x="505" y="280" width="215" height="65" rx="10"/>
+                                    <text class="diag-title" x="517" y="305" fill="var(--amber)">★ Content &amp; TLS</text>
+                                    <text class="diag-subtitle" x="517" y="328">Static hosting / WebDAV · auto HTTPS</text>
+                                </g>
+                                <g class="diag-group">
+                                    <rect class="diag-card" x="290" y="280" width="195" height="65" rx="10" stroke="var(--amber)" stroke-width="1.2"/>
+                                    <text class="diag-title" x="302" y="305" fill="var(--amber)">Built-in Web Server</text>
+                                    <text class="diag-subtitle" x="302" y="328">SPA / WebDAV / Markdown hosting</text>
+                                </g>
+                                <g class="diag-group">
+                                    <rect class="diag-card" x="510" y="375" width="210" height="60" rx="8"/>
+                                    <text class="diag-title" x="522" y="400">Observability</text>
+                                    <text class="diag-subtitle" x="522" y="420">Access logs · Prometheus · Trace</text>
+                                </g>
+                                <g class="diag-group">
+                                    <rect class="diag-card" x="290" y="375" width="190" height="60" rx="8"/>
+                                    <text class="diag-title" x="302" y="400">Integration</text>
+                                    <text class="diag-subtitle" x="302" y="420">MCP/AI · middleware · .lite.yaml</text>
+                                </g>
+
+                                <rect class="diag-card" x="795" y="80" width="230" height="150" rx="10" stroke-dasharray="4,2"/>
+                                <text class="diag-title" x="807" y="105">Service Discovery (Providers)</text>
+                                <g class="diag-group">
+                                    <circle cx="817" cy="130" r="4" fill="var(--accent)"/>
+                                    <text class="diag-subtitle" x="827" y="134">litemesh / litedeploy (SSE)</text>
+                                </g>
+                                <g class="diag-group">
+                                    <circle cx="817" cy="155" r="4" fill="var(--accent)"/>
+                                    <text class="diag-subtitle" x="827" y="159">consul / docker (Labels &amp; Tags)</text>
+                                </g>
+                                <g class="diag-group">
+                                    <circle cx="817" cy="180" r="4" fill="var(--accent)"/>
+                                    <text class="diag-subtitle" x="827" y="184">discovery (Consul-compatible Blocking Query)</text>
+                                </g>
+                                <g class="diag-group">
+                                    <circle cx="817" cy="205" r="4" fill="var(--accent)"/>
+                                    <text class="diag-subtitle" x="827" y="209">k8s / nacos / etcd (via discovery)</text>
+                                </g>
+
+                                <rect class="diag-card" x="795" y="255" width="230" height="205" rx="10"/>
+                                <text class="diag-title" x="807" y="280">Proxied Backends</text>
+                                <g class="diag-group">
+                                    <rect class="diag-card" x="807" y="295" width="205" height="40" rx="6"/>
+                                    <text class="diag-subtitle" x="819" y="320" font-weight="600">API Service</text>
+                                </g>
+                                <g class="diag-group">
+                                    <rect class="diag-card" x="807" y="345" width="205" height="40" rx="6"/>
+                                    <text class="diag-subtitle" x="819" y="370" font-weight="600">Backend Server 1 / 2</text>
+                                </g>
+                                <g class="diag-group">
+                                    <rect class="diag-card" x="807" y="395" width="205" height="40" rx="6"/>
+                                    <text class="diag-subtitle" x="819" y="420" font-weight="600">L4 TCP/UDP targets</text>
+                                </g>
+                            </svg>
                         </div>
-                    </div>
-                    <div class="entry-model-proof-grid" data-animate>
-                        <article class="entry-proof-card">
-                            <h3>Not a Caddy replacement, but a step further forward</h3>
-                            <p>Inherits the low barrier-to-entry of site serving and auto HTTPS, but scales beyond a mere web server.</p>
-                        </article>
-                        <article class="entry-proof-card entry-proof-card-blue">
-                            <h3>Not a Traefik alternative, but completes the entry plane</h3>
-                            <p>Dynamic routing is just one part. LiteGate consolidates site hosting, cert automation, and identity-driven access into a single execution plane.</p>
-                        </article>
-                        <article class="entry-proof-card entry-proof-card-warm">
-                            <h3>For Nginx users, this liberates the certificate lifecycle from manual chores</h3>
-                            <p>The value of DNS-01, wildcard domains, and auto-renewal lies in consolidating acquisition, rotation, and reloading into the entry layer.</p>
-                        </article>
-                    </div>
-                    <div class="entry-model-action" data-animate>
-                        <a href="litegate.html" class="btn btn-secondary">View Full Entry Model</a>
-                        <a href="deploy-flow.html" class="btn btn-primary">View Deploy & Upgrade Flow</a>
-                        <a href="gateway-philosophy.html" class="btn btn-secondary">View Design Philosophy</a>
+                        <p class="arch-caption">
+                            Want the full in-gateway request flow (inverted pipeline, control/data plane separation,
+                            lock-free data plane and atomic hot reload)? Read
+                            <a href="../docs/en/litegate_architecture.html">Architecture &amp; Request Lifecycle →</a>
+                        </p>
                     </div>
                 </div>
             </section>
 
-            <section class="section" id="fit">
+            <section class="section" id="capabilities">
                 <div class="container">
                     <div class="section-head" data-animate>
-                        <p class="eyebrow">Is It For You</p>
-                        <h2>Don't look at features first. See if you are the right person for LiteGate right now</h2>
+                        <p class="eyebrow">Capabilities</p>
+                        <h2>One gateway, nine jobs that used to need several components</h2>
                         <p>
-                            Helping users determine their fit is more important than dumping a feature checklist.
+                            Every item below is supported natively on the main path — no glue scripts.
                         </p>
                     </div>
-                    <div class="card-grid card-grid-3">
-                        <article class="info-card" data-animate>
-                            <span class="card-tag card-tag-good">Great Fit</span>
-                            <h3>Consolidation needed</h3>
-                            <p>You're already using Caddy or Nginx for site hosting, but need a separate ingress layer for dynamic services, service registries, reverse proxying, or auth pipelines.</p>
+                    <div class="capability-grid">
+                        <article class="capability-card" data-animate>
+                            <h3>Site &amp; content hosting</h3>
+                            <p>Static sites, SPAs, Markdown and WebDAV: one site file hosts your frontend assets, no extra layer to bolt on.</p>
                         </article>
-                        <article class="info-card" data-animate>
-                            <span class="card-tag card-tag-warm">Potential Fit</span>
-                            <h3>Starting with sites & APIs, but growing rapidly</h3>
-                            <p>Today you only need static sites and backend services, but you foresee Docker, service discovery, identity gateways, and multi-tenant routing entering your system soon.</p>
+                        <article class="capability-card" data-animate>
+                            <h3>Automatic HTTPS &amp; certs</h3>
+                            <p>DNS-01, wildcards, auto-renewal and On-Demand TLS — manual issue, replace and reload folded back into the entry layer.</p>
                         </article>
-                        <article class="info-card" data-animate>
-                            <span class="card-tag card-tag-muted">Not Needed Yet</span>
-                            <h3>You only need a simple web server</h3>
-                            <p>If you only have a single static site with no dynamic backends, service registry, or SaaS ingress requirements, LiteGate may not be worth migrating to just yet.</p>
+                        <article class="capability-card" data-animate>
+                            <h3>Dynamic DNS (DDNS)</h3>
+                            <p>A records sync automatically once a site is declared. Built-in Aliyun, Cloudflare, Huawei Cloud and Tencent Cloud — no pointing new domains by hand first.</p>
                         </article>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section section-contrast" id="why">
-                <div class="container">
-                    <div class="section-head section-head-left" data-animate>
-                        <p class="eyebrow">Why LiteGate</p>
-                        <h2>Migration shouldn't stem from "more features", but from "less fragmentation"</h2>
-                        <p>
-                            LiteGate is not trying to be a bloated gateway. It consolidates scattered duties in site hosting, proxying, certs, discovery, and access governance back into a unified entry layer.
-                        </p>
-                    </div>
-                    <div class="contrast-grid">
-                        <div class="contrast-panel" data-animate>
-                            <h3>What many entry architectures eventually degrade to</h3>
-                            <ul class="list">
-                                <li>Sites hosted in one tool, dynamic proxies in another</li>
-                                <li>Certs, DNS, service discovery, and identity gateways scattered across external scripts or third-party platforms</li>
-                                <li>As systems grow complex, the ingress layer becomes the hardest part to maintain</li>
-                            </ul>
-                        </div>
-                        <div class="contrast-panel contrast-panel-highlight" data-animate>
-                            <h3>LiteGate offers a simpler answer</h3>
-                            <ul class="list">
-                                <li>A unified site model hosting both static resources and backend APIs</li>
-                                <li>Native auto HTTPS, dynamic discovery, and entry governance built directly into the main pipeline</li>
-                                <li>Grow smoothly from simple setups to full SaaS scenarios, without shifting architectures halfway</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section section-automation" id="automation-story">
-                <div class="container">
-                    <div class="section-head" data-animate>
-                        <p class="eyebrow">Automation Story</p>
-                        <h2>From a single label to instant go-live: see the complete pipeline</h2>
-                        <p>
-                            LiteGate's true strength lies not just in routing, but in consolidating service registration, domain binding, cert acquisition, and HTTPS readiness into a single continuous action.
-                        </p>
-                    </div>
-                    <div class="story-grid">
-                        <article class="story-step" data-animate>
-                            <span class="story-no">01</span>
-                            <h3>Declare service or site</h3>
-                            <p>Write a few lines of `*.lite.yaml` or tag a container/service with `litegate.*` labels to declare your ingress intent.</p>
+                        <article class="capability-card" data-animate>
+                            <h3>Service discovery</h3>
+                            <p>Five providers — litemesh, litedeploy, consul, docker, discovery — add a label to go live; mixed sources merge automatically.</p>
                         </article>
-                        <article class="story-step" data-animate>
-                            <span class="story-no">02</span>
-                            <h3>Register & discover</h3>
-                            <p>Service instances register with Litemesh, or expose unified discovery interfaces for LiteGate through a bridging layer.</p>
+                        <article class="capability-card" data-animate>
+                            <h3>Cluster config center</h3>
+                            <p>In a multi-node cluster, site YAML and certificates live in Litemesh KV: write once, auto-sync and hot-reload across every node; certs are issued once under a distributed lock and shared cluster-wide — no per-node config to maintain.</p>
                         </article>
-                        <article class="story-step" data-animate>
-                            <span class="story-no">03</span>
-                            <h3>DNS & certs follow suit</h3>
-                            <p>New domains bypass manual DNS/cert steps; A-record sync, DNS verification, and HTTPS readiness are handled natively by the ingress plane.</p>
+                        <article class="capability-card" data-animate>
+                            <h3>Frontend releases</h3>
+                            <p>Zip the build to OSS and write one KV key; every node downloads, switches atomically and keeps previous versions for rollback.</p>
                         </article>
-                        <article class="story-step" data-animate>
-                            <span class="story-no">04</span>
-                            <h3>Directly live and ready</h3>
-                            <p>Ultimately, you get more than just "config written" — you get a live domain, an active cert, and ready routes.</p>
+                        <article class="capability-card capability-card-ai" data-animate>
+                            <h3>MCP autopilot</h3>
+                            <p>Built-in MCP server with 20+ tools — AI assistants create sites, edit routes, read schemas, hot-reload and troubleshoot directly.</p>
                         </article>
-                    </div>
-                    <div class="story-points" data-animate>
-                        <div class="cert-point">
-                            <strong>Smoother new domain launches</strong>
-                            <span>After declaring a site, A-records and certs follow automatically, reducing the risk of forgetting DNS edits during releases.</span>
-                        </div>
-                        <div class="cert-point">
-                            <strong>Fewer manual prerequisites</strong>
-                            <span>Eliminates prerequisites like "manually point DNS first, then request a certificate".</span>
-                        </div>
-                        <div class="cert-point">
-                            <strong>Wildcards made easy</strong>
-                            <span>DNS validation natively fits private cloud, multi-domain, and multi-environment setups, especially for managing wildcards.</span>
-                        </div>
-                        <div class="cert-point">
-                            <strong>Govern certs and sites together</strong>
-                            <span>Domains, site entries, cert policies, and backend routing no longer require maintenance in separate components.</span>
-                        </div>
-                    </div>
-                    <div class="story-note" data-animate>
-                        This is what distinguishes LiteGate from traditional gateways that only route packets: LiteGate cares about the complete go-live pipeline, not just a segment of it.
-                    </div>
-                </div>
-            </section>
-
-            <section class="section section-automation" id="frontend-release">
-                <div class="container">
-                    <div class="section-head" data-animate>
-                        <p class="eyebrow">Frontend Release</p>
-                        <h2>Frontend upgrades without individual node deploys: just publish a version</h2>
-                        <p>
-                            This is more than a static file config option. It condenses frontend releases into a single version submission: 
-                            zip and upload assets to OSS, write version info to Litemesh KV, 
-                            and LiteGate automatically syncs, unpacks, switches, and manages history across all nodes.
-                        </p>
-                    </div>
-                    <div class="quickstart-shell" data-animate>
-                        <div class="terminal-card">
-                            <div class="terminal-head">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                            <div class="terminal">
-                                <div class="terminal-line"><span class="comment"># 1. build frontend and upload ZIP to OSS</span></div>
-                                <div class="terminal-line"><span class="prompt">$</span><span class="cmd">oss://frontends/main-12.zip</span></div>
-                                <div class="terminal-line"><span class="comment"># 2. write one KV key</span></div>
-                                <div class="terminal-line"><span class="cmd">litegate/config/front/main</span></div>
-                                <div class="terminal-line"><span class="comment">{</span></div>
-                                <div class="terminal-line"><span class="comment">  "version": "12",</span></div>
-                                <div class="terminal-line"><span class="comment">  "url": "https://oss.example.com/front/main-12.zip",</span></div>
-                                <div class="terminal-line"><span class="comment">  "md5": "3e5a..."</span></div>
-                                <div class="terminal-line"><span class="comment">}</span></div>
-                                <div class="terminal-line"><span class="comment"># 3. LiteGate nodes auto sync and switch</span></div>
-                            </div>
-                        </div>
-                        <div class="quickstart-copy">
-                            <div class="quickstart-block">
-                                <h3>Consolidated release operations</h3>
-                                <p>No need to log into each node to swap static directories or run complex distribution scripts. Just upload the ZIP, update a KV key, and your release is done.</p>
-                            </div>
-                            <div class="quickstart-block quickstart-block-ai">
-                                <h3>LiteGate handles the rest</h3>
-                                <p>Nodes listen to KV updates, fetch the new package, extract to local version dirs, switch symlinks, and retain historical versions for quick rollback.</p>
-                            </div>
-                            <div class="quickstart-block">
-                                <h3>Better multi-node consistency</h3>
-                                <p>New nodes fetch the correct version automatically, while existing nodes update simultaneously. For small teams, this beats manual directory copy or rsync across nodes.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-grid card-grid-3" data-animate>
-                        <article class="info-card">
-                            <span class="card-tag card-tag-good">Less Ops</span>
-                            <h3>No more file-copy across nodes</h3>
-                            <p>Frontend upgrades scale from "distributing files" to "declaring versions" — perfect for small teams running without dedicated DevOps.</p>
+                        <article class="capability-card" data-animate>
+                            <h3>Identity &amp; SaaS entry (IDS)</h3>
+                            <p>Remote auth, OIDC, tenant-context injection and sid routing — close to a real multi-tenant SaaS entry plane.</p>
                         </article>
-                        <article class="info-card">
-                            <span class="card-tag card-tag-warm">Multi-Node</span>
-                            <h3>Natively consistent multi-node</h3>
-                            <p>All nodes converge state around a single KV key, eliminating human errors across machines during deployment.</p>
-                        </article>
-                        <article class="info-card">
-                            <span class="card-tag card-tag-muted">Rollback Ready</span>
-                            <h3>Rollback-ready history</h3>
-                            <p>Retaining previous versions ensures rollback doesn't require rebuilding; simply shifting the version pointer yields a clean rollback.</p>
-                        </article>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section" id="discovery-architecture">
-                <div class="container">
-                    <div class="section-head" data-animate>
-                        <p class="eyebrow">Discovery Architecture</p>
-                        <h2>Decoupled service discovery: no need to overhaul your registry for LiteGate</h2>
-                        <p>
-                            If you already use Consul, Litemesh, Nacos, etcd, or heterogeneous clusters, LiteGate doesn't force a migration. It decouples the discovery layer to bridge arbitrary registries.
-                        </p>
-                    </div>
-                    <div class="discovery-arch-grid">
-                        <article class="discovery-arch-card" data-animate>
-                            <h3>Built-in providers</h3>
-                            <p>Start simple. Begin with static configs, then upgrade smoothly to Consul, Litemesh, external providers, or hybrid registries.</p>
-                            <div class="tag-row">
-                                <span class="tag tag-warm">static</span>
-                                <span class="tag tag-warm">Consul</span>
-                                <span class="tag tag-accent">Litemesh</span>
-                                <span class="tag">hybrid</span>
-                            </div>
-                        </article>
-                        <article class="discovery-arch-card" data-animate>
-                            <h3>litemesh-registrator-go</h3>
-                            <p>Perfect for Docker / Swarm. Simply tag services with labels, let registrator register running containers, and LiteGate directly consumes the registry.</p>
-                            <div class="tag-row">
-                                <span class="tag">Docker labels</span>
-                                <span class="tag tag-accent">auto register</span>
-                                <span class="tag tag-accent">Litemesh</span>
-                            </div>
-                        </article>
-                        <article class="discovery-arch-card" data-animate>
-                            <h3>camodns_discovery</h3>
-                            <p>Ideal for heterogeneous registries. It bridges Nacos, etcd, k8s, Docker, and other sources into a unified discovery interface, pushing registry changes as event streams rather than wasteful polling.</p>
-                            <div class="tag-row">
-                                <span class="tag">Nacos</span>
-                                <span class="tag">etcd</span>
-                                <span class="tag">k8s</span>
-                                <span class="tag">Docker</span>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section section-path" id="path">
-                <div class="container">
-                    <div class="section-head" data-animate>
-                        <p class="eyebrow">Growth Path</p>
-                        <h2>Not a complex gateway from day one: make simple tasks smooth first</h2>
-                        <p>
-                            What makes LiteGate compelling is it allows teams to progress according to real complexity, without forcing complete platform overhead early on.
-                        </p>
-                    </div>
-                    <div class="path-grid">
-                        <article class="path-card" data-animate>
-                            <span class="path-step">Stage 01</span>
-                            <h3>Sites & APIs</h3>
-                            <p>Begin with static sites, SPAs, simple proxies, and auto HTTPS to nail down fundamental ingress needs.</p>
-                        </article>
-                        <article class="path-card" data-animate>
-                            <span class="path-step">Stage 02</span>
-                            <h3>Dynamic Services</h3>
-                            <p>As backend instances fluctuate, plug in Consul, Litemesh, or other sources to let routing evolve with your topology.</p>
-                        </article>
-                        <article class="path-card" data-animate>
-                            <span class="path-step">Stage 03</span>
-                            <h3>SaaS Gateways</h3>
-                            <p>As you hit multi-tenancy, cluster sharding, identity-driven routing, canaries, and dedicated instances, your entry layer remains unchanged.</p>
-                        </article>
-                    </div>
-                    <div class="path-note" data-animate>
-                        LiteGate's value lies not just in handling complex scenarios, but in ensuring you don't have to replace your entire ingress architecture as your system grows.
-                    </div>
-                </div>
-            </section>
-
-            <section class="section" id="modes">
-                <div class="container">
-                    <div class="section-head" data-animate>
-                        <p class="eyebrow">Lite vs Full</p>
-                        <h2>Start lightweight for simple cases, upgrade seamlessly for complexity</h2>
-                        <p>
-                            Lite Mode offers the shortest path to go live, while Full Mode is a complete governance model. They share the same core, exposed via different configuration entry points.
-                        </p>
-                    </div>
-                    <div class="mode-grid">
-                        <article class="mode-card" data-animate>
-                            <div class="mode-head">
-                                <h3>Lite Mode</h3>
-                                <span>Shortest path for simple setups</span>
-                            </div>
-                            <pre><code>example.com:
-  proxy: 127.0.0.1:8080</code></pre>
-                            <ul class="list">
-                                <li>Perfect for single sites, SPAs, basic proxying, redirects, and WebDAV.</li>
-                                <li>A few lines of <code>*.lite.yaml</code> get your site up and running</li>
-                                <li>An intuitive user-facing configuration, rather than a secondary configuration core</li>
-                            </ul>
-                        </article>
-                        <article class="mode-card mode-card-highlight" data-animate>
-                            <div class="mode-head">
-                                <h3>Full Mode</h3>
-                                <span>Retaining full governance & extensibility</span>
-                            </div>
-                            <pre><code>domain: example.com
-routes:
-  - match:
-      path_prefix: /
-    action:
-      type: proxy
-      upstream:
-        - 127.0.0.1:8080</code></pre>
-                            <ul class="list">
-                                <li>Perfect for complex matches, authentication, middlewares, discovery, and advanced ingress governance.</li>
-                                <li>When your system demands richer expressions, seamlessly switch to the full model</li>
-                                <li>Lite configs compile down to the standard model, ensuring clear migration paths</li>
-                            </ul>
+                        <article class="capability-card" data-animate>
+                            <h3>Security &amp; observability</h3>
+                            <p>WAF, dynamic rate limiting, IP rules, CORS, Litemesh mTLS, plus access logs, Dashboard and Prometheus metrics.</p>
                         </article>
                     </div>
                 </div>
@@ -536,67 +342,28 @@ routes:
                 <div class="container">
                     <div class="section-head" data-animate>
                         <p class="eyebrow">Scenarios</p>
-                        <h2>Scenarios where LiteGate excels over standard reverse proxies</h2>
+                        <h2>Where it feels better than a plain reverse proxy</h2>
                         <p>
-                            Not every project demands LiteGate, but these use cases make its value immediately apparent.
+                            Not every project needs LiteGate, but these scenarios feel its value sooner.
                         </p>
                     </div>
                     <div class="scenario-grid">
                         <article class="scenario-card" data-animate>
-                            <h3>Marketing Sites, Docs, & Admin Panels</h3>
-                            <p>Frontends and backend APIs housed in a single entry point, minimizing assembly and redundant configs.</p>
+                            <h3>Sites, docs &amp; admin panels</h3>
+                            <p>Static sites and backend APIs behind one entry, with less glue and duplicate config.</p>
                         </article>
                         <article class="scenario-card" data-animate>
-                            <h3>Small Products on Private Clouds or VPS</h3>
-                            <p>Single binary, Docker, auto HTTPS, and automated DNS workflows fit lightweight deployments and multi-domain realities.</p>
+                            <h3>Small products on private cloud or VPS</h3>
+                            <p>Single binary, Docker, automatic HTTPS and DNS-based certs fit lightweight, multi-domain reality.</p>
                         </article>
                         <article class="scenario-card" data-animate>
-                            <h3>Lightweight Microservice Ingress</h3>
-                            <p>As instances become dynamic, service discovery and tag routing scale to handle the complexity.</p>
+                            <h3>Microservices</h3>
+                            <p>Services register to Litemesh and are consumed by LiteGate automatically; east-west calls run over mTLS zero-trust, and routing follows instances as they change.</p>
                         </article>
                         <article class="scenario-card" data-animate>
                             <h3>Multi-tenant SaaS</h3>
-                            <p>Identity-driven routing, tenant context injection, and sid partitioning match what real SaaS ingress planes need.</p>
+                            <p>Identity-driven routing, tenant-context injection and sid splitting — closer to what a SaaS entry actually needs.</p>
                         </article>
-                        <article class="scenario-card" data-animate>
-                            <h3>DNS-free Onboarding for New Domains</h3>
-                            <p>Declare a site, and let the entry layer manage A-record sync, certs, and HTTPS readiness — simpler than setting up DNS first.</p>
-                        </article>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section section-mcp" id="mcp-example">
-                <div class="container">
-                    <div class="section-head" data-animate>
-                        <p class="eyebrow">MCP Example</p>
-                        <h2>MCP is not a buzzword: it executes complete ingress setup on your behalf</h2>
-                        <p>
-                            Without real context, AI integration sounds hollow. To be precise: you describe the target, and AI uses LiteGate MCP to read schemas, generate config, save it, and verify the route.
-                        </p>
-                    </div>
-                    <div class="mcp-example-shell" data-animate>
-                        <div class="mcp-example-card">
-                            <h3>What you say to AI</h3>
-                            <pre><code>Host an official site and an /api
-Domain is demo.example.com
-Frontend directory is ./dist
-Backend at 127.0.0.1:8080
-Verify the certificates and HTTPS routes while you're at it</code></pre>
-                        </div>
-                        <div class="mcp-example-card">
-                            <h3>What LiteGate MCP does</h3>
-                            <ul class="list">
-                                <li>Inspect site schemas and configurations</li>
-                                <li>Generate `*.lite.yaml` or standard YAML declarations</li>
-                                <li>Save configurations and trigger validations</li>
-                                <li>Verify the ingress endpoints are actively reachable</li>
-                            </ul>
-                        </div>
-                        <div class="mcp-example-card">
-                            <h3>What users actually get</h3>
-                            <p>Instead of abstract "AI assistance", complete ingress provisioning is condensed into natural language tasks — ideal for marketing sites, admin dashboards, docs, and basic APIs.</p>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -605,9 +372,9 @@ Verify the certificates and HTTPS routes while you're at it</code></pre>
                 <div class="container">
                     <div class="section-head section-head-left" data-animate>
                         <p class="eyebrow">Quick Start</p>
-                        <h2>Get your first active response, then decide your next steps</h2>
+                        <h2>Get your first response, then decide</h2>
                         <p>
-                            The most crucial CTA on a landing page is a quick win, not reading a full whitepaper.
+                            The best first try: bring up a same-domain frontend + backend site in Lite mode.
                         </p>
                     </div>
                     <div class="quickstart-shell" data-animate>
@@ -618,26 +385,27 @@ Verify the certificates and HTTPS routes while you're at it</code></pre>
                                 <span></span>
                             </div>
                             <div class="terminal">
-                                <div class="terminal-line"><span class="prompt">$</span><span class="cmd">litegate -hello</span></div>
-                                <div class="terminal-line"><span class="prompt">$</span><span class="cmd">curl http://localhost:8080/</span></div>
-                                <div class="terminal-line"><span class="comment"># hello world</span></div>
+                                <div class="terminal-line"><span class="comment"># sites/hello.lite.yaml</span></div>
+                                <div class="terminal-line"><span class="cmd">localhost:</span></div>
+                                <div class="terminal-line"><span class="cmd">&nbsp;&nbsp;respond: "Hello, LiteGate!"</span></div>
+                                <div class="terminal-line"><span class="prompt">$</span><span class="cmd">./litegate</span></div>
+                                <div class="terminal-line"><span class="prompt">$</span><span class="cmd">curl http://localhost/</span></div>
+                                <div class="terminal-line"><span class="comment"># Hello, LiteGate!</span></div>
                                 <div class="terminal-line"><span class="prompt">$</span><span class="cmd">litegate -t</span></div>
                                 <div class="terminal-line"><span class="comment"># config check passed</span></div>
                             </div>
                         </div>
                         <div class="quickstart-copy">
                             <div class="quickstart-block">
-                                <h3>Spin up a unified frontend/backend site in Lite Mode first</h3>
-                                <p>If you just want to quickly experience LiteGate, this is the most direct path to start.</p>
+                                <h3>Bring a site up in a few lines of YAML</h3>
+                                <p>Just want to feel how LiteGate works? This is the shortest path. Same-domain frontend/backend and automatic HTTPS are ready by default.</p>
                             </div>
-                            <div class="quickstart-block">
-                                <h3>Decide whether to scale up later</h3>
-                                <p>When you eventually need advanced matching, authentication, middleware, or discovery, seamlessly transition to Full Mode.</p>
+                            <div class="quickstart-block quickstart-block-ai">
+                                <h3>Or let AI configure it</h3>
+                                <p>With the built-in MCP on, describe the scenario to AI — it reads the schema, generates config, saves it and verifies the entry is actually reachable.</p>
                             </div>
                             <div class="quickstart-actions">
-                                <a href="../docs/en/litegate_quickstart.html" class="btn btn-primary">Read Quick Start</a>
-                                <a href="../docs/en/index.html" class="btn btn-secondary">View Documentation Center</a>
-                                <a href="../docs/en/litegate_mcp_autopilot.html" class="btn btn-secondary">View MCP Autopilot</a>
+                                <a href="../docs/en/litegate_quickstart.html" class="btn btn-primary">Read Quick Start →</a>
                             </div>
                         </div>
                     </div>
@@ -652,8 +420,8 @@ Verify the certificates and HTTPS routes while you're at it</code></pre>
                         <span class="brand-mark">L</span>
                         <span class="brand-text">LiteGate</span>
                     </a>
-                    <p>A unified entry layer that grows naturally from simple site hosting to private cloud, service discovery, and multi-tenant SaaS ingress.</p>
-                    <p class="footer-hosted">This website itself is hosted by LiteGate to demonstrate its native site-serving and production-hosting capabilities.</p>
+                    <p>A unified entry gateway that grows from a simple website entry to private cloud, dynamic service discovery and multi-tenant SaaS.</p>
+                    <p class="footer-hosted">This very site is served by LiteGate — a live demo of its hosting and entry capabilities on a real site.</p>
                 </div>
                 <div class="footer-links">
                     <div>
@@ -664,11 +432,8 @@ Verify the certificates and HTTPS routes while you're at it</code></pre>
                     </div>
                     <div>
                         <h4>Docs</h4>
-                        <a href="../docs/en/litegate_quickstart.html">Quick Start</a>
-                        <a href="../docs/en/index.html">Documentation Center</a>
-                        <a href="deploy-flow.html">Deploy Flow</a>
-                        <a href="litegate.html">Entry Model</a>
-                        <a href="architecture.html">Architecture</a>
+                        <a href="../docs/en/index.html">Documentation Hub</a>
+                        <a href="../docs/en/litegate_architecture.html">Architecture</a>
                     </div>
                 </div>
             </div>

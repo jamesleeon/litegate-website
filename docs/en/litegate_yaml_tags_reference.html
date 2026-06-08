@@ -611,6 +611,11 @@ routes:
       root: /var/www/dist
       index: index.html
       spa: true
+      # 💡 Optional: enable Serve KV automated synchronization mode
+      # kv_mode: true
+      # kv_provider: litemesh
+      # kv_key: litegate/config/front/main
+      # keep_versions: 3
 
   # 💡 Tip: dynamic API proxy routes do NOT need to be declared here!
   # Backend services report their own IP, port, and route Tags to the registry at startup.
@@ -1221,6 +1226,10 @@ const SECTIONS = [
       ["routes[i].action","location","Target redirect URL in redirect mode.","no","","Not supported"],
       ["routes[i].action","web_ui","Whether WebDAV exposes a graphical web browser UI.","no","","Not supported"],
       ["routes[i].action","read_only","Whether WebDAV is forced read-only for safety.","no","","Not supported"],
+      ["routes[i].action","kv_mode","Whether to enable Serve KV automated synchronization mode. If true, LiteGate automatically watches the version registry and pulls zip releases.","no","","Not supported"],
+      ["routes[i].action","kv_provider","Specifies the KV sync driver type (supports: litemesh, consul, http).","no","","Not supported"],
+      ["routes[i].action","kv_key","The watched KV key path. If the provider is http, write the full GET API URL.","no","","Not supported"],
+      ["routes[i].action","keep_versions","Number of historical versions kept locally. Excess directories are purged automatically after a successful swap. Default is 3.","no","","Not supported"],
     ]
   },
   {
@@ -1332,6 +1341,16 @@ function renderDesc(desc, note, key) {
     case 'routes[i].action.auth.secret':
       isRequired = true;
       desc += ' <span style="color:var(--text3); font-size:10.5px;">(required when auth.type is sso)</span>';
+      break;
+    case 'routes[i].action.kv_mode':
+    case 'routes[i].action.kv_provider':
+    case 'routes[i].action.kv_key':
+      isRequired = true;
+      desc += ' <span style="color:var(--text3); font-size:10.5px;">(required when kv_mode is enabled)</span>';
+      break;
+    case 'routes[i].action.keep_versions':
+      isRequired = false;
+      defaultVal = '3';
       break;
     default:
       isRequired = false;

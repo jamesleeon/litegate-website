@@ -283,7 +283,7 @@ td code { font-size: 12px; }
 
     <section id="diagram">
       <h2><span class="num">0</span>系统架构图景</h2>
-      <p>LiteGate 采用清晰的三栏式架构设计：<strong>左侧来自互联网的流量</strong>，通过灵活的域名和协议进入<strong>中间的 LiteGate 核心路由引擎</strong>。经过规则匹配与过滤器链后，除了常规代理转发至<strong>右侧的后端基础设施</strong>外，LiteGate 特有的<strong>内置 Web Server</strong> 能够针对静态页面、Markdown 文档和 WebDAV 共享等请求进行<strong>本地闭环响应</strong>，无需再转发至外部 nginx 容器。所有服务发现源（Providers）均支持热载入，Kubernetes 正在通过通用协议适配中。</p>
+      <p>LiteGate 采用清晰的三栏式架构设计：<strong>左侧来自互联网的流量</strong>，通过灵活的域名和协议进入<strong>中间的 LiteGate 核心路由引擎</strong>。经过规则匹配与过滤器链后，除了常规代理转发至<strong>右侧的后端基础设施</strong>外，LiteGate 特有的<strong>内置 Web Server</strong> 能够针对静态页面、Markdown 文档和 WebDAV 共享等请求进行<strong>本地闭环响应</strong>，无需再转发至外部 nginx 容器。所有服务发现源（Providers）均支持热载入；k8s / nacos / etcd 等异构注册中心可经 Discovery Agent（CamoDNS Discovery）聚合，以 Consul 兼容的 Blocking Query 接入。</p>
       
       <div class="diag-container">
         <svg class="diag-svg" viewBox="0 0 1060 520" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -431,11 +431,11 @@ td code { font-size: 12px; }
           </g>
           <g class="diag-group">
             <circle cx="817" cy="180" r="4" fill="var(--accent)"/>
-            <text class="diag-subtitle" x="827" y="184">Discovery Agent (异构注册聚合)</text>
+            <text class="diag-subtitle" x="827" y="184">Discovery Agent (Consul 兼容 Blocking Query)</text>
           </g>
-          <g class="diag-group" opacity="0.5">
-            <circle cx="817" cy="205" r="4" fill="var(--text3)"/>
-            <text class="diag-subtitle" x="827" y="209" fill="var(--text3)">Kubernetes (Roadmap / 非原生 CRD)</text>
+          <g class="diag-group">
+            <circle cx="817" cy="205" r="4" fill="var(--accent)"/>
+            <text class="diag-subtitle" x="827" y="209">k8s / nacos / etcd (经 Discovery Agent 聚合)</text>
           </g>
 
           <!-- 代理后端服务 -->
