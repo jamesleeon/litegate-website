@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate 鉴权总览 | OIDC · JWT · API-Key · 远程鉴权</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.toc .group { font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); margin: 18px 0 6px 10px; font-weight: 600; }
+.toc a.ext::after { content: "↗"; font-size: 10px; margin-left: 5px; color: var(--text3); opacity: .8; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card, .panel, .mini-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3, .panel h3, .mini-card h3 { margin-top: 0; }
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate 鉴权</div>
+    <div class="brand-sub">OIDC · JWT · API-Key</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← 文档首页</a>
+    <a href="#overview">概览</a>
+    <a href="#choose">选型速查</a>
+    <a href="#oidc">OIDC / OAuth2（人类登录）</a>
+    <a href="#jwt">JWT 校验（机器/API）</a>
+    <a href="#apikey">API Key + 配额</a>
+    <a href="#remote">远程鉴权（forward auth）</a>
+    <a href="#enrich">身份注入</a>
+    <a href="#more">mTLS 与 IDS</a>
+    <div class="group">深入阅读</div>
+    <a class="ext" href="ids_development_guide.html">IDS 开发指南</a>
+    <a class="ext" href="litemesh_mtls_guide.html">Litemesh mTLS</a>
+    <a class="ext" href="litegate_config_reference.html">配置参考</a>
+    <div class="group">语言</div>
+    <a class="ext" href="../en/litegate_authentication.html">English version</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>统一鉴权：把"人"和"机器"两类流量都收进网关</h1>
+      <p class="lead">LiteGate 把鉴权下沉到网关边缘，后端服务不必各自实现登录与令牌校验。它同时覆盖<strong>人类交互流量</strong>（OIDC/OAuth2 登录、SSO）与<strong>机器/API 流量</strong>（JWT、API-Key + 配额），并能把校验出的身份注入下游请求头。</p>
+      <div class="badges"><span class="badge green">OIDC / OAuth2</span><span class="badge">JWT (JWKS)</span><span class="badge">API-Key + 配额</span><span class="badge">远程鉴权</span><span class="badge amber">mTLS / SPIFFE</span></div>
+    </div>
+
+    <section id="choose">
+      <h2><span class="num">1</span>选型速查：什么场景用什么</h2>
+      <table>
+        <thead><tr><th>方式</th><th>适合</th><th>关键点</th></tr></thead>
+        <tbody>
+          <tr><td><strong>OIDC / OAuth2</strong></td><td>人类用户登录、SaaS 后台、需要交互式跳转</td><td>原生，含 introspection、多 Provider、自定义登录页</td></tr>
+          <tr><td><strong>JWT 校验</strong></td><td>机器/服务间 API 调用，已签发 Bearer JWT</td><td>对 JWKS 校验签名 + issuer/audience，锁定 RS/ES 算法</td></tr>
+          <tr><td><strong>API-Key + 配额</strong></td><td>对外开放 API、按调用方限额</td><td>多源提取 + 按 key 配额（集群分布式限流）</td></tr>
+          <tr><td><strong>远程鉴权</strong></td><td>已有自研鉴权服务，想复用</td><td>子请求转发到外部鉴权端点（类 forward_auth）</td></tr>
+          <tr><td><strong>Basic Auth</strong></td><td>内部工具、最简单口令保护</td><td>开箱即用</td></tr>
+          <tr><td><strong>mTLS / SPIFFE</strong></td><td>零信任服务网格、双向证书</td><td>见 <a class="inline" href="litemesh_mtls_guide.html">Litemesh mTLS</a></td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><span class="t">人 vs 机器</span><p>简单记法：浏览器里的真人 → <strong>OIDC</strong>;程序/服务调用 API → <strong>JWT</strong> 或 <strong>API-Key</strong>。三者可在同一网关共存，按路由分别绑定。</p></div>
+    </section>
+
+    <section id="oidc">
+      <h2><span class="num">2</span>OIDC / OAuth2（人类登录）</h2>
+      <p>面向交互式登录：未登录请求重定向到 IdP，回调后建立会话。原生支持 token introspection、多 Provider，并可挂自定义登录页模板。</p>
+      <div class="code-wrap"><span class="lang">sites/app.yaml</span><pre><code>routes:
+  - name: admin
+    match:
+      path_prefix: /admin
+    action:
+      type: proxy
+      service_name: admin-svc
+      auth:
+        type: sso
+        secret: "your-long-sso-cookie-signing-secret"
+        template: "./templates/auth/login.html"   # 可选自定义登录页</code></pre></div>
+      <p>身份决策与租户选路的高级用法见 <a class="inline" href="ids_development_guide.html">IDS 开发指南</a>。</p>
+    </section>
+
+    <section id="jwt">
+      <h2><span class="num">3</span>JWT 校验（机器 / API 流量）</h2>
+      <p>面向无交互的服务间调用：校验传入的 Bearer JWT。网关对 JWKS 校验签名，校验 <code>issuer</code> / <code>audience</code>，并把 claim 投影成下游请求头供后端使用。</p>
+      <div class="code-wrap"><span class="lang">middleware</span><pre><code>middlewares:
+  jwt-auth:
+    type: jwt_auth
+    config:
+      jwks_url: "https://idp.example.com/.well-known/jwks.json"
+      issuer:   "https://idp.example.com/"
+      audience: "api.example.com"
+      inject_claims: "sub:X-Auth-Subject,email:X-Auth-Email"</code></pre></div>
+      <div class="callout ok"><span class="t">默认安全：锁定签名算法</span><p>JWT 校验显式锁定 RS/ES 非对称算法（`WithValidMethods`），杜绝经典的 RS256→HS256 算法混淆攻击与 `alg: none`。</p></div>
+    </section>
+
+    <section id="apikey">
+      <h2><span class="num">4</span>API Key + 按 key 配额</h2>
+      <p>面向对外开放的 API：校验 API Key，并对<strong>每个 key</strong>施加独立的 QPS 配额。Key 可从 header / query / Bearer 多种位置提取;配额基于集群共享的 Redis 令牌桶（Redis 不可用时退回本地有界限流），日志中 key 自动脱敏。</p>
+      <div class="code-wrap"><span class="lang">middleware</span><pre><code>middlewares:
+  api-key:
+    type: api_key
+    config:
+      extract_from: "header.X-API-Key"   # 或 query.api_key / bearer
+      keys: "key_live_aaa,key_live_bbb"
+      quotas: "key_live_aaa:50,key_live_bbb:10"   # 每 key QPS
+      default_quota: "5"</code></pre></div>
+    </section>
+
+    <section id="remote">
+      <h2><span class="num">5</span>远程鉴权（forward auth）</h2>
+      <p>如果你已有自研鉴权服务，网关可以把鉴权决策<strong>子请求转发</strong>给它（对标 Nginx <code>auth_request</code> / Caddy <code>forward_auth</code>）：外部端点返回 2xx 放行、401/403 拒绝，并可回传身份头。适合复用既有 RBAC / 会话中心。</p>
+    </section>
+
+    <section id="enrich">
+      <h2><span class="num">6</span>身份注入（claims → header）</h2>
+      <p>无论身份来自 OIDC、JWT 还是远程鉴权，网关都能把解析出的身份（用户 ID、邮箱、租户、角色等）<strong>注入下游请求头</strong>，后端直接读头即可，无需自己再解析令牌。这是把鉴权真正"下沉到网关"的关键一环，也是多租户 SaaS 入口的常用模式。</p>
+      <div class="callout warn"><span class="t">防伪造</span><p>注入前网关会先剥离客户端伪造的同名权威头，确保后端读到的身份头只可能来自网关本身。</p></div>
+    </section>
+
+    <section id="more">
+      <h2><span class="num">7</span>mTLS / SPIFFE 与 IDS</h2>
+      <p>除上述 HTTP 层鉴权外，LiteGate 还支持传输层与入侵检测层的身份能力：</p>
+      <ul>
+        <li><strong>mTLS / SPIFFE</strong>：双向证书认证，支持 SPIFFE ID 校验，用于零信任服务网格。见 <a class="inline" href="litemesh_mtls_guide.html">Litemesh mTLS 指南</a>。</li>
+        <li><strong>IDS 入侵检测链路</strong>：插件化的请求签名 / 身份校验引擎，是 LiteGate 的差异化能力。见 <a class="inline" href="ids_development_guide.html">IDS 开发指南</a>。</li>
+      </ul>
+    </section>
+
+    <div class="footer">LiteGate 文档 · <a class="inline" href="litegate_complete_introduction.html">完整介绍</a> · <a class="inline" href="ids_development_guide.html">IDS</a> · <a class="inline" href="litemesh_mtls_guide.html">mTLS</a> · <a class="inline" href="../en/litegate_authentication.html">English version</a></div>
+  </main>
+</div>
+
+<script>
+(function () {
+  const toc = document.querySelector('.toc');
+  if (!toc) return;
+  const links = Array.from(toc.querySelectorAll('a[href^="#"]'));
+  const items = links.map((link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    return { link, target: document.getElementById(id) };
+  }).filter((item) => item.target);
+  if (!items.length) return;
+  let activeLink = null;
+  let ticking = false;
+  function setActive(item) {
+    if (!item || activeLink === item.link) return;
+    links.forEach((link) => link.classList.remove('active'));
+    item.link.classList.add('active');
+    activeLink = item.link;
+    const tocRect = toc.getBoundingClientRect();
+    const linkRect = item.link.getBoundingClientRect();
+    if (linkRect.top < tocRect.top + 16 || linkRect.bottom > tocRect.bottom - 16) {
+      item.link.scrollIntoView({ block: 'nearest' });
+    }
+  }
+  function currentItem() {
+    if (window.scrollY < 100) return items[0];
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+    for (const item of items) {
+      const rect = item.target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight * 0.88;
+      if (!visible) continue;
+      const distance = Math.abs(rect.top - anchor);
+      if (distance < bestDistance) { best = item; bestDistance = distance; }
+    }
+    if (!best) {
+      best = items[0];
+      for (const item of items) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= anchor) best = item;
+      }
+    }
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      best = items[items.length - 1];
+    }
+    return best;
+  }
+  function updateActive() { ticking = false; setActive(currentItem()); }
+  function requestUpdate() {
+    if (!ticking) { ticking = true; window.requestAnimationFrame(updateActive); }
+  }
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('hashchange', requestUpdate);
+  links.forEach((link) => link.addEventListener('click', () => window.setTimeout(requestUpdate, 80)));
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', requestUpdate, { once: true });
+  } else { requestUpdate(); }
+})();
+</script>
+</body>
+</html>

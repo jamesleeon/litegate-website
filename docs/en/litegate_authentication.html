@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate Authentication | OIDC · JWT · API-Key · Forward Auth</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.toc .group { font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text3); margin: 18px 0 6px 10px; font-weight: 600; }
+.toc a.ext::after { content: "↗"; font-size: 10px; margin-left: 5px; color: var(--text3); opacity: .8; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 780px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card, .panel, .mini-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3, .panel h3, .mini-card h3 { margin-top: 0; }
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate Auth</div>
+    <div class="brand-sub">OIDC · JWT · API-Key</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← Docs Home</a>
+    <a href="#overview">Overview</a>
+    <a href="#choose">Which to use</a>
+    <a href="#oidc">OIDC / OAuth2 (humans)</a>
+    <a href="#jwt">JWT (machine / API)</a>
+    <a href="#apikey">API Key + quota</a>
+    <a href="#remote">Forward auth</a>
+    <a href="#enrich">Identity injection</a>
+    <a href="#more">mTLS &amp; IDS</a>
+    <div class="group">Read More</div>
+    <a class="ext" href="ids_development_guide.html">IDS Guide</a>
+    <a class="ext" href="litemesh_mtls_guide.html">Litemesh mTLS</a>
+    <a class="ext" href="litegate_config_reference.html">Config Reference</a>
+    <div class="group">Language</div>
+    <a class="ext" href="../zh-cn/litegate_authentication.html">中文版</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>Unified Authentication: bring both "human" and "machine" traffic into the gateway</h1>
+      <p class="lead">LiteGate pushes authentication down to the gateway edge so backend services don't each reimplement login and token validation. It covers both <strong>interactive human traffic</strong> (OIDC/OAuth2 login, SSO) and <strong>machine / API traffic</strong> (JWT, API-Key + quota), and can inject the verified identity into downstream request headers.</p>
+      <div class="badges"><span class="badge green">OIDC / OAuth2</span><span class="badge">JWT (JWKS)</span><span class="badge">API-Key + quota</span><span class="badge">Forward auth</span><span class="badge amber">mTLS / SPIFFE</span></div>
+    </div>
+
+    <section id="choose">
+      <h2><span class="num">1</span>Which to use for what</h2>
+      <table>
+        <thead><tr><th>Method</th><th>Best for</th><th>Key point</th></tr></thead>
+        <tbody>
+          <tr><td><strong>OIDC / OAuth2</strong></td><td>Human login, SaaS consoles, interactive redirects</td><td>Native; introspection, multi-provider, custom login page</td></tr>
+          <tr><td><strong>JWT validation</strong></td><td>Machine / service-to-service API calls with issued Bearer JWTs</td><td>Verify against JWKS + issuer/audience, locked RS/ES algorithms</td></tr>
+          <tr><td><strong>API-Key + quota</strong></td><td>Public-facing APIs, per-caller rate limits</td><td>Multi-source extraction + per-key quota (cluster-distributed)</td></tr>
+          <tr><td><strong>Forward auth</strong></td><td>Reusing an existing in-house auth service</td><td>Subrequest to an external auth endpoint (like forward_auth)</td></tr>
+          <tr><td><strong>Basic Auth</strong></td><td>Internal tools, simplest password gate</td><td>Out of the box</td></tr>
+          <tr><td><strong>mTLS / SPIFFE</strong></td><td>Zero-trust service mesh, mutual certs</td><td>See <a class="inline" href="litemesh_mtls_guide.html">Litemesh mTLS</a></td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><span class="t">Human vs machine</span><p>Rule of thumb: a real person in a browser → <strong>OIDC</strong>; a program/service calling an API → <strong>JWT</strong> or <strong>API-Key</strong>. All three coexist in one gateway, bound per route.</p></div>
+    </section>
+
+    <section id="oidc">
+      <h2><span class="num">2</span>OIDC / OAuth2 (human login)</h2>
+      <p>For interactive login: unauthenticated requests are redirected to the IdP, and a session is established on callback. Natively supports token introspection, multiple providers, and a custom login page template.</p>
+      <div class="code-wrap"><span class="lang">sites/app.yaml</span><pre><code>routes:
+  - name: admin
+    match:
+      path_prefix: /admin
+    action:
+      type: proxy
+      service_name: admin-svc
+      auth:
+        type: sso
+        secret: "your-long-sso-cookie-signing-secret"
+        template: "./templates/auth/login.html"   # optional custom login page</code></pre></div>
+      <p>For identity-driven decisions and tenant steering, see the <a class="inline" href="ids_development_guide.html">IDS Guide</a>.</p>
+    </section>
+
+    <section id="jwt">
+      <h2><span class="num">3</span>JWT validation (machine / API traffic)</h2>
+      <p>For non-interactive service-to-service calls: validate the incoming Bearer JWT. The gateway verifies the signature against JWKS, checks <code>issuer</code> / <code>audience</code>, and projects claims into downstream request headers for the backend.</p>
+      <div class="code-wrap"><span class="lang">middleware</span><pre><code>middlewares:
+  jwt-auth:
+    type: jwt_auth
+    config:
+      jwks_url: "https://idp.example.com/.well-known/jwks.json"
+      issuer:   "https://idp.example.com/"
+      audience: "api.example.com"
+      inject_claims: "sub:X-Auth-Subject,email:X-Auth-Email"</code></pre></div>
+      <div class="callout ok"><span class="t">Secure by default: algorithm pinning</span><p>JWT validation explicitly pins RS/ES asymmetric algorithms (`WithValidMethods`), eliminating the classic RS256→HS256 algorithm-confusion attack and `alg: none`.</p></div>
+    </section>
+
+    <section id="apikey">
+      <h2><span class="num">4</span>API Key + per-key quota</h2>
+      <p>For public-facing APIs: validate the API Key and apply a separate QPS quota <strong>per key</strong>. Keys can be extracted from header / query / Bearer; quotas use a cluster-shared Redis token bucket (falling back to bounded local limiting if Redis is down), and keys are masked in logs.</p>
+      <div class="code-wrap"><span class="lang">middleware</span><pre><code>middlewares:
+  api-key:
+    type: api_key
+    config:
+      extract_from: "header.X-API-Key"   # or query.api_key / bearer
+      keys: "key_live_aaa,key_live_bbb"
+      quotas: "key_live_aaa:50,key_live_bbb:10"   # per-key QPS
+      default_quota: "5"</code></pre></div>
+    </section>
+
+    <section id="remote">
+      <h2><span class="num">5</span>Forward auth (remote authorization)</h2>
+      <p>If you already have an in-house auth service, the gateway can <strong>subrequest</strong> the authorization decision to it (like Nginx <code>auth_request</code> / Caddy <code>forward_auth</code>): the external endpoint returns 2xx to allow, 401/403 to deny, and can return identity headers. Great for reusing existing RBAC / session centers.</p>
+    </section>
+
+    <section id="enrich">
+      <h2><span class="num">6</span>Identity injection (claims → header)</h2>
+      <p>Whether identity comes from OIDC, JWT, or forward auth, the gateway can <strong>inject the parsed identity</strong> (user ID, email, tenant, roles, etc.) into downstream request headers. Backends just read the headers — no token parsing of their own. This is the key to truly pushing auth down to the gateway, and a common pattern for multi-tenant SaaS ingress.</p>
+      <div class="callout warn"><span class="t">Anti-spoofing</span><p>Before injecting, the gateway strips any client-forged authoritative headers of the same name, so the identity headers a backend sees can only come from the gateway itself.</p></div>
+    </section>
+
+    <section id="more">
+      <h2><span class="num">7</span>mTLS / SPIFFE &amp; IDS</h2>
+      <p>Beyond the HTTP-layer auth above, LiteGate also offers transport-layer and intrusion-detection identity:</p>
+      <ul>
+        <li><strong>mTLS / SPIFFE</strong>: mutual certificate authentication with SPIFFE ID verification for zero-trust meshes. See the <a class="inline" href="litemesh_mtls_guide.html">Litemesh mTLS guide</a>.</li>
+        <li><strong>IDS intrusion-detection chain</strong>: a pluggable request-signing / identity-verification engine — a LiteGate differentiator. See the <a class="inline" href="ids_development_guide.html">IDS Guide</a>.</li>
+      </ul>
+    </section>
+
+    <div class="footer">LiteGate Docs · <a class="inline" href="litegate_complete_introduction.html">Full Introduction</a> · <a class="inline" href="ids_development_guide.html">IDS</a> · <a class="inline" href="litemesh_mtls_guide.html">mTLS</a> · <a class="inline" href="../zh-cn/litegate_authentication.html">中文版</a></div>
+  </main>
+</div>
+
+<script>
+(function () {
+  const toc = document.querySelector('.toc');
+  if (!toc) return;
+  const links = Array.from(toc.querySelectorAll('a[href^="#"]'));
+  const items = links.map((link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    return { link, target: document.getElementById(id) };
+  }).filter((item) => item.target);
+  if (!items.length) return;
+  let activeLink = null;
+  let ticking = false;
+  function setActive(item) {
+    if (!item || activeLink === item.link) return;
+    links.forEach((link) => link.classList.remove('active'));
+    item.link.classList.add('active');
+    activeLink = item.link;
+    const tocRect = toc.getBoundingClientRect();
+    const linkRect = item.link.getBoundingClientRect();
+    if (linkRect.top < tocRect.top + 16 || linkRect.bottom > tocRect.bottom - 16) {
+      item.link.scrollIntoView({ block: 'nearest' });
+    }
+  }
+  function currentItem() {
+    if (window.scrollY < 100) return items[0];
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+    for (const item of items) {
+      const rect = item.target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight * 0.88;
+      if (!visible) continue;
+      const distance = Math.abs(rect.top - anchor);
+      if (distance < bestDistance) { best = item; bestDistance = distance; }
+    }
+    if (!best) {
+      best = items[0];
+      for (const item of items) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= anchor) best = item;
+      }
+    }
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      best = items[items.length - 1];
+    }
+    return best;
+  }
+  function updateActive() { ticking = false; setActive(currentItem()); }
+  function requestUpdate() {
+    if (!ticking) { ticking = true; window.requestAnimationFrame(updateActive); }
+  }
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('hashchange', requestUpdate);
+  links.forEach((link) => link.addEventListener('click', () => window.setTimeout(requestUpdate, 80)));
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', requestUpdate, { once: true });
+  } else { requestUpdate(); }
+})();
+</script>
+</body>
+</html>

@@ -288,7 +288,7 @@
                 <div class="container">
                     <div class="section-head" data-animate>
                         <p class="eyebrow">能力一览</p>
-                        <h2>一个网关，九件本来要好几套组件的事</h2>
+                        <h2>一个网关，十件本来要好几套组件的事</h2>
                         <p>
                             下面每一项都在主链路里原生支持，不靠外围脚本拼装。
                         </p>
@@ -311,6 +311,10 @@
                             <p>litemesh、litedeploy、consul、docker、discovery 五种发现源，打个 label 即上线；多源混用时自动合并归一。</p>
                         </article>
                         <article class="capability-card" data-animate>
+                            <h3>gRPC 一等公民</h3>
+                            <p>一行 proto: grpc：h2c/grpcs 自动二分、mTLS 自动升级、grpc.health.v1 健康检查、gRPC-Web 转码与服务反射，全部原生，无需插件。</p>
+                        </article>
+                        <article class="capability-card" data-animate>
                             <h3>集群配置中心</h3>
                             <p>多节点集群里，站点 YAML 和证书统一存进 Litemesh KV：写一次自动同步到所有节点并热重载，证书还由分布式锁单点签发、全集群共享，无需逐台维护配置。</p>
                         </article>
@@ -324,13 +328,65 @@
                         </article>
                         <article class="capability-card" data-animate>
                             <h3>身份与 SaaS 入口（IDS）</h3>
-                            <p>remote auth、OIDC、租户上下文注入和 sid 分流，更贴近多租户 SaaS 真实接入面。</p>
+                            <p>OIDC 登录、JWT(JWKS) 与 API-Key 配额、remote auth、租户上下文注入和 sid 分流，人与机器流量都收进入口层。</p>
                         </article>
                         <article class="capability-card" data-animate>
                             <h3>安全与可观测</h3>
                             <p>WAF、动态限流、IP 限制、CORS、Litemesh mTLS，以及访问日志、Dashboard 和 Prometheus 指标。</p>
                         </article>
                     </div>
+                </div>
+            </section>
+
+            <style>
+            .status-demo { background:#0b1220; border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:26px 28px 22px; max-width:760px; margin:0 auto; box-shadow:0 24px 60px rgba(8,15,30,.35); }
+            .status-demo .sd-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+            .status-demo .sd-title { color:#f8fafc; font-size:18px; font-weight:700; letter-spacing:-.2px; }
+            .status-demo .sd-pill { color:#34d399; font-size:12px; border:1px solid rgba(52,211,153,.35); border-radius:20px; padding:4px 12px; display:inline-flex; align-items:center; gap:7px; white-space:nowrap; }
+            .status-demo .sd-dot { width:7px; height:7px; border-radius:50%; background:#34d399; display:inline-block; box-shadow:0 0 0 3px rgba(52,211,153,.18); }
+            .status-demo .sd-bars { display:flex; gap:3px; margin:6px 0 22px; }
+            .status-demo .sd-bars span { flex:1; height:30px; border-radius:3px; background:#10b981; }
+            .status-demo .sd-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+            .status-demo .sd-stat .l { color:#64748b; font-size:10.5px; letter-spacing:.5px; text-transform:uppercase; }
+            .status-demo .sd-stat .v { color:#f1f5f9; font-size:19px; font-weight:700; margin-top:3px; }
+            .status-demo .sd-route { margin-top:20px; border-top:1px solid rgba(255,255,255,.07); padding-top:16px; }
+            .status-demo .sd-rhead { display:flex; justify-content:space-between; align-items:center; color:#e2e8f0; font-size:13.5px; font-weight:600; }
+            .status-demo .sd-tag { color:#34d399; font-size:10.5px; border:1px solid rgba(52,211,153,.3); border-radius:5px; padding:2px 8px; font-weight:600; }
+            .status-demo .sd-rmeta { color:#64748b; font-size:11.5px; margin:7px 0 4px; }
+            .status-demo .sd-rmeta b { color:#34d399; font-weight:600; }
+            .status-demo .sd-rmeta .err { color:#f87171; }
+            .status-note { text-align:center; color:var(--text-soft,#54655f); font-size:13px; max-width:680px; margin:22px auto 0; line-height:1.7; }
+            </style>
+            <section class="section" id="status">
+                <div class="container">
+                    <div class="section-head" data-animate>
+                        <p class="eyebrow">可观测</p>
+                        <h2>内建状态看板：写段配置，省掉一个 Uptime Kuma</h2>
+                        <p>给路由配上 status 动作，网关就把它正在转发的后端渲染成一个实时状态页。指标全部来自真实转发流量——第一手、白盒、零额外探测开销，还能下钻到动态发现的物理实例，不必再单独部署一套监控组件。</p>
+                    </div>
+                    <div class="status-demo" data-animate>
+                        <div class="sd-top">
+                            <div class="sd-title">All Systems Operational</div>
+                            <span class="sd-pill"><span class="sd-dot"></span>Active Monitoring</span>
+                        </div>
+                        <div class="sd-bars">
+                            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <div class="sd-stats">
+                            <div class="sd-stat"><div class="l">Response Time</div><div class="v">20.3 ms</div></div>
+                            <div class="sd-stat"><div class="l">Daily Requests</div><div class="v">8,383</div></div>
+                            <div class="sd-stat"><div class="l">Daily Errors</div><div class="v">1</div></div>
+                            <div class="sd-stat"><div class="l">Total Requests</div><div class="v">8,383</div></div>
+                        </div>
+                        <div class="sd-route">
+                            <div class="sd-rhead"><span>📄 dynamic-mq-main</span><span class="sd-tag">ONLINE</span></div>
+                            <div class="sd-rmeta">LT : <b>27 ms</b> &nbsp; AVG : <b>25.1 ms</b> &nbsp; ERR : <span class="err">1</span> &nbsp;·&nbsp; 192.168.50.44:8383 · 192.168.50.45:48384</div>
+                            <svg viewBox="0 0 600 60" preserveAspectRatio="none" style="width:100%;height:48px;display:block;margin-top:8px;">
+                                <polyline fill="none" stroke="#10b981" stroke-width="2" points="0,40 30,36 60,42 90,30 120,38 150,28 180,40 210,34 240,44 270,32 300,26 330,38 360,30 390,42 420,34 450,24 480,36 510,30 540,40 570,32 600,36"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="status-note">它与外部黑盒监控（如 Uptime Kuma）<strong>互补而非替代</strong>：外部探测回答“从外面能不能连到我”，状态页回答“我正在转发的后端此刻怎么样”。 <a href="docs/zh-cn/litegate_observability_deployment.html">了解可观测能力 →</a></p>
                 </div>
             </section>
 
