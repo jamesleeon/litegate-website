@@ -102,7 +102,7 @@ td code { font-size: 12px; }
     <a href="index.html" style="font-weight:600;color:var(--accent);">← 文档首页</a>
     <a href="#overview">概览 · 为什么可扩展</a>
     <a href="#model">1. 编译期注册表模型</a>
-    <a href="#seams">2. 五个可扩展接缝</a>
+    <a href="#seams">2. 六个可扩展接缝</a>
     <a href="#quickstart">3. 快速开始（Action）</a>
     <a href="#contract">4. 公共契约速览</a>
     <a href="#middleware">5. Middleware 插件</a>
@@ -111,23 +111,24 @@ td code { font-size: 12px; }
     <a href="#ids-provider" class="sub">凭证 Provider（读）</a>
     <a href="#ids-issuer" class="sub">会话 Issuer（写）</a>
     <a href="#ids-mode" class="sub">模式处理器（控制）</a>
-    <a href="#build">8. 编译与分发</a>
-    <a href="#lifecycle">9. 生命周期全景</a>
-    <a href="#pitfalls">10. 踩坑清单</a>
-    <a href="#test">11. 测试你的插件</a>
-    <a href="#faq">12. 常见问题</a>
+    <a href="#dns">8. DNS Provider（证书 + DDNS）</a>
+    <a href="#build">9. 编译与分发</a>
+    <a href="#lifecycle">10. 生命周期全景</a>
+    <a href="#pitfalls">11. 踩坑清单</a>
+    <a href="#test">12. 测试你的插件</a>
+    <a href="#faq">13. 常见问题</a>
     <a href="../en/litegate_plugin_development.html">English version</a>
   </nav>
 
   <main>
     <div class="hero" id="overview">
       <h1>LiteGate 插件开发指南</h1>
-      <p class="lead">LiteGate 采用 <strong>编译期注册表（compile-time registry）</strong>插件模型：插件就是一个普通 Go 包，在 <code>init()</code> 里向公共契约包注册自己；你写自己的 <code>main</code>，空导入插件包并调 <code>litegate.Run()</code>，<code>go build</code> 即得带你插件的网关二进制。<strong>不用 fork、不用改核心代码、不用动态 .so</strong>——插件住在你自己的仓库里。本指南带你从零写出 Action / Middleware / LoadBalancer 以及 IDS 身份治理插件。</p>
+      <p class="lead">LiteGate 采用 <strong>编译期注册表（compile-time registry）</strong>插件模型：插件就是一个普通 Go 包，在 <code>init()</code> 里向公共契约包注册自己；你写自己的 <code>main</code>，空导入插件包并调 <code>litegate.Run()</code>，<code>go build</code> 即得带你插件的网关二进制。<strong>不用 fork、不用改核心代码、不用动态 .so</strong>——插件住在你自己的仓库里。本指南带你从零写出 Action / Middleware / LoadBalancer、DNS Provider（证书 + DDNS）以及 IDS 身份治理插件。</p>
       <div class="badges">
         <span class="badge">编译期注册表</span>
         <span class="badge green">零核心改动</span>
         <span class="badge amber">纯 Go，无 RPC / WASM 开销</span>
-        <span class="badge">5 个接缝</span>
+        <span class="badge">6 个接缝</span>
       </div>
 
       <div class="callout" style="margin-top:20px">
@@ -148,8 +149,8 @@ td code { font-size: 12px; }
     </section>
 
     <section id="seams">
-      <h2><span class="num">2</span>五个可扩展接缝</h2>
-      <p>全部定义在公共包 <code>github.com/jamesleeon/LiteGate/pkg/plugin</code>。前三类是通用插件，后两类（IDS）是身份治理专用。</p>
+      <h2><span class="num">2</span>六个可扩展接缝</h2>
+      <p>全部定义在公共包 <code>github.com/jamesleeon/LiteGate/pkg/plugin</code>。前三类是通用插件，中间两类（IDS）是身份治理专用，最后一类（DNS Provider）接管证书签发与 DDNS。</p>
       <table>
         <thead><tr><th>类型</th><th>用途</th><th>注册函数</th><th>必选接口</th><th>配置入口</th></tr></thead>
         <tbody>
@@ -158,6 +159,7 @@ td code { font-size: 12px; }
           <tr><td><strong>LoadBalancer</strong></td><td>自定义上游选择策略</td><td><code>RegisterLoadBalancer</code></td><td><code>Next</code></td><td><code>action.lb_policy</code></td></tr>
           <tr><td><strong>IDS Provider</strong></td><td>进程内回源校验/获取凭证与分流数据</td><td><code>RegisterProvider</code></td><td><code>GetCredentials</code></td><td><code>ids.ids_provider</code></td></tr>
           <tr><td><strong>IDS Issuer / Mode</strong></td><td>签发会话 / 自定义鉴权模式生命周期</td><td><code>RegisterSessionIssuer</code> / <code>RegisterIDSModeProcessor</code></td><td><code>Authenticate</code> / <code>IDSModeProcessor</code></td><td><code>ids.ids_issuer</code> / <code>ids.mode</code></td></tr>
+          <tr><td><strong>DNS Provider</strong></td><td>ACME 证书 DNS-01 质询 + DDNS 动态解析同步</td><td><code>RegisterDNSProvider</code></td><td><code>CertDNSProvider</code> / <code>DDNSProvider</code></td><td><code>auto_cert.dns_providers[].type</code></td></tr>
         </tbody>
       </table>
       <p>所有注册函数都返回 <code>error</code>：空名、nil 工厂、重名、或与<strong>内置类型冲突</strong>都会被拒绝（如 <code>RegisterHandler("proxy", …)</code> 必然失败）。</p>
@@ -368,14 +370,22 @@ go build -o litegate .
       <div class="callout"><span class="t">三个可插拔接缝（读 / 写 / 控制）</span><p><strong>凭证 Provider</strong>（读，校验/获取）· <strong>会话 Issuer</strong>（写，签发）· <strong>模式处理器</strong>（控制，拦截生命周期）。前两者各自独立选择、各自默认内置 <code>"http"</code>、按路由生效。IDS 本身的使用见 <a href="ids_development_guide.html" class="inline">IDS 开发指南</a>。</p></div>
 
       <h3 id="ids-provider">凭证 Provider（读 / 校验）</h3>
-      <p>实现 <code>CredentialProvider</code>，自行决定数据来源（本地规则 / DB / Redis / 甚至自己发 HTTP），返回 <code>*plugin.CredentialResponse</code>。</p>
+      <p>实现 <code>CredentialProvider</code>，自行决定数据来源（本地规则 / DB / Redis / 甚至自己发 HTTP），返回 <code>*plugin.CredentialResponse</code>。在 <code>openapi</code> / <code>verify</code> 模式下，<strong><code>Auth</code> 返回的是网关做本地验签所需的「密钥 + 签名方法 + 算法」</strong>，而不是身份字段——网关据此在进程内对请求做 HMAC/MD5 验签，密钥永不下发到下游。</p>
       <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">func</span> (p *myProvider) GetCredentials(ctx context.Context, req *plugin.CredentialRequestContext) (*plugin.CredentialResponse, <span class="kw">error</span>) {
     <span class="kw">if</span> req.Token == <span class="str">""</span> {
         <span class="cm">// 查无此凭证 → 负缓存（核心短期缓存，挡住重复打穿）</span>
         <span class="kw">return</span> &plugin.CredentialResponse{NotFound: <span class="kw">true</span>}, <span class="kw">nil</span>
     }
+    <span class="cm">// 按 req.AppID 取出该应用的验签密钥（来自你的 DB / 配置 / Redis）</span>
+    appSecret := p.lookupSecret(req.AppID)
     <span class="kw">return</span> &plugin.CredentialResponse{
-        Auth: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"app_id"</span>: req.AppID, <span class="str">"ttl"</span>: <span class="str">"300"</span>}, <span class="cm">// ttl 控制缓存秒数</span>
+        <span class="cm">// Auth = 本地验签凭据：密钥 + 方法 + 算法（openapi/verify 模式核心据此验签）</span>
+        Auth: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{
+            <span class="str">"secret"</span>:    appSecret,  <span class="cm">// 验签密钥（也认 "secret_key" / "key"）</span>
+            <span class="str">"type"</span>:      <span class="str">"hmac"</span>,     <span class="cm">// 签名方法；留空回退 config.sign_method</span>
+            <span class="str">"algorithm"</span>: <span class="str">"sha256"</span>,   <span class="cm">// 签名算法</span>
+            <span class="str">"ttl"</span>:       <span class="str">"300"</span>,      <span class="cm">// 本条凭证缓存秒数</span>
+        },
         Route: plugin.RouteNode{
             Selector: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"tenant"</span>: <span class="str">"corp_abc"</span>}, <span class="cm">// ← 动态路由</span>
             Meta:     <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"gray"</span>: <span class="str">"true"</span>},
@@ -389,6 +399,7 @@ go build -o litegate .
         <span class="kw">return</span> &myProvider{deps: deps}, <span class="kw">nil</span>
     })
 }</code></pre></div>
+      <div class="callout"><span class="t">Auth 字段的真正用途</span><p>在 <code>openapi</code> / <code>verify</code> 模式下，<code>Auth</code> 返回的是网关做<strong>本地签名校验</strong>所需的凭据，而非身份本身：<code>secret</code>（验签密钥，核心依次回退认 <code>secret_key</code> / <code>key</code>）、<code>type</code>（签名方法，如 <code>hmac</code> / <code>md5</code>，留空回退 <code>config.sign_method</code>）、<code>algorithm</code>（算法，如 <code>sha256</code>）。<code>ttl</code>（秒）控制本条凭证缓存时长。网关据此对请求做验签，<strong>密钥只在网关内使用、永不注入下游</strong>；要传给下游的身份信息请放 <code>Head</code>。</p></div>
       <p>配置（按路由选）：路由 <code>ids.ids_provider: "myids"</code>，留空 = 默认 <code>http</code>。<strong>不同路由可以用不同 provider。</strong></p>
 
       <h3 id="ids-issuer">会话 Issuer（写 / 签发）</h3>
@@ -432,8 +443,91 @@ go build -o litegate .
       <div class="callout"><span class="t">为什么这套很干净</span><p><code>CredentialResponse</code> / <code>CredentialRequestContext</code> 是<strong>纯数据 + stdlib <code>http.Request</code></strong>，不引用任何内部类型——所以内置代码直接采用了这套公共类型，内置 <code>"http"</code> 回源也注册进<strong>同一张公共注册表</strong>。第三方插件与内置回源走完全相同的契约与分发路径。</p></div>
     </section>
 
+    <section id="dns">
+      <h2><span class="num">8</span>DNS Provider 插件（证书 DNS-01 + DDNS）</h2>
+      <p>接管两件事：<strong>ACME 证书签发的 DNS-01 质询</strong>（在 <code>_acme-challenge</code> 上增删 TXT 记录）与 <strong>动态 DNS（DDNS）同步</strong>（把本机公网 IP 写到域名的 A/AAAA 记录）。用于在内置服务商（阿里云 / Cloudflare / 腾讯云 / 华为云）之外接入任意 DNS。</p>
+      <div class="callout"><span class="t">一个名字、两种能力（按需各自实现）</span><p>都建立在 marker 接口 <code>DNSProvider</code>（只有 <code>GetName()</code>）之上：<strong>证书 DNS-01</strong> → 实现 <code>CertDNSProvider</code>（<code>AddTXTRecord</code> / <code>DeleteTXTRecord</code>）；<strong>DDNS 同步</strong> → 实现 <code>DDNSProvider</code>（<code>Sync</code>）。只做证书就只实现前者，只做 DDNS 就只实现后者，两个都要就都实现。核心在用到时按能力做断言——缺哪个能力就用哪个能力时报明确 error，而内置服务商与第三方插件走<strong>同一张公共注册表与同一套断言路径</strong>。</p></div>
+
+      <h3>接口契约（pkg/plugin/dns.go）</h3>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="cm">// marker：所有 DNS 插件的基接口</span>
+<span class="kw">type</span> DNSProvider <span class="kw">interface</span> { GetName() <span class="kw">string</span> }
+
+<span class="cm">// 能力一：ACME DNS-01 质询（证书签发/续期）</span>
+<span class="kw">type</span> CertDNSProvider <span class="kw">interface</span> {
+    DNSProvider
+    AddTXTRecord(ctx context.Context, domain, token, keyAuth <span class="kw">string</span>) <span class="kw">error</span>
+    DeleteTXTRecord(ctx context.Context, domain, token, keyAuth <span class="kw">string</span>) <span class="kw">error</span>
+}
+
+<span class="cm">// 能力二：动态 DNS（A/AAAA 同步）</span>
+<span class="kw">type</span> DDNSProvider <span class="kw">interface</span> {
+    DNSProvider
+    Sync(ctx context.Context, domain <span class="kw">string</span>, ip <span class="kw">string</span>) <span class="kw">error</span>
+}
+
+<span class="cm">// 可选接口（实现才生效）：自定义传播等待 / 超时 / 记录同步路由</span>
+<span class="kw">type</span> DNSPropagationChecker <span class="kw">interface</span> { WaitForPropagation(ctx context.Context, domain, value <span class="kw">string</span>) <span class="kw">error</span> }
+<span class="kw">type</span> DNSOptionalTimeout   <span class="kw">interface</span> { GetTimeout() (totalTime, checkInterval time.Duration) }
+<span class="kw">type</span> DNSSyncRecordRouter  <span class="kw">interface</span> { SyncRecord(ctx context.Context, domain, recordType, value <span class="kw">string</span>) <span class="kw">error</span> }</code></pre></div>
+
+      <h3>① 实现 + 注册</h3>
+      <p>下面是<strong>同时实现证书 DNS-01 与 DDNS</strong> 的最小骨架；只需要一种能力时删掉另一组方法即可。</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">const</span> providerName = <span class="str">"mydns"</span> <span class="cm">// 写在 YAML dns_providers[].type，不能与内置名重名</span>
+
+<span class="kw">type</span> provider <span class="kw">struct</span>{ apiKey, apiSecret <span class="kw">string</span> }
+
+<span class="kw">func</span> (p *provider) GetName() <span class="kw">string</span> { <span class="kw">return</span> providerName }
+
+<span class="cm">// 能力一：证书 DNS-01（在 _acme-challenge.&lt;domain&gt; 上写值为 keyAuth 的 TXT）</span>
+<span class="kw">func</span> (p *provider) AddTXTRecord(ctx context.Context, domain, token, keyAuth <span class="kw">string</span>) <span class="kw">error</span> {
+    <span class="kw">return</span> p.upsertTXT(ctx, <span class="str">"_acme-challenge."</span>+domain, keyAuth)
+}
+<span class="kw">func</span> (p *provider) DeleteTXTRecord(ctx context.Context, domain, token, keyAuth <span class="kw">string</span>) <span class="kw">error</span> {
+    <span class="kw">return</span> p.removeTXT(ctx, <span class="str">"_acme-challenge."</span>+domain, keyAuth)
+}
+
+<span class="cm">// 能力二：DDNS（记录类型由 ip 是 IPv4/IPv6 决定）</span>
+<span class="kw">func</span> (p *provider) Sync(ctx context.Context, domain, ip <span class="kw">string</span>) <span class="kw">error</span> {
+    <span class="kw">return</span> p.upsertAddr(ctx, domain, ip)
+}
+
+<span class="kw">func</span> init() {
+    <span class="cm">// 注意：DNS 工厂只收 config map[string]string，不收 *plugin.Dependencies</span>
+    err := plugin.RegisterDNSProvider(providerName, <span class="kw">func</span>(config <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>) (plugin.DNSProvider, <span class="kw">error</span>) {
+        <span class="kw">if</span> config[<span class="str">"api_key"</span>] == <span class="str">""</span> {
+            <span class="kw">return</span> <span class="kw">nil</span>, fmt.Errorf(<span class="str">"%s: api_key required"</span>, providerName)
+        }
+        <span class="kw">return</span> &provider{apiKey: config[<span class="str">"api_key"</span>], apiSecret: config[<span class="str">"api_secret"</span>]}, <span class="kw">nil</span>
+    })
+    <span class="kw">if</span> err != <span class="kw">nil</span> {
+        log.Error().Err(err).Str(<span class="str">"plugin"</span>, providerName).Msg(<span class="str">"register DNS provider failed"</span>)
+    }
+}</code></pre></div>
+
+      <h3>② 配置：在 auto_cert.dns_providers 里引用</h3>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>auto_cert:
+  enabled: true
+  email: admin@example.com
+  dns_providers:
+    - name: my-cloud              <span class="cm"># 逻辑名（被 domains 路由引用，可与 type 不同）</span>
+      type: mydns                 <span class="cm"># ← 你注册的插件名</span>
+      enabled: true
+      domains: [<span class="str">"*.example.com"</span>]  <span class="cm"># 该 provider 负责签发证书的域名（DNS-01）</span>
+      config:                     <span class="cm"># ← 整个 map 原样传给工厂的 config 参数（值均为 string）</span>
+        api_key: <span class="str">"AKxxxx"</span>
+        api_secret: <span class="str">"yyyy"</span>
+        propagation_wait: <span class="str">"60s"</span>   <span class="cm"># 可选：DNS-01 传播等待</span>
+      ddns:                       <span class="cm"># 可选：开启 DDNS 同步</span>
+        enabled: true
+        sync_a: true
+        domains: [<span class="str">"home.example.com"</span>]</code></pre></div>
+
+      <div class="callout warn"><span class="t">几个关键约束</span><p>① <strong>工厂不收 <code>Dependencies</code></strong>——没有 Logger / Discovery 注入，只拿 <code>config map[string]string</code>（值都是 string，时长写 <code>"60s"</code> 自己解析）；② <strong>内置名不可覆盖</strong>：<code>aliyun</code> / <code>cloudflare</code> / <code>tencent</code> / <code>tencentcloud</code> / <code>huawei</code> / <code>huaweicloud</code>；③ <strong>通配符证书</strong>（<code>*.example.com</code>）必须用 DNS Provider，HTTP-01 不支持；④ 必须尊重 <code>ctx</code> 取消（关机/超时），别用 <code>context.Background()</code>。</p></div>
+      <div class="callout ok"><span class="t">两条写记录路径</span><p>DDNS 周期任务（<code>dns_providers[].ddns</code>）直接调 <code>DDNSProvider.Sync(ctx, domain, ip)</code>，记录类型由 IP 版本决定；而证书管理器的记录同步会<strong>优先</strong> <code>DNSSyncRecordRouter.SyncRecord</code>（拿到现成 <code>recordType</code>）再回退 <code>Sync</code>。需要精细控制记录类型时实现 <code>DNSSyncRecordRouter</code>。</p></div>
+    </section>
+
     <section id="build">
-      <h2><span class="num">8</span>编译与分发</h2>
+      <h2><span class="num">9</span>编译与分发</h2>
 
       <h3>方式 1：litegate build --with（内置一键构建，推荐）</h3>
       <p>LiteGate 内置一键构建命令行工具，自动生成 <code>main.go</code> + <code>go.mod</code>、拉取依赖、pin 版本、编译。</p>
@@ -454,9 +548,9 @@ litegate build --with ./greeting --replace=../LiteGate -o my-litegate
     </section>
 
     <section id="lifecycle">
-      <h2><span class="num">9</span>生命周期全景</h2>
+      <h2><span class="num">10</span>生命周期全景</h2>
       <div class="code-wrap"><span class="lang">text</span><pre><code>程序启动
-  └─ 各插件包 init() → Register{Handler,Middleware,LoadBalancer,Provider,...}
+  └─ 各插件包 init() → Register{Handler,Middleware,LoadBalancer,Provider,DNSProvider,...}
 配置加载 / 热重载
   └─ loader 逐路由校验 → Validator.Validate(cfg)        [仅 Action；fail-closed：错则起不来]
 首个请求命中该类型（懒加载，singleflight 去重）
@@ -469,7 +563,7 @@ litegate build --with ./greeting --replace=../LiteGate -o my-litegate
     </section>
 
     <section id="pitfalls">
-      <h2><span class="num">10</span>踩坑清单</h2>
+      <h2><span class="num">11</span>踩坑清单</h2>
       <ol>
         <li><strong>Handler / LB 是跨路由的类型级单例。</strong>所有用该类型的路由共享一个实例并发调用。<strong>每路由不同的配置必须在 <code>Execute</code> 里从 <code>cfg</code> 现读，不能缓存到结构体字段</strong>，否则路由间互相覆盖。</li>
         <li><strong>不能覆盖内置类型。</strong><code>RegisterHandler("proxy", …)</code> / <code>RegisterMiddleware("cors", …)</code> / <code>RegisterLoadBalancer("round_robin", …)</code> 都返回 error。取个不冲突的名字。（IDS 内置 <code>"http"</code> 要覆盖须用 <code>ReplaceProvider</code> / <code>ReplaceSessionIssuer</code>。）</li>
@@ -484,7 +578,7 @@ litegate build --with ./greeting --replace=../LiteGate -o my-litegate
     </section>
 
     <section id="test">
-      <h2><span class="num">11</span>测试你的插件</h2>
+      <h2><span class="num">12</span>测试你的插件</h2>
       <p>你自己的仓库里可直接对 <code>pkg/plugin</code> 的接口做单元测试（构造 <code>plugin.Context</code> 与一个实现 <code>ActionConfig</code> 的桩），无需启动整个网关。</p>
       <ol class="steps">
         <li><strong>单元测试</strong>：构造 <code>*plugin.Context</code>（用 <code>httptest.NewRecorder()</code> + <code>httptest.NewRequest()</code>）与一个 <code>ActionConfig</code> 桩，直接调 <code>Execute</code> 断言响应。</li>
@@ -495,7 +589,7 @@ litegate build --with ./greeting --replace=../LiteGate -o my-litegate
     </section>
 
     <section id="faq">
-      <h2><span class="num">12</span>常见问题</h2>
+      <h2><span class="num">13</span>常见问题</h2>
       <h3>能动态加载 .so 插件吗？</h3>
       <p>不能。LiteGate 用编译期注册表，插件必须编译进二进制。这是为零运行时开销与跨平台稳定性（Go <code>plugin</code> 在 Windows 不可用）做的有意取舍。</p>
 
@@ -513,7 +607,7 @@ litegate build --with ./greeting --replace=../LiteGate -o my-litegate
     </section>
 
     <div class="footer">
-      LiteGate 插件开发指南 · 契约基于公共包 <code>pkg/plugin</code>（register / context / config / middleware / loadbalancer / ids）与入口 <code>pkg/litegate</code>，与源码逐项对齐 · 设计原理详见仓库 <code>docs/zh-cn/plugin-architecture.md</code>。
+      LiteGate 插件开发指南 · 契约基于公共包 <code>pkg/plugin</code>（register / context / config / middleware / loadbalancer / ids / dns）与入口 <code>pkg/litegate</code>，与源码逐项对齐 · 设计原理详见仓库 <code>docs/zh-cn/plugin-architecture.md</code>。
     </div>
   </main>
 </div>

@@ -102,7 +102,7 @@ td code { font-size: 12px; }
     <a href="index.html" style="font-weight:600;color:var(--accent);">← Docs home</a>
     <a href="#overview">Overview · Why extensible</a>
     <a href="#model">1. Compile-time registry</a>
-    <a href="#seams">2. Five extension seams</a>
+    <a href="#seams">2. Six extension seams</a>
     <a href="#quickstart">3. Quick start (Action)</a>
     <a href="#contract">4. Public contract</a>
     <a href="#middleware">5. Middleware plugin</a>
@@ -111,23 +111,24 @@ td code { font-size: 12px; }
     <a href="#ids-provider" class="sub">Credential Provider (read)</a>
     <a href="#ids-issuer" class="sub">Session Issuer (write)</a>
     <a href="#ids-mode" class="sub">Mode Processor (control)</a>
-    <a href="#build">8. Build &amp; distribute</a>
-    <a href="#lifecycle">9. Lifecycle</a>
-    <a href="#pitfalls">10. Pitfalls</a>
-    <a href="#test">11. Testing</a>
-    <a href="#faq">12. FAQ</a>
+    <a href="#dns">8. DNS Provider (certs + DDNS)</a>
+    <a href="#build">9. Build &amp; distribute</a>
+    <a href="#lifecycle">10. Lifecycle</a>
+    <a href="#pitfalls">11. Pitfalls</a>
+    <a href="#test">12. Testing</a>
+    <a href="#faq">13. FAQ</a>
     <a href="../zh-cn/litegate_plugin_development.html">中文版</a>
   </nav>
 
   <main>
     <div class="hero" id="overview">
       <h1>LiteGate Plugin Development Guide</h1>
-      <p class="lead">LiteGate uses a <strong>compile-time registry</strong> plugin model: a plugin is just a plain Go package that registers itself with the public contract package in <code>init()</code>. You write your own <code>main</code>, blank-import the plugin package, call <code>litegate.Run()</code>, and <code>go build</code> produces a gateway binary with your plugin baked in. <strong>No fork, no core changes, no dynamic .so</strong> — the plugin lives in your own repo. This guide walks you through Action / Middleware / LoadBalancer and IDS identity-governance plugins from scratch.</p>
+      <p class="lead">LiteGate uses a <strong>compile-time registry</strong> plugin model: a plugin is just a plain Go package that registers itself with the public contract package in <code>init()</code>. You write your own <code>main</code>, blank-import the plugin package, call <code>litegate.Run()</code>, and <code>go build</code> produces a gateway binary with your plugin baked in. <strong>No fork, no core changes, no dynamic .so</strong> — the plugin lives in your own repo. This guide walks you through Action / Middleware / LoadBalancer, DNS Provider (certificates + DDNS), and IDS identity-governance plugins from scratch.</p>
       <div class="badges">
         <span class="badge">Compile-time registry</span>
         <span class="badge green">Zero core changes</span>
         <span class="badge amber">Pure Go — no RPC / WASM cost</span>
-        <span class="badge">5 seams</span>
+        <span class="badge">6 seams</span>
       </div>
 
       <div class="callout" style="margin-top:20px">
@@ -148,8 +149,8 @@ td code { font-size: 12px; }
     </section>
 
     <section id="seams">
-      <h2><span class="num">2</span>Five extension seams</h2>
-      <p>All defined in the public package <code>github.com/jamesleeon/LiteGate/pkg/plugin</code>. The first three are general plugins; the last two (IDS) are identity-governance specific.</p>
+      <h2><span class="num">2</span>Six extension seams</h2>
+      <p>All defined in the public package <code>github.com/jamesleeon/LiteGate/pkg/plugin</code>. The first three are general plugins; the middle two (IDS) are identity-governance specific; the last one (DNS Provider) handles certificate issuance and DDNS.</p>
       <table>
         <thead><tr><th>Type</th><th>Purpose</th><th>Register fn</th><th>Required interface</th><th>Config entry</th></tr></thead>
         <tbody>
@@ -158,6 +159,7 @@ td code { font-size: 12px; }
           <tr><td><strong>LoadBalancer</strong></td><td>Custom upstream selection strategy</td><td><code>RegisterLoadBalancer</code></td><td><code>Next</code></td><td><code>action.lb_policy</code></td></tr>
           <tr><td><strong>IDS Provider</strong></td><td>In-process origin to verify/fetch credentials and routing data</td><td><code>RegisterProvider</code></td><td><code>GetCredentials</code></td><td><code>ids.ids_provider</code></td></tr>
           <tr><td><strong>IDS Issuer / Mode</strong></td><td>Issue sessions / custom auth-mode lifecycle</td><td><code>RegisterSessionIssuer</code> / <code>RegisterIDSModeProcessor</code></td><td><code>Authenticate</code> / <code>IDSModeProcessor</code></td><td><code>ids.ids_issuer</code> / <code>ids.mode</code></td></tr>
+          <tr><td><strong>DNS Provider</strong></td><td>ACME certificate DNS-01 challenge + DDNS record sync</td><td><code>RegisterDNSProvider</code></td><td><code>CertDNSProvider</code> / <code>DDNSProvider</code></td><td><code>auto_cert.dns_providers[].type</code></td></tr>
         </tbody>
       </table>
       <p>Every register function returns <code>error</code>: empty name, nil factory, duplicate, or collision with a <strong>built-in type</strong> is rejected (e.g. <code>RegisterHandler("proxy", …)</code> always fails).</p>
@@ -368,14 +370,22 @@ go build -o litegate .
       <div class="callout"><span class="t">Three pluggable seams (read / write / control)</span><p><strong>Credential Provider</strong> (read — verify/fetch) · <strong>Session Issuer</strong> (write — issue) · <strong>Mode Processor</strong> (control — intercept lifecycle). The first two are selected independently, each default to built-in <code>"http"</code>, and apply per route. For using IDS itself, see the <a href="ids_development_guide.html" class="inline">IDS Development Guide</a>.</p></div>
 
       <h3 id="ids-provider">Credential Provider (read / verify)</h3>
-      <p>Implement <code>CredentialProvider</code>, choose your own data source (local rules / DB / Redis / even your own HTTP), return <code>*plugin.CredentialResponse</code>.</p>
+      <p>Implement <code>CredentialProvider</code>, choose your own data source (local rules / DB / Redis / even your own HTTP), return <code>*plugin.CredentialResponse</code>. In <code>openapi</code> / <code>verify</code> mode, <strong><code>Auth</code> returns the "secret + signing method + algorithm" the gateway needs for local signature verification</strong> — not identity fields. The gateway runs HMAC/MD5 verification in-process; the secret is never forwarded downstream.</p>
       <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">func</span> (p *myProvider) GetCredentials(ctx context.Context, req *plugin.CredentialRequestContext) (*plugin.CredentialResponse, <span class="kw">error</span>) {
     <span class="kw">if</span> req.Token == <span class="str">""</span> {
         <span class="cm">// no such credential → negative cache (core caches briefly, blocks repeated misses)</span>
         <span class="kw">return</span> &plugin.CredentialResponse{NotFound: <span class="kw">true</span>}, <span class="kw">nil</span>
     }
+    <span class="cm">// look up this app's signing secret (from your DB / config / Redis)</span>
+    appSecret := p.lookupSecret(req.AppID)
     <span class="kw">return</span> &plugin.CredentialResponse{
-        Auth: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"app_id"</span>: req.AppID, <span class="str">"ttl"</span>: <span class="str">"300"</span>}, <span class="cm">// ttl controls cache seconds</span>
+        <span class="cm">// Auth = local verification credentials: secret + method + algorithm</span>
+        Auth: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{
+            <span class="str">"secret"</span>:    appSecret,  <span class="cm">// signing secret (also accepts "secret_key" / "key")</span>
+            <span class="str">"type"</span>:      <span class="str">"hmac"</span>,     <span class="cm">// signing method; falls back to config.sign_method if empty</span>
+            <span class="str">"algorithm"</span>: <span class="str">"sha256"</span>,   <span class="cm">// signing algorithm</span>
+            <span class="str">"ttl"</span>:       <span class="str">"300"</span>,      <span class="cm">// cache seconds for this credential</span>
+        },
         Route: plugin.RouteNode{
             Selector: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"tenant"</span>: <span class="str">"corp_abc"</span>}, <span class="cm">// ← dynamic routing</span>
             Meta:     <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"gray"</span>: <span class="str">"true"</span>},
@@ -389,6 +399,7 @@ go build -o litegate .
         <span class="kw">return</span> &myProvider{deps: deps}, <span class="kw">nil</span>
     })
 }</code></pre></div>
+      <div class="callout"><span class="t">What <code>Auth</code> is really for</span><p>In <code>openapi</code> / <code>verify</code> mode, <code>Auth</code> carries the credentials the gateway needs for <strong>local signature verification</strong>, not identity itself: <code>secret</code> (the signing secret; the core falls back to <code>secret_key</code> then <code>key</code>), <code>type</code> (signing method such as <code>hmac</code> / <code>md5</code>, falling back to <code>config.sign_method</code> if empty), and <code>algorithm</code> (e.g. <code>sha256</code>). <code>ttl</code> (seconds) controls how long this credential is cached. The gateway verifies the request signature with these; the <strong>secret is used only inside the gateway and never injected downstream</strong> — put identity you want forwarded into <code>Head</code>.</p></div>
       <p>Config (per route): set <code>ids.ids_provider: "myids"</code>; leave empty = default <code>http</code>. <strong>Different routes can use different providers.</strong></p>
 
       <h3 id="ids-issuer">Session Issuer (write / issue)</h3>
@@ -432,8 +443,91 @@ go build -o litegate .
       <div class="callout"><span class="t">Why this is clean</span><p><code>CredentialResponse</code> / <code>CredentialRequestContext</code> are <strong>pure data + stdlib <code>http.Request</code></strong>, referencing no internal types — so the internal code adopted these public types directly, and the built-in <code>"http"</code> origin registers into <strong>the same public registry</strong>. Third-party plugins and the built-in origin share the exact same contract and dispatch path.</p></div>
     </section>
 
+    <section id="dns">
+      <h2><span class="num">8</span>DNS Provider plugin (certificate DNS-01 + DDNS)</h2>
+      <p>Takes over two jobs: the <strong>DNS-01 challenge for ACME certificate issuance</strong> (adding/removing TXT records on <code>_acme-challenge</code>) and <strong>Dynamic DNS (DDNS) sync</strong> (writing the host's public IP to the domain's A/AAAA records). Use it to integrate any DNS service beyond the built-ins (Alibaba Cloud / Cloudflare / Tencent Cloud / Huawei Cloud).</p>
+      <div class="callout"><span class="t">One name, two capabilities (implement as needed)</span><p>Both build on the marker interface <code>DNSProvider</code> (just <code>GetName()</code>): <strong>certificate DNS-01</strong> → implement <code>CertDNSProvider</code> (<code>AddTXTRecord</code> / <code>DeleteTXTRecord</code>); <strong>DDNS sync</strong> → implement <code>DDNSProvider</code> (<code>Sync</code>). Cert-only plugins implement just the former, DDNS-only just the latter, both if you need both. The core asserts the capability at the point of use — using a capability the provider lacks returns a clear error — and built-in providers travel <strong>the same public registry and assertion path</strong> as third-party plugins.</p></div>
+
+      <h3>Interface contract (pkg/plugin/dns.go)</h3>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="cm">// marker: base interface for all DNS plugins</span>
+<span class="kw">type</span> DNSProvider <span class="kw">interface</span> { GetName() <span class="kw">string</span> }
+
+<span class="cm">// Capability 1: ACME DNS-01 challenge (certificate issuance/renewal)</span>
+<span class="kw">type</span> CertDNSProvider <span class="kw">interface</span> {
+    DNSProvider
+    AddTXTRecord(ctx context.Context, domain, token, keyAuth <span class="kw">string</span>) <span class="kw">error</span>
+    DeleteTXTRecord(ctx context.Context, domain, token, keyAuth <span class="kw">string</span>) <span class="kw">error</span>
+}
+
+<span class="cm">// Capability 2: Dynamic DNS (A/AAAA sync)</span>
+<span class="kw">type</span> DDNSProvider <span class="kw">interface</span> {
+    DNSProvider
+    Sync(ctx context.Context, domain <span class="kw">string</span>, ip <span class="kw">string</span>) <span class="kw">error</span>
+}
+
+<span class="cm">// Optional interfaces (effective only when implemented): custom propagation wait / timeout / record routing</span>
+<span class="kw">type</span> DNSPropagationChecker <span class="kw">interface</span> { WaitForPropagation(ctx context.Context, domain, value <span class="kw">string</span>) <span class="kw">error</span> }
+<span class="kw">type</span> DNSOptionalTimeout   <span class="kw">interface</span> { GetTimeout() (totalTime, checkInterval time.Duration) }
+<span class="kw">type</span> DNSSyncRecordRouter  <span class="kw">interface</span> { SyncRecord(ctx context.Context, domain, recordType, value <span class="kw">string</span>) <span class="kw">error</span> }</code></pre></div>
+
+      <h3>① Implement + register</h3>
+      <p>Below is a minimal skeleton implementing <strong>both certificate DNS-01 and DDNS</strong>; drop the other method group when you only need one.</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">const</span> providerName = <span class="str">"mydns"</span> <span class="cm">// goes in YAML dns_providers[].type; must not clash with a built-in name</span>
+
+<span class="kw">type</span> provider <span class="kw">struct</span>{ apiKey, apiSecret <span class="kw">string</span> }
+
+<span class="kw">func</span> (p *provider) GetName() <span class="kw">string</span> { <span class="kw">return</span> providerName }
+
+<span class="cm">// Capability 1: certificate DNS-01 (write a TXT with value keyAuth on _acme-challenge.&lt;domain&gt;)</span>
+<span class="kw">func</span> (p *provider) AddTXTRecord(ctx context.Context, domain, token, keyAuth <span class="kw">string</span>) <span class="kw">error</span> {
+    <span class="kw">return</span> p.upsertTXT(ctx, <span class="str">"_acme-challenge."</span>+domain, keyAuth)
+}
+<span class="kw">func</span> (p *provider) DeleteTXTRecord(ctx context.Context, domain, token, keyAuth <span class="kw">string</span>) <span class="kw">error</span> {
+    <span class="kw">return</span> p.removeTXT(ctx, <span class="str">"_acme-challenge."</span>+domain, keyAuth)
+}
+
+<span class="cm">// Capability 2: DDNS (record type determined by whether ip is IPv4/IPv6)</span>
+<span class="kw">func</span> (p *provider) Sync(ctx context.Context, domain, ip <span class="kw">string</span>) <span class="kw">error</span> {
+    <span class="kw">return</span> p.upsertAddr(ctx, domain, ip)
+}
+
+<span class="kw">func</span> init() {
+    <span class="cm">// Note: the DNS factory only takes config map[string]string, not *plugin.Dependencies</span>
+    err := plugin.RegisterDNSProvider(providerName, <span class="kw">func</span>(config <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>) (plugin.DNSProvider, <span class="kw">error</span>) {
+        <span class="kw">if</span> config[<span class="str">"api_key"</span>] == <span class="str">""</span> {
+            <span class="kw">return</span> <span class="kw">nil</span>, fmt.Errorf(<span class="str">"%s: api_key required"</span>, providerName)
+        }
+        <span class="kw">return</span> &provider{apiKey: config[<span class="str">"api_key"</span>], apiSecret: config[<span class="str">"api_secret"</span>]}, <span class="kw">nil</span>
+    })
+    <span class="kw">if</span> err != <span class="kw">nil</span> {
+        log.Error().Err(err).Str(<span class="str">"plugin"</span>, providerName).Msg(<span class="str">"register DNS provider failed"</span>)
+    }
+}</code></pre></div>
+
+      <h3>② Configure: reference it under auto_cert.dns_providers</h3>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>auto_cert:
+  enabled: true
+  email: admin@example.com
+  dns_providers:
+    - name: my-cloud              <span class="cm"># logical name (referenced by domain routing; may differ from type)</span>
+      type: mydns                 <span class="cm"># ← your registered plugin name</span>
+      enabled: true
+      domains: [<span class="str">"*.example.com"</span>]  <span class="cm"># domains this provider issues certificates for (DNS-01)</span>
+      config:                     <span class="cm"># ← the whole map is passed verbatim to the factory (values are all strings)</span>
+        api_key: <span class="str">"AKxxxx"</span>
+        api_secret: <span class="str">"yyyy"</span>
+        propagation_wait: <span class="str">"60s"</span>   <span class="cm"># optional: DNS-01 propagation wait</span>
+      ddns:                       <span class="cm"># optional: enable DDNS sync</span>
+        enabled: true
+        sync_a: true
+        domains: [<span class="str">"home.example.com"</span>]</code></pre></div>
+
+      <div class="callout warn"><span class="t">Key constraints</span><p>① <strong>The factory gets no <code>Dependencies</code></strong> — no Logger / Discovery injection, only <code>config map[string]string</code> (all values are strings; write durations as <code>"60s"</code> and parse them yourself); ② <strong>built-in names can't be overridden</strong>: <code>aliyun</code> / <code>cloudflare</code> / <code>tencent</code> / <code>tencentcloud</code> / <code>huawei</code> / <code>huaweicloud</code>; ③ <strong>wildcard certificates</strong> (<code>*.example.com</code>) must use a DNS Provider — HTTP-01 can't do them; ④ honor <code>ctx</code> cancellation (shutdown/timeout), don't use <code>context.Background()</code>.</p></div>
+      <div class="callout ok"><span class="t">Two record-writing paths</span><p>The DDNS periodic task (<code>dns_providers[].ddns</code>) calls <code>DDNSProvider.Sync(ctx, domain, ip)</code> directly, with the record type determined by IP version; the cert-manager's record sync <strong>prefers</strong> <code>DNSSyncRecordRouter.SyncRecord</code> (with a ready-made <code>recordType</code>) then falls back to <code>Sync</code>. Implement <code>DNSSyncRecordRouter</code> when you need fine-grained record-type control.</p></div>
+    </section>
+
     <section id="build">
-      <h2><span class="num">8</span>Build &amp; distribute</h2>
+      <h2><span class="num">9</span>Build &amp; distribute</h2>
 
       <h3>Option 1: litegate build --with (built-in one-shot build, recommended)</h3>
       <p>LiteGate ships a one-shot build CLI that generates <code>main.go</code> + <code>go.mod</code>, fetches deps, pins the version, and compiles.</p>
@@ -454,9 +548,9 @@ litegate build --with ./greeting --replace=../LiteGate -o my-litegate
     </section>
 
     <section id="lifecycle">
-      <h2><span class="num">9</span>Lifecycle at a glance</h2>
+      <h2><span class="num">10</span>Lifecycle at a glance</h2>
       <div class="code-wrap"><span class="lang">text</span><pre><code>Program start
-  └─ each plugin's init() → Register{Handler,Middleware,LoadBalancer,Provider,...}
+  └─ each plugin's init() → Register{Handler,Middleware,LoadBalancer,Provider,DNSProvider,...}
 Config load / hot reload
   └─ loader validates per route → Validator.Validate(cfg)  [Action only; fail-closed: bad config = no start]
 First request hits the type (lazy load, singleflight-deduped)
@@ -469,7 +563,7 @@ Shutdown / reload unload
     </section>
 
     <section id="pitfalls">
-      <h2><span class="num">10</span>Pitfalls checklist</h2>
+      <h2><span class="num">11</span>Pitfalls checklist</h2>
       <ol>
         <li><strong>Handler / LB are cross-route, type-level singletons.</strong> All routes using that type share one instance, called concurrently. <strong>Per-route config must be read fresh from <code>cfg</code> inside <code>Execute</code>, never cached on struct fields</strong>, or routes overwrite each other.</li>
         <li><strong>You can't override built-in types.</strong> <code>RegisterHandler("proxy", …)</code> / <code>RegisterMiddleware("cors", …)</code> / <code>RegisterLoadBalancer("round_robin", …)</code> all return errors. Pick a non-clashing name. (To override the built-in IDS <code>"http"</code>, use <code>ReplaceProvider</code> / <code>ReplaceSessionIssuer</code>.)</li>
@@ -484,7 +578,7 @@ Shutdown / reload unload
     </section>
 
     <section id="test">
-      <h2><span class="num">11</span>Testing your plugin</h2>
+      <h2><span class="num">12</span>Testing your plugin</h2>
       <p>In your own repo you can unit-test against the <code>pkg/plugin</code> interfaces directly (construct a <code>plugin.Context</code> and a stub implementing <code>ActionConfig</code>) without booting the whole gateway.</p>
       <ol class="steps">
         <li><strong>Unit test</strong>: build a <code>*plugin.Context</code> (with <code>httptest.NewRecorder()</code> + <code>httptest.NewRequest()</code>) and an <code>ActionConfig</code> stub, call <code>Execute</code>, assert the response.</li>
@@ -495,7 +589,7 @@ Shutdown / reload unload
     </section>
 
     <section id="faq">
-      <h2><span class="num">12</span>FAQ</h2>
+      <h2><span class="num">13</span>FAQ</h2>
       <h3>Can I load .so plugins dynamically?</h3>
       <p>No. LiteGate uses a compile-time registry; plugins must be compiled into the binary. This is a deliberate trade-off for zero runtime overhead and cross-platform stability (Go's <code>plugin</code> is unavailable on Windows).</p>
 
@@ -513,7 +607,7 @@ Shutdown / reload unload
     </section>
 
     <div class="footer">
-      LiteGate Plugin Development Guide · Contract based on the public package <code>pkg/plugin</code> (register / context / config / middleware / loadbalancer / ids) and the <code>pkg/litegate</code> entrypoint, aligned item-by-item with the source · For design rationale see <code>docs/zh-cn/plugin-architecture.md</code> in the repo.
+      LiteGate Plugin Development Guide · Contract based on the public package <code>pkg/plugin</code> (register / context / config / middleware / loadbalancer / ids / dns) and the <code>pkg/litegate</code> entrypoint, aligned item-by-item with the source · For design rationale see <code>docs/zh-cn/plugin-architecture.md</code> in the repo.
     </div>
   </main>
 </div>
