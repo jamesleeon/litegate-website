@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate Plugin Development · Extend the gateway in Go with a compile-time registry — no fork</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 760px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline { color: var(--accent); text-decoration: none; }
+a.inline:hover { text-decoration: underline; }
+
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.cm { color: var(--text3); }
+.kw { color: var(--accent); }
+.str { color: var(--green); }
+
+.callout { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.req { color: var(--red); font-weight: 600; }
+.opt { color: var(--text3); }
+.rec { color: var(--green); font-weight: 600; }
+
+.steps { counter-reset: step; list-style: none; margin-left: 0; }
+.steps li { position: relative; padding-left: 38px; margin-bottom: 14px; counter-increment: step; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+
+@media (max-width: 880px) { .toc { display: none; } main { padding: 28px 20px 60px; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc" id="toc">
+    <div class="brand">LiteGate × Plugins</div>
+    <div class="brand-sub">Plugin Development</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← Docs home</a>
+    <a href="#overview">Overview · Why extensible</a>
+    <a href="#model">1. Compile-time registry</a>
+    <a href="#seams">2. Five extension seams</a>
+    <a href="#quickstart">3. Quick start (Action)</a>
+    <a href="#contract">4. Public contract</a>
+    <a href="#middleware">5. Middleware plugin</a>
+    <a href="#lb">6. LoadBalancer plugin</a>
+    <a href="#ids">7. IDS identity plugins</a>
+    <a href="#ids-provider" class="sub">Credential Provider (read)</a>
+    <a href="#ids-issuer" class="sub">Session Issuer (write)</a>
+    <a href="#ids-mode" class="sub">Mode Processor (control)</a>
+    <a href="#build">8. Build &amp; distribute</a>
+    <a href="#lifecycle">9. Lifecycle</a>
+    <a href="#pitfalls">10. Pitfalls</a>
+    <a href="#test">11. Testing</a>
+    <a href="#faq">12. FAQ</a>
+    <a href="../zh-cn/litegate_plugin_development.html">中文版</a>
+  </nav>
+
+  <main>
+    <div class="hero" id="overview">
+      <h1>LiteGate Plugin Development Guide</h1>
+      <p class="lead">LiteGate uses a <strong>compile-time registry</strong> plugin model: a plugin is just a plain Go package that registers itself with the public contract package in <code>init()</code>. You write your own <code>main</code>, blank-import the plugin package, call <code>litegate.Run()</code>, and <code>go build</code> produces a gateway binary with your plugin baked in. <strong>No fork, no core changes, no dynamic .so</strong> — the plugin lives in your own repo. This guide walks you through Action / Middleware / LoadBalancer and IDS identity-governance plugins from scratch.</p>
+      <div class="badges">
+        <span class="badge">Compile-time registry</span>
+        <span class="badge green">Zero core changes</span>
+        <span class="badge amber">Pure Go — no RPC / WASM cost</span>
+        <span class="badge">5 seams</span>
+      </div>
+
+      <div class="callout" style="margin-top:20px">
+        <span class="t">Why not dynamic loading?</span>
+        <p>LiteGate <strong>deliberately rules out</strong> runtime <code>.so</code> loading (Go's <code>plugin</code> package is unavailable on Windows and brittle on Linux — it requires exact dependency-version parity), and avoids out-of-process go-plugin / gRPC (per-call RPC overhead) and WASM / interpreters (the perf and isolation cost isn't worth it). The payoff is <strong>zero runtime overhead</strong> — plugins and built-ins compile into the same binary and travel the same call path.</p>
+      </div>
+    </div>
+
+    <section id="model">
+      <h2><span class="num">1</span>The compile-time registry model</h2>
+      <p>Early LiteGate dispatched actions and picked load-balancing algorithms with hardcoded <code>switch</code> statements — adding a capability meant editing the core. That is now unified into a registry model: <strong>built-ins and third-party plugins follow exactly the same registration path</strong> — the core mounts its own built-in capabilities through this very registry, so the plugin path and the built-in path stay on par and never diverge.</p>
+      <ul>
+        <li>A new capability = one Go package + one <code>init()</code>, zero core changes.</li>
+        <li>Enterprises keep private plugins in <strong>private repos</strong>, compile custom binaries, never conflict with upstream.</li>
+        <li>Third parties only touch the <strong>public contract layer</strong> <code>pkg/plugin</code> (narrow interfaces / narrow DTOs); internal core types never leak, so the core can evolve freely without breaking your plugin.</li>
+      </ul>
+      <div class="callout ok"><span class="t">Two-layer contract</span><p>Built-in / first-party code uses the <strong>internal contract</strong> (referencing heavy types like <code>loader.Action</code> directly); third-party repos use the <strong>public facade</strong> <code>pkg/plugin</code> (exposing only <code>Context</code> / <code>ActionConfig</code> / <code>SiteConfig</code> / <code>Endpoint</code> / <code>DiscoveryClient</code>). Both are dispatched through <strong>the same registry</strong>; the core bridges internal types to the narrow interfaces via adapters.</p></div>
+    </section>
+
+    <section id="seams">
+      <h2><span class="num">2</span>Five extension seams</h2>
+      <p>All defined in the public package <code>github.com/jamesleeon/LiteGate/pkg/plugin</code>. The first three are general plugins; the last two (IDS) are identity-governance specific.</p>
+      <table>
+        <thead><tr><th>Type</th><th>Purpose</th><th>Register fn</th><th>Required interface</th><th>Config entry</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Action</strong></td><td>Terminate the request, produce a response (proxy, render, auth termination…)</td><td><code>RegisterHandler</code></td><td><code>Execute</code></td><td><code>action.type</code> + inline keys</td></tr>
+          <tr><td><strong>Middleware</strong></td><td>Process on the request chain (rate limit, rewrite, inject…) then call next</td><td><code>RegisterMiddleware</code></td><td><code>Wrap</code> + <code>Stage</code> + <code>Priority</code></td><td><code>config map[string]string</code></td></tr>
+          <tr><td><strong>LoadBalancer</strong></td><td>Custom upstream selection strategy</td><td><code>RegisterLoadBalancer</code></td><td><code>Next</code></td><td><code>action.lb_policy</code></td></tr>
+          <tr><td><strong>IDS Provider</strong></td><td>In-process origin to verify/fetch credentials and routing data</td><td><code>RegisterProvider</code></td><td><code>GetCredentials</code></td><td><code>ids.ids_provider</code></td></tr>
+          <tr><td><strong>IDS Issuer / Mode</strong></td><td>Issue sessions / custom auth-mode lifecycle</td><td><code>RegisterSessionIssuer</code> / <code>RegisterIDSModeProcessor</code></td><td><code>Authenticate</code> / <code>IDSModeProcessor</code></td><td><code>ids.ids_issuer</code> / <code>ids.mode</code></td></tr>
+        </tbody>
+      </table>
+      <p>Every register function returns <code>error</code>: empty name, nil factory, duplicate, or collision with a <strong>built-in type</strong> is rejected (e.g. <code>RegisterHandler("proxy", …)</code> always fails).</p>
+    </section>
+
+    <section id="quickstart">
+      <h2><span class="num">3</span>Quick start: an Action plugin</h2>
+      <p>Three steps: write the plugin package → write your own <code>main</code> that blank-imports it → <code>go build</code>.</p>
+
+      <h3>① Plugin package (minimal skeleton)</h3>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">package</span> greeting
+
+<span class="kw">import</span> (
+    <span class="str">"net/http"</span>
+
+    <span class="str">"github.com/jamesleeon/LiteGate/pkg/plugin"</span>
+    <span class="str">"github.com/rs/zerolog/log"</span>
+)
+
+<span class="cm">// actionType is the name users put in YAML action.type; must not clash with built-ins.</span>
+<span class="kw">const</span> actionType = <span class="str">"greeting"</span>
+
+<span class="kw">type</span> handler <span class="kw">struct</span> {
+    deps *plugin.Dependencies <span class="cm">// only global, read-only, thread-safe things</span>
+}
+
+<span class="kw">type</span> config <span class="kw">struct</span> {
+    Message <span class="kw">string</span> <span class="str">`json:"message"`</span>
+}
+
+<span class="cm">// Execute is the only method you must implement. Called per matching request; may be concurrent.</span>
+<span class="kw">func</span> (h *handler) Execute(ctx *plugin.Context, cfg plugin.ActionConfig) <span class="kw">error</span> {
+    <span class="cm">// Read THIS route's config fresh from cfg per request; never cache it on struct fields.</span>
+    <span class="kw">var</span> c config
+    <span class="kw">if</span> err := cfg.Unmarshal(&c); err != <span class="kw">nil</span> {
+        <span class="kw">return</span> err
+    }
+    <span class="kw">if</span> name := ctx.Req.URL.Query().Get(<span class="str">"name"</span>); name != <span class="str">""</span> {
+        c.Message += <span class="str">", "</span> + name
+    }
+    ctx.W.Header().Set(<span class="str">"Content-Type"</span>, <span class="str">"text/plain; charset=utf-8"</span>)
+    ctx.W.WriteHeader(http.StatusOK)
+    _, err := ctx.W.Write([]<span class="kw">byte</span>(c.Message))
+    <span class="kw">return</span> err
+}
+
+<span class="cm">// init auto-registers the plugin when the package is imported.</span>
+<span class="kw">func</span> init() {
+    <span class="kw">if</span> err := plugin.RegisterHandler(actionType, <span class="kw">func</span>(deps *plugin.Dependencies) plugin.Handler {
+        <span class="kw">return</span> &handler{deps: deps}
+    }); err != <span class="kw">nil</span> {
+        log.Error().Err(err).Str(<span class="str">"plugin"</span>, actionType).Msg(<span class="str">"register failed"</span>)
+    }
+}</code></pre></div>
+
+      <h3>② Your own main</h3>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">package</span> main
+
+<span class="kw">import</span> (
+    <span class="str">"log"</span>
+
+    <span class="str">"github.com/jamesleeon/LiteGate/pkg/litegate"</span>
+
+    _ <span class="str">"my-litegate/greeting"</span> <span class="cm">// ← blank import triggers init() registration</span>
+)
+
+<span class="kw">func</span> main() {
+    <span class="kw">if</span> err := litegate.Run(); err != <span class="kw">nil</span> {
+        log.Fatalf(<span class="str">"litegate exited: %v"</span>, err)
+    }
+}</code></pre></div>
+      <p><code>litegate.Run()</code> reuses all of LiteGate's CLI flags and startup logic; you can also pass options like <code>litegate.Run(litegate.WithConfigPath("custom.yaml"))</code>.</p>
+
+      <h3>③ Config: write custom keys directly in YAML</h3>
+      <p>Any key under <code>action</code> that <strong>doesn't match a named field</strong> is collected into the plugin config, readable via <code>ActionConfig</code>.</p>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>routes:
+  - name: <span class="str">"demo"</span>
+    match: { path_prefix: <span class="str">"/demo"</span> }
+    action:
+      type: <span class="str">"greeting"</span>         <span class="cm"># ← the name you registered</span>
+      message: <span class="str">"hi"</span>            <span class="cm"># ← readable via cfg.Get("message") / cfg.Unmarshal</span>
+      threshold: 100           <span class="cm"># ← numbers arrive as int/float</span></code></pre></div>
+
+      <h3>④ Build</h3>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>cd my-litegate
+go mod tidy
+go build -o litegate .
+./litegate -config config.yaml</code></pre></div>
+      <div class="callout"><span class="t">Local development</span><p>When hacking on LiteGate source, add <code>replace github.com/jamesleeon/LiteGate =&gt; ../LiteGate</code> to your <code>go.mod</code> to point at the local tree.</p></div>
+    </section>
+
+    <section id="contract">
+      <h2><span class="num">4</span>Public contract at a glance (pkg/plugin)</h2>
+      <p>These are <strong>narrow interfaces / narrow DTOs</strong>, deliberately hiding internal heavy types — so the core can evolve without breaking your plugin.</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="cm">// Three behavior interfaces</span>
+<span class="kw">type</span> Handler <span class="kw">interface</span> {
+    Execute(ctx *Context, cfg ActionConfig) <span class="kw">error</span>
+}
+<span class="kw">type</span> MiddlewareHandler <span class="kw">interface</span> {
+    Wrap(next http.Handler, site SiteConfig, name <span class="kw">string</span>, config <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>) http.Handler
+    Stage() MiddlewareStage
+    Priority() <span class="kw">int</span>
+}
+<span class="kw">type</span> LoadBalancer <span class="kw">interface</span> {
+    Next(endpoints []Endpoint, key <span class="kw">string</span>) Endpoint
+}
+
+<span class="cm">// Request context (the only fields a plugin sees)</span>
+<span class="kw">type</span> Context <span class="kw">struct</span> {
+    W             http.ResponseWriter
+    Req           *http.Request
+    Site          <span class="kw">string</span>
+    MatchedPrefix <span class="kw">string</span>
+    ClientIP      <span class="kw">string</span>
+}
+
+<span class="cm">// Read-only config view</span>
+<span class="kw">type</span> ActionConfig <span class="kw">interface</span> {
+    Type() <span class="kw">string</span>                 <span class="cm">// action.type</span>
+    Get(key <span class="kw">string</span>) (any, <span class="kw">bool</span>)   <span class="cm">// fetch one raw value</span>
+    Unmarshal(target any) <span class="kw">error</span>   <span class="cm">// decode into your struct (by json tag)</span>
+}
+
+<span class="cm">// Host dependencies handed to the factory (all narrow interfaces)</span>
+<span class="kw">type</span> Dependencies <span class="kw">struct</span> {
+    Logger    *zerolog.Logger
+    Discovery DiscoveryClient <span class="cm">// GetEndpoints(ctx, name, ns, tag) ([]string, error)</span>
+}
+
+<span class="cm">// Optional lifecycle interfaces (Action supports all; Middleware/LB support Provisioner+CleanerUpper)</span>
+<span class="kw">type</span> Provisioner  <span class="kw">interface</span> { Provision(deps *Dependencies) <span class="kw">error</span> } <span class="cm">// first instantiation, global init</span>
+<span class="kw">type</span> Validator    <span class="kw">interface</span> { Validate(cfg ActionConfig) <span class="kw">error</span> }    <span class="cm">// config-load validation, fail-closed</span>
+<span class="kw">type</span> CleanerUpper <span class="kw">interface</span> { Cleanup() <span class="kw">error</span> }                     <span class="cm">// release resources gracefully</span></code></pre></div>
+      <table>
+        <thead><tr><th>Reading config</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>cfg.Type()</code></td><td>returns <code>action.type</code></td></tr>
+          <tr><td><code>cfg.Get(key)</code></td><td>fetch one raw value — <strong>always type-assert and handle failure</strong></td></tr>
+          <tr><td><code>cfg.Unmarshal(&amp;struct)</code></td><td><span class="rec">recommended</span>: decode by json tag, no per-field assertions</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="middleware">
+      <h2><span class="num">5</span>Middleware plugin</h2>
+      <p>Middleware processes on the request chain, then calls <code>next</code> to hand off. <strong>Put initialization in the factory</strong> (<code>Wrap</code> runs once at build time; the returned <code>http.Handler</code> is what runs per request).</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">type</span> myMW <span class="kw">struct</span>{ deps *plugin.Dependencies }
+
+<span class="kw">func</span> (h *myMW) Wrap(next http.Handler, site plugin.SiteConfig, name <span class="kw">string</span>, config <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>) http.Handler {
+    threshold := config[<span class="str">"threshold"</span>] <span class="cm">// config is map[string]string</span>
+    <span class="kw">return</span> http.HandlerFunc(<span class="kw">func</span>(w http.ResponseWriter, r *http.Request) {
+        <span class="cm">// ...pre-processing (site.Domain() etc. available)...</span>
+        next.ServeHTTP(w, r) <span class="cm">// don't forget next, or the chain breaks</span>
+    })
+}
+<span class="kw">func</span> (h *myMW) Stage() plugin.MiddlewareStage { <span class="kw">return</span> plugin.StageAuth }
+<span class="kw">func</span> (h *myMW) Priority() <span class="kw">int</span>                 { <span class="kw">return</span> 500 }
+
+<span class="kw">func</span> init() {
+    _ = plugin.RegisterMiddleware(<span class="str">"my_mw"</span>, <span class="kw">func</span>(deps *plugin.Dependencies) plugin.MiddlewareHandler {
+        <span class="kw">return</span> &myMW{deps: deps}
+    })
+}</code></pre></div>
+      <p><strong>Stage (coarse ordering) + Priority (fine ordering within a stage) together decide execution order</strong>, regardless of declaration order in config. Within a stage, <strong>higher Priority runs further out / earlier</strong>.</p>
+      <table>
+        <thead><tr><th>Stage</th><th>Order</th><th>Typical use</th><th>Built-in reference</th></tr></thead>
+        <tbody>
+          <tr><td><code>StagePreSecurity</code></td><td>first</td><td>things that must precede security (CORS preflight)</td><td><code>cors</code> = 1000</td></tr>
+          <tr><td><code>StageAuth</code></td><td>next</td><td>auth, IP restriction</td><td><code>jwt_auth</code> = 800 · <code>api_key</code> = 700</td></tr>
+          <tr><td><code>StageRateLimit</code></td><td>then</td><td>rate limit, WAF, circuit breaker</td><td><code>ratelimit</code> = 300</td></tr>
+          <tr><td><code>StageRoute</code></td><td>last (closest to business)</td><td>rewrite, compression, cache</td><td><code>strip_prefix</code> = 100</td></tr>
+        </tbody>
+      </table>
+      <p>Enable it by declaring <code>my_mw</code> in the site/route middleware list. Middleware may optionally implement <code>Provisioner</code> / <code>CleanerUpper</code> to join lifecycle management.</p>
+    </section>
+
+    <section id="lb">
+      <h2><span class="num">6</span>LoadBalancer plugin</h2>
+      <p>Custom upstream selection. <code>Next</code> is called <strong>on every upstream pick</strong> (hot path) — it must be <strong>thread-safe and non-blocking</strong>.</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">type</span> gpuLB <span class="kw">struct</span>{}
+
+<span class="cm">// Next picks one endpoint to return; it MUST be an element of the input slice.</span>
+<span class="kw">func</span> (l *gpuLB) Next(endpoints []plugin.Endpoint, key <span class="kw">string</span>) plugin.Endpoint {
+    <span class="kw">var</span> best plugin.Endpoint
+    <span class="kw">for</span> _, ep := <span class="kw">range</span> endpoints {
+        <span class="kw">if</span> !ep.Healthy() {
+            <span class="kw">continue</span>
+        }
+        <span class="kw">if</span> best == <span class="kw">nil</span> || ep.ActiveRequests() &lt; best.ActiveRequests() {
+            best = ep
+        }
+    }
+    <span class="kw">return</span> best <span class="cm">// nil when none available; host falls back to round_robin</span>
+}
+
+<span class="kw">func</span> init() {
+    _ = plugin.RegisterLoadBalancer(<span class="str">"gpu_aware"</span>, <span class="kw">func</span>() plugin.LoadBalancer {
+        <span class="kw">return</span> &gpuLB{} <span class="cm">// note: LB factory takes no Dependencies</span>
+    })
+}</code></pre></div>
+      <p>Config: <code>action.lb_policy: "gpu_aware"</code>.</p>
+      <div class="callout warn"><span class="t">Three hard rules</span><p>① <strong>Return an element of the input <code>endpoints</code></strong> (the host maps it back to a real endpoint); <code>nil</code> = give up, host falls back to <code>round_robin</code>. ② Never cache an <code>Endpoint</code> reference on a struct field — it's valid only for this call. ③ <code>Next</code> is on the hot path; no blocking I/O.</p></div>
+    </section>
+
+    <section id="ids">
+      <h2><span class="num">7</span>IDS identity-governance plugins</h2>
+      <p>When the IDS engine handles a request it needs a <strong>credential + routing</strong> payload (<code>CredentialResponse</code>): identity, headers to inject, rate-limit hints, plus the <code>selector</code> / <code>meta</code> used for dynamic routing. By default that payload comes from the gateway <strong>making an HTTP call to a remote auth service</strong>; a plugin lets you produce the same structure with <strong>in-process Go code</strong> — the engine then proceeds as usual (caching, route injection, rate limiting unchanged).</p>
+      <div class="callout"><span class="t">Three pluggable seams (read / write / control)</span><p><strong>Credential Provider</strong> (read — verify/fetch) · <strong>Session Issuer</strong> (write — issue) · <strong>Mode Processor</strong> (control — intercept lifecycle). The first two are selected independently, each default to built-in <code>"http"</code>, and apply per route. For using IDS itself, see the <a href="ids_development_guide.html" class="inline">IDS Development Guide</a>.</p></div>
+
+      <h3 id="ids-provider">Credential Provider (read / verify)</h3>
+      <p>Implement <code>CredentialProvider</code>, choose your own data source (local rules / DB / Redis / even your own HTTP), return <code>*plugin.CredentialResponse</code>.</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">func</span> (p *myProvider) GetCredentials(ctx context.Context, req *plugin.CredentialRequestContext) (*plugin.CredentialResponse, <span class="kw">error</span>) {
+    <span class="kw">if</span> req.Token == <span class="str">""</span> {
+        <span class="cm">// no such credential → negative cache (core caches briefly, blocks repeated misses)</span>
+        <span class="kw">return</span> &plugin.CredentialResponse{NotFound: <span class="kw">true</span>}, <span class="kw">nil</span>
+    }
+    <span class="kw">return</span> &plugin.CredentialResponse{
+        Auth: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"app_id"</span>: req.AppID, <span class="str">"ttl"</span>: <span class="str">"300"</span>}, <span class="cm">// ttl controls cache seconds</span>
+        Route: plugin.RouteNode{
+            Selector: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"tenant"</span>: <span class="str">"corp_abc"</span>}, <span class="cm">// ← dynamic routing</span>
+            Meta:     <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"gray"</span>: <span class="str">"true"</span>},
+        },
+        Head: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"X-Tenant-Id"</span>: <span class="str">"corp_abc"</span>}, <span class="cm">// inject downstream</span>
+    }, <span class="kw">nil</span>
+}
+
+<span class="kw">func</span> init() {
+    _ = plugin.RegisterProvider(<span class="str">"myids"</span>, <span class="kw">func</span>(deps *plugin.Dependencies) (plugin.CredentialProvider, <span class="kw">error</span>) {
+        <span class="kw">return</span> &myProvider{deps: deps}, <span class="kw">nil</span>
+    })
+}</code></pre></div>
+      <p>Config (per route): set <code>ids.ids_provider: "myids"</code>; leave empty = default <code>http</code>. <strong>Different routes can use different providers.</strong></p>
+
+      <h3 id="ids-issuer">Session Issuer (write / issue)</h3>
+      <p>Issuing (login → token) is a separate path: implement <code>SessionIssuer</code>, configure via <code>ids.ids_issuer</code> (independent of the provider).</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">func</span> (i *myIssuer) Authenticate(ctx context.Context, r *http.Request, cfg plugin.SessionIssuerConfig) (*plugin.CredentialResponse, *http.Response, <span class="kw">error</span>) {
+    <span class="cm">// In-process issuing: compute and return; *http.Response is nil (core nil-guards it)</span>
+    <span class="kw">return</span> &plugin.CredentialResponse{
+        Auth: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"session"</span>: <span class="str">"..."</span>, <span class="str">"ttl"</span>: <span class="str">"7200"</span>},
+    }, <span class="kw">nil</span>, <span class="kw">nil</span>
+}
+
+<span class="kw">func</span> init() {
+    _ = plugin.RegisterSessionIssuer(<span class="str">"myids"</span>, <span class="kw">func</span>(deps *plugin.Dependencies) (plugin.SessionIssuer, <span class="kw">error</span>) {
+        <span class="kw">return</span> &myIssuer{}, <span class="kw">nil</span>
+    })
+}</code></pre></div>
+      <div class="callout ok"><span class="t">Read/write decoupled</span><p>A verify-only plugin registers just <code>CredentialProvider</code> and configures only <code>ids_provider</code>; leave <code>ids_issuer</code> empty to fall back to built-in http — it won't fail startup just because you didn't implement issuing.</p></div>
+
+      <h3 id="ids-mode">Mode Processor (control / intercept)</h3>
+      <p>To fully control request-lifecycle hijacking (pre-security checks, hard cut-off, transforming the downstream response), implement <code>IDSModeProcessor</code>.</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">func</span> (p *MyMode) ModeName() <span class="kw">string</span> { <span class="kw">return</span> <span class="str">"my-mode"</span> }
+
+<span class="kw">func</span> (p *MyMode) ProcessRequest(w http.ResponseWriter, r *http.Request, ctx context.Context, config *plugin.IDSConfig) (context.Context, <span class="kw">bool</span>) {
+    <span class="kw">if</span> r.Header.Get(<span class="str">"X-My-Secure-Token"</span>) == <span class="str">""</span> {
+        w.WriteHeader(http.StatusForbidden)
+        _, _ = w.Write([]<span class="kw">byte</span>(<span class="str">"Forbidden"</span>))
+        <span class="kw">return</span> ctx, <span class="kw">false</span> <span class="cm">// cut off the request</span>
+    }
+    <span class="kw">return</span> ctx, <span class="kw">true</span> <span class="cm">// proceed</span>
+}
+
+<span class="kw">func</span> (p *MyMode) WrapResponse(w http.ResponseWriter, r *http.Request, rw http.ResponseWriter, config *plugin.IDSConfig) http.ResponseWriter {
+    <span class="kw">return</span> rw <span class="cm">// don't hijack the response by default</span>
+}
+
+<span class="kw">func</span> init() {
+    _ = plugin.RegisterIDSModeProcessor(&MyMode{})
+    <span class="cm">// Overriding a built-in mode (verify/issue…) must be explicit: plugin.ReplaceIDSModeProcessor(&MyVerify{})</span>
+}</code></pre></div>
+      <p>Config: route <code>ids.mode: "my-mode"</code> activates it.</p>
+      <div class="callout"><span class="t">Why this is clean</span><p><code>CredentialResponse</code> / <code>CredentialRequestContext</code> are <strong>pure data + stdlib <code>http.Request</code></strong>, referencing no internal types — so the internal code adopted these public types directly, and the built-in <code>"http"</code> origin registers into <strong>the same public registry</strong>. Third-party plugins and the built-in origin share the exact same contract and dispatch path.</p></div>
+    </section>
+
+    <section id="build">
+      <h2><span class="num">8</span>Build &amp; distribute</h2>
+
+      <h3>Option 1: litegate build --with (built-in one-shot build, recommended)</h3>
+      <p>LiteGate ships a one-shot build CLI that generates <code>main.go</code> + <code>go.mod</code>, fetches deps, pins the version, and compiles.</p>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>litegate build --with github.com/acme/litegate-llm -o my-litegate
+
+<span class="cm"># Local dev: replace the LiteGate dependency with a local source tree</span>
+litegate build --with ./greeting --replace=../LiteGate -o my-litegate
+<span class="cm"># or set the env var LITEGATE_LOCAL_PATH=../LiteGate</span></code></pre></div>
+      <ul>
+        <li>Requires a local Go toolchain (auto-detects and adapts to your Go version) + network access to the Go module proxy.</li>
+        <li>Repeat <code>--with</code> to stack multiple plugins; <code>-o/--output</code> sets the artifact path.</li>
+      </ul>
+      <div class="callout warn"><span class="t">Dev versions require --replace</span><p>When LiteGate runs a development version (version string containing <code>-dev</code>) and you're not inside the LiteGate module directory, that version doesn't exist on the module proxy, so <code>litegate build</code> requires an explicit <code>--replace=&lt;local path&gt;</code> or <code>LITEGATE_LOCAL_PATH</code>.</p></div>
+
+      <h3>Option 2: you own main (native go build)</h3>
+      <p>As in section 3, create your own Go module, blank-import the plugin in <code>main</code>, call <code>litegate.Run()</code>, and compile with native <code>go build</code>. Lock the version via <code>go.mod</code>; use <code>replace</code> for local dev. A template lives in the repo at <code>examples/plugin-template</code>.</p>
+      <div class="callout danger"><span class="t">No dynamic loading</span><p>There is no <code>.so</code> hot-swap. Plugins must be <strong>compiled into the binary</strong> — a deliberate trade-off for zero runtime overhead.</p></div>
+    </section>
+
+    <section id="lifecycle">
+      <h2><span class="num">9</span>Lifecycle at a glance</h2>
+      <div class="code-wrap"><span class="lang">text</span><pre><code>Program start
+  └─ each plugin's init() → Register{Handler,Middleware,LoadBalancer,Provider,...}
+Config load / hot reload
+  └─ loader validates per route → Validator.Validate(cfg)  [Action only; fail-closed: bad config = no start]
+First request hits the type (lazy load, singleflight-deduped)
+  └─ factory(deps) → Provisioner.Provision(deps)          [once, global init, no route config here]
+Every request
+  └─ Handler.Execute() / middleware chain / LB.Next()     [high concurrency, type-level shared instance]
+Shutdown / reload unload
+  └─ CleanerUpper.Cleanup()                               [once, graceful release]</code></pre></div>
+      <p>Every boundary is guarded by <code>recover</code>: panics in the factory / <code>Provision</code> / <code>Validate</code> / plugin <code>Execute</code> are turned into an error or a 500 and never crash the process. Don't rely on it as normal flow, though.</p>
+    </section>
+
+    <section id="pitfalls">
+      <h2><span class="num">10</span>Pitfalls checklist</h2>
+      <ol>
+        <li><strong>Handler / LB are cross-route, type-level singletons.</strong> All routes using that type share one instance, called concurrently. <strong>Per-route config must be read fresh from <code>cfg</code> inside <code>Execute</code>, never cached on struct fields</strong>, or routes overwrite each other.</li>
+        <li><strong>You can't override built-in types.</strong> <code>RegisterHandler("proxy", …)</code> / <code>RegisterMiddleware("cors", …)</code> / <code>RegisterLoadBalancer("round_robin", …)</code> all return errors. Pick a non-clashing name. (To override the built-in IDS <code>"http"</code>, use <code>ReplaceProvider</code> / <code>ReplaceSessionIssuer</code>.)</li>
+        <li><strong>Validate is fail-closed (Action only).</strong> Any invalid route config blocks gateway start/reload — that's correct. Push config validation into <code>Validate</code>.</li>
+        <li><strong>Provision has no route config.</strong> It does route-agnostic global init only; route-dependent logic belongs in <code>Execute</code>.</li>
+        <li><strong>Mind value types.</strong> YAML numbers arrive as <code>int</code>/<code>float64</code>, not strings. Prefer <code>cfg.Unmarshal(&amp;struct)</code>.</li>
+        <li><strong>Minimal dependencies.</strong> A plugin only gets <code>Logger</code> and <code>Discovery</code> (narrow interfaces). Need more? Push to add a narrow interface in <code>pkg/plugin</code> rather than expecting internal concrete types.</li>
+        <li><strong>IDS: don't cache yourself.</strong> The core already does L1 (LRU) + L2 (Redis) + negative cache + singleflight outside your provider call. Just return raw data. Cache duration via <code>Auth["ttl"]</code> (seconds).</li>
+        <li><strong>IDS: fail-closed by default.</strong> On error the core applies <code>fail_policy</code> (default deny); auth failure should return an error or <code>NotFound</code>, never silently pass.</li>
+        <li><strong>Don't leak goroutines across reloads.</strong> Background goroutines started in <code>Provision</code> must watch the host cancel signal and stop in <code>Cleanup</code>, or repeated reloads accumulate leaks.</li>
+      </ol>
+    </section>
+
+    <section id="test">
+      <h2><span class="num">11</span>Testing your plugin</h2>
+      <p>In your own repo you can unit-test against the <code>pkg/plugin</code> interfaces directly (construct a <code>plugin.Context</code> and a stub implementing <code>ActionConfig</code>) without booting the whole gateway.</p>
+      <ol class="steps">
+        <li><strong>Unit test</strong>: build a <code>*plugin.Context</code> (with <code>httptest.NewRecorder()</code> + <code>httptest.NewRequest()</code>) and an <code>ActionConfig</code> stub, call <code>Execute</code>, assert the response.</li>
+        <li><strong>Registration check</strong>: assert <code>RegisterHandler</code> returns <code>nil</code>; duplicate / built-in override returns an error.</li>
+        <li><strong>End-to-end</strong>: see the repo's <code>internal/action/plugin_external_test.go</code> — one E2E case per plugin type using the public API.</li>
+        <li><strong>Config test</strong>: <code>litegate -t -config config.yaml</code> checks config syntax and triggers Action <code>Validate</code>.</li>
+      </ol>
+    </section>
+
+    <section id="faq">
+      <h2><span class="num">12</span>FAQ</h2>
+      <h3>Can I load .so plugins dynamically?</h3>
+      <p>No. LiteGate uses a compile-time registry; plugins must be compiled into the binary. This is a deliberate trade-off for zero runtime overhead and cross-platform stability (Go's <code>plugin</code> is unavailable on Windows).</p>
+
+      <h3>What host capabilities does a plugin get?</h3>
+      <p>Third parties get <code>Dependencies{ Logger, Discovery }</code> — a logger plus a narrow service-discovery view. Bring your own Redis / storage; to get more host capability, add a narrow interface in <code>pkg/plugin</code>.</p>
+
+      <h3>Any difference between built-ins and my plugin?</h3>
+      <p>They dispatch through the same registry, but capabilities are <strong>asymmetric</strong>: built-in Actions take the "host internal shortcut" (direct access to <code>Executor</code> private state), while third parties go through the public <code>Dependencies</code> contract. A deliberate perf/encapsulation trade-off.</p>
+
+      <h3>Will a plugin panic take down the gateway?</h3>
+      <p>No. The factory / <code>Provision</code> / <code>Validate</code> / plugin <code>Execute</code> are all <code>recover</code>ed into an error or a 500. Still, handle your own errors — don't treat recover as normal flow.</p>
+
+      <h3>Can one name be both an Action and a Middleware?</h3>
+      <p>Yes — they're independent registries with separate namespaces. Internal <code>Register*</code> does cross-check the external registry to prevent duplicates within the same table.</p>
+    </section>
+
+    <div class="footer">
+      LiteGate Plugin Development Guide · Contract based on the public package <code>pkg/plugin</code> (register / context / config / middleware / loadbalancer / ids) and the <code>pkg/litegate</code> entrypoint, aligned item-by-item with the source · For design rationale see <code>docs/zh-cn/plugin-architecture.md</code> in the repo.
+    </div>
+  </main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var map = {};
+  links.forEach(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) map[id] = a;
+  });
+  var ids = Object.keys(map);
+  function onScroll() {
+    var pos = window.scrollY + 120;
+    var current = ids[0];
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && el.offsetTop <= pos) current = id;
+    });
+    links.forEach(function (a) { a.classList.remove('active'); });
+    if (map[current]) map[current].classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>

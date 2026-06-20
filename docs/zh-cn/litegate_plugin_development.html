@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate 插件开发指南 · 不 fork 核心，用 Go 编译期注册表扩展网关</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+
+.toc { position: sticky; top: 0; width: 240px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 760px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline { color: var(--accent); text-decoration: none; }
+a.inline:hover { text-decoration: underline; }
+
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.cm { color: var(--text3); }
+.kw { color: var(--accent); }
+.str { color: var(--green); }
+
+.callout { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.req { color: var(--red); font-weight: 600; }
+.opt { color: var(--text3); }
+.rec { color: var(--green); font-weight: 600; }
+
+.steps { counter-reset: step; list-style: none; margin-left: 0; }
+.steps li { position: relative; padding-left: 38px; margin-bottom: 14px; counter-increment: step; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+
+@media (max-width: 880px) { .toc { display: none; } main { padding: 28px 20px 60px; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc" id="toc">
+    <div class="brand">LiteGate × Plugins</div>
+    <div class="brand-sub">插件开发指南</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← 文档首页</a>
+    <a href="#overview">概览 · 为什么可扩展</a>
+    <a href="#model">1. 编译期注册表模型</a>
+    <a href="#seams">2. 五个可扩展接缝</a>
+    <a href="#quickstart">3. 快速开始（Action）</a>
+    <a href="#contract">4. 公共契约速览</a>
+    <a href="#middleware">5. Middleware 插件</a>
+    <a href="#lb">6. LoadBalancer 插件</a>
+    <a href="#ids">7. IDS 身份治理插件</a>
+    <a href="#ids-provider" class="sub">凭证 Provider（读）</a>
+    <a href="#ids-issuer" class="sub">会话 Issuer（写）</a>
+    <a href="#ids-mode" class="sub">模式处理器（控制）</a>
+    <a href="#build">8. 编译与分发</a>
+    <a href="#lifecycle">9. 生命周期全景</a>
+    <a href="#pitfalls">10. 踩坑清单</a>
+    <a href="#test">11. 测试你的插件</a>
+    <a href="#faq">12. 常见问题</a>
+    <a href="../en/litegate_plugin_development.html">English version</a>
+  </nav>
+
+  <main>
+    <div class="hero" id="overview">
+      <h1>LiteGate 插件开发指南</h1>
+      <p class="lead">LiteGate 采用 <strong>编译期注册表（compile-time registry）</strong>插件模型：插件就是一个普通 Go 包，在 <code>init()</code> 里向公共契约包注册自己；你写自己的 <code>main</code>，空导入插件包并调 <code>litegate.Run()</code>，<code>go build</code> 即得带你插件的网关二进制。<strong>不用 fork、不用改核心代码、不用动态 .so</strong>——插件住在你自己的仓库里。本指南带你从零写出 Action / Middleware / LoadBalancer 以及 IDS 身份治理插件。</p>
+      <div class="badges">
+        <span class="badge">编译期注册表</span>
+        <span class="badge green">零核心改动</span>
+        <span class="badge amber">纯 Go，无 RPC / WASM 开销</span>
+        <span class="badge">5 个接缝</span>
+      </div>
+
+      <div class="callout" style="margin-top:20px">
+        <span class="t">为什么不是动态加载？</span>
+        <p>LiteGate <strong>明确排除</strong>运行时 <code>.so</code> 动态加载（Go <code>plugin</code> 包在 Windows 不可用、Linux 要求依赖版本完全一致，脆弱），也不做进程外 go-plugin / gRPC（每调用一次 RPC 开销）或 WASM/解释器（性能与隔离开销不划算）。换来的是<strong>零运行时性能损失</strong>——插件和内置功能编译进同一个二进制，走同一条调用路径。</p>
+      </div>
+    </div>
+
+    <section id="model">
+      <h2><span class="num">1</span>编译期注册表模型</h2>
+      <p>LiteGate 早期用硬编码 <code>switch</code> 分发 action、选负载均衡算法，加一种能力就得改核心。现已统一为注册表模型：<strong>内置功能与第三方插件走完全相同的注册路径</strong>——核心自己也通过这张注册表挂载内置能力，从而保证插件通道与内置通道始终对等、不会退化。</p>
+      <ul>
+        <li>新增能力 = 写一个 Go 包 + 一个 <code>init()</code>，核心代码零改动。</li>
+        <li>企业可在<strong>私有仓库</strong>维护私有插件，编译定制二进制，不与上游冲突。</li>
+        <li>第三方只接触<strong>公共契约层</strong> <code>pkg/plugin</code>（窄接口 / 窄 DTO），核心内部类型不外泄，因此核心可以自由演进而不破坏你的插件。</li>
+      </ul>
+      <div class="callout ok"><span class="t">两层契约</span><p>内置 / 第一方代码走<strong>内部契约</strong>（直接引用 <code>loader.Action</code> 等重型类型）；第三方独立仓库走<strong>公共门面</strong> <code>pkg/plugin</code>（只暴露 <code>Context</code> / <code>ActionConfig</code> / <code>SiteConfig</code> / <code>Endpoint</code> / <code>DiscoveryClient</code>）。两者经由<strong>同一张注册表</strong>分发，核心用适配器把内部类型桥接到窄接口。</p></div>
+    </section>
+
+    <section id="seams">
+      <h2><span class="num">2</span>五个可扩展接缝</h2>
+      <p>全部定义在公共包 <code>github.com/jamesleeon/LiteGate/pkg/plugin</code>。前三类是通用插件，后两类（IDS）是身份治理专用。</p>
+      <table>
+        <thead><tr><th>类型</th><th>用途</th><th>注册函数</th><th>必选接口</th><th>配置入口</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Action</strong></td><td>终结请求、产出响应（代理、渲染、鉴权终结…）</td><td><code>RegisterHandler</code></td><td><code>Execute</code></td><td><code>action.type</code> + 内联键</td></tr>
+          <tr><td><strong>Middleware</strong></td><td>请求链上加工（限流、改写、注入…）后交给下一环</td><td><code>RegisterMiddleware</code></td><td><code>Wrap</code> + <code>Stage</code> + <code>Priority</code></td><td><code>config map[string]string</code></td></tr>
+          <tr><td><strong>LoadBalancer</strong></td><td>自定义上游选择策略</td><td><code>RegisterLoadBalancer</code></td><td><code>Next</code></td><td><code>action.lb_policy</code></td></tr>
+          <tr><td><strong>IDS Provider</strong></td><td>进程内回源校验/获取凭证与分流数据</td><td><code>RegisterProvider</code></td><td><code>GetCredentials</code></td><td><code>ids.ids_provider</code></td></tr>
+          <tr><td><strong>IDS Issuer / Mode</strong></td><td>签发会话 / 自定义鉴权模式生命周期</td><td><code>RegisterSessionIssuer</code> / <code>RegisterIDSModeProcessor</code></td><td><code>Authenticate</code> / <code>IDSModeProcessor</code></td><td><code>ids.ids_issuer</code> / <code>ids.mode</code></td></tr>
+        </tbody>
+      </table>
+      <p>所有注册函数都返回 <code>error</code>：空名、nil 工厂、重名、或与<strong>内置类型冲突</strong>都会被拒绝（如 <code>RegisterHandler("proxy", …)</code> 必然失败）。</p>
+    </section>
+
+    <section id="quickstart">
+      <h2><span class="num">3</span>快速开始：写一个 Action 插件</h2>
+      <p>三步：写插件包 → 写自己的 <code>main</code> 空导入 → <code>go build</code>。</p>
+
+      <h3>① 插件包（最小骨架）</h3>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">package</span> greeting
+
+<span class="kw">import</span> (
+    <span class="str">"net/http"</span>
+
+    <span class="str">"github.com/jamesleeon/LiteGate/pkg/plugin"</span>
+    <span class="str">"github.com/rs/zerolog/log"</span>
+)
+
+<span class="cm">// actionType 是用户写在 YAML action.type 里的名字，不能与内置类型重名。</span>
+<span class="kw">const</span> actionType = <span class="str">"greeting"</span>
+
+<span class="kw">type</span> handler <span class="kw">struct</span> {
+    deps *plugin.Dependencies <span class="cm">// 仅放全局、只读、线程安全的东西</span>
+}
+
+<span class="kw">type</span> config <span class="kw">struct</span> {
+    Message <span class="kw">string</span> <span class="str">`json:"message"`</span>
+}
+
+<span class="cm">// Execute 是唯一必须实现的方法。每个命中本路由的请求都会调用它，可能并发。</span>
+<span class="kw">func</span> (h *handler) Execute(ctx *plugin.Context, cfg plugin.ActionConfig) <span class="kw">error</span> {
+    <span class="cm">// 每请求从 cfg 现读“本条路由”的配置，不要缓存到结构体字段上。</span>
+    <span class="kw">var</span> c config
+    <span class="kw">if</span> err := cfg.Unmarshal(&c); err != <span class="kw">nil</span> {
+        <span class="kw">return</span> err
+    }
+    <span class="kw">if</span> name := ctx.Req.URL.Query().Get(<span class="str">"name"</span>); name != <span class="str">""</span> {
+        c.Message += <span class="str">", "</span> + name
+    }
+    ctx.W.Header().Set(<span class="str">"Content-Type"</span>, <span class="str">"text/plain; charset=utf-8"</span>)
+    ctx.W.WriteHeader(http.StatusOK)
+    _, err := ctx.W.Write([]<span class="kw">byte</span>(c.Message))
+    <span class="kw">return</span> err
+}
+
+<span class="cm">// init 在包被导入时自动注册本插件。</span>
+<span class="kw">func</span> init() {
+    <span class="kw">if</span> err := plugin.RegisterHandler(actionType, <span class="kw">func</span>(deps *plugin.Dependencies) plugin.Handler {
+        <span class="kw">return</span> &handler{deps: deps}
+    }); err != <span class="kw">nil</span> {
+        log.Error().Err(err).Str(<span class="str">"plugin"</span>, actionType).Msg(<span class="str">"register failed"</span>)
+    }
+}</code></pre></div>
+
+      <h3>② 你自己的 main</h3>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">package</span> main
+
+<span class="kw">import</span> (
+    <span class="str">"log"</span>
+
+    <span class="str">"github.com/jamesleeon/LiteGate/pkg/litegate"</span>
+
+    _ <span class="str">"my-litegate/greeting"</span> <span class="cm">// ← 空导入即触发 init() 注册</span>
+)
+
+<span class="kw">func</span> main() {
+    <span class="kw">if</span> err := litegate.Run(); err != <span class="kw">nil</span> {
+        log.Fatalf(<span class="str">"litegate exited: %v"</span>, err)
+    }
+}</code></pre></div>
+      <p><code>litegate.Run()</code> 复用 LiteGate 全部 CLI 旗标与启动逻辑，也可传选项 <code>litegate.Run(litegate.WithConfigPath("custom.yaml"))</code>。</p>
+
+      <h3>③ 配置：YAML 里直接写自定义键</h3>
+      <p><code>action</code> 下任何<strong>未匹配命名字段</strong>的键会被自动收进插件配置，由 <code>ActionConfig</code> 读取。</p>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>routes:
+  - name: <span class="str">"demo"</span>
+    match: { path_prefix: <span class="str">"/demo"</span> }
+    action:
+      type: <span class="str">"greeting"</span>         <span class="cm"># ← 你注册的名字</span>
+      message: <span class="str">"hi"</span>            <span class="cm"># ← cfg.Get("message") / cfg.Unmarshal 可读</span>
+      threshold: 100           <span class="cm"># ← 数字进来是 int/float</span></code></pre></div>
+
+      <h3>④ 编译</h3>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>cd my-litegate
+go mod tidy
+go build -o litegate .
+./litegate -config config.yaml</code></pre></div>
+      <div class="callout"><span class="t">本地联调</span><p>调试 LiteGate 源码时，可在 <code>go.mod</code> 里用 <code>replace github.com/jamesleeon/LiteGate =&gt; ../LiteGate</code> 指向本地源码树。</p></div>
+    </section>
+
+    <section id="contract">
+      <h2><span class="num">4</span>公共契约速览（pkg/plugin）</h2>
+      <p>这些都是<strong>窄接口 / 窄 DTO</strong>，刻意不暴露内部重型类型——核心因此能自由演进而不破坏你的插件。</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="cm">// 三类行为接口</span>
+<span class="kw">type</span> Handler <span class="kw">interface</span> {
+    Execute(ctx *Context, cfg ActionConfig) <span class="kw">error</span>
+}
+<span class="kw">type</span> MiddlewareHandler <span class="kw">interface</span> {
+    Wrap(next http.Handler, site SiteConfig, name <span class="kw">string</span>, config <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>) http.Handler
+    Stage() MiddlewareStage
+    Priority() <span class="kw">int</span>
+}
+<span class="kw">type</span> LoadBalancer <span class="kw">interface</span> {
+    Next(endpoints []Endpoint, key <span class="kw">string</span>) Endpoint
+}
+
+<span class="cm">// 请求上下文（插件能看到的全部字段）</span>
+<span class="kw">type</span> Context <span class="kw">struct</span> {
+    W             http.ResponseWriter
+    Req           *http.Request
+    Site          <span class="kw">string</span>
+    MatchedPrefix <span class="kw">string</span>
+    ClientIP      <span class="kw">string</span>
+}
+
+<span class="cm">// 只读配置视图</span>
+<span class="kw">type</span> ActionConfig <span class="kw">interface</span> {
+    Type() <span class="kw">string</span>                 <span class="cm">// action.type</span>
+    Get(key <span class="kw">string</span>) (any, <span class="kw">bool</span>)   <span class="cm">// 取单个原始值</span>
+    Unmarshal(target any) <span class="kw">error</span>   <span class="cm">// 解码到你的 struct（按 json tag）</span>
+}
+
+<span class="cm">// 工厂收到的宿主依赖（全是窄接口）</span>
+<span class="kw">type</span> Dependencies <span class="kw">struct</span> {
+    Logger    *zerolog.Logger
+    Discovery DiscoveryClient <span class="cm">// GetEndpoints(ctx, name, ns, tag) ([]string, error)</span>
+}
+
+<span class="cm">// 可选生命周期接口（仅 Action 全支持；Middleware/LB 支持 Provisioner+CleanerUpper）</span>
+<span class="kw">type</span> Provisioner  <span class="kw">interface</span> { Provision(deps *Dependencies) <span class="kw">error</span> } <span class="cm">// 首次实例化，全局初始化</span>
+<span class="kw">type</span> Validator    <span class="kw">interface</span> { Validate(cfg ActionConfig) <span class="kw">error</span> }    <span class="cm">// 配置加载期校验，fail-closed</span>
+<span class="kw">type</span> CleanerUpper <span class="kw">interface</span> { Cleanup() <span class="kw">error</span> }                     <span class="cm">// 优雅释放资源</span></code></pre></div>
+      <table>
+        <thead><tr><th>读配置方式</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>cfg.Type()</code></td><td>返回 <code>action.type</code></td></tr>
+          <tr><td><code>cfg.Get(key)</code></td><td>取单个原始值，<strong>务必类型断言并处理失败</strong></td></tr>
+          <tr><td><code>cfg.Unmarshal(&amp;struct)</code></td><td><span class="rec">推荐</span>：按 json tag 解码，省去逐字段断言</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="middleware">
+      <h2><span class="num">5</span>Middleware 插件</h2>
+      <p>中间件在请求链上加工，再调 <code>next</code> 交给下一环。<strong>初始化放在工厂函数里</strong>（<code>Wrap</code> 只在构建期调用一次，返回的 <code>http.Handler</code> 才是每请求执行）。</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">type</span> myMW <span class="kw">struct</span>{ deps *plugin.Dependencies }
+
+<span class="kw">func</span> (h *myMW) Wrap(next http.Handler, site plugin.SiteConfig, name <span class="kw">string</span>, config <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>) http.Handler {
+    threshold := config[<span class="str">"threshold"</span>] <span class="cm">// 配置是 map[string]string</span>
+    <span class="kw">return</span> http.HandlerFunc(<span class="kw">func</span>(w http.ResponseWriter, r *http.Request) {
+        <span class="cm">// ...前置处理（可用 site.Domain() 等）...</span>
+        next.ServeHTTP(w, r) <span class="cm">// 别忘了调 next，否则链断了</span>
+    })
+}
+<span class="kw">func</span> (h *myMW) Stage() plugin.MiddlewareStage { <span class="kw">return</span> plugin.StageAuth }
+<span class="kw">func</span> (h *myMW) Priority() <span class="kw">int</span>                 { <span class="kw">return</span> 500 }
+
+<span class="kw">func</span> init() {
+    _ = plugin.RegisterMiddleware(<span class="str">"my_mw"</span>, <span class="kw">func</span>(deps *plugin.Dependencies) plugin.MiddlewareHandler {
+        <span class="kw">return</span> &myMW{deps: deps}
+    })
+}</code></pre></div>
+      <p><strong>Stage（粗排序）+ Priority（同档细排序）共同决定执行顺序</strong>，与配置里的声明顺序无关。同一 Stage 内 <strong>Priority 越大越靠外、越先执行</strong>。</p>
+      <table>
+        <thead><tr><th>Stage</th><th>次序</th><th>典型用途</th><th>内置参照</th></tr></thead>
+        <tbody>
+          <tr><td><code>StagePreSecurity</code></td><td>最先</td><td>CORS 预检等需先于安全的</td><td><code>cors</code> = 1000</td></tr>
+          <tr><td><code>StageAuth</code></td><td>次之</td><td>鉴权、IP 限制</td><td><code>jwt_auth</code> = 800 · <code>api_key</code> = 700</td></tr>
+          <tr><td><code>StageRateLimit</code></td><td>再次</td><td>限流、WAF、熔断</td><td><code>ratelimit</code> = 300</td></tr>
+          <tr><td><code>StageRoute</code></td><td>最后（最贴近业务）</td><td>改写、压缩、缓存</td><td><code>strip_prefix</code> = 100</td></tr>
+        </tbody>
+      </table>
+      <p>配置里启用：在站点 / 路由的中间件列表中声明 <code>my_mw</code> 即可。Middleware 可选实现 <code>Provisioner</code> / <code>CleanerUpper</code> 参与生命周期托管。</p>
+    </section>
+
+    <section id="lb">
+      <h2><span class="num">6</span>LoadBalancer 插件</h2>
+      <p>自定义上游选择策略。<code>Next</code> 在<strong>每次选上游时</strong>被调用（热路径），必须<strong>线程安全、不可阻塞</strong>。</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">type</span> gpuLB <span class="kw">struct</span>{}
+
+<span class="cm">// Next 从给定端点里选一个返回；必须返回入参切片中的某个元素。</span>
+<span class="kw">func</span> (l *gpuLB) Next(endpoints []plugin.Endpoint, key <span class="kw">string</span>) plugin.Endpoint {
+    <span class="kw">var</span> best plugin.Endpoint
+    <span class="kw">for</span> _, ep := <span class="kw">range</span> endpoints {
+        <span class="kw">if</span> !ep.Healthy() {
+            <span class="kw">continue</span>
+        }
+        <span class="kw">if</span> best == <span class="kw">nil</span> || ep.ActiveRequests() &lt; best.ActiveRequests() {
+            best = ep
+        }
+    }
+    <span class="kw">return</span> best <span class="cm">// 无可用时返回 nil，宿主会回退到 round_robin</span>
+}
+
+<span class="kw">func</span> init() {
+    _ = plugin.RegisterLoadBalancer(<span class="str">"gpu_aware"</span>, <span class="kw">func</span>() plugin.LoadBalancer {
+        <span class="kw">return</span> &gpuLB{} <span class="cm">// 注意：LB 工厂不收 Dependencies</span>
+    })
+}</code></pre></div>
+      <p>配置：<code>action.lb_policy: "gpu_aware"</code>。</p>
+      <div class="callout warn"><span class="t">三条铁律</span><p>① <strong>必须返回入参 <code>endpoints</code> 中的某个元素</strong>（宿主据此映射回真实端点），返回 <code>nil</code> = 放弃，宿主回退到 <code>round_robin</code>；② 别把 <code>Endpoint</code> 引用缓存到结构体字段——它只在本次调用有效；③ <code>Next</code> 在热路径，别做阻塞 I/O。</p></div>
+    </section>
+
+    <section id="ids">
+      <h2><span class="num">7</span>IDS 身份治理插件</h2>
+      <p>IDS 引擎处理一个请求时，需要一份<strong>凭证 + 分流数据</strong>（<code>CredentialResponse</code>）：身份、要注入的头、限流提示，以及动态路由用的 <code>selector</code> / <code>meta</code>。默认这份数据是网关<strong>发 HTTP 去远端鉴权服务</strong>回源得到的；插件让你用<strong>进程内 Go 代码</strong>直接产出同一个结构——引擎拿到后照常走（缓存、选路注入、限流不变）。</p>
+      <div class="callout"><span class="t">三个可插拔接缝（读 / 写 / 控制）</span><p><strong>凭证 Provider</strong>（读，校验/获取）· <strong>会话 Issuer</strong>（写，签发）· <strong>模式处理器</strong>（控制，拦截生命周期）。前两者各自独立选择、各自默认内置 <code>"http"</code>、按路由生效。IDS 本身的使用见 <a href="ids_development_guide.html" class="inline">IDS 开发指南</a>。</p></div>
+
+      <h3 id="ids-provider">凭证 Provider（读 / 校验）</h3>
+      <p>实现 <code>CredentialProvider</code>，自行决定数据来源（本地规则 / DB / Redis / 甚至自己发 HTTP），返回 <code>*plugin.CredentialResponse</code>。</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">func</span> (p *myProvider) GetCredentials(ctx context.Context, req *plugin.CredentialRequestContext) (*plugin.CredentialResponse, <span class="kw">error</span>) {
+    <span class="kw">if</span> req.Token == <span class="str">""</span> {
+        <span class="cm">// 查无此凭证 → 负缓存（核心短期缓存，挡住重复打穿）</span>
+        <span class="kw">return</span> &plugin.CredentialResponse{NotFound: <span class="kw">true</span>}, <span class="kw">nil</span>
+    }
+    <span class="kw">return</span> &plugin.CredentialResponse{
+        Auth: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"app_id"</span>: req.AppID, <span class="str">"ttl"</span>: <span class="str">"300"</span>}, <span class="cm">// ttl 控制缓存秒数</span>
+        Route: plugin.RouteNode{
+            Selector: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"tenant"</span>: <span class="str">"corp_abc"</span>}, <span class="cm">// ← 动态路由</span>
+            Meta:     <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"gray"</span>: <span class="str">"true"</span>},
+        },
+        Head: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"X-Tenant-Id"</span>: <span class="str">"corp_abc"</span>}, <span class="cm">// 注入下游</span>
+    }, <span class="kw">nil</span>
+}
+
+<span class="kw">func</span> init() {
+    _ = plugin.RegisterProvider(<span class="str">"myids"</span>, <span class="kw">func</span>(deps *plugin.Dependencies) (plugin.CredentialProvider, <span class="kw">error</span>) {
+        <span class="kw">return</span> &myProvider{deps: deps}, <span class="kw">nil</span>
+    })
+}</code></pre></div>
+      <p>配置（按路由选）：路由 <code>ids.ids_provider: "myids"</code>，留空 = 默认 <code>http</code>。<strong>不同路由可以用不同 provider。</strong></p>
+
+      <h3 id="ids-issuer">会话 Issuer（写 / 签发）</h3>
+      <p>签发（登录换 token）是另一条路，实现 <code>SessionIssuer</code>，配置用 <code>ids.ids_issuer</code>（与 provider 独立）。</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">func</span> (i *myIssuer) Authenticate(ctx context.Context, r *http.Request, cfg plugin.SessionIssuerConfig) (*plugin.CredentialResponse, *http.Response, <span class="kw">error</span>) {
+    <span class="cm">// 进程内签发：算出凭证直接返回，*http.Response 给 nil（核心已 nil 守卫）</span>
+    <span class="kw">return</span> &plugin.CredentialResponse{
+        Auth: <span class="kw">map</span>[<span class="kw">string</span>]<span class="kw">string</span>{<span class="str">"session"</span>: <span class="str">"..."</span>, <span class="str">"ttl"</span>: <span class="str">"7200"</span>},
+    }, <span class="kw">nil</span>, <span class="kw">nil</span>
+}
+
+<span class="kw">func</span> init() {
+    _ = plugin.RegisterSessionIssuer(<span class="str">"myids"</span>, <span class="kw">func</span>(deps *plugin.Dependencies) (plugin.SessionIssuer, <span class="kw">error</span>) {
+        <span class="kw">return</span> &myIssuer{}, <span class="kw">nil</span>
+    })
+}</code></pre></div>
+      <div class="callout ok"><span class="t">读写解耦</span><p>只做校验的插件，只注册 <code>CredentialProvider</code>、只配 <code>ids_provider</code> 即可，<code>ids_issuer</code> 留空自动用内置 http——不会因为没实现签发而启动失败。</p></div>
+
+      <h3 id="ids-mode">模式处理器（控制 / 拦截）</h3>
+      <p>想完全控制请求生命周期劫持（前置安全校验、直接截断、转换下游返回），实现 <code>IDSModeProcessor</code>。</p>
+      <div class="code-wrap"><span class="lang">go</span><pre><code><span class="kw">func</span> (p *MyMode) ModeName() <span class="kw">string</span> { <span class="kw">return</span> <span class="str">"my-mode"</span> }
+
+<span class="kw">func</span> (p *MyMode) ProcessRequest(w http.ResponseWriter, r *http.Request, ctx context.Context, config *plugin.IDSConfig) (context.Context, <span class="kw">bool</span>) {
+    <span class="kw">if</span> r.Header.Get(<span class="str">"X-My-Secure-Token"</span>) == <span class="str">""</span> {
+        w.WriteHeader(http.StatusForbidden)
+        _, _ = w.Write([]<span class="kw">byte</span>(<span class="str">"Forbidden"</span>))
+        <span class="kw">return</span> ctx, <span class="kw">false</span> <span class="cm">// 截断请求</span>
+    }
+    <span class="kw">return</span> ctx, <span class="kw">true</span> <span class="cm">// 放行</span>
+}
+
+<span class="kw">func</span> (p *MyMode) WrapResponse(w http.ResponseWriter, r *http.Request, rw http.ResponseWriter, config *plugin.IDSConfig) http.ResponseWriter {
+    <span class="kw">return</span> rw <span class="cm">// 默认不劫持响应</span>
+}
+
+<span class="kw">func</span> init() {
+    _ = plugin.RegisterIDSModeProcessor(&MyMode{})
+    <span class="cm">// 覆盖内置模式（verify/issue…）须显式：plugin.ReplaceIDSModeProcessor(&MyVerify{})</span>
+}</code></pre></div>
+      <p>配置：路由 <code>ids.mode: "my-mode"</code> 即激活。</p>
+      <div class="callout"><span class="t">为什么这套很干净</span><p><code>CredentialResponse</code> / <code>CredentialRequestContext</code> 是<strong>纯数据 + stdlib <code>http.Request</code></strong>，不引用任何内部类型——所以内置代码直接采用了这套公共类型，内置 <code>"http"</code> 回源也注册进<strong>同一张公共注册表</strong>。第三方插件与内置回源走完全相同的契约与分发路径。</p></div>
+    </section>
+
+    <section id="build">
+      <h2><span class="num">8</span>编译与分发</h2>
+
+      <h3>方式 1：litegate build --with（内置一键构建，推荐）</h3>
+      <p>LiteGate 内置一键构建命令行工具，自动生成 <code>main.go</code> + <code>go.mod</code>、拉取依赖、pin 版本、编译。</p>
+      <div class="code-wrap"><span class="lang">bash</span><pre><code>litegate build --with github.com/acme/litegate-llm -o my-litegate
+
+<span class="cm"># 本地联调：把 LiteGate 依赖替换为本地源码树</span>
+litegate build --with ./greeting --replace=../LiteGate -o my-litegate
+<span class="cm"># 或设置环境变量 LITEGATE_LOCAL_PATH=../LiteGate</span></code></pre></div>
+      <ul>
+        <li>依赖本地 Go 工具链（自动推导适配当前 Go 版本）+ 网络能访问 Go module 代理。</li>
+        <li>可重复 <code>--with</code> 叠加多个插件；<code>-o/--output</code> 指定产物路径。</li>
+      </ul>
+      <div class="callout warn"><span class="t">dev 版本必须配 --replace</span><p>当 LiteGate 跑的是开发版本（版本号含 <code>-dev</code>）且不在 LiteGate 模块目录内时，module 代理上不存在该版本，<code>litegate build</code> 会要求你显式 <code>--replace=&lt;本地路径&gt;</code> 或设 <code>LITEGATE_LOCAL_PATH</code>。</p></div>
+
+      <h3>方式 2：用户拥有 main（原生 go build）</h3>
+      <p>如第 3 节，自建 Go 模块，主函数空导入插件包并调 <code>litegate.Run()</code>，用原生 <code>go build</code> 编译。版本通过 <code>go.mod</code> 锁定，本地开发用 <code>replace</code> 替换。模板见仓库 <code>examples/plugin-template</code>。</p>
+      <div class="callout danger"><span class="t">不支持动态加载</span><p>没有 <code>.so</code> 热插拔。插件必须<strong>编译进二进制</strong>——这是为零运行时开销做的有意取舍。</p></div>
+    </section>
+
+    <section id="lifecycle">
+      <h2><span class="num">9</span>生命周期全景</h2>
+      <div class="code-wrap"><span class="lang">text</span><pre><code>程序启动
+  └─ 各插件包 init() → Register{Handler,Middleware,LoadBalancer,Provider,...}
+配置加载 / 热重载
+  └─ loader 逐路由校验 → Validator.Validate(cfg)        [仅 Action；fail-closed：错则起不来]
+首个请求命中该类型（懒加载，singleflight 去重）
+  └─ 工厂 factory(deps) → Provisioner.Provision(deps)   [一次，全局初始化，拿不到路由配置]
+每个请求
+  └─ Handler.Execute() / 中间件链 / LB.Next()           [高并发，类型级共享实例]
+关机 / 热重载卸载
+  └─ CleanerUpper.Cleanup()                             [一次，优雅释放]</code></pre></div>
+      <p>全链路 panic 都有 <code>recover</code> 兜底：工厂 / <code>Provision</code> / <code>Validate</code> / 插件 <code>Execute</code> 的 panic 都被转成 error 或 500，不会拖垮进程。但别依赖它当正常流程。</p>
+    </section>
+
+    <section id="pitfalls">
+      <h2><span class="num">10</span>踩坑清单</h2>
+      <ol>
+        <li><strong>Handler / LB 是跨路由的类型级单例。</strong>所有用该类型的路由共享一个实例并发调用。<strong>每路由不同的配置必须在 <code>Execute</code> 里从 <code>cfg</code> 现读，不能缓存到结构体字段</strong>，否则路由间互相覆盖。</li>
+        <li><strong>不能覆盖内置类型。</strong><code>RegisterHandler("proxy", …)</code> / <code>RegisterMiddleware("cors", …)</code> / <code>RegisterLoadBalancer("round_robin", …)</code> 都返回 error。取个不冲突的名字。（IDS 内置 <code>"http"</code> 要覆盖须用 <code>ReplaceProvider</code> / <code>ReplaceSessionIssuer</code>。）</li>
+        <li><strong>Validate 是 fail-closed（仅 Action）。</strong>任一路由配置非法都会让网关启动/重载失败——这是对的。把配置校验尽量放进 <code>Validate</code>。</li>
+        <li><strong>Provision 拿不到路由配置。</strong>只做与路由无关的全局初始化；需要路由配置的逻辑放 <code>Execute</code>。</li>
+        <li><strong>配置值类型要小心。</strong>YAML 数字进来是 <code>int</code>/<code>float64</code>，不是 string。优先 <code>cfg.Unmarshal(&amp;struct)</code>。</li>
+        <li><strong>依赖最小集。</strong>插件只拿到 <code>Logger</code> 和 <code>Discovery</code>（窄接口）。需要更多能力应推动在 <code>pkg/plugin</code> 追加窄接口，不暴露内部具体类型。</li>
+        <li><strong>IDS：别自己做缓存。</strong>核心已在 provider 调用外层做了 L1(LRU)+L2(Redis)+负缓存+singleflight。你只管返回裸数据。缓存时长用 <code>Auth["ttl"]</code>（秒）。</li>
+        <li><strong>IDS：fail-closed 默认。</strong>返回 error 时核心按 <code>fail_policy</code>（默认 deny）处理；鉴权失败应返回 error 或 <code>NotFound</code>，别静默放行。</li>
+        <li><strong>热重载下别泄露 goroutine。</strong>在 <code>Provision</code> 起的后台 goroutine 必须监听宿主取消信号，并在 <code>Cleanup</code> 里终止，否则多次重载累积泄露。</li>
+      </ol>
+    </section>
+
+    <section id="test">
+      <h2><span class="num">11</span>测试你的插件</h2>
+      <p>你自己的仓库里可直接对 <code>pkg/plugin</code> 的接口做单元测试（构造 <code>plugin.Context</code> 与一个实现 <code>ActionConfig</code> 的桩），无需启动整个网关。</p>
+      <ol class="steps">
+        <li><strong>单元测试</strong>：构造 <code>*plugin.Context</code>（用 <code>httptest.NewRecorder()</code> + <code>httptest.NewRequest()</code>）与一个 <code>ActionConfig</code> 桩，直接调 <code>Execute</code> 断言响应。</li>
+        <li><strong>注册校验</strong>：断言 <code>RegisterHandler</code> 返回 <code>nil</code>，重名 / 覆盖内置返回 error。</li>
+        <li><strong>端到端</strong>：参考仓库 <code>internal/action/plugin_external_test.go</code>，三类插件各有一个公共 API 的端到端用例。</li>
+        <li><strong>配置测试</strong>：<code>litegate -t -config config.yaml</code> 验证配置语法 + 触发 Action 的 <code>Validate</code>。</li>
+      </ol>
+    </section>
+
+    <section id="faq">
+      <h2><span class="num">12</span>常见问题</h2>
+      <h3>能动态加载 .so 插件吗？</h3>
+      <p>不能。LiteGate 用编译期注册表，插件必须编译进二进制。这是为零运行时开销与跨平台稳定性（Go <code>plugin</code> 在 Windows 不可用）做的有意取舍。</p>
+
+      <h3>插件能拿到哪些宿主能力？</h3>
+      <p>第三方只拿到 <code>Dependencies{ Logger, Discovery }</code>——日志 + 服务发现窄视图。需要 Redis / 其它存储请插件自带；需要更多宿主能力，应在 <code>pkg/plugin</code> 追加窄接口。</p>
+
+      <h3>内置功能和我的插件有区别吗？</h3>
+      <p>走同一张注册表分发，但<strong>能力不对等</strong>：内置 Action 走“宿主内部捷径”（直接访问 <code>Executor</code> 私有状态），第三方走公共 <code>Dependencies</code> 契约。这是性能与封装的有意权衡。</p>
+
+      <h3>插件 panic 会不会搞垮网关？</h3>
+      <p>不会。工厂 / <code>Provision</code> / <code>Validate</code> / 插件 <code>Execute</code> 都被宿主 <code>recover</code> 成 error 或 500。但请自己处理错误，别把 recover 当正常流程。</p>
+
+      <h3>同一个名字能同时是 Action 和 Middleware 吗？</h3>
+      <p>可以——它们是各自独立的注册表，名字空间不冲突。但内部 <code>Register*</code> 会反查外部注册表防止内外同表重名。</p>
+    </section>
+
+    <div class="footer">
+      LiteGate 插件开发指南 · 契约基于公共包 <code>pkg/plugin</code>（register / context / config / middleware / loadbalancer / ids）与入口 <code>pkg/litegate</code>，与源码逐项对齐 · 设计原理详见仓库 <code>docs/zh-cn/plugin-architecture.md</code>。
+    </div>
+  </main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var map = {};
+  links.forEach(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) map[id] = a;
+  });
+  var ids = Object.keys(map);
+  function onScroll() {
+    var pos = window.scrollY + 120;
+    var current = ids[0];
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && el.offsetTop <= pos) current = id;
+    });
+    links.forEach(function (a) { a.classList.remove('active'); });
+    if (map[current]) map[current].classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>
