@@ -768,18 +768,14 @@ litegate.router.priority=200
 # 启用大一统安全认证控制引擎并指定校验模式为 verify (会话校验)
 litegate.middleware.ids.enabled=true
 litegate.middleware.ids.mode=verify
-# 关联统一的认证授权提供商 saas-auth
-litegate.middleware.ids.provider=saas-auth
 
-# ── 3. 动态身份校验提供者 (IDSProvider) 参数配置 ──
-# 指定提供商的底层校验模型为 ids_session
-litegate.http.ids_providers.saas-auth.type=ids_session
+# ── 3. 大一统 IDS 引擎内联参数配置 ──
 # 从 Authorization 请求头中提取会话凭证（支持 Bearer / UUID 格式自动识别）
-litegate.http.ids_providers.saas-auth.extractor={header.Authorization}
+litegate.middleware.ids.extractor={header.Authorization}
 # 会话的强制生存时间（秒）
-litegate.http.ids_providers.saas-auth.session_ttl=7200
+litegate.middleware.ids.session_ttl=7200
 # 当会话剩余时间小于 3600 秒时，触发异步滑动续签，防止用户登录态突然中断
-litegate.http.ids_providers.saas-auth.renew_threshold=3600
+litegate.middleware.ids.renew_threshold=3600
 
 # ── 4. 身份信息上下文注入 ──
 # 💡 注: inject_headers / inject_claims 为静态 YAML 专属，动态标签不支持；
@@ -844,22 +840,18 @@ litegate.http.routers.open-orders.ids.mode=openapi
 # 关联绑定的动态安全认证提供者
 litegate.http.routers.open-orders.ids.provider=dynamic-openapi
 
-# ── 2. 动态身份校验提供者 (IDSProvider) 注册 ──
-# 声明身份服务提供商类型为 remote_auth (支持集群动态回源发现)
-litegate.http.ids_providers.dynamic-openapi.type=remote_auth
-# 声明身份验证模式为 openapi
-litegate.http.ids_providers.dynamic-openapi.mode=openapi
+# ── 2. 大一统 IDS 引擎内联参数配置 ──
 # 从请求头提取应用标识 AppId 变量
-litegate.http.ids_providers.dynamic-openapi.extractor={header._appid}
+litegate.http.routers.open-orders.ids.extractor={header._appid}
 # 声明身份发放提供者（由网关动态调度后端 identityservice 完成物理回源）
-litegate.http.ids_providers.dynamic-openapi.discovery_service=identityservice
+litegate.http.routers.open-orders.ids.discovery_service=identityservice
 # 挂载局部自定义凭证校验接口路径
-litegate.http.ids_providers.dynamic-openapi.path=/api/gate/credentials
+litegate.http.routers.open-orders.ids.path=/api/gate/credentials
 # 绑定接入身份中心的客户端凭证 (ClientID / ClientSecret)
-litegate.http.ids_providers.dynamic-openapi.client_id=litegate
-litegate.http.ids_providers.dynamic-openapi.client_secret=secret
+litegate.http.routers.open-orders.ids.client_id=litegate
+litegate.http.routers.open-orders.ids.client_secret=secret
 # 非法 AppId 404 负缓存强力阻断时间 (秒)
-litegate.http.ids_providers.dynamic-openapi.negative_ttl=60</code></pre>
+litegate.http.routers.open-orders.ids.negative_ttl=60</code></pre>
             </div>
             <div class="architecture-tip">
               <p>💡 <b>选路提升防护：</b>验签通过后，网关在网关内部安全提取 <code>sid</code> 并自动提升为物理选路键 <code>KeyRouteSelector["sid"]</code> 交互 Litemesh 进行定向分片路由，同时彻底屏蔽向下游的 <code>sid</code> 透传，确保边缘安全。</p>
@@ -1186,19 +1178,7 @@ const SECTIONS = [
       ["routes[i].action.ids","inject_claims","用户身份验证成功后，将 Claims 荷载解密注入到请求头的映射关系。","no","","不适用"],
       ["routes[i].action.ids","inject_headers","会话成功后是否自动将通用身份元数据注入到下游请求头。","no","","不适用"],
       ["routes[i].action.ids","inject_response","是否同步将身份凭证元数据以 HTTP 响应头形式返回给客户端。","yes","litegate.middleware.inject_response=true","物理平铺于 middleware 层，没有 ids 中断段"],
-      ["动态提供商","ids_providers[i].type","注册专属动态身份提供商类型。","yes","litegate.http.ids_providers.myids.type=ids","支持 ids / ids_session / oidc 等类型"],
-      ["动态提供商","ids_providers[i].enabled","是否启用此动态身份提供商。","yes","litegate.http.ids_providers.myids.enabled=true",""],
-      ["动态提供商","ids_providers[i].issuer","OIDC 身份发行方 URL 地址。","yes","litegate.http.ids_providers.myids.issuer=https://okta.com",""],
-      ["动态提供商","ids_providers[i].client_id","接入提供商的客户端 ID 凭证。","yes","litegate.http.ids_providers.myids.client_id=client123",""],
-      ["动态提供商","ids_providers[i].client_secret","接入提供商的客户端密匙凭证。","yes","litegate.http.ids_providers.myids.client_secret=secret123",""],
-      ["动态提供商","ids_providers[i].scopes","请求认证时的 scope 作用域（逗号分隔）。","yes","litegate.http.ids_providers.myids.scopes=openid,email",""],
-      ["动态提供商","ids_providers[i].session_prefix","缓存于 Redis 中的 Session 主键前缀。","yes","litegate.http.ids_providers.myids.session_prefix=auth:orders: (缺省为 session:)",""],
-      ["动态提供商","ids_providers[i].session_ttl","会话缓存存活生存秒数。","yes","litegate.http.ids_providers.myids.session_ttl=7200 (缺省为 7200)",""],
-      ["动态提供商","ids_providers[i].renew_threshold","触发会话异步滑动续签的剩余秒数阀值。","yes","litegate.http.ids_providers.myids.renew_threshold=3600 (缺省为 3600)",""],
-      ["动态提供商","ids_providers[i].negative_ttl","非法 AppId 404 负缓存强力拦截防高频穿透的时间（秒）。","yes","litegate.http.ids_providers.myids.negative_ttl=60",""],
-      ["动态提供商","ids_providers[i].fail_policy","接口鉴权失败时的安全策略（如 deny 直接拦截、bypass 放行）。","yes","litegate.http.ids_providers.myids.fail_policy=deny",""],
-      ["动态提供商","ids_providers[i].url","远程物理服务验证接口的绝对 URL 路径。","yes","litegate.http.ids_providers.myids.url=http://192.168.10.10:9091",""],
-      ["动态提供商","ids_providers[i].discovery_service","用于物理回源发现的后端微服务注册名称。","yes","litegate.http.ids_providers.myids.discovery_service=identityservice",""],
+      ["动态提供商","ids_providers[i].*","【已废弃】旧版动态身份提供商配置。自 2.0+ 起，IDS 属性已完全内联自包含到具体的路由 action.ids/middleware.ids 下配置。","no","","不再生效"],
       ["动态中间件","middlewares[i].type","动态向网关注册专属中间件实例类型。","yes","litegate.http.middlewares.m1.type=headers","动态中间件: 支持 headers / ratelimit / cors / ip_restriction 等"],
       ["动态中间件","middlewares[i].config","对应中间件实例类型的私有自定义配置 Map。","yes","litegate.http.middlewares.m1.response.X-Test=true","`litegate.http.middlewares.m2.qps=10`"],
     ]

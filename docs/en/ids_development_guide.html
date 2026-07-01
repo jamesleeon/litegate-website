@@ -56,7 +56,7 @@
   <h2>1. Request and response contract</h2>
   <p>The contract is the core of IDS development: LiteGate sends a request with gateway credentials and a caller identifier; IDS returns a normalized decision envelope.</p>
   <h3>Request from LiteGate</h3>
-<pre><code>GET /api/gate/credentials?client_id=app-c1&amp;type=remote_auth
+<pre><code>GET /api/gate/credentials?client_id=app-c1&amp;type=ids
 X-Gateway-ID: litegate-prod
 X-Gateway-Secret: shared-secret</code></pre>
   <p><code>X-Gateway-ID</code> and <code>X-Gateway-Secret</code> let your IDS confirm that the query comes from a trusted gateway.</p>
@@ -67,7 +67,7 @@ X-Gateway-Secret: shared-secret</code></pre>
   "data": {
     "auth": { "type": "md5", "secret": "secret-c1", "ttl": "300" },
     "route": { "selector": { "sid": "c1" }, "meta": { "lane": "stable" } },
-    "head": { "X-Tenant-ID": "tenant-c1" },
+    "head": { "X-LiteGate-Identity-Ref": "ref_7f3a9c" },
     "ratelimit": { "qps": "100", "limit_key": "tenant-c1" }
   }
 }</code></pre>
@@ -114,7 +114,7 @@ X-Gateway-Secret: shared-secret</code></pre>
   <h3>auth</h3>
   <p>Defines how LiteGate verifies the caller locally. Common values are <code>none</code>, <code>md5</code>, <code>md5-secure</code>, and <code>jwt</code>.</p>
   <h3>route</h3>
-  <p><code>selector</code> is hard isolation. If it says <code>sid=c1</code>, LiteGate only sends traffic to instances carrying <code>sid=c1</code>. <code>meta</code> is a softer preference for lane, version, or canary metadata.</p>
+  <p><code>selector</code> is hard isolation and is <strong>mandatory</strong> for <code>openapi</code>, <code>verify</code>, and <code>issue</code> modes (missing selector triggers a fail-closed error). <code>meta</code> is a softer preference for lane, version, or canary metadata.</p>
   <h3>head</h3>
   <p>Headers in this section are trusted headers injected by the gateway. LiteGate removes untrusted client-supplied copies before injecting them.</p>
   <h3>ratelimit</h3>
@@ -184,11 +184,11 @@ X-Gateway-Secret: shared-secret</code></pre>
   <table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
     <tr><td><code>auth.type</code></td><td>Signer or verifier type used by LiteGate.</td></tr>
     <tr><td><code>auth.secret</code></td><td>Secret used for local signature verification.</td></tr>
-    <tr><td><code>route.selector</code></td><td>Hard isolation metadata, commonly <code>sid</code>.</td></tr>
+    <tr><td><code>route.selector</code></td><td>Hard isolation metadata, commonly <code>sid</code> (Mandatory for openapi/verify/issue modes).</td></tr>
     <tr><td><code>route.meta</code></td><td>Soft metadata used for lane, canary, or version preference.</td></tr>
     <tr><td><code>head</code></td><td>Trusted downstream request headers.</td></tr>
     <tr><td><code>ratelimit.qps</code></td><td>Dynamic quota for this caller or tenant.</td></tr>
-    <tr><td><code>ratelimit.limit_key</code></td><td>Bucket key, usually tenant id or app id.</td></tr>
+    <tr><td><code>ratelimit.limit_key</code></td><td>Bucket key, usually tenant id or app id (fallback to key or client IP if empty).</td></tr>
   </tbody></table>
 </section>
 

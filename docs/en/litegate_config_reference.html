@@ -256,19 +256,23 @@ oidc_security:
     cookie_same_site: lax         # lax / strict / none
     max_concurrent_sessions: 10
 
-# Reusable auth providers (referenced by a route's ids.provider)
+# OIDC / OAuth2 SSO providers (referenced by a route's remote_auth.provider)
 auth_providers:
     # google:
     #     type: oidc
     #     issuer: "https://accounts.google.com"
     #     client_id: "..."
+
+# IDS provider connection settings, keyed by name (referenced by a route's ids.provider).
+# Freeform per-provider map passed verbatim to a custom IDS plugin factory (DB/Redis/HTTP,
+# with secrets). Route IDS behavior itself is self-contained under action.ids; nothing here
+# is a routing template. The built-in "http" provider needs no entry here.
 ids_providers:
-    # dynamic-openapi:
-    #     type: ids
-    #     mode: openapi
-    #     extractor: "{header._appid}"
-    #     discovery_service: identityservice</code></pre></div>
-      <div class="callout warn"><span class="t">cookie_secret length</span><p>Once set, <code>oidc_security.cookie_secret</code> must be <strong>&gt;= 32 bytes</strong>, or startup validation fails. <code>ids_providers</code> are merged into <code>auth_providers</code> at load time for unified use.</p></div>
+    # myids:
+    #     driver: postgres
+    #     dsn: "postgres://user:pass@10.0.0.5:5432/tenants"
+    #     redis_addr: "10.0.0.6:6379"</code></pre></div>
+      <div class="callout warn"><span class="t">cookie_secret length</span><p>Once set, <code>oidc_security.cookie_secret</code> must be <strong>&gt;= 32 bytes</strong>, or startup validation fails. <code>ids_providers</code> entries are <strong>not</strong> merged into <code>auth_providers</code>; they are separate per-provider connection settings handed to the IDS plugin factory at instantiation.</p></div>
     </section>
 
     <section id="log">
