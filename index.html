@@ -17,6 +17,7 @@
     <a class="brand" href="#"><span class="brand-mark">L</span>LiteGate</a>
     <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
     <nav class="nav-links" aria-label="主导航">
+      <a href="#discovery">服务发现</a>
       <a href="#syntax">配置语法</a>
       <a href="#network">跨网络</a>
       <a href="#security">证书与 ECH</a>
@@ -65,67 +66,114 @@
   </div>
 </section>
 
+<!-- ── Discovery ── -->
+<section id="discovery" class="alt">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">服务发现 · Magic Ingress</p>
+      <h2>后端注册即上线，网关零配置</h2>
+      <p>做 API 网关时，网关上只为前端写一次站点；之后每个后端服务在注册时带上两个标签，就自动挂到同一个域名下。服务上线、扩容、下线都不用改网关配置，也不用重启。</p>
+    </div>
+
+    <div class="split discovery" data-animate>
+      <div>
+        <ol class="flow-steps">
+          <li><strong>服务注册</strong><span>后端在 Litemesh、Consul、Docker 或 Kubernetes 中注册，标签写在服务元数据或 Docker label 里。</span></li>
+          <li><strong>网关实时感知</strong><span>LiteGate 订阅服务变化，在内存里生成路由，和站点文件里的前端合并到同一个域名，天然同源、没有跨域问题。</span></li>
+          <li><strong>流量自动跟随实例</strong><span>新实例自动加入负载均衡，健康检查失败或下线自动摘除；用到新域名时证书照常自动申请。</span></li>
+        </ol>
+        <a class="card-link" href="docs/zh-cn/user/03-configuration/tag-dsl.md">服务标签使用指南</a>
+      </div>
+
+      <div class="code-stack">
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml<span class="label">网关上只写这一次</span></div>
+<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<span class="k">spa</span>: <span class="s">./dist</span></pre>
+        </div>
+
+        <div data-tabs>
+          <div class="tabs" role="tablist" aria-label="服务声明方式">
+            <button class="tab" role="tab" id="t-docker" aria-controls="p-docker" aria-selected="true">Docker</button>
+            <button class="tab" role="tab" id="t-meta" aria-controls="p-meta" aria-selected="false" tabindex="-1">Litemesh / Consul</button>
+            <button class="tab" role="tab" id="t-policy" aria-controls="p-policy" aria-selected="false" tabindex="-1">加上治理策略</button>
+          </div>
+          <div class="tab-panel" id="p-docker" role="tabpanel" aria-labelledby="t-docker">
+            <div class="code-window">
+              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>docker-compose.yml<span class="label">后端自己声明</span></div>
+<pre><span class="k">services</span>:
+  <span class="k">orders</span>:
+    <span class="k">image</span>: <span class="s">acme/orders</span>
+    <span class="k">labels</span>:
+      <span class="k">litegate.http.host</span>: <span class="s">app.example.com</span>
+      <span class="k">litegate.http.path_prefix</span>: <span class="s">/api/orders</span>
+  <span class="k">users</span>:
+    <span class="k">image</span>: <span class="s">acme/users</span>
+    <span class="k">labels</span>:
+      <span class="k">litegate.http.host</span>: <span class="s">app.example.com</span>
+      <span class="k">litegate.http.path_prefix</span>: <span class="s">/api/users</span></pre>
+            </div>
+          </div>
+          <div class="tab-panel" id="p-meta" role="tabpanel" aria-labelledby="t-meta" hidden>
+            <div class="code-window">
+              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>服务元数据<span class="label">注册时附带</span></div>
+<pre><span class="c"># orders 服务注册时携带的标签</span>
+<span class="k">litegate.http.host</span>=<span class="s">app.example.com</span>
+<span class="k">litegate.http.path_prefix</span>=<span class="s">/api/orders</span>
+<span class="k">litegate.http.strip_path</span>=<span class="s">true</span>   <span class="c"># 可选：转发时去掉前缀</span></pre>
+            </div>
+          </div>
+          <div class="tab-panel" id="p-policy" role="tabpanel" aria-labelledby="t-policy" hidden>
+            <div class="code-window">
+              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>服务元数据<span class="label">命名资源写法</span></div>
+<pre><span class="k">litegate.http.routers.orders.match.hosts</span>=<span class="s">app.example.com</span>
+<span class="k">litegate.http.routers.orders.match.path_prefix</span>=<span class="s">/api/orders</span>
+<span class="k">litegate.http.routers.orders.middlewares</span>=<span class="s">orders-limit</span>
+<span class="k">litegate.http.middlewares.orders-limit.ratelimit.qps</span>=<span class="s">100</span>
+<span class="k">litegate.http.services.orders.retry.attempts</span>=<span class="s">2</span>
+<span class="k">litegate.http.services.orders.healthcheck.path</span>=<span class="s">/healthz</span></pre>
+            </div>
+          </div>
+        </div>
+        <p class="result-line"><code>https://app.example.com/</code> 是前端，<code>/api/orders</code>、<code>/api/users</code> 随服务注册自动出现。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── Syntax ── -->
-<section id="syntax" class="alt">
+<section id="syntax">
   <div class="wrap">
     <div class="section-head" data-animate>
       <p class="kicker">Site YAML v2</p>
-      <h2>比 Caddyfile 更好读的配置语言</h2>
-      <p>路径就是键，动作就是值。简单站点和 Caddyfile 一样短；规则一多，差别就出来了：不用记指令执行顺序，跨域和限流直接写在路由下，不需要额外插件。</p>
+      <h2>一种配置语言，从三行到完整网关</h2>
+      <p>路径就是键，动作就是值。简单站点几行写完；需要负载均衡、跨域、限流时，直接写在对应路由下面，不用换格式，也不需要额外插件。</p>
     </div>
 
-    <div data-tabs data-animate>
-      <div class="tabs" role="tablist" aria-label="对比场景">
-        <button class="tab" role="tab" id="t-spa" aria-controls="p-spa" aria-selected="true">SPA + API</button>
-        <button class="tab" role="tab" id="t-lb" aria-controls="p-lb" aria-selected="false" tabindex="-1">去前缀 + 负载均衡</button>
-        <button class="tab" role="tab" id="t-gov" aria-controls="p-gov" aria-selected="false" tabindex="-1">跨域 + 限流</button>
-      </div>
-
-      <div class="tab-panel compare" id="p-spa" role="tabpanel" aria-labelledby="t-spa">
+    <div class="grid grid-3 examples">
+      <div class="card example" data-animate>
+        <h3>前后端分流</h3>
+        <p><code>/api</code> 交给后端，其余交给单页应用，未知路由回退到 <code>index.html</code>。</p>
         <div class="code-window">
-          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml<span class="label badge-ours">LiteGate</span></div>
 <pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
 <span class="p">/api</span>: <span class="s">127.0.0.1:8080</span>
 <span class="k">spa</span>: <span class="s">./dist</span></pre>
         </div>
-        <div class="code-window theirs">
-          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>Caddyfile<span class="label">Caddy</span></div>
-<pre>app.example.com {
-  handle /api/* {
-    reverse_proxy 127.0.0.1:8080
-  }
-  handle {
-    root * ./dist
-    try_files {path} /index.html
-    file_server
-  }
-}</pre>
-        </div>
-        <p class="verdict"><strong>3 行对 10 行。</strong>SPA 回退是 <code>spa:</code> 一个键；<code>/api</code> 按路径段匹配，同时覆盖 <code>/api</code> 和 <code>/api/...</code>。</p>
       </div>
-
-      <div class="tab-panel compare" id="p-lb" role="tabpanel" aria-labelledby="t-lb" hidden>
+      <div class="card example" data-animate>
+        <h3>多个后端 + 去前缀</h3>
+        <p>逗号分隔多个地址，默认轮询；<code>strip_prefix</code> 转发前去掉 <code>/v1</code>。</p>
         <div class="code-window">
-          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/api.yaml<span class="label badge-ours">LiteGate</span></div>
 <pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
 <span class="p">/v1</span>:
   <span class="k">proxy</span>: <span class="s">10.0.0.5:8080, 10.0.0.6:8080</span>
   <span class="k">strip_prefix</span>: <span class="s">true</span></pre>
         </div>
-        <div class="code-window theirs">
-          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>Caddyfile<span class="label">Caddy</span></div>
-<pre>api.example.com {
-  handle_path /v1/* {
-    reverse_proxy 10.0.0.5:8080 10.0.0.6:8080
-  }
-}</pre>
-        </div>
-        <p class="verdict"><strong>字段名就是含义。</strong><code>strip_prefix: true</code> 不需要记住 <code>handle</code> 和 <code>handle_path</code> 的区别；多个后端默认轮询。</p>
       </div>
-
-      <div class="tab-panel compare" id="p-gov" role="tabpanel" aria-labelledby="t-gov" hidden>
+      <div class="card example" data-animate>
+        <h3>跨域 + 限流</h3>
+        <p>治理规则和转发写在同一个路由下，预检请求由网关直接应答。</p>
         <div class="code-window">
-          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/api.yaml<span class="label badge-ours">LiteGate</span></div>
 <pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
 <span class="p">/api</span>:
   <span class="k">proxy</span>: <span class="s">localhost:8080</span>
@@ -133,29 +181,6 @@
     <span class="k">allowed_origins</span>: [<span class="s">https://web.example.com</span>]
   <span class="k">rate_limit</span>: {<span class="k">rate</span>: <span class="s">10</span>, <span class="k">key</span>: <span class="s">ip</span>}</pre>
         </div>
-        <div class="code-window theirs">
-          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>Caddyfile<span class="label">Caddy + caddy-ratelimit</span></div>
-<pre>{
-  order rate_limit before reverse_proxy
-}
-api.example.com {
-  @preflight method OPTIONS
-  handle /api/* {
-    header Access-Control-Allow-Origin https://web.example.com
-    header Access-Control-Allow-Methods "GET, POST, OPTIONS"
-    respond @preflight 204
-    rate_limit {
-      zone api {
-        key    {remote_host}
-        events 10
-        window 1s
-      }
-    }
-    reverse_proxy localhost:8080
-  }
-}</pre>
-        </div>
-        <p class="verdict"><strong>治理就地声明。</strong>Caddy 没有内置 CORS 和限流：跨域要手写响应头和预检，限流需要另外编译第三方插件，并在全局声明指令顺序。</p>
       </div>
     </div>
 
@@ -177,7 +202,7 @@ api.example.com {
 </section>
 
 <!-- ── Cross-network ── -->
-<section id="network">
+<section id="network" class="alt">
   <div class="wrap">
     <div class="section-head" data-animate>
       <p class="kicker">跨网络连接</p>
@@ -289,7 +314,7 @@ api.example.com {
 </section>
 
 <!-- ── Security ── -->
-<section id="security" class="alt">
+<section id="security">
   <div class="wrap">
     <div class="split" data-animate>
       <div>
@@ -359,7 +384,7 @@ api.example.com {
 </section>
 
 <!-- ── Platform ── -->
-<section id="platform">
+<section id="platform" class="alt">
   <div class="wrap">
     <div class="section-head" data-animate>
       <p class="kicker">平台能力</p>
@@ -368,8 +393,8 @@ api.example.com {
     </div>
     <div class="features" data-animate>
       <div class="feature">
-        <h3>服务发现与打标上线</h3>
-        <p>对接 Consul、Litemesh、Docker、Kubernetes。后端注册时带上标签，就自动挂到对应站点的路由下，前后端各自发布。</p>
+        <h3>配置发布与回滚</h3>
+        <p>开启 Release Control 后，修改先进草稿，校验并确认差异后再发布；每次发布都有历史，可以一键回滚。</p>
       </div>
       <div class="feature">
         <h3>多租户选路（IDS）</h3>
@@ -396,7 +421,7 @@ api.example.com {
 </section>
 
 <!-- ── Quick start ── -->
-<section id="quickstart" class="alt">
+<section id="quickstart">
   <div class="wrap">
     <div class="section-head" data-animate>
       <p class="kicker">快速开始</p>
