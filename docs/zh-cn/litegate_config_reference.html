@@ -262,13 +262,8 @@ auth_providers:
     #     type: oidc
     #     issuer: "https://accounts.google.com"
     #     client_id: "..."
-ids_providers:
-    # dynamic-openapi:
-    #     type: ids
-    #     mode: openapi
-    #     extractor: "{header._appid}"
-    #     discovery_service: identityservice</code></pre></div>
-      <div class="callout warn"><span class="t">cookie_secret 长度</span><p><code>oidc_security.cookie_secret</code> 一旦设置就必须 <strong>≥ 32 字节</strong>，否则启动校验直接失败。<code>ids_providers</code> 在加载时会并入 <code>auth_providers</code> 统一使用。</p></div>
+</code></pre></div>
+      <div class="callout warn"><span class="t">cookie_secret 长度</span><p><code>oidc_security.cookie_secret</code> 一旦设置就必须 <strong>≥ 32 字节</strong>，否则启动校验直接失败。</p></div>
     </section>
 
     <section id="log">

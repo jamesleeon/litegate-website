@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate 证书管理实战 | 自动申请、集群共享与自带付费证书</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #faf7f1;
+  --bg3: #f4f1ea;
+  --border: rgba(31, 44, 40, 0.12);
+  --border2: rgba(31, 44, 40, 0.18);
+  --text: #1f2c28;
+  --text2: #54655f;
+  --text3: #7f9089;
+  --accent: #1a7f64;
+  --accent-bg: rgba(26, 127, 100, 0.1);
+  --accent-text: #0d5c46;
+  --green: #1a7f43;
+  --green-bg: #e3f4ea;
+  --amber: #c46a2d;
+  --amber-bg: rgba(196, 106, 45, 0.1);
+  --red: #b3261e;
+  --red-bg: #fbe6e5;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body { font-family: var(--sans); background: var(--bg3); color: var(--text); font-size: 14px; line-height: 1.7; min-height: 100vh; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; align-items: flex-start; }
+.toc { position: sticky; top: 0; width: 250px; flex-shrink: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 0.5px solid var(--border2); }
+.toc .brand { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; letter-spacing: .3px; }
+.toc .brand-sub { font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.toc a { display: block; padding: 5px 10px; font-size: 12.5px; color: var(--text2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; transition: background .12s, color .12s; }
+.toc a:hover { background: var(--bg2); color: var(--text); }
+.toc a.sub { padding-left: 22px; font-size: 12px; color: var(--text3); }
+.toc a.active { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+main { flex: 1; min-width: 0; background: var(--bg); padding: 40px 48px 80px; min-height: 100vh; }
+.hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 10px; line-height: 1.25; }
+.hero .lead { font-size: 14.5px; color: var(--text2); max-width: 820px; margin-bottom: 12px; }
+.badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11.5px; padding: 3px 11px; border-radius: 20px; background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+section { margin-top: 48px; scroll-margin-top: 20px; }
+h2 { font-size: 19px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border2); }
+h2 .num { color: var(--accent); margin-right: 8px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; margin: 26px 0 10px; }
+h4 { font-size: 13.5px; font-weight: 600; margin: 18px 0 8px; color: var(--text2); }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 0 0 14px 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); padding: 1.5px 6px; border-radius: 4px; border: 0.5px solid var(--border); color: var(--accent-text); }
+a.inline, a { color: var(--accent); text-decoration: none; }
+a.inline:hover, a:hover { text-decoration: underline; }
+.code-wrap { position: relative; margin: 14px 0 18px; }
+.code-wrap .lang { position: absolute; top: 8px; right: 10px; font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono); user-select: none; }
+pre { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--text); margin: 14px 0 18px; }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+.callout, .note, .ok, .warn { border-radius: var(--radius); padding: 13px 16px; margin: 16px 0; border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: 13.5px; }
+.callout .t { font-weight: 600; margin-bottom: 3px; display: block; }
+.callout.warn, .warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+.callout.ok, .ok { border-left-color: var(--green); background: var(--green-bg); }
+.callout p:last-child { margin-bottom: 0; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-weight: 600; font-size: 12px; color: var(--text2); }
+td code { font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
+.card, .panel, .mini-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h3, .panel h3, .mini-card h3 { margin-top: 0; }
+.tag { display:inline-block; font-size: 11px; padding: 1px 8px; border-radius: 4px; background: var(--accent-bg); color: var(--accent-text); font-weight: 600; font-family: var(--mono); }
+.footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border2); font-size: 12px; color: var(--text3); }
+@media (max-width: 880px) { .toc { display: none; } .layout { display: block; } main { padding: 28px 20px 60px; } .grid, .two { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">LiteGate HTTPS</div>
+    <div class="brand-sub">证书管理实战指南</div>
+    <a href="index.html" style="font-weight:600;color:var(--accent);">← 文档首页</a>
+    <a href="#overview">概览：三种证书来源</a>
+    <a href="#base">公共配置：auto_cert 基础块</a>
+    <a href="#ca">选择 CA 与 EAB</a>
+    <a href="#auto-single">A1 · 自动申请（单机）</a>
+    <a href="#auto-cluster">A2 · 自动申请（集群）</a>
+    <a href="#paid-single">B1 · 自带付费证书（单机）</a>
+    <a href="#paid-cluster">B2 · 自带付费证书（集群）</a>
+    <a href="#mix">混合：付费 + 自动并存</a>
+    <a href="#dns-plugin">自定义 DNS 插件并编译</a>
+    <a href="#rotate">轮换、续期与热加载</a>
+    <a href="#trouble">排障 FAQ</a>
+    <a href="#reference">配置字段速查</a>
+    <a href="litegate_certificate_lifecycle.html">证书生命周期（原理）</a>
+    <a href="../en/litegate_certificate_management.html">English version</a>
+  </nav>
+  <main>
+    <div class="hero" id="overview">
+      <h1>证书管理实战：自动申请、集群共享与自带付费证书</h1>
+      <p class="lead">这篇文档面向落地配置：你只需要决定证书从哪来——让网关自动向 ACME 申请，还是用你已经买好的商业证书——剩下的存储、续期、多节点共享和热加载由 LiteGate 完成。本文把单机与集群、自动与付费四种组合逐个写清楚，并教你在内置 DNS 服务商不够用时，如何自己写插件编译进去。</p>
+      <div class="badges"><span class="badge">自动 ACME</span><span class="badge green">自带付费证书</span><span class="badge">集群共享存储</span><span class="badge amber">DNS 插件</span></div>
+    </div>
+
+    <section id="overview-2">
+      <h2><span class="num">0</span>先搞清楚：证书有三种来源</h2>
+      <p>LiteGate 的入口层在 TLS 握手时按 SNI 找证书。证书可以来自下面三条路径，它们可以在同一个网关里并存：</p>
+      <div class="grid">
+        <div class="card"><h3>A · 自动申请</h3><p>配置 <code>auto_cert</code>，网关运行时向 Let's Encrypt 等 ACME 机构申请、续期。适合自己掌控 DNS 或 80 端口的域名。<br><span class="tag">本文 A1 / A2</span></p></div>
+        <div class="card"><h3>B · 自带付费证书</h3><p>你从 DigiCert / 阿里云 / 沃通等买了商业证书（OV/EV、或更长链路的 DV），把 <code>.pem</code> + <code>.key</code> 交给网关加载。<br><span class="tag">本文 B1 / B2</span></p></div>
+        <div class="card"><h3>C · 按需签发</h3><p>SaaS 多租户场景：握手时域名才第一次出现，授权通过后即时签发。属于 A 的进阶玩法，详见 <a href="litegate_certificate_lifecycle.html">证书生命周期</a> 与 on-demand 文档。</p></div>
+      </div>
+      <div class="callout"><span class="t">单机 vs 集群的唯一区别</span><p>配置语义完全一致，区别只在于<strong>证书存到哪里</strong>：单机存本地磁盘 <code>certs_dir</code>；集群把权威副本存进 Consul / Litemesh KV，所有节点共享同一份，再镜像回各自本地磁盘做高速加载。所以「集群配置」= 「单机配置」+ 「打开一个存储角色」。</p></div>
+    </section>
+
+    <section id="base">
+      <h2><span class="num">1</span>公共配置：auto_cert 基础块</h2>
+      <p>自动申请相关配置都在全局 <code>config.yaml</code> 的顶层 <code>auto_cert</code> 块下。最小可用骨架：</p>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>auto_cert:
+  enabled: true                 # 总开关
+  email: "ops@example.com"      # ACME 账号邮箱（必填）
+  certs_dir: "./certs"          # 本地证书目录（默认 ./certs）
+  ca_provider: "letsencrypt"    # CA：letsencrypt(默认)/zerossl/buypass/google/custom
+  renew_days: 30                # 过期前多少天触发续期
+  check_interval: 12            # 周期检查间隔（小时）
+  use_staging: false            # true=用测试环境，调试时避免触发频率限制
+  storage_secret: ""            # 共享存储下加密私钥的对称密钥（>=32 字节，强烈建议）</code></pre></div>
+      <div class="callout warn"><span class="t">字段名容易踩的坑</span><p>DNS 服务商的凭证写在 <code>dns_providers[].config</code> 下（注意是 <code>config:</code>，不是 <code>provider_config:</code>）。<code>provider_config</code> 仅用于已废弃的顶层单 Provider 兼容写法。新配置一律用 <code>dns_providers</code> 列表。</p></div>
+    </section>
+
+    <section id="ca">
+      <h2><span class="num">2</span>选择证书颁发机构（CA）与 EAB</h2>
+      <p>默认 Let's Encrypt，无需任何额外凭证。切换 CA 只改 <code>ca_provider</code>，网关会自动选用对应 ACME 目录地址，并为每个 CA 单独保存账号私钥，互不干扰。</p>
+      <table>
+        <thead><tr><th><code>ca_provider</code></th><th>内置 ACME 地址</th><th>是否需要 EAB</th></tr></thead>
+        <tbody>
+          <tr><td><code>letsencrypt</code>（默认）</td><td>acme-v02.api.letsencrypt.org</td><td>否</td></tr>
+          <tr><td><code>zerossl</code></td><td>acme.zerossl.com/v2/DV90</td><td><strong>是</strong></td></tr>
+          <tr><td><code>buypass</code></td><td>api.buypass.com/acme</td><td>否</td></tr>
+          <tr><td><code>google</code> / <code>gts</code></td><td>dv.acme-v02.api.pki.goog</td><td><strong>是</strong></td></tr>
+          <tr><td><code>custom</code></td><td>由 <code>acme_url</code> 指定</td><td>视服务而定</td></tr>
+        </tbody>
+      </table>
+      <p>ZeroSSL 与 Google Trust Services <strong>强制要求</strong> EAB（外部账号绑定）。到对应控制台拿到 kid/hmac 后成对填写，否则启动时会直接报配置错误并拒绝启动：</p>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>auto_cert:
+  enabled: true
+  email: "ops@example.com"
+  ca_provider: "zerossl"
+  eab_kid: "your-key-id"
+  eab_hmac: "your-hmac-key"</code></pre></div>
+      <h4>私有 CA / step-ca</h4>
+      <div class="code-wrap"><span class="lang">yaml</span><pre><code>auto_cert:
+  enabled: true
+  ca_provider: "custom"
+  acme_url: "https://ca.internal.example.com/acme/acme/directory"   # custom 时必填</code></pre></div>
+      <div class="callout"><span class="t">迁移 CA 会被一致性校验拦截</span><p>集群存储里记录了 <code>_cluster_ca_provider</code>，所有节点必须用同一个 CA + ACME URL。若要切换 CA，需先删除存储中的该元数据键（本地磁盘即 <code>certs_dir</code> 下的 <code>_cluster_ca_provider.pem/.key</code>）再重启。</p></div>
+    </section>
+
+    <section id="auto-single">
+      <h2><span class="num">3</span>A1 · 自动申请：单机</h2>
+      <p>单机不需要任何外部存储，证书直接落 <code>certs_dir</code>。按你能控制的校验通道二选一。</p>
+
+      <h3>方式一：HTTP-01（最简单，需公网 80 端口）</h3>
+      <p>不需要配置任何 DNS 服务商。在站点 YAML 里声明域名并开启 <code>force_https</code>，网关会拦截 <code>/.well-known/acme-challenge/</code> 完成校验。前提是公网能访问到本机 80 端口、域名 A 记录已指向本机。</p>
+      <div class="code-wrap"><span class="lang">yaml · sites/app.yaml</span><pre><code>domain: app.example.com
+force_https: true               # 开启即自动激活 HTTP-01 自动证书
+routes:
+  - name: web
+    match: { path_prefix: "/" }
+    action: { type: proxy, upstream: ["127.0.0.1:8080"] }</code></pre></div>
+      <p>同时在全局开启 <code>auto_cert.enabled</code> 与 <code>email</code> 即可（见 §1 骨架，不需要 <code>dns_providers</code>）。</p>
+
+      <h3>方式二：DNS-01（支持泛域名 / 不开 80 端口）</h3>
+      <p>申请 <code>*.example.com</code> 这类泛域名证书，或 80 端口不可开放时，必须走 DNS-01——网关用 DNS API 写入校验 TXT 记录。内置服务商：<code>aliyun</code> / <code>cloudflare</code> / <code>tencent</code> / <code>huawei</code>。</p>
+      <div class="code-wrap"><span class="lang">yaml · config.yaml</span><pre><code>auto_cert:
+  enabled: true
+  email: "ops@example.com"
+  certs_dir: "./certs"
+  storage_secret: "a-32-bytes-or-longer-secret-key-xxxxx"
+  dns_providers:
+    - name: "ali-main"           # 逻辑名（被 domains 路由引用，可与 type 不同）
+      type: "aliyun"             # 内置服务商类型
+      enabled: true
+      domains: ["*.example.com", "example.com"]
+      config:                    # 整个 map 原样传给 Provider
+        access_key_id: "LTAI..."
+        access_key_secret: "..."
+        # 可选传播控制：
+        # propagation_wait: "60s"
+        # recursive_nameservers: "223.5.5.5,8.8.8.8"</code></pre></div>
+      <p>域名匹配某个 provider 的 <code>domains</code> 时，网关就用该 provider 走 DNS-01。证书申请成功后写入：</p>
+      <div class="code-wrap"><span class="lang">text · certs_dir 布局</span><pre><code>certs/
+├── example.com.pem            # 完整证书链
+├── example.com.key            # 私钥（0600）
+├── _wildcard.example.com.pem  # 通配符证书单独前缀，避免与裸域冲突
+├── _wildcard.example.com.key
+├── _acme_account.key          # Let's Encrypt 账号私钥（其它 CA 为 _acme_account_<ca>）
+└── _cluster_ca_provider.pem   # CA 一致性元数据</code></pre></div>
+      <div class="callout ok"><span class="t">单机也建议设 storage_secret</span><p>本地磁盘上的 <code>.key</code> 仍是明文（受 0600 保护，满足握手高速加载）。但只要配了 <code>storage_secret</code>，未来切到共享存储或推送 KV 时私钥会自动 AES-256-GCM 加密。提前设好，迁移零改动。</p></div>
+    </section>
+
+    <section id="auto-cluster">
+      <h2><span class="num">4</span>A2 · 自动申请：集群</h2>
+      <p>多个 LiteGate 节点对外服务同一批域名时，<strong>不要</strong>让每个节点各自向 CA 申请——会重复签发、触发频率限制、证书各不相同。正确做法：选一个共享存储作为权威副本。在 §3 的 DNS-01 配置基础上，<strong>只需多打开一个存储角色</strong>。</p>
+
+      <h3>用 Litemesh KV 作为证书存储（推荐）</h3>
+      <div class="code-wrap"><span class="lang">yaml · config.yaml</span><pre><code>litemesh:
+  enabled: true
+  address: "127.0.0.1:7400"
+  token: "${LITEMESH_TOKEN}"
+  roles:
+    cert_storage: true          # ← 打开这个角色，证书即存入 Litemesh KV
+  keys:
+    cert_prefix: "litegate/certs/"   # 可选，默认即此
+
+auto_cert:
+  enabled: true
+  email: "ops@example.com"
+  storage_secret: "a-32-bytes-or-longer-secret-key-xxxxx"   # 集群强烈必填
+  dns_providers:
+    - name: "ali-main"
+      type: "aliyun"
+      enabled: true
+      domains: ["*.example.com"]
+      config: { access_key_id: "LTAI...", access_key_secret: "..." }</code></pre></div>
+
+      <h3>或用 Consul KV 作为证书存储</h3>
+      <div class="code-wrap"><span class="lang">yaml · config.yaml</span><pre><code>consul:
+  enabled: true
+  address: "127.0.0.1:8500"
+  roles:
+    cert_storage: true          # ← 同理，证书存入 Consul KV
+  keys:
+    cert_prefix: "litegate/certs/"</code></pre></div>
+
+      <p>打开角色后，集群自动获得这些保障（无需你额外配置）：</p>
+      <table>
+        <thead><tr><th>机制</th><th>解决什么</th></tr></thead>
+        <tbody>
+          <tr><td><strong>分布式锁</strong></td><td>同一域名同时被多节点遇到时，只有一个节点向 CA 申请，其余等待并读取结果。</td></tr>
+          <tr><td><strong>pending 标记</strong></td><td>Litemesh 存储下标记「正在申请」的域名，锁内双检，进一步压制脑裂/锁竞争导致的重复签发。</td></tr>
+          <tr><td><strong>确定性延迟</strong></td><td>申请/续期前加入分散延迟，避免整个集群在同一毫秒冲击 CA 或 DNS API。</td></tr>
+          <tr><td><strong>本地镜像</strong></td><td>权威副本在 KV，签发后自动镜像到各节点 <code>certs_dir</code>，TLSManager 仍从本地磁盘高速加载。</td></tr>
+          <tr><td><strong>CA 一致性</strong></td><td><code>_cluster_ca_provider</code> 强制所有节点使用同一 CA + ACME URL，配置漂移会被启动校验拦截。</td></tr>
+        </tbody>
+      </table>
+      <div class="callout danger"><span class="t">集群下 storage_secret 不是可选项</span><p>证书私钥会进共享 KV。不配 <code>storage_secret</code> 等于把私钥明文写进注册表，任何能读 KV 的人都能拿到。务必配置（≥32 字节），并通过环境变量等方式管理，不要硬编码进 git。</p></div>
+    </section>
+
+    <section id="paid-single">
+      <h2><span class="num">5</span>B1 · 自带付费证书：单机</h2>
+      <p>你已经从商业 CA 买了证书（拿到 <code>fullchain.pem</code> 和 <code>privkey.key</code>），不走 ACME。这种证书<strong>绑定在站点或 Stream 上</strong>，在站点 YAML 里用 <code>tls.cert_file</code> / <code>tls.key_file</code> 指定文件路径即可。</p>
+
+      <h3>HTTP 站点（七层）</h3>
+      <div class="code-wrap"><span class="lang">yaml · sites/shop.yaml</span><pre><code>domain: shop.example.com
+tls:
+  enabled: true
+  cert_file: "/etc/litegate/certs/shop.fullchain.pem"   # 必须是完整链
+  key_file:  "/etc/litegate/certs/shop.privkey.key"
+routes:
+  - name: web
+    match: { path_prefix: "/" }
+    action: { type: proxy, upstream: ["127.0.0.1:8080"] }</code></pre></div>
+      <div class="callout"><span class="t">付费证书不会被自动证书顶替</span><p>站点一旦 pin 了 <code>cert_file/key_file</code>，网关绝不会悄悄回退到 ACME/按需证书。即使文件加载失败，也会继续用上一份已加载的好证书，而不是降级——避免一次手滑把线上 HTTPS 打挂。</p></div>
+
+      <h3>TCP/UDP Stream（四层，如 MySQL/gRPC over TLS）</h3>
+      <div class="code-wrap"><span class="lang">yaml · streams/db.yaml</span><pre><code>name: mysql-tls
+port: 3306
+protocol: tcp
+upstream: "10.0.0.10:3306"
+enabled: true
+tls:
+  enabled: true
+  cert_file: "/etc/litegate/certs/db.fullchain.pem"
+  key_file:  "/etc/litegate/certs/db.privkey.key"
+  min_version: "1.2"            # 可选：1.2 / 1.3</code></pre></div>
+      <div class="callout warn"><span class="t">cert_file 与 key_file 必须成对</span><p>只配其中一个，启动/加载会直接报错（Stream 路径明确校验「成对出现」）。证书必须是<strong>完整链</strong>（服务器证书 + 中间 CA），否则部分客户端会校验失败。</p></div>
+    </section>
+
+    <section id="paid-cluster">
+      <h2><span class="num">6</span>B2 · 自带付费证书：集群</h2>
+      <p>集群里付费证书有两种分发思路。</p>
+
+      <h3>思路一：每个节点放同一份文件（最朴素）</h3>
+      <p>用配置管理工具（Ansible / Salt / 镜像内置）把同样的 <code>cert_file/key_file</code> 推到每台机器的相同路径，YAML 写法与 §5 完全一致。简单，但轮换时要逐台更新文件。</p>
+
+      <h3>思路二：证书放进 KV，所有节点从 KV 读（推荐）</h3>
+      <p>把 <code>cert_file/key_file</code> 的值写成 KV 引用前缀，网关启动/加载时从共享存储拉取，一处更新全集群生效。支持两种 scheme：</p>
+      <table>
+        <thead><tr><th>前缀</th><th>含义</th></tr></thead>
+        <tbody>
+          <tr><td><code>litemesh-kv:&lt;key&gt;</code></td><td>从 Litemesh KV 读取该 key 的值作为 PEM 内容</td></tr>
+          <tr><td><code>consul-kv:&lt;key&gt;</code></td><td>从 Consul KV 读取该 key 的值作为 PEM 内容</td></tr>
+        </tbody>
+      </table>
+      <div class="code-wrap"><span class="lang">yaml · sites/shop.yaml（集群）</span><pre><code>domain: shop.example.com
+tls:
+  enabled: true
+  cert_file: "litemesh-kv:litegate/manual-certs/shop/fullchain"
+  key_file:  "litemesh-kv:litegate/manual-certs/shop/privkey"
+routes:
+  - name: web
+    match: { path_prefix: "/" }
+    action: { type: proxy, upstream: ["127.0.0.1:8080"] }</code></pre></div>
+      <h4>把买来的证书内容写入 KV</h4>
+      <div class="code-wrap"><span class="lang">bash · Consul 示例</span><pre><code># PEM 文件内容整体作为 value 写入
+consul kv put litegate/manual-certs/shop/fullchain @shop.fullchain.pem
+consul kv put litegate/manual-certs/shop/privkey   @shop.privkey.key</code></pre></div>
+      <div class="code-wrap"><span class="lang">bash · Litemesh 示例</span><pre><code># 用 litemesh CLI / API 把同样的内容写入对应 key
+litemesh kv put litegate/manual-certs/shop/fullchain --file shop.fullchain.pem
+litemesh kv put litegate/manual-certs/shop/privkey   --file shop.privkey.key</code></pre></div>
+      <div class="callout"><span class="t">cert_file 与 key_file 必须用同一种 scheme</span><p>不能一个 <code>litemesh-kv:</code> 一个本地路径——前缀必须成对匹配，否则回退到本地磁盘加载逻辑导致找不到文件。前缀只对 <code>tls.cert_file/key_file</code>（手动证书）生效；ACME 自动证书走的是 <code>auto_cert</code> 的存储角色，二者机制不同。</p></div>
+      <div class="callout warn"><span class="t">KV 里的手动证书私钥不会自动加密</span><p>与 ACME 私钥不同，手动证书走 <code>cert_file/key_file</code> 直读路径，写进 KV 的内容就是你放进去的明文 PEM。请用 KV 自身的 ACL / 加密能力保护这两个 key，或考虑用 §4 的自动证书路径（私钥受 <code>storage_secret</code> 加密）。</p></div>
+    </section>
+
+    <section id="mix">
+      <h2><span class="num">7</span>混合：付费证书与自动证书并存</h2>
+      <p>真实场景常常是：主域名买了 OV 证书走付费，泛域名子站点和内部域名走自动。两者按站点粒度独立配置，互不影响：</p>
+      <ul>
+        <li><strong>付费站点</strong>：站点 YAML 配 <code>tls.cert_file/key_file</code> → pin 住，永不被 ACME 顶替。</li>
+        <li><strong>自动站点</strong>：站点不配 <code>tls</code> 块（或只 <code>force_https</code>），由全局 <code>auto_cert</code> 接管申请。</li>
+        <li><strong>优先级</strong>：握手时若站点显式 pin 了证书，直接用 pin 的；否则查内存里的自动/已加载证书；再否则走按需签发（若开启）。</li>
+      </ul>
+    </section>
+
+    <section id="dns-plugin">
+      <h2><span class="num">8</span>内置 DNS 不够用？写个插件编译进来</h2>
+      <p>内置只有 aliyun / cloudflare / tencent / huawei。你的 DNS 服务商不在其中、或想用内部 IPAM / 私有 DNS API 完成 DNS-01 校验（以及可选的 DDNS A/AAAA 同步）时，自己写一个 DNS Provider 插件即可。契约在公共包 <code>github.com/jamesleeon/LiteGate/pkg/plugin</code>，第三方可在独立仓库编写并编译进去。</p>
+
+      <h3>一个名字，两种能力（按需各自实现）</h3>
+      <table>
+        <thead><tr><th>能力</th><th>接口</th><th>干什么</th></tr></thead>
+        <tbody>
+          <tr><td>证书 DNS-01</td><td><code>plugin.CertDNSProvider</code></td><td>ACME 质询时增删 <code>_acme-challenge</code> 的 TXT 记录</td></tr>
+          <tr><td>DDNS 同步</td><td><code>plugin.DDNSProvider</code></td><td>把本机 IP 写到域名 A/AAAA 记录</td></tr>
+        </tbody>
+      </table>
+      <p>只签证书就只实现 <code>CertDNSProvider</code>；两个都要就都实现。给某 provider 配了证书用途（域名进了 <code>dns_providers[].domains</code>）却没实现 <code>CertDNSProvider</code>，核心会在用到时返回明确 error。</p>
+
+      <h3>第 1 步：实现接口 + 注册</h3>
+      <div class="code-wrap"><span class="lang">go · mydns/provider.go</span><pre><code>package mydns
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/jamesleeon/LiteGate/pkg/plugin"
+	"github.com/rs/zerolog/log"
+)
+
+const providerName = "mydns" // 用户写在 dns_providers[].type 里的名字，不能与内置名重名
+
+type provider struct {
+	apiKey    string
+	apiSecret string
+}
+
+func (p *provider) GetName() string { return providerName }
+
+// 能力一：证书 DNS-01
+func (p *provider) AddTXTRecord(ctx context.Context, domain, token, keyAuth string) error {
+	// 在 _acme-challenge.<domain> 上加一条值为 keyAuth 的 TXT；注意尊重 ctx 取消
+	return p.upsertTXT(ctx, "_acme-challenge."+domain, keyAuth)
+}
+func (p *provider) DeleteTXTRecord(ctx context.Context, domain, token, keyAuth string) error {
+	return p.removeTXT(ctx, "_acme-challenge."+domain, keyAuth) // 按值精确清理，别误删并发质询
+}
+
+// 能力二（可选）：DDNS
+func (p *provider) Sync(ctx context.Context, domain, ip string) error {
+	return p.upsertAddr(ctx, domain, ip) // 记录类型由 ip 是 v4/v6 决定
+}
+
+func init() {
+	err := plugin.RegisterDNSProvider(providerName, func(config map[string]string) (plugin.DNSProvider, error) {
+		key, secret := config["api_key"], config["api_secret"]
+		if key == "" || secret == "" {
+			return nil, fmt.Errorf("%s: api_key and api_secret are required", providerName)
+		}
+		return &provider{apiKey: key, apiSecret: secret}, nil
+	})
+	if err != nil {
+		log.Error().Err(err).Str("plugin", providerName).Msg("register DNS provider failed")
+	}
+}</code></pre></div>
+
+      <h3>第 2 步：在配置里引用</h3>
+      <div class="code-wrap"><span class="lang">yaml · config.yaml</span><pre><code>auto_cert:
+  enabled: true
+  email: "ops@example.com"
+  dns_providers:
+    - name: "my-cloud"
+      type: "mydns"                  # ← 你注册的插件名
+      enabled: true
+      domains: ["*.example.com"]
+      config:                        # ← 整个 map 原样传给工厂；值都是字符串
+        api_key: "AK..."
+        api_secret: "..."
+        propagation_wait: "60s"      # 可选：DNS-01 传播等待</code></pre></div>
+
+      <h3>第 3 步：编译进二进制（用户拥有 main）</h3>
+      <p>在你<strong>自己的仓库</strong>建一个 main，空导入插件包再调 <code>litegate.Run()</code>：</p>
+      <div class="code-wrap"><span class="lang">go · main.go</span><pre><code>package main
+
+import (
+	"log"
+
+	"github.com/jamesleeon/LiteGate/pkg/litegate"
+	_ "your-module/mydns" // ← init() 里 RegisterDNSProvider
+)
+
+func main() {
+	if err := litegate.Run(); err != nil {
+		log.Fatalf("litegate exited: %v", err)
+	}
+}</code></pre></div>
+      <p><code>go build</code> 即得带插件的网关；也可一键构建：<code>litegate build --with your-module/mydns -o litegate</code>。</p>
+
+      <h3>可选高级能力（实现才生效）</h3>
+      <table>
+        <thead><tr><th>接口</th><th>作用</th></tr></thead>
+        <tbody>
+          <tr><td><code>DNSPropagationChecker</code></td><td>完全接管 DNS-01 传播等待逻辑</td></tr>
+          <tr><td><code>DNSOptionalTimeout</code></td><td>自定义传播总时长 / 轮询间隔（默认 2min / 10s）</td></tr>
+          <tr><td><code>DNSSyncRecordRouter</code></td><td>证书管理器记录同步时精确控制 recordType（A/AAAA）</td></tr>
+          <tr><td><code>DNSConfigValidator</code></td><td>启动期提前校验自定义配置，让问题早暴露</td></tr>
+          <tr><td><code>DNSProviderFactoryWithDependencies</code></td><td>需要宿主注入 Logger 时改用此注册函数</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><span class="t">完整插件指南</span><p>接口契约、生命周期、踩坑清单与 in-tree 开发方式见 <a href="../../docs/zh-cn/dns-provider-plugin-guide.md">dns-provider-plugin-guide.md</a>。通配符证书必须走 DNS Provider（HTTP-01 做不了 <code>*.example.com</code>）。</p></div>
+    </section>
+
+    <section id="rotate">
+      <h2><span class="num">9</span>轮换、续期与热加载</h2>
+      <h3>自动证书：全自动</h3>
+      <p>网关每 <code>check_interval</code> 小时检查一次，过期前 <code>renew_days</code> 天自动续期；续期成功写入存储 + 镜像本地 + 触发 TLSManager 热加载，全程无感。集群下只有一个节点真正续期，其余读结果。</p>
+
+      <h3>付费证书：换文件后要「碰一下」YAML</h3>
+      <div class="callout warn"><span class="t">重要：换 .pem 文件本身不会触发热加载</span><p>配置文件监听器只监听 <code>sites/</code>、<code>streams/</code> 目录下 <code>.yaml</code>/<code>.yml</code> 的写入事件，<strong>不监听证书文件本身</strong>。所以你把新的 <code>shop.fullchain.pem</code> 覆盖上去后，网关不会自动重载。轮换付费证书时，请在替换证书文件后<strong>重新保存（touch）对应的站点 / Stream YAML</strong>，触发一次 reload——站点路径会重新从磁盘读取证书；或者重启进程。</p></div>
+      <p>KV 引用方式（<code>litemesh-kv:</code> / <code>consul-kv:</code>）同理：更新 KV 里的值后，需要重新保存引用它的 YAML 触发加载，KV 变更本身不会自动 push 重载。</p>
+
+      <h3>强制重新申请自动证书</h3>
+      <p>删除存储中对应域名的证书与私钥（本地磁盘即 <code>certs_dir</code> 下的 <code>example.com.pem/.key</code>，或 KV 中对应 key）并重启，网关立即重新进入申请流程。</p>
+    </section>
+
+    <section id="trouble">
+      <h2><span class="num">10</span>排障 FAQ</h2>
+      <table>
+        <thead><tr><th>现象</th><th>排查方向</th></tr></thead>
+        <tbody>
+          <tr><td>证书一直 Pending</td><td>HTTP-01 看公网 80 端口是否可达；DNS-01 看 DNS API 凭证与 A 记录；看是否撞了 CA 频率限制（调试期先 <code>use_staging: true</code>）。</td></tr>
+          <tr><td>启动报 CA provider conflict</td><td>集群里 <code>ca_provider</code>/<code>acme_url</code> 漂移了。统一配置，或删除存储中 <code>_cluster_ca_provider</code> 后重启。</td></tr>
+          <tr><td>zerossl/google 启动即报错</td><td>缺 <code>eab_kid</code>/<code>eab_hmac</code>，到 CA 控制台领取后成对填写。</td></tr>
+          <tr><td>付费证书 HTTPS 失败</td><td><code>cert_file/key_file</code> 是否成对、路径是否可读、是否完整链；KV 方式检查前缀 scheme 是否一致、key 是否存在。</td></tr>
+          <tr><td>换了证书文件没生效</td><td>见 §9——需 touch 对应 YAML 或重启。</td></tr>
+          <tr><td>通配符证书签不下来</td><td>必须用实现了 <code>CertDNSProvider</code> 的 DNS Provider，HTTP-01 不支持泛域名。</td></tr>
+          <tr><td>日志告警「私钥明文存储」</td><td>共享存储下务必配 <code>storage_secret</code>（≥32 字节）。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="reference">
+      <h2><span class="num">11</span>配置字段速查</h2>
+      <h3>auto_cert（全局）</h3>
+      <table>
+        <thead><tr><th>字段</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>enabled</code></td><td>自动证书总开关</td></tr>
+          <tr><td><code>email</code></td><td>ACME 账号邮箱（必填）</td></tr>
+          <tr><td><code>certs_dir</code></td><td>本地证书目录，默认 <code>./certs</code></td></tr>
+          <tr><td><code>ca_provider</code> / <code>acme_url</code></td><td>CA 选择；<code>custom</code> 时 <code>acme_url</code> 必填</td></tr>
+          <tr><td><code>eab_kid</code> / <code>eab_hmac</code></td><td>zerossl/google/gts 必填</td></tr>
+          <tr><td><code>renew_days</code> / <code>check_interval</code></td><td>续期提前天数 / 周期检查间隔（小时）</td></tr>
+          <tr><td><code>use_staging</code></td><td>用 CA 测试环境，调试期避免频率限制</td></tr>
+          <tr><td><code>storage_secret</code></td><td>AES-256 对称密钥，加密存储中的私钥（共享存储强烈必填）</td></tr>
+          <tr><td><code>dns_providers[]</code></td><td>DNS 服务商列表：<code>name</code>/<code>type</code>/<code>enabled</code>/<code>domains</code>/<code>config</code>/<code>ddns</code></td></tr>
+          <tr><td><code>on_demand</code></td><td>按需签发（SaaS 多租户），详见证书生命周期文档</td></tr>
+        </tbody>
+      </table>
+      <h3>站点 / Stream 的 tls 块（手动证书）</h3>
+      <table>
+        <thead><tr><th>字段</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>tls.enabled</code></td><td>开启该站点/Stream 的 TLS</td></tr>
+          <tr><td><code>tls.cert_file</code></td><td>完整链证书：本地路径 或 <code>litemesh-kv:</code>/<code>consul-kv:</code> 引用</td></tr>
+          <tr><td><code>tls.key_file</code></td><td>私钥；必须与 <code>cert_file</code> 同种 scheme、成对出现</td></tr>
+          <tr><td><code>tls.min_version</code></td><td>（Stream）最低 TLS 版本 <code>1.2</code>/<code>1.3</code></td></tr>
+          <tr><td><code>tls.auto_cert</code> / <code>tls.domains</code></td><td>（Stream）让四层监听也走自动证书</td></tr>
+        </tbody>
+      </table>
+      <h3>启用集群共享存储</h3>
+      <table>
+        <thead><tr><th>字段</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>litemesh.roles.cert_storage: true</code></td><td>证书权威副本存入 Litemesh KV</td></tr>
+          <tr><td><code>consul.roles.cert_storage: true</code></td><td>证书权威副本存入 Consul KV</td></tr>
+          <tr><td>两者都不开</td><td>退回本地磁盘 <code>certs_dir</code>（单机模式）</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="footer">LiteGate 文档 · 证书管理实战 · 相关：<a class="inline" href="litegate_certificate_lifecycle.html">证书生命周期（原理）</a> · <a class="inline" href="litegate_config_reference.html">config.yaml 参考</a></div>
+  </main>
+</div>
+
+<script>
+(function () {
+  const toc = document.querySelector('.toc');
+  if (!toc) return;
+  const links = Array.from(toc.querySelectorAll('a[href^="#"]'));
+  const items = links.map((link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    return { link, target: document.getElementById(id) };
+  }).filter((item) => item.target);
+  if (!items.length) return;
+
+  let activeLink = null;
+  let ticking = false;
+
+  function setActive(item) {
+    if (!item || activeLink === item.link) return;
+    links.forEach((link) => link.classList.remove('active'));
+    item.link.classList.add('active');
+    activeLink = item.link;
+    const tocRect = toc.getBoundingClientRect();
+    const linkRect = item.link.getBoundingClientRect();
+    if (linkRect.top < tocRect.top + 16 || linkRect.bottom > tocRect.bottom - 16) {
+      item.link.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function currentItem() {
+    if (window.scrollY < 100) return items[0];
+    const anchor = Math.min(140, window.innerHeight * 0.22);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+    for (const item of items) {
+      const rect = item.target.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight * 0.88;
+      if (!visible) continue;
+      const distance = Math.abs(rect.top - anchor);
+      if (distance < bestDistance) { best = item; bestDistance = distance; }
+    }
+    if (!best) {
+      best = items[0];
+      for (const item of items) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= anchor) best = item;
+      }
+    }
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      best = items[items.length - 1];
+    }
+    return best;
+  }
+
+  function updateActive() { ticking = false; setActive(currentItem()); }
+  function requestUpdate() { if (!ticking) { ticking = true; window.requestAnimationFrame(updateActive); } }
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('hashchange', requestUpdate);
+  links.forEach((link) => link.addEventListener('click', () => window.setTimeout(requestUpdate, 80)));
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', requestUpdate, { once: true });
+  } else {
+    requestUpdate();
+  }
+})();
+</script>
+</body>
+</html>

@@ -768,18 +768,14 @@ litegate.router.priority=200
 # Enable the unified IDS engine and set the verification mode to verify (session verification)
 litegate.middleware.ids.enabled=true
 litegate.middleware.ids.mode=verify
-# Bind the unified auth provider saas-auth
-litegate.middleware.ids.provider=saas-auth
 
-# ── 3. Dynamic IDSProvider parameters ──
-# The provider's underlying validation model is ids_session
-litegate.http.ids_providers.saas-auth.type=ids_session
+# ── 3. Unified IDS engine inline parameter configuration ──
 # Extract the session credential from the Authorization header (auto-detects Bearer / UUID format)
-litegate.http.ids_providers.saas-auth.extractor={header.Authorization}
+litegate.middleware.ids.extractor={header.Authorization}
 # Hard session lifetime (seconds)
-litegate.http.ids_providers.saas-auth.session_ttl=7200
+litegate.middleware.ids.session_ttl=7200
 # Trigger async sliding renewal when the session has less than 3600 seconds left, preventing abrupt logout
-litegate.http.ids_providers.saas-auth.renew_threshold=3600
+litegate.middleware.ids.renew_threshold=3600
 
 # ── 4. Identity context injection ──
 # 💡 Note: inject_headers / inject_claims are static-YAML-only; dynamic tags don't support them.
@@ -844,22 +840,18 @@ litegate.http.routers.open-orders.ids.mode=openapi
 # Bind the associated dynamic IDS provider
 litegate.http.routers.open-orders.ids.provider=dynamic-openapi
 
-# ── 2. Dynamic IDSProvider registration ──
-# Declare the provider type as remote_auth (supports cluster dynamic origin discovery)
-litegate.http.ids_providers.dynamic-openapi.type=remote_auth
-# Declare the verification mode as openapi
-litegate.http.ids_providers.dynamic-openapi.mode=openapi
+# ── 2. Unified IDS engine inline parameter configuration ──
 # Extract the AppId variable from the request header
-litegate.http.ids_providers.dynamic-openapi.extractor={header._appid}
+litegate.http.routers.open-orders.ids.extractor={header._appid}
 # Declare the credential provider (the gateway dynamically dispatches the backend identityservice for origin fetch)
-litegate.http.ids_providers.dynamic-openapi.discovery_service=identityservice
+litegate.http.routers.open-orders.ids.discovery_service=identityservice
 # Mount the custom credential-verification endpoint path
-litegate.http.ids_providers.dynamic-openapi.path=/api/gate/credentials
+litegate.http.routers.open-orders.ids.path=/api/gate/credentials
 # Bind the client credentials for the identity center (ClientID / ClientSecret)
-litegate.http.ids_providers.dynamic-openapi.client_id=litegate
-litegate.http.ids_providers.dynamic-openapi.client_secret=secret
+litegate.http.routers.open-orders.ids.client_id=litegate
+litegate.http.routers.open-orders.ids.client_secret=secret
 # 404 negative-cache block duration for invalid AppId (seconds)
-litegate.http.ids_providers.dynamic-openapi.negative_ttl=60</code></pre>
+litegate.http.routers.open-orders.ids.negative_ttl=60</code></pre>
             </div>
             <div class="architecture-tip">
               <p>💡 <b>Routing-elevation protection:</b> after signature verification passes, the gateway securely extracts <code>sid</code> internally and promotes it to the physical routing key <code>KeyRouteSelector["sid"]</code>, working with Litemesh for targeted shard routing while fully blocking <code>sid</code> from being passed downstream — keeping the edge secure.</p>
@@ -1186,19 +1178,7 @@ const SECTIONS = [
       ["routes[i].action.ids","inject_claims","Map of claims to decrypt and inject into request headers after successful auth.","no","","Not applicable"],
       ["routes[i].action.ids","inject_headers","Whether to auto-inject common identity metadata into upstream request headers after success.","no","","Not applicable"],
       ["routes[i].action.ids","inject_response","Whether to mirror identity metadata back to the client as HTTP response headers.","yes","litegate.middleware.inject_response=true","Flattened at the middleware layer; no ids segment"],
-      ["Dynamic provider","ids_providers[i].type","Register a dynamic IDS provider type.","yes","litegate.http.ids_providers.myids.type=ids","Supports ids / ids_session / oidc, etc."],
-      ["Dynamic provider","ids_providers[i].enabled","Whether to enable this dynamic provider.","yes","litegate.http.ids_providers.myids.enabled=true",""],
-      ["Dynamic provider","ids_providers[i].issuer","OIDC issuer URL.","yes","litegate.http.ids_providers.myids.issuer=https://okta.com",""],
-      ["Dynamic provider","ids_providers[i].client_id","Client ID credential for the provider.","yes","litegate.http.ids_providers.myids.client_id=client123",""],
-      ["Dynamic provider","ids_providers[i].client_secret","Client secret credential for the provider.","yes","litegate.http.ids_providers.myids.client_secret=secret123",""],
-      ["Dynamic provider","ids_providers[i].scopes","Requested OAuth scopes (comma-separated).","yes","litegate.http.ids_providers.myids.scopes=openid,email",""],
-      ["Dynamic provider","ids_providers[i].session_prefix","Redis session key prefix.","yes","litegate.http.ids_providers.myids.session_prefix=auth:orders: (default session:)",""],
-      ["Dynamic provider","ids_providers[i].session_ttl","Session cache lifetime in seconds.","yes","litegate.http.ids_providers.myids.session_ttl=7200 (default 7200)",""],
-      ["Dynamic provider","ids_providers[i].renew_threshold","Remaining-seconds threshold that triggers async sliding renewal.","yes","litegate.http.ids_providers.myids.renew_threshold=3600 (default 3600)",""],
-      ["Dynamic provider","ids_providers[i].negative_ttl","Negative-cache TTL (seconds) for invalid AppId 404 to block high-frequency probing.","yes","litegate.http.ids_providers.myids.negative_ttl=60",""],
-      ["Dynamic provider","ids_providers[i].fail_policy","Security policy on auth failure (e.g. deny to block, bypass to pass through).","yes","litegate.http.ids_providers.myids.fail_policy=deny",""],
-      ["Dynamic provider","ids_providers[i].url","Absolute URL of the remote validation endpoint.","yes","litegate.http.ids_providers.myids.url=http://192.168.10.10:9091",""],
-      ["Dynamic provider","ids_providers[i].discovery_service","Backend discovery service name used for origin lookup.","yes","litegate.http.ids_providers.myids.discovery_service=identityservice",""],
+      ["Dynamic provider","ids_providers[i].*","【DEPRECATED】Legacy dynamic identity provider configuration. Since v2.0+, IDS parameters should be configured inline and self-contained directly under action.ids / middleware.ids.","no","","No longer effective"],
       ["Dynamic middleware","middlewares[i].type","Register a dynamic middleware instance type.","yes","litegate.http.middlewares.m1.type=headers","Dynamic middleware: supports headers / ratelimit / cors / ip_restriction, etc."],
       ["Dynamic middleware","middlewares[i].config","Custom config map for the middleware instance type.","yes","litegate.http.middlewares.m1.response.X-Test=true","`litegate.http.middlewares.m2.qps=10`"],
     ]

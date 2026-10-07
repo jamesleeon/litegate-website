@@ -172,10 +172,10 @@ td code { font-size: 12px; }
           <div class="node be"><div class="icon">🖥️</div><div class="name">后端 c2</div><div class="desc">sid=c2</div></div>
         </div>
       </div>
-      <p style="text-align:center;color:var(--text3);font-size:12.5px;margin-top:-6px">②③ LiteGate 在中间侧路调用 <strong>你的 IDS</strong>（<code>GET ?client_id=app-c1</code>）拿到四段决策 → 据此处理 → 才转发到真后端</p>
+      <p style="text-align:center;color:var(--text3);font-size:12.5px;margin-top:-6px">②③ LiteGate 在中间侧路调用 <strong>你的 IDS</strong>（<code>GET ?client_id=app-c1&type=ids</code>）拿到四段决策 → 据此处理 → 才转发到真后端</p>
 
       <h3 id="req">网关发给你的请求</h3>
-      <div class="code-wrap"><span class="lang">http</span><pre><code>GET /api/gate/credentials?client_id=app-c1 HTTP/1.1
+      <div class="code-wrap"><span class="lang">http</span><pre><code>GET /api/gate/credentials?client_id=app-c1&type=ids HTTP/1.1
 X-Gateway-ID: litegate          <span class="cm"># 网关身份（来自 provider.client_id）</span>
 X-Gateway-Secret: secret        <span class="cm"># 网关密钥（来自 provider.client_secret）</span></code></pre></div>
       <ul>
@@ -192,11 +192,11 @@ X-Gateway-Secret: secret        <span class="cm"># 网关密钥（来自 provide
   <span class="str">"data"</span>: {
     <span class="str">"auth"</span>:      { <span class="str">"type"</span>: <span class="str">"md5"</span>, <span class="str">"secret"</span>: <span class="str">"secret-c1"</span>, <span class="str">"ttl"</span>: <span class="str">"300"</span> },        <span class="cm"># ① 验签策略</span>
     <span class="str">"route"</span>:     { <span class="str">"selector"</span>: { <span class="str">"sid"</span>: <span class="str">"c1"</span> }, <span class="str">"meta"</span>: { <span class="str">"lane"</span>: <span class="str">"stable"</span> } },  <span class="cm"># ② 物理选路</span>
-    <span class="str">"head"</span>:      { <span class="str">"X-Tenant-ID"</span>: <span class="str">"tenant-c1"</span> },                        <span class="cm"># ③ 下游注入头</span>
+    <span class="str">"head"</span>:      { <span class="str">"X-LiteGate-Identity-Ref"</span>: <span class="str">"ref_7f3a9c"</span> },              <span class="cm"># ③ 下游注入头（opaque 引用）</span>
     <span class="str">"ratelimit"</span>: { <span class="str">"qps"</span>: <span class="str">"10"</span>, <span class="str">"limit_key"</span>: <span class="str">"tenant-c1"</span> }            <span class="cm"># ④ 租户限流</span>
   }
 }</code></pre></div>
-      <div class="callout ok"><span class="t">记住这四段</span><p><strong>auth</strong>（怎么验调用方）+ <strong>route</strong>（流量去哪个分片）+ <strong>head</strong>（给下游塞什么）+ <strong>ratelimit</strong>（对这个人/租户限多少）。一个 IDS 的全部职责就在这四段里——<strong>每段都可选，按需返回</strong>。</p></div>
+      <div class="callout ok"><span class="t">记住这四段</span><p><strong>auth</strong>（怎么验调用方）+ <strong>route</strong>（流量去哪个分片）+ <strong>head</strong>（给下游塞什么）+ <strong>ratelimit</strong>（对这个人/租户限多少）。一个 IDS 的全部职责就在这四段里。<strong>注意：为确保选路，在 openapi、verify 和 issue 模式下，<code>route.selector</code> 是强约束必填项，如果不返回网关会直接返回 401/403/500 阻断请求。</strong></p></div>
     </section>
 
     <section id="minimal">
@@ -300,9 +300,9 @@ X-Gateway-Secret: secret        <span class="cm"># 网关密钥（来自 provide
       <p>不需要选路就省略 <code>route</code>，流量走默认负载均衡。后端如何带 <code>sid</code>/<code>version</code> 标签注册见 <a href="#shard" class="inline">第 7 节</a>。</p>
 
       <h3 id="head">head · 下游注入</h3>
-      <p>告诉网关"把这些头<strong>注入到转发给后端的请求里</strong>"。后端无需解析凭证，直接读这些头拿身份上下文。</p>
-      <div class="code-wrap"><span class="lang">json</span><pre><code><span class="str">"head"</span>: { <span class="str">"X-Tenant-ID"</span>: <span class="str">"tenant-c1"</span>, <span class="str">"X-User-Role"</span>: <span class="str">"admin"</span> }</code></pre></div>
-      <p>实测中后端确实收到这些头（<code>X-Tenant-ID: tenant-c1</code>）——这是"身份在网关层解析、下游零负担"的核心机制。</p>
+      <p>告诉网关"把这些头<strong>注入到转发给后端的请求里</strong>"。<strong>推荐只注入 opaque 引用</strong>（如 <code>X-LiteGate-Identity-Ref</code>），后端凭引用再去自己的租户中心换取库名/租户等敏感信息；不要把租户 ID、库名等明文当默认下发头（会被 Fail-Closed 拦截，除非显式 <code>allowed_headers</code> 白名单，属用户自担风险）。</p>
+      <div class="code-wrap"><span class="lang">json</span><pre><code><span class="str">"head"</span>: { <span class="str">"X-LiteGate-Identity-Ref"</span>: <span class="str">"ref_7f3a9c"</span> }</code></pre></div>
+      <p>后端收到该 opaque 引用后，向内部服务解析出真实身份/库映射——这是"身份在网关层解析、下游零负担且不泄漏敏感明文"的核心机制。</p>
 
       <h3 id="ratelimit">ratelimit · 租户/调用方限流（第四段，按选路结果再限流）</h3>
       <p>选路之后，网关还能<strong>针对这个调用方/租户单独限流</strong>——而且配额由 IDS 动态返回（免费版 10 QPS、付费版 100 QPS，IDS 说了算）。这跟路由上写死的静态 <code>rate_limit</code>（整条路由全局共享一个桶）<strong>是两回事</strong>。</p>
@@ -313,7 +313,7 @@ X-Gateway-Secret: secret        <span class="cm"># 网关密钥（来自 provide
           <tr><td><code>limit_key</code></td><td>限流<strong>维度</strong>。显式给则用它——<strong>同一个 key 的调用方共享一个配额</strong>（比如填租户 ID，则该租户下所有用户合用一份 QPS）。</td></tr>
         </tbody>
       </table>
-      <p>若不给 <code>limit_key</code>，网关按此顺序<strong>回退</strong>取维度：<code>head["tenantId"]</code> → <code>head["userId"]</code> → <code>head["app"]</code> → 客户端 IP。限流桶实际按 <code>站点:路由:dyn:&lt;limit_key&gt;</code> 隔离，超限返回 <code>429 Too Many Requests (Quota Exceeded)</code>。</p>
+      <p>若不给 <code>limit_key</code>，网关会首先尝试从 <code>ratelimit.key</code> 读取。若仍未提供，则直接**回退**以客户端 IP 隔离。限流桶实际按 <code>站点:路由:dyn:&lt;limit_key&gt;</code> 隔离，超限返回 <code>429 Too Many Requests (Quota Exceeded)</code>。</p>
       <div class="callout"><span class="t">典型用法</span><p>SaaS 多租户：<code>limit_key</code> 填租户 ID，<code>qps</code> 按套餐返回。于是<strong>免费租户被限 10 QPS、付费租户 100 QPS，且各租户配额互不影响</strong>——全由 IDS 一句 JSON 决定，不用改任何网关配置。</p></div>
     </section>
 
@@ -406,11 +406,11 @@ X-Gateway-Secret: secret        <span class="cm"># 网关密钥（来自 provide
           <tr><td><code>auth.type</code></td><td>auth</td><td class="rec">建议</td><td>md5 / md5-secure / none</td></tr>
           <tr><td><code>auth.secret</code></td><td>auth</td><td class="req">md5 时必填</td><td>验签密钥</td></tr>
           <tr><td><code>auth.ttl</code></td><td>auth</td><td class="opt">可选</td><td>正向缓存秒数</td></tr>
-          <tr><td><code>route.selector</code></td><td>route</td><td class="opt">可选</td><td><strong>硬隔离</strong>，如 <code>{sid: c1}</code>，无匹配即拒绝（不回退）</td></tr>
+           <tr><td><code>route.selector</code></td><td>route</td><td class="req">必填</td><td><strong>硬隔离</strong>，如 <code>{sid: c1}</code>，在 openapi/verify/issue 模式下为强制必填，无匹配即拒绝</td></tr>
           <tr><td><code>route.meta</code></td><td>route</td><td class="opt">可选</td><td><strong>软偏好</strong>（灰度/版本），无匹配时回退 selector 池</td></tr>
           <tr><td><code>head</code></td><td>head</td><td class="opt">可选</td><td>注入下游的头部 map</td></tr>
           <tr><td><code>ratelimit.qps</code></td><td>ratelimit</td><td class="opt">可选</td><td>限流值（每秒），亦可用 <code>rate</code>/<code>limit</code></td></tr>
-          <tr><td><code>ratelimit.limit_key</code></td><td>ratelimit</td><td class="opt">可选</td><td>限流维度（同 key 共享配额）；缺省回退 tenantId/userId/app/IP</td></tr>
+          <tr><td><code>ratelimit.limit_key</code></td><td>ratelimit</td><td class="opt">可选</td><td>限流维度（同 key 共享配额）；缺省回退 key/IP</td></tr>
         </tbody>
       </table>
       <h3>provider 配置项</h3>
