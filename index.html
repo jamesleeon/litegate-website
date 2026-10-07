@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate · 单一二进制的 HTTP / TCP 网关</title>
+<meta name="description" content="LiteGate：三行 YAML 上线站点，自动 HTTPS 与 ECH，443 端口 SNI 分流，Connect 内网发布，Forward 安全访问云上数据库，服务发现与多租户选路，全部在一个 Go 二进制里。">
+<link rel="alternate" hreflang="en" href="en/index.html">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add("js")</script>
+<script src="main.js" defer></script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="#syntax">配置语法</a>
+      <a href="#network">跨网络</a>
+      <a href="#security">证书与 ECH</a>
+      <a href="#platform">平台能力</a>
+      <a href="docs/zh-cn/">文档</a>
+      <a href="en/index.html" data-lang-switch="en">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">开源 · MIT · 单一二进制</span>
+      <h1>三行配置上线，<br><em>一个网关</em>收齐所有入口</h1>
+      <p class="lead">静态站点、API 反代、自动 HTTPS、443 端口 SNI 分流、内网发布与云上资产访问、服务发现与多租户选路。原来要拼好几套组件的事，LiteGate 用一个 Go 二进制、一种配置语言完成。</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#quickstart">快速开始</a>
+        <a class="btn btn-ghost" href="https://github.com/jamesleeon/LiteGate">在 GitHub 查看</a>
+      </div>
+      <ul class="hero-meta">
+        <li>无外部依赖</li>
+        <li>配置热加载</li>
+        <li>Linux / macOS / Windows</li>
+      </ul>
+    </div>
+    <div class="code-stack">
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml</div>
+<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<span class="p">/api</span>: <span class="s">127.0.0.1:8080</span>   <span class="c"># 反代后端，含 WebSocket</span>
+<span class="k">spa</span>: <span class="s">./dist</span>            <span class="c"># 其余交给单页应用</span></pre>
+      </div>
+      <div class="code-window terminal">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>terminal</div>
+<pre><span class="t">$</span> ./litegate
+<span class="t">$</span> curl -I http://app.example.com/
+<span class="c">HTTP/1.1 308 Permanent Redirect</span>
+<span class="c">Location: https://app.example.com/</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Syntax ── -->
+<section id="syntax" class="alt">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">Site YAML v2</p>
+      <h2>比 Caddyfile 更好读的配置语言</h2>
+      <p>路径就是键，动作就是值。简单站点和 Caddyfile 一样短；规则一多，差别就出来了：不用记指令执行顺序，跨域和限流直接写在路由下，不需要额外插件。</p>
+    </div>
+
+    <div data-tabs data-animate>
+      <div class="tabs" role="tablist" aria-label="对比场景">
+        <button class="tab" role="tab" id="t-spa" aria-controls="p-spa" aria-selected="true">SPA + API</button>
+        <button class="tab" role="tab" id="t-lb" aria-controls="p-lb" aria-selected="false" tabindex="-1">去前缀 + 负载均衡</button>
+        <button class="tab" role="tab" id="t-gov" aria-controls="p-gov" aria-selected="false" tabindex="-1">跨域 + 限流</button>
+      </div>
+
+      <div class="tab-panel compare" id="p-spa" role="tabpanel" aria-labelledby="t-spa">
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml<span class="label badge-ours">LiteGate</span></div>
+<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<span class="p">/api</span>: <span class="s">127.0.0.1:8080</span>
+<span class="k">spa</span>: <span class="s">./dist</span></pre>
+        </div>
+        <div class="code-window theirs">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>Caddyfile<span class="label">Caddy</span></div>
+<pre>app.example.com {
+  handle /api/* {
+    reverse_proxy 127.0.0.1:8080
+  }
+  handle {
+    root * ./dist
+    try_files {path} /index.html
+    file_server
+  }
+}</pre>
+        </div>
+        <p class="verdict"><strong>3 行对 10 行。</strong>SPA 回退是 <code>spa:</code> 一个键；<code>/api</code> 按路径段匹配，同时覆盖 <code>/api</code> 和 <code>/api/...</code>。</p>
+      </div>
+
+      <div class="tab-panel compare" id="p-lb" role="tabpanel" aria-labelledby="t-lb" hidden>
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/api.yaml<span class="label badge-ours">LiteGate</span></div>
+<pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
+<span class="p">/v1</span>:
+  <span class="k">proxy</span>: <span class="s">10.0.0.5:8080, 10.0.0.6:8080</span>
+  <span class="k">strip_prefix</span>: <span class="s">true</span></pre>
+        </div>
+        <div class="code-window theirs">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>Caddyfile<span class="label">Caddy</span></div>
+<pre>api.example.com {
+  handle_path /v1/* {
+    reverse_proxy 10.0.0.5:8080 10.0.0.6:8080
+  }
+}</pre>
+        </div>
+        <p class="verdict"><strong>字段名就是含义。</strong><code>strip_prefix: true</code> 不需要记住 <code>handle</code> 和 <code>handle_path</code> 的区别；多个后端默认轮询。</p>
+      </div>
+
+      <div class="tab-panel compare" id="p-gov" role="tabpanel" aria-labelledby="t-gov" hidden>
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/api.yaml<span class="label badge-ours">LiteGate</span></div>
+<pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
+<span class="p">/api</span>:
+  <span class="k">proxy</span>: <span class="s">localhost:8080</span>
+  <span class="k">cors</span>:
+    <span class="k">allowed_origins</span>: [<span class="s">https://web.example.com</span>]
+  <span class="k">rate_limit</span>: {<span class="k">rate</span>: <span class="s">10</span>, <span class="k">key</span>: <span class="s">ip</span>}</pre>
+        </div>
+        <div class="code-window theirs">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>Caddyfile<span class="label">Caddy + caddy-ratelimit</span></div>
+<pre>{
+  order rate_limit before reverse_proxy
+}
+api.example.com {
+  @preflight method OPTIONS
+  handle /api/* {
+    header Access-Control-Allow-Origin https://web.example.com
+    header Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    respond @preflight 204
+    rate_limit {
+      zone api {
+        key    {remote_host}
+        events 10
+        window 1s
+      }
+    }
+    reverse_proxy localhost:8080
+  }
+}</pre>
+        </div>
+        <p class="verdict"><strong>治理就地声明。</strong>Caddy 没有内置 CORS 和限流：跨域要手写响应头和预检，限流需要另外编译第三方插件，并在全局声明指令顺序。</p>
+      </div>
+    </div>
+
+    <div class="reasons">
+      <div class="reason" data-animate>
+        <h3>顺序无关</h3>
+        <p>路由按优先级和匹配精确度排序，写在文件里的先后不影响结果；匹配条件完全相同的两条路由直接报错，而不是静默覆盖。</p>
+      </div>
+      <div class="reason" data-animate>
+        <h3>从简写到完整，不换格式</h3>
+        <p>需要精确路径、按方法或请求头匹配、命名服务复用时，在同一个文件里加 <code>routes</code>、<code>services</code>，简写和完整写法可以混用。</p>
+      </div>
+      <div class="reason" data-animate>
+        <h3>工具友好</h3>
+        <p>就是 YAML：编辑器高亮、<code>litegate -t</code> 校验、Git 管理版本；AI 助手可以通过内置 MCP 直接创建和修改站点。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Cross-network ── -->
+<section id="network">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">跨网络连接</p>
+      <h2>内网发布、云上资产、统一出网</h2>
+      <p>三种方向，三个能力，都跑在同一个 443 端口上，不需要再部署 frp、跳板机或单独的代理服务。</p>
+    </div>
+
+    <div class="net-list">
+      <article class="card net-row" data-animate>
+        <div class="net-text">
+        <span class="tag">CONNECT</span>
+        <h3>把内网服务发布到公网</h3>
+        <div class="flow" aria-hidden="true">
+          <svg viewBox="0 0 300 120">
+            <defs>
+              <marker id="ah1" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 z"/></marker>
+              <marker id="ah1t" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow tls" d="M0,0 L8,4 L0,8 z"/></marker>
+            </defs>
+            <g class="node"><rect x="4" y="44" width="76" height="34" rx="8"/><text x="42" y="65" text-anchor="middle">访客</text></g>
+            <g class="node hub"><rect x="112" y="40" width="76" height="42" rx="8"/><text x="150" y="59" text-anchor="middle">Cloud</text><text class="sub" x="150" y="73" text-anchor="middle">只看 SNI</text></g>
+            <g class="node"><rect x="220" y="6" width="76" height="34" rx="8"/><text x="258" y="27" text-anchor="middle">Home A</text></g>
+            <g class="node"><rect x="220" y="82" width="76" height="34" rx="8"/><text x="258" y="103" text-anchor="middle">Home B</text></g>
+            <path class="edge" d="M80,61 L110,61" marker-end="url(#ah1)"/>
+            <path class="edge tls" d="M220,23 C200,23 200,52 190,54" marker-end="url(#ah1t)"/>
+            <path class="edge tls" d="M220,99 C200,99 200,70 190,68" marker-end="url(#ah1t)"/>
+          </svg>
+        </div>
+        <p>内网节点主动拨向云端，家里和机房不用开放任何入站端口。一个 Cloud 可以接入多个 Home，每个 Home 只能发布被授权的域名。TLS 在内网终止，证书私钥不离开内网，云端看不到明文。</p>
+        <a class="card-link" href="docs/zh-cn/user/09-advanced/connect.md">Connect 配置指南</a>
+        </div>
+        <div class="net-code">
+          <div class="code-window"><div class="code-head">Home · config.yaml</div>
+<pre><span class="k">connect</span>:
+  <span class="k">client</span>:
+    <span class="k">enabled</span>: <span class="s">true</span>
+    <span class="k">name</span>: <span class="s">home</span>
+    <span class="k">remote</span>: <span class="s">https://connect.example.com</span>
+    <span class="k">token_file</span>: <span class="s">/etc/litegate/secrets/home.token</span>
+    <span class="k">publish_sites</span>: <span class="s">true</span></pre></div>
+        </div>
+      </article>
+
+      <article class="card net-row" data-animate>
+        <div class="net-text">
+        <span class="tag">FORWARD</span>
+        <h3>在本机安全访问云上数据库</h3>
+        <div class="flow" aria-hidden="true">
+          <svg viewBox="0 0 300 120">
+            <defs>
+              <marker id="ah2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 z"/></marker>
+              <marker id="ah2t" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow tls" d="M0,0 L8,4 L0,8 z"/></marker>
+            </defs>
+            <g class="node"><rect x="4" y="40" width="80" height="42" rx="8"/><text x="44" y="59" text-anchor="middle">开发机</text><text class="sub" x="44" y="73" text-anchor="middle">127.0.0.1:3306</text></g>
+            <g class="node hub"><rect x="112" y="40" width="76" height="42" rx="8"/><text x="150" y="59" text-anchor="middle">LiteGate</text><text class="sub" x="150" y="73" text-anchor="middle">Token 鉴权</text></g>
+            <g class="node"><rect x="216" y="40" width="80" height="42" rx="8"/><text x="256" y="59" text-anchor="middle">RDS</text><text class="sub" x="256" y="73" text-anchor="middle">VPC 内网</text></g>
+            <path class="edge tls" d="M84,61 L110,61" marker-end="url(#ah2t)"/>
+            <path class="edge" d="M188,61 L214,61" marker-end="url(#ah2)"/>
+            <text class="lbl" x="97" y="34" text-anchor="middle">TLS 443</text>
+          </svg>
+        </div>
+        <p>把 VPC 里的 MySQL、Redis、SSH 映射到开发者本机端口。服务端把域名锁定到一个 Stream，客户端无法改变目标；Stream 的 IP 限制、会话上限和超时照常生效。</p>
+        <a class="card-link" href="docs/zh-cn/database-proxy-solution.md">数据库安全访问方案</a>
+        </div>
+        <div class="net-code">
+          <div class="code-window"><div class="code-head">开发机</div>
+<pre><span class="t">$</span> litegate forward \
+    --remote https://db-tunnel.example.com \
+    --local 127.0.0.1:3306 \
+    --token-file ./rds.token</pre></div>
+        </div>
+      </article>
+
+      <article class="card net-row" data-animate>
+        <div class="net-text">
+        <span class="tag">FORWARD PROXY</span>
+        <h3>无公网 IP 的机器统一出网</h3>
+        <div class="flow" aria-hidden="true">
+          <svg viewBox="0 0 300 120">
+            <defs>
+              <marker id="ah3" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 z"/></marker>
+              <marker id="ah3t" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow tls" d="M0,0 L8,4 L0,8 z"/></marker>
+            </defs>
+            <g class="node"><rect x="4" y="40" width="80" height="42" rx="8"/><text x="44" y="59" text-anchor="middle">内网服务器</text><text class="sub" x="44" y="73" text-anchor="middle">HTTPS_PROXY</text></g>
+            <g class="node hub"><rect x="112" y="40" width="76" height="42" rx="8"/><text x="150" y="59" text-anchor="middle">LiteGate</text><text class="sub" x="150" y="73" text-anchor="middle">ACL · 审计</text></g>
+            <g class="node"><rect x="216" y="40" width="80" height="42" rx="8"/><text x="256" y="59" text-anchor="middle">公网 API</text><text class="sub" x="256" y="73" text-anchor="middle">支付 · AI · SaaS</text></g>
+            <path class="edge tls" d="M84,61 L110,61" marker-end="url(#ah3t)"/>
+            <path class="edge" d="M188,61 L214,61" marker-end="url(#ah3)"/>
+            <text class="lbl" x="97" y="34" text-anchor="middle">CONNECT</text>
+          </svg>
+        </div>
+        <p>标准 HTTP CONNECT 正向代理，挂在 443 上按域名触发。支持账号认证和目标 ACL；开启防探测后，未认证的访问看起来就是一个普通网站。</p>
+        <a class="card-link" href="docs/zh-cn/forward-vs-forward-proxy.md">Forward 与 Forward Proxy 对比</a>
+        </div>
+        <div class="net-code">
+          <div class="code-window"><div class="code-head">config.yaml</div>
+<pre><span class="k">ingress_plugins</span>:
+  - <span class="k">name</span>: <span class="s">egress</span>
+    <span class="k">type</span>: <span class="s">forward_proxy</span>
+    <span class="k">entrypoints</span>: [<span class="s">websecure</span>]
+    <span class="k">config</span>:
+      <span class="k">hosts</span>: [<span class="s">proxy.example.com</span>]
+      <span class="k">username</span>: <span class="s">ops</span>
+      <span class="k">password_env</span>: <span class="s">LITEGATE_PROXY_PASSWORD</span>
+      <span class="k">probe_resistance</span>: <span class="s">true</span></pre></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ── Security ── -->
+<section id="security" class="alt">
+  <div class="wrap">
+    <div class="split" data-animate>
+      <div>
+        <p class="kicker">Encrypted ClientHello</p>
+        <h2>连访问哪个网站都加密</h2>
+        <p>普通 HTTPS 会在握手时明文暴露域名（SNI）。开启 ECH 后，网络上只能看到一个公共名称，真实域名被加密在 ClientHello 里，LiteGate 解密后照常按原域名选证书、走路由。</p>
+        <ul class="checklist">
+          <li>自动生成 ECH 密钥，并通过 DNS Provider 发布 HTTPS（类型 65）记录</li>
+          <li>网站继续使用普通 ACME 证书，不需要特殊证书</li>
+          <li>支持多组公共名称，密钥可存放在文件或集群 KV 中</li>
+          <li>没有启用 ECH 的客户端照常访问，不受影响</li>
+        </ul>
+        <a class="card-link" href="docs/zh-cn/user/06-certificates/ech.md">ECH 配置指南</a>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml</div>
+<pre><span class="k">ech</span>:
+  <span class="k">enabled</span>: <span class="s">true</span>
+  <span class="k">public_name</span>: <span class="s">ech.example.com</span>   <span class="c"># 网络上唯一可见的名称</span>
+  <span class="k">dns_provider</span>: <span class="s">cloudflare</span>
+  <span class="k">domains</span>:                       <span class="c"># 需要隐藏的真实站点</span>
+    - <span class="s">app.example.com</span>
+    - <span class="s">admin.example.com</span></pre>
+      </div>
+    </div>
+
+    <div class="split reverse" data-animate>
+      <div>
+        <p class="kicker">自动证书</p>
+        <h2>家庭网络也能自动签证书</h2>
+        <p>站点一配上域名就自动申请证书，到期前自动续期。80 端口连不进来的家庭网络，配好 DNS Provider 后整个区自动改走 DNS-01；失败会退避重试，不会把 CA 的限额打满。</p>
+        <ul class="checklist">
+          <li>HTTP-01、TLS-ALPN-01、DNS-01（泛域名）</li>
+          <li>阿里云、Cloudflare、华为云、腾讯云内置，其他服务商可用插件扩展</li>
+          <li>On-Demand TLS：SaaS 客户自带域名，握手时按需签发</li>
+          <li>本地 CA：<code>*.localhost</code> 开发环境也是受信任的 HTTPS</li>
+        </ul>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml · 家庭网络</div>
+<pre><span class="k">auto_cert</span>:
+  <span class="k">dns_providers</span>:
+    - <span class="k">name</span>: <span class="s">cloudflare</span>
+      <span class="k">type</span>: <span class="s">cloudflare</span>
+      <span class="k">enabled</span>: <span class="s">true</span>
+      <span class="k">domains</span>: [<span class="s">"*.home.example.com"</span>]
+      <span class="k">config</span>:
+        <span class="k">api_token</span>: <span class="s">env://CF_API_TOKEN</span>
+<span class="c"># 先签泛域名，之后新加的站点直接复用，</span>
+<span class="c"># 不在泛域名内的同区域名也会自动走 DNS-01</span></pre>
+      </div>
+    </div>
+
+    <div class="split" data-animate>
+      <div>
+        <p class="kicker">L4 + L7</p>
+        <h2>网站和 TLS 服务共用 443</h2>
+        <p>LiteGate 在 TLS 握手前读取 SNI，把匹配的连接整条转给 TCP 上游，其余照常进入 HTTPS。Redis TLS、gRPC 这类一开始就是 TLS 的协议可以直接共用 443；MySQL、PostgreSQL 这类先明文握手的协议，用上面的 Forward。</p>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>streams/redis.yaml</div>
+<pre><span class="k">site</span>: <span class="s">tcp://redis.example.com</span>   <span class="c"># 按 SNI 匹配，自动挂到 443</span>
+<span class="k">proxy</span>: <span class="s">10.0.0.30:6380</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Platform ── -->
+<section id="platform">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">平台能力</p>
+      <h2>从一台 VPS 到多租户 SaaS</h2>
+      <p>小项目只用前面那几行配置；业务长大以后，下面这些能力按需打开，不用换网关。</p>
+    </div>
+    <div class="features" data-animate>
+      <div class="feature">
+        <h3>服务发现与打标上线</h3>
+        <p>对接 Consul、Litemesh、Docker、Kubernetes。后端注册时带上标签，就自动挂到对应站点的路由下，前后端各自发布。</p>
+      </div>
+      <div class="feature">
+        <h3>多租户选路（IDS）</h3>
+        <p>路由匹配后、转发前，由你的 Go 插件识别租户、决定放行或拒绝、选择租户专属实例并按租户限流。</p>
+      </div>
+      <div class="feature">
+        <h3>集群配置与证书共享</h3>
+        <p>站点、证书和 ECH 密钥可以统一放在 Litemesh / Consul KV，写一次全集群热加载，证书由一个节点签发、全员共享。</p>
+      </div>
+      <div class="feature">
+        <h3>编译期插件</h3>
+        <p><code>litegate build --with</code> 把第三方插件编进二进制，覆盖 Stream、Action、中间件、负载均衡、DNS Provider 等扩展点。</p>
+      </div>
+      <div class="feature">
+        <h3>内置 MCP</h3>
+        <p>Claude Code、Cursor 等 AI 助手通过 MCP 查看站点、创建配置、热重载和排查错误。</p>
+      </div>
+      <div class="feature">
+        <h3>安全与可观测</h3>
+        <p>OIDC / JWT / API Key 鉴权、IP 限制、扫描防护，内置 Dashboard、访问日志、Prometheus 指标与链路追踪。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Quick start ── -->
+<section id="quickstart" class="alt">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">快速开始</p>
+      <h2>一分钟拿到第一个响应</h2>
+    </div>
+    <div class="steps">
+      <div class="step" data-animate>
+        <h3>安装</h3>
+        <p>从 Releases 下载对应平台的二进制，或用 Go 安装：</p>
+        <div class="code-window"><pre><span class="t">$</span> go install \
+  github.com/jamesleeon/LiteGate/cmd/litegate@latest</pre></div>
+      </div>
+      <div class="step" data-animate>
+        <h3>写一个站点</h3>
+        <p>在工作目录创建 <code>sites/hello.yaml</code>：</p>
+        <div class="code-window"><pre><span class="k">site</span>: <span class="s">localhost</span>
+<span class="k">respond</span>: <span class="s">"Hello, LiteGate!"</span></pre></div>
+      </div>
+      <div class="step" data-animate>
+        <h3>启动</h3>
+        <p>没有 <code>config.yaml</code> 也能直接跑：</p>
+        <div class="code-window"><pre><span class="t">$</span> ./litegate
+<span class="t">$</span> curl http://localhost/
+<span class="c">Hello, LiteGate!</span></pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap" data-animate>
+    <h2>开源，MIT 协议</h2>
+    <p>欢迎试用、提 Issue 和 Pull Request。1.0 之前配置格式可能还会调整，升级前请看 Changelog。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+      <a class="btn btn-ghost" href="docs/zh-cn/">阅读文档</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="#"><span class="brand-mark">L</span>LiteGate</a>
+      <p class="note">单一二进制的 HTTP / TCP 网关。本站由 LiteGate 托管。</p>
+    </div>
+    <div>
+      <h4>项目</h4>
+      <ul>
+        <li><a href="https://github.com/jamesleeon/LiteGate">GitHub</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/releases">Releases</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/CHANGELOG.md">Changelog</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/ROADMAP.md">Roadmap</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>文档</h4>
+      <ul>
+        <li><a href="docs/zh-cn/">文档首页</a></li>
+        <li><a href="docs/zh-cn/user/03-configuration/site-config.md">站点配置（v2）</a></li>
+        <li><a href="docs/zh-cn/user/cookbook/README.md">常用场景案例</a></li>
+        <li><a href="docs/zh-cn/ARCHITECTURE_WHITE_PAPER_ZH.md">架构白皮书</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>社区</h4>
+      <ul>
+        <li><a href="https://github.com/jamesleeon/LiteGate/issues">Issues</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/CONTRIBUTING.md">参与贡献</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/SECURITY.md">安全报告</a></li>
+        <li><a href="en/index.html" data-lang-switch="en">English</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
