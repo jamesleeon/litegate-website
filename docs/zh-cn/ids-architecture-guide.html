@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>LiteGate IDS：面向 SaaS 的请求决策架构</title>
+  <style>
+    :root{--ink:#17202a;--muted:#65717e;--line:#dfe5e8;--paper:#fff;--wash:#f4f7f6;--brand:#087f5b;--brand2:#0b7285;--warm:#f59f00;--danger:#c92a2a;--code:#15241f}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--wash);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+    a{color:var(--brand2);text-decoration:none}a:hover{text-decoration:underline}.wrap{max-width:1160px;margin:auto;padding:0 28px}.hero{color:#fff;background:linear-gradient(125deg,#102b24,#075c49 58%,#0b7285);padding:72px 0 62px}.eyebrow{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#96f2d7}.hero h1{max-width:900px;margin:12px 0 18px;font-size:clamp(34px,5vw,62px);line-height:1.12;letter-spacing:-.035em}.hero p{max-width:830px;margin:0;color:#d6f5eb;font-size:20px}.hero .tags{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}.tag{padding:6px 12px;border:1px solid #ffffff45;border-radius:999px;background:#ffffff12;font-size:13px}
+    .layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:38px;padding:40px 28px 80px}.toc{position:sticky;top:18px;align-self:start;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px}.toc strong{display:block;margin-bottom:8px}.toc a{display:block;padding:5px 0;color:#53606b;font-size:14px}.content{min-width:0}.content>section{margin-bottom:58px;scroll-margin-top:20px}.content h2{font-size:31px;line-height:1.25;margin:0 0 16px}.content h3{font-size:21px;margin:27px 0 10px}.lead{font-size:19px;color:#34424d}.callout{border-left:4px solid var(--brand);background:#e8f7f1;padding:18px 20px;border-radius:0 12px 12px 0}.warning{border-color:var(--warm);background:#fff7df}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:21px}.card h3{margin:0 0 7px}.num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;background:#d3f9d8;color:#176b3a;font-weight:700;margin-right:8px}
+    .flow{display:flex;align-items:stretch;gap:8px;overflow:auto;padding:18px;background:#edf3f1;border-radius:14px}.node{min-width:135px;flex:1;background:#fff;border:1px solid #cfdad6;border-radius:10px;padding:14px;text-align:center}.node b{display:block;color:var(--brand)}.arrow{display:grid;place-items:center;color:var(--brand);font-size:22px}.branch{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}.branch .node{min-width:0}.ok{border-top:4px solid var(--brand)}.stop{border-top:4px solid var(--warm)}.err{border-top:4px solid var(--danger)}
+    pre{overflow:auto;background:var(--code);color:#d9fbe8;border-radius:12px;padding:18px;font:13.5px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.inline{padding:2px 6px;border-radius:5px;background:#e9efed;font-size:.9em}table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line)}th,td{text-align:left;vertical-align:top;padding:12px 14px;border-bottom:1px solid var(--line)}th{background:#edf3f1}ul,ol{padding-left:23px}.boundary{display:grid;grid-template-columns:1fr 1fr;gap:18px}.boundary>div{border-radius:14px;padding:20px}.does{background:#e8f7f1}.doesnt{background:#fff1f0}.footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted)}
+    @media(max-width:850px){.layout{display:block}.toc{position:static;margin-bottom:32px}.grid,.boundary{grid-template-columns:1fr}.branch{grid-template-columns:1fr}.flow{display:grid}.arrow{transform:rotate(90deg)}}
+    @media print{body{background:#fff}.hero{padding:35px 0}.toc{display:none}.layout{display:block}.content>section{break-inside:avoid}.card,pre,table{break-inside:avoid}}
+  </style>
+</head>
+<body>
+  <header class="hero"><div class="wrap">
+    <div class="eyebrow">LiteGate Architecture Guide</div>
+    <h1>IDS：把 SaaS 业务决策放到请求进入下游之前</h1>
+    <p>一个业务中立、可插拔的请求决策接缝：验证流量、补充可信上下文、选择隔离实例池，或者在不访问下游时直接响应客户端。</p>
+    <div class="tags"><span class="tag">开放平台</span><span class="tag">多租户 SaaS</span><span class="tag">独立数据库</span><span class="tag">独立集群</span><span class="tag">灰度版本</span></div>
+  </div></header>
+
+  <main class="wrap layout">
+    <nav class="toc" aria-label="目录"><strong>本文目录</strong>
+      <a href="#why">为什么设计 IDS</a><a href="#model">核心模型</a><a href="#decision">IDSDecision 对象</a><a href="#boundary">职责边界</a><a href="#scenes">典型场景</a><a href="#routing">Selector 与 Meta</a><a href="#cache">动态配置与缓存</a><a href="#code">插件与配置样例</a><a href="#security">安全原则</a>
+    </nav>
+    <article class="content">
+      <section id="why"><h2>1. 为什么需要 IDS</h2>
+        <p class="lead">普通网关擅长按 Host、Path 和 Header 匹配静态路由，但 SaaS 的流量方向经常只有在查询业务系统之后才能确定。</p>
+        <div class="grid">
+          <div class="card"><h3><span class="num">1</span>内核不应该认识租户字段</h3><p>不同企业使用 Tenant ID、App ID、组织、项目或自定义凭证。把这些字段写进内核，会让网关与某一种 SaaS 模型永久耦合。</p></div>
+          <div class="card"><h3><span class="num">2</span>认证结果会影响选路</h3><p>验证 JWT 只是开始。请求可能还要进入该租户的数据库、专属集群或指定版本；身份判断与物理流量方向需要在同一个业务决策中完成。</p></div>
+          <div class="card"><h3><span class="num">3</span>策略来自外部状态</h3><p>租户系统、Redis session、授权平台和配置中心中的状态会变化。仅靠静态路由规则无法表达“租户 A 去集群 A，租户 B 去集群 B”。</p></div>
+          <div class="card"><h3><span class="num">4</span>拒绝请求不应访问下游</h3><p>缺少凭证、权限不足或 session 失效时，Provider 应直接返回 401/403，而不是先把不可信请求发送到业务服务。</p></div>
+        </div>
+        <p class="callout"><strong>IDS 的目的不是再造一种 JWT 中间件。</strong>它提供的是“业务系统参与网关转发决策”的稳定接口，同时让 LiteGate 内核保持业务中立。</p>
+      </section>
+
+      <section id="model"><h2>2. 核心模型：一次调用，一个明确决策</h2>
+        <div class="flow"><div class="node">客户端请求</div><div class="arrow">→</div><div class="node">路由匹配</div><div class="arrow">→</div><div class="node"><b>IDS Provider</b>读取请求<br>查询业务状态</div><div class="arrow">→</div><div class="node">服务发现与 Proxy</div></div>
+        <div class="branch"><div class="node ok"><b>Forward</b>继续转发<br>可注入 Header<br>可选择候选池</div><div class="node stop"><b>Respond</b>直接返回客户端<br>不访问下游</div><div class="node err"><b>error</b>插件或依赖故障<br>按 fail_policy 处理</div></div>
+        <h3>公共接口</h3>
+<pre><code>type IDSProvider interface {
+    Evaluate(
+        ctx context.Context,
+        input IDSInput,
+    ) (*IDSDecision, error)
+}</code></pre>
+        <p><code class="inline">input.Request</code> 是受限的只读请求视图，只公开 Method、Scheme、Host、Path、Query、Header、RemoteAddress 与带上限的 Body 读取；插件不能取得或修改 <code class="inline">*http.Request</code>。<code class="inline">input.Options</code> 是当前路由的不可变动态参数副本。</p>
+        <table><thead><tr><th>结果</th><th>语义</th><th>典型用途</th></tr></thead><tbody>
+          <tr><td>Forward，无 Route</td><td>验证通过，使用原路由默认下游</td><td>开放平台验签、权限验证</td></tr>
+          <tr><td>Forward，有 Route</td><td>验证通过，并约束服务发现候选实例</td><td>租户隔离、版本灰度</td></tr>
+          <tr><td>Forward，有 RateLimit</td><td>按插件返回的不透明主体 Key 动态限流</td><td>租户套餐、App 配额</td></tr>
+          <tr><td>Respond</td><td>由网关直接响应，不访问下游</td><td>401、403、业务拒绝</td></tr>
+          <tr><td>error</td><td>Provider 或 Redis/租户系统等基础设施失败</td><td>503，或显式 fail-open</td></tr>
+        </tbody></table>
+
+        <div id="decision" style="scroll-margin-top:20px">
+          <h3>IDSDecision 返回对象详解</h3>
+          <p><code class="inline">IDSDecision</code> 是 Provider 交给 LiteGate 的单次请求决策。它不是身份对象，也不固定 Tenant ID、App ID 或 SID；它只描述网关接下来应该执行什么。</p>
+<pre><code>type IDSDecision struct {
+    Action    IDSAction
+    Route     *RouteDecision
+    RateLimit *RateLimitDecision
+    Headers   http.Header
+    Response  *DirectResponse
+}
+
+type RouteDecision struct {
+    Selector map[string]string
+    Meta     map[string]string
+}
+
+type RateLimitDecision struct {
+    Key               string
+    RequestsPerSecond float64
+}
+
+type DirectResponse struct {
+    Status  int
+    Headers http.Header
+    Body    []byte
+}</code></pre>
+          <table><thead><tr><th>字段</th><th>何时使用</th><th>语义和约束</th></tr></thead><tbody>
+            <tr><td><code>Action</code></td><td>始终必填</td><td><code>ActionForward</code> 或 <code>ActionRespond</code>。零值和未知值会被视为插件错误并返回 500。</td></tr>
+            <tr><td><code>Route</code></td><td>仅 Forward，可选</td><td>为空表示使用路由配置的默认下游。Selector 是硬过滤边界；Meta 是该边界内的可回退偏好。空 map 等同于未指定该部分。</td></tr>
+            <tr><td><code>RateLimit</code></td><td>仅 Forward，可选</td><td>按不透明 Key 执行动态 QPS token bucket。Key 必须为 1–256 字节，QPS 必须大于 0；超限直接返回 429。</td></tr>
+            <tr><td><code>Headers</code></td><td>仅 Forward，可选</td><td>写入继续转发的请求。只有路由 <code>allowed_headers</code> 白名单允许的敏感 Header 才能投影；Authorization、Cookie、X-Forwarded-* 等保留 Header 不能覆盖。</td></tr>
+            <tr><td><code>Response</code></td><td>仅 Respond，必填</td><td>直接返回客户端，不访问服务发现和下游。Status 必须在 100–599；Headers 是响应头，Body 是响应体字节。</td></tr>
+          </tbody></table>
+
+          <h3>合法组合</h3>
+          <div class="grid">
+            <div class="card"><h3>验证通过，默认下游</h3><pre><code>&amp;plugin.IDSDecision{
+    Action: plugin.ActionForward,
+}</code></pre><p>不选择实例池、不注入 Header，也不动态限流。</p></div>
+            <div class="card"><h3>验证通过，完整 SaaS 决策</h3><pre><code>&amp;plugin.IDSDecision{
+    Action: plugin.ActionForward,
+    Route: route,
+    RateLimit: quota,
+    Headers: trustedHeaders,
+}</code></pre><p>限流通过后，按 Selector/Meta 过滤并访问下游。</p></div>
+            <div class="card"><h3>业务拒绝</h3><pre><code>&amp;plugin.IDSDecision{
+    Action: plugin.ActionRespond,
+    Response: &amp;plugin.DirectResponse{
+        Status: 401,
+        Body: []byte("unauthorized"),
+    },
+}</code></pre><p>这是正常业务结果，不能用 error 代替。</p></div>
+            <div class="card"><h3>插件或依赖故障</h3><pre><code>return nil, err</code></pre><p>例如 Redis 超时或租户系统不可用，由 <code>fail_policy</code> 决定拒绝还是放行。</p></div>
+          </div>
+
+          <h3>禁止的组合</h3>
+          <table><thead><tr><th>错误返回</th><th>原因</th></tr></thead><tbody>
+            <tr><td>Respond 没有 Response</td><td>网关不知道应该返回什么。</td></tr>
+            <tr><td>Respond 同时带 Route、RateLimit 或请求 Headers</td><td>Respond 已终止转发，这些字段语义冲突。</td></tr>
+            <tr><td>Forward 同时带 Response</td><td>不能同时继续转发和直接响应。</td></tr>
+            <tr><td>RateLimit Key 为空或 QPS ≤ 0</td><td>无法构造有效、隔离的 token bucket。</td></tr>
+            <tr><td>返回 nil decision 且 nil error</td><td>属于不明确的插件结果，网关按 500 处理。</td></tr>
+          </tbody></table>
+          <p class="callout warning"><strong>业务拒绝和系统错误必须分开：</strong>凭证无效、权限不足、配额业务规则拒绝使用 Respond；Redis、数据库、HTTP 依赖失败才返回 error。只有 error 会受到 <code>fail_policy</code> 影响。</p>
+        </div>
+      </section>
+
+      <section id="boundary"><h2>3. IDS 与现有网关能力的边界</h2>
+        <div class="boundary"><div class="does"><h3>IDS 负责</h3><ul><li>读取请求并执行自定义验证</li><li>查询 Redis、租户系统或授权平台</li><li>生成可信的下游 Header</li><li>选择 Selector 和可选 Meta</li><li>直接拒绝或响应客户端</li></ul></div><div class="doesnt"><h3>IDS 不负责</h3><ul><li>内置 Tenant ID、App ID 或 JWT 模型</li><li>返回任意下游 URL 绕过路由边界</li><li>替代现有 rewrite 和 redirect</li><li>替代完整的 Body 转换引擎</li><li>让内核管理业务 session 生命周期</li></ul></div></div>
+        <table><thead><tr><th>能力</th><th>应该使用</th></tr></thead><tbody><tr><td><code>/oldapi</code> 固定改为 <code>/api</code></td><td>rewrite</td></tr><tr><td>通知浏览器访问新地址</td><td>redirect</td></tr><tr><td>JWT 对应哪个租户、数据库或集群</td><td>IDS Provider</td></tr><tr><td>静态 Basic/JWT 认证</td><td>auth</td></tr><tr><td>标准 OAuth2/OIDC 回调与登录会话</td><td>remote_auth</td></tr></tbody></table>
+      </section>
+
+      <section id="scenes"><h2>4. IDS 主要解决的场景</h2>
+        <h3>场景 A：开放平台 App ID + Secret</h3><ol><li>插件从请求读取 App ID、时间戳和签名。</li><li>从本地缓存、Redis 或租户系统取得 Secret。</li><li>完成签名、防重放和权限验证。</li><li>生成可信业务 Header，返回 Forward；通常无需返回 Route，继续走默认服务。</li></ol><p>仓库提供了兼容旧 Body MD5 协议的完整实现，参见 <a href="openapi-md5-ids-plugin.md">OpenAPI MD5 IDS Provider</a>。</p>
+        <h3>场景 B：应用共享，数据库独立</h3><ol><li>登录 Provider 在业务登录链路中建立 JWT/session 与租户资源的绑定。</li><li>API Provider 从请求读取 token，在 Redis 查询 session。</li><li>将不透明的数据库引用投影给共享应用。</li><li>下游应用只使用可信网关上下文连接对应租户数据库。</li></ol>
+        <h3>场景 C：每个租户进入独立集群</h3><ol><li>Provider 根据 token 找到租户。</li><li>租户 A 返回 <code>Selector {cluster: a}</code>，租户 B 返回 <code>{cluster: b}</code>。</li><li>服务发现只在对应硬边界内选择健康实例，不发生跨租户降级。</li></ol>
+        <h3>场景 D：租户级灰度或升级</h3><p>Provider 返回租户硬 Selector，并附加 <code>Meta {version: v2}</code>。v2 已部署则进入灰度池；若该集群忘记部署 v2，只回到同一 Selector 的默认实例。</p>
+        <h3>场景 E：老系统迁移</h3><p>确定性的 <code>/oldapi → /api</code> 使用 rewrite；IDS 查询租户迁移状态，并选择旧集群或新集群。这样路径变换和业务选路各自保持清晰，无需扩大 IDS 接口。</p>
+      </section>
+
+      <section id="routing"><h2>5. Selector 是边界，Meta 是偏好</h2>
+        <div class="flow"><div class="node"><b>Selector</b>cluster = A</div><div class="arrow">→</div><div class="node"><b>Meta 命中</b>version = v2</div><div class="arrow">→</div><div class="node">A 集群 v2 实例</div></div>
+        <div class="flow" style="margin-top:10px"><div class="node"><b>Selector</b>cluster = A</div><div class="arrow">→</div><div class="node"><b>Meta 未命中</b>无 v2 实例</div><div class="arrow">→</div><div class="node">A 集群默认实例</div></div>
+        <p class="callout warning"><strong>不会发生：</strong>A 集群没有 v2 时进入 B 集群，也不会误入 A 集群中另一个可选版本。Selector 永不跨越，Meta 只在边界内回退。</p>
+      </section>
+
+      <section id="cache"><h2>6. 动态配置、密钥与缓存</h2>
+        <p>新架构没有全局 <code class="inline">ids_providers</code>。路由 options 每次 Evaluate 都传入当前值，因此站点配置或服务标签热更新后无需重启网关。</p>
+<pre><code>options:
+  token_header: Authorization
+  policy_ref: order-read
+  redis_ref: tenant-session-prod</code></pre>
+        <p><code class="inline">options</code> 应存放策略值或安全引用，不放 Redis 密码、数据库口令。Provider 用引用从自己的 Secret Manager 或配置中心解析秘密，并作为并发单例复用 HTTP、Redis、DB 客户端。</p>
+        <div class="flow"><div class="node">进程内短缓存</div><div class="arrow">→</div><div class="node">Redis</div><div class="arrow">→</div><div class="node">租户系统</div><div class="arrow">→</div><div class="node">回填缓存</div></div>
+        <ul><li>缓存键包含所有影响验证和选路的维度。</li><li>不存在的数据使用较短负缓存。</li><li>登录、刷新、注销主动失效关联键。</li><li>设置 TTL、外部访问超时和连接池上限。</li></ul>
+        <h3>租户或 App 动态限流</h3>
+<pre><code>RateLimit: &amp;plugin.RateLimitDecision{
+    Key:               session.SubjectRef,
+    RequestsPerSecond: session.QPS,
+}</code></pre>
+        <p>执行顺序为 IDS → 动态限流 → 服务发现 → Proxy。超限直接返回 429，不会查询实例或访问下游。网关不解释 Key 的业务含义，并在写入本地缓存或 Redis 前将其哈希。</p>
+      </section>
+
+      <section id="code"><h2>7. 完整样例</h2>
+        <h3>路由配置</h3>
+<pre><code>action:
+  type: proxy
+  service_name: shared-saas-service
+  ids:
+    provider: saas-session
+    fail_policy: deny
+    options:
+      token_header: Authorization
+      policy_ref: order-read
+    header_projection:
+      allowed_headers:
+        - X-Tenant-Ref
+        - X-Database-Ref</code></pre>
+        <h3>Provider 决策</h3>
+<pre><code>func (p *Provider) Evaluate(
+    ctx context.Context,
+    input plugin.IDSInput,
+) (*plugin.IDSDecision, error) {
+    token := first(input.Request.Header(input.Options.Get("token_header")))
+    session, err := p.lookupSession(ctx, token)
+    if err != nil { return nil, err }
+    if session == nil {
+        return &plugin.IDSDecision{
+            Action: plugin.ActionRespond,
+            Response: &plugin.DirectResponse{Status: http.StatusUnauthorized},
+        }, nil
+    }
+    return &plugin.IDSDecision{
+        Action: plugin.ActionForward,
+        Headers: http.Header{
+            "X-Tenant-Ref":   {session.TenantRef},
+            "X-Database-Ref": {session.DatabaseRef},
+        },
+        Route: &plugin.RouteDecision{
+            Selector: map[string]string{"cluster": session.Cluster},
+            Meta: map[string]string{"version": session.PreferredVersion},
+        },
+        RateLimit: &plugin.RateLimitDecision{
+            Key: session.SubjectRef,
+            RequestsPerSecond: session.QPS,
+        },
+    }, nil
+}</code></pre>
+        <p>如果只验证数据并进入默认下游，省略 <code class="inline">Route</code>。业务拒绝返回 Respond；只有 Redis 不可用、租户系统超时等系统故障才返回 error。</p>
+      </section>
+
+      <section id="security"><h2>8. 安全与实现原则</h2>
+        <ol><li><strong>默认 fail-closed：</strong><code>fail_policy: deny</code>，只有明确接受绕过风险时才使用 allow。</li><li><strong>Header 最小授权：</strong>客户端携带的内部 Header 先清理，插件生成的值还要经过投影白名单。</li><li><strong>并发安全：</strong>Provider 是跨请求单例，不在普通字段保存单次请求状态。</li><li><strong>限制请求体：</strong>读取 Body 时限制大小并恢复 Body，保证下游仍可读取。</li><li><strong>结构化选路：</strong>只返回 Selector/Meta，不允许任意目标 URL。</li><li><strong>配置加载校验：</strong>Provider 为空或未注册时拒绝加载站点配置。</li></ol>
+        <p class="callout"><strong>一句话总结：</strong>IDS 让用户在网关和下游之间插入自己的 SaaS 决策逻辑，而 LiteGate 只负责安全地执行 Forward、Respond、Header 投影和候选池选择。</p>
+      </section>
+    </article>
+  </main>
+  <footer class="footer"><div class="wrap">LiteGate IDS Architecture · 相关文档：<a href="ids-architecture-v2.md">架构契约</a> · <a href="ids-provider-plugin-guide.md">插件开发与配置</a> · <a href="openapi-md5-ids-plugin.md">OpenAPI MD5 Provider</a></div></footer>
+</body>
+</html>

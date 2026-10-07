@@ -1,445 +1,479 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LiteGate | One gateway for sites, certs, discovery and SaaS entry</title>
-    <meta name="description" content="LiteGate folds site hosting, API proxy, automatic HTTPS, dynamic DNS, service discovery and SaaS identity entry into a single gateway. Single-binary deployment, built for private clouds, VPS and multi-tenant scenarios.">
-    <link rel="stylesheet" href="../style.css">
-    <style>
-    /* ── Homepage architecture diagram (self-contained scope, ported from litegate_architecture.html) ── */
-    .arch-figure {
-      --bg: #ffffff;
-      --bg2: #faf7f1;
-      --bg3: #f4f1ea;
-      --border: rgba(31, 44, 40, 0.12);
-      --border2: rgba(31, 44, 40, 0.18);
-      --text: #1f2c28;
-      --text2: #54655f;
-      --text3: #7f9089;
-      --accent: #1a7f64;
-      --accent-bg: rgba(26, 127, 100, 0.1);
-      --amber: #c46a2d;
-      --amber-bg: rgba(196, 106, 45, 0.1);
-      --sans: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
-      margin: 0 auto;
-    }
-    .arch-figure .diag-container {
-      background: var(--bg2);
-      border: 0.5px solid var(--border2);
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      position: relative;
-    }
-    .arch-figure .diag-svg { width: 100%; height: auto; display: block; }
-    .arch-figure .diag-card { fill: var(--bg); stroke: var(--border); stroke-width: 1; transition: all 0.25s ease; }
-    .arch-figure .diag-card-amber { fill: var(--amber-bg); stroke: var(--amber); stroke-width: 1.5; }
-    .arch-figure .diag-group { cursor: default; transition: transform 0.2s ease; }
-    .arch-figure .diag-group:hover { transform: translateY(-2px); }
-    .arch-figure .diag-group:hover .diag-card { fill: var(--bg2); stroke: var(--accent); filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08)); }
-    .arch-figure .diag-group:hover .diag-card-amber { stroke-width: 2; filter: drop-shadow(0 4px 12px rgba(196, 106, 45, 0.25)); }
-    .arch-figure .diag-title { fill: var(--text); font-family: var(--sans); font-weight: 600; font-size: 13.5px; }
-    .arch-figure .diag-title-white { fill: #ffffff; font-family: var(--sans); font-weight: 600; font-size: 14px; }
-    .arch-figure .diag-subtitle { fill: var(--text2); font-family: var(--sans); font-size: 11px; }
-    .arch-figure .diag-subtitle-white { fill: rgba(255,255,255,0.9); font-family: var(--sans); font-size: 11px; }
-    .arch-figure .diag-badge { font-size: 10px; font-family: var(--sans); font-weight: 600; }
-    @keyframes arch-flow-dash { to { stroke-dashoffset: -40; } }
-    @keyframes arch-flow-dash-reverse { to { stroke-dashoffset: 40; } }
-    .arch-figure .flow-line { stroke-width: 1.5; stroke-dasharray: 6, 4; animation: arch-flow-dash 1.5s linear infinite; }
-    .arch-figure .flow-accent { stroke: var(--accent); }
-    .arch-figure .flow-amber { stroke: var(--amber); stroke-width: 2; animation: arch-flow-dash 1.2s linear infinite; }
-    .arch-figure .flow-amber-back { stroke: var(--amber); stroke-width: 1.5; stroke-dasharray: 5, 5; animation: arch-flow-dash-reverse 1.8s linear infinite; }
-    .arch-figure .diag-column-bg { fill: var(--bg3); stroke: var(--border); stroke-width: 0.5; opacity: 0.3; }
-    .arch-figure .diag-column-title { fill: var(--text2); font-family: var(--sans); font-weight: 600; font-size: 11px; letter-spacing: 0.6px; }
-    .arch-figure .arch-caption { margin: 18px 0 0; text-align: center; color: var(--ink-soft); font-size: 0.95rem; }
-    @media (prefers-reduced-motion: reduce) {
-      .arch-figure .flow-line, .arch-figure .flow-amber, .arch-figure .flow-amber-back { animation: none; }
-    }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate · An HTTP / TCP gateway in a single binary</title>
+<meta name="description" content="LiteGate: put a site online with three lines of YAML. Automatic HTTPS and ECH, SNI routing on port 443, Connect for publishing private services, Forward for reaching cloud databases, service discovery and multi-tenant routing, all in one Go binary.">
+<link rel="alternate" hreflang="zh-CN" href="../index.html">
+<link rel="stylesheet" href="../style.css">
+<script>document.documentElement.classList.add("js")</script>
+<script src="../main.js" defer></script>
 </head>
 <body>
-    <div class="site-shell">
-        <nav class="nav" id="nav">
-            <div class="container nav-inner">
-                <a href="#" class="brand" aria-label="LiteGate Home">
-                    <span class="brand-mark">L</span>
-                    <span class="brand-text">LiteGate</span>
-                </a>
-                <div class="nav-links">
-                    <a href="#what">What</a>
-                    <a href="#capabilities">Capabilities</a>
-                    <a href="#scenarios">Scenarios</a>
-                    <a href="../docs/en/index.html" style="font-weight: 600; color: var(--accent);">Docs</a>
-                </div>
-                <div class="nav-actions">
-                    <a href="../index.html" class="nav-lang-switch" style="margin-right: 10px;">中文</a>
-                    <a href="https://github.com/jamesleeon/LiteGate" class="nav-link-quiet">GitHub</a>
-                    <a href="#quickstart" class="btn btn-nav">Get Started</a>
-                </div>
-            </div>
-        </nav>
 
-        <header class="hero">
-            <div class="hero-grid"></div>
-            <div class="container hero-layout">
-                <div class="hero-copy">
-                    <p class="eyebrow" data-animate>Unified Entry Gateway · Single Binary</p>
-                    <h1 data-animate>One gateway for your whole entry layer</h1>
-                    <p class="hero-lead" data-animate>
-                        Site hosting, API proxy, automatic HTTPS, dynamic DNS, service discovery, frontend releases
-                        and SaaS identity entry used to live across several components. LiteGate folds them into one
-                        gateway behind a single routing model — go live in a few lines of YAML, scale up when things
-                        get complex, no re-platforming halfway.
-                    </p>
-                    <div class="hero-actions" data-animate>
-                        <a href="#quickstart" class="btn btn-primary">Get started in 5 min</a>
-                        <a href="#capabilities" class="btn btn-secondary">See what it does</a>
-                    </div>
-                    <div class="hero-note" data-animate>
-                        Built for private cloud, VPS, Docker, hybrid cloud and multi-tenant SaaS · This very site is served by LiteGate.
-                    </div>
-                </div>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#syntax">Syntax</a>
+      <a href="#network">Connectivity</a>
+      <a href="#security">Certificates &amp; ECH</a>
+      <a href="#platform">Platform</a>
+      <a href="../docs/en/">Docs</a>
+      <a href="../index.html" data-lang-switch="zh">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
 
-                <div class="hero-stack" data-animate>
-                    <section class="panel panel-code">
-                        <div class="panel-topline">
-                            <span class="panel-pill">Lite Mode</span>
-                            <span class="panel-file">sites/app.example.com.lite.yaml</span>
-                        </div>
-                        <pre><code>app.example.com:
-  /:
-    root: ./dist
-    spa: true
-  /api:
-    proxy: 127.0.0.1:8080</code></pre>
-                        <p class="panel-note-emphasis">
-                            One site file carries frontend assets, API routes and the HTTPS entry — certificates,
-                            DNS and routing all come up together.
-                        </p>
-                        <p>
-                            When things get complex, switch to full mode (standard <code>.yaml</code>) on the same core.
-                        </p>
-                    </section>
-                </div>
-            </div>
-        </header>
+<main>
 
-        <main>
-            <section class="section section-entry-model" id="what">
-                <div class="container">
-                    <div class="section-head" data-animate>
-                        <p class="eyebrow">What it is</p>
-                        <h2>Not just a reverse proxy — a unified entry layer</h2>
-                        <p>
-                            Internet traffic enters on the left, passes through the LiteGate core engine for matching
-                            and governance in the middle, then reaches your backend infrastructure on the right.
-                            Site hosting, dynamic proxy, automatic certificates, service discovery and identity entry
-                            all live on one execution plane.
-                        </p>
-                    </div>
-                    <div class="arch-figure" data-animate>
-                        <div class="diag-container">
-                            <svg class="diag-svg" viewBox="0 0 1060 520" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <filter id="shadow-glow" x="-10%" y="-10%" width="120%" height="120%">
-                                        <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="var(--accent)" flood-opacity="0.15" />
-                                    </filter>
-                                    <filter id="amber-glow" x="-10%" y="-10%" width="120%" height="120%">
-                                        <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="var(--amber)" flood-opacity="0.25" />
-                                    </filter>
-                                </defs>
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Open source · MIT · Single binary</span>
+      <h1>Three lines to go live.<br><em>One gateway</em> for every entry point.</h1>
+      <p class="lead">Static sites, API proxying, automatic HTTPS, SNI routing on port 443, private-network publishing and cloud resource access, service discovery and multi-tenant routing. What used to take several components is one Go binary and one configuration language.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#quickstart">Get started</a>
+        <a class="btn btn-ghost" href="https://github.com/jamesleeon/LiteGate">View on GitHub</a>
+      </div>
+      <ul class="hero-meta">
+        <li>No external dependencies</li>
+        <li>Hot reload</li>
+        <li>Linux / macOS / Windows</li>
+      </ul>
+    </div>
+    <div class="code-stack">
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml</div>
+<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<span class="p">/api</span>: <span class="s">127.0.0.1:8080</span>   <span class="c"># backend, WebSockets included</span>
+<span class="k">spa</span>: <span class="s">./dist</span>            <span class="c"># everything else is the SPA</span></pre>
+      </div>
+      <div class="code-window terminal">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>terminal</div>
+<pre><span class="t">$</span> ./litegate
+<span class="t">$</span> curl -I http://app.example.com/
+<span class="c">HTTP/1.1 308 Permanent Redirect</span>
+<span class="c">Location: https://app.example.com/</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
 
-                                <rect class="diag-column-bg" x="15" y="20" width="220" height="480" rx="12"/>
-                                <text class="diag-column-title" x="30" y="45">FROM THE INTERNET</text>
-
-                                <rect class="diag-column-bg" x="265" y="20" width="480" height="480" rx="12"/>
-                                <text class="diag-column-title" x="280" y="45">LITEGATE CORE ENGINE</text>
-
-                                <rect class="diag-column-bg" x="775" y="20" width="270" height="480" rx="12"/>
-                                <text class="diag-column-title" x="790" y="45">TO YOUR INFRASTRUCTURE</text>
-
-                                <g opacity="0.25">
-                                    <path d="M 205,115 C 310,115 310,230 405,230" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
-                                    <path d="M 205,205 C 310,205 310,230 405,230" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
-                                    <path d="M 205,295 C 310,295 310,230 405,230" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
-                                    <path d="M 205,385 C 310,385 310,230 405,230" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
-                                </g>
-
-                                <path d="M 205,115 C 310,115 310,230 405,230" class="flow-line flow-accent" fill="none"/>
-                                <text class="diag-badge" fill="var(--accent)" x="280" y="150" text-anchor="middle">HTTPS / North-South mTLS</text>
-
-                                <path d="M 205,205 C 310,205 310,230 405,230" class="flow-line flow-accent" fill="none"/>
-                                <path d="M 605,245 C 665,245 665,305 605,305" class="flow-line flow-amber" fill="none"/>
-                                <path d="M 505,305 L 445,305" class="flow-line flow-amber" fill="none"/>
-                                <path d="M 290,305 C 235,305 235,205 205,205" class="flow-line flow-amber-back" fill="none"/>
-                                <text class="diag-badge" fill="var(--amber)" x="225" y="255">Local Response</text>
-
-                                <path d="M 795,145 C 720,145 720,210 605,210" stroke="var(--text3)" stroke-width="1.5" stroke-dasharray="4,4" fill="none"/>
-
-                                <g opacity="0.3">
-                                    <path d="M 605,260 C 700,260 700,345 795,345" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
-                                    <path d="M 605,260 C 700,260 700,425 795,425" stroke="var(--text2)" stroke-width="1.5" fill="none"/>
-                                </g>
-                                <path d="M 605,260 C 700,260 700,345 795,345" class="flow-line flow-accent" fill="none"/>
-                                <text class="diag-badge" fill="var(--accent)" x="725" y="322" text-anchor="middle">mTLS upstream (SPIFFE)</text>
-
-                                <g class="diag-group">
-                                    <rect class="diag-card" x="30" y="80" width="175" height="70" rx="8"/>
-                                    <text class="diag-title" x="42" y="108">api.example.com</text>
-                                    <text class="diag-subtitle" x="42" y="130">HTTP/HTTPS · API traffic</text>
-                                </g>
-                                <g class="diag-group">
-                                    <rect class="diag-card" x="30" y="170" width="175" height="70" rx="8"/>
-                                    <text class="diag-title" x="42" y="198">app.example.com</text>
-                                    <text class="diag-subtitle" x="42" y="220">HTTP/HTTPS · SPA hosting / WebDAV</text>
-                                </g>
-                                <g class="diag-group">
-                                    <rect class="diag-card" x="30" y="260" width="175" height="70" rx="8"/>
-                                    <text class="diag-title" x="42" y="288">storage.example.com</text>
-                                    <text class="diag-subtitle" x="42" y="310">HTTP/HTTPS · Markdown docs</text>
-                                </g>
-                                <g class="diag-group">
-                                    <rect class="diag-card" x="30" y="350" width="175" height="70" rx="8"/>
-                                    <text class="diag-title" x="42" y="378">L4 Stream traffic</text>
-                                    <text class="diag-subtitle" x="42" y="400">TCP / UDP / IoT / MySQL</text>
-                                </g>
-
-                                <g class="diag-group" filter="url(#shadow-glow)">
-                                    <rect x="405" y="180" width="200" height="90" rx="12" fill="var(--accent)" stroke="var(--accent)" stroke-width="1.5"/>
-                                    <text class="diag-title-white" x="420" y="210">Routing Engine</text>
-                                    <text class="diag-subtitle-white" x="420" y="232">Trie routing · inverted L1–L7 pipeline</text>
-                                    <text class="diag-subtitle-white" x="420" y="248">lock-free data plane · atomic hot reload</text>
-                                </g>
-
-                                <g class="diag-group">
-                                    <rect class="diag-card" x="290" y="80" width="190" height="60" rx="8"/>
-                                    <text class="diag-title" x="302" y="105">Security &amp; Identity</text>
-                                    <text class="diag-subtitle" x="302" y="125">IDS · mTLS · WAF · OIDC/SSO · IP rules</text>
-                                </g>
-                                <g class="diag-group">
-                                    <rect class="diag-card" x="510" y="80" width="210" height="60" rx="8"/>
-                                    <text class="diag-title" x="522" y="105">Traffic Management</text>
-                                    <text class="diag-subtitle" x="522" y="125">LB · circuit breaking · retry · canary · rate limit</text>
-                                </g>
-                                <g class="diag-group" filter="url(#amber-glow)">
-                                    <rect class="diag-card-amber" x="505" y="280" width="215" height="65" rx="10"/>
-                                    <text class="diag-title" x="517" y="305" fill="var(--amber)">★ Content &amp; TLS</text>
-                                    <text class="diag-subtitle" x="517" y="328">Static hosting / WebDAV · auto HTTPS</text>
-                                </g>
-                                <g class="diag-group">
-                                    <rect class="diag-card" x="290" y="280" width="195" height="65" rx="10" stroke="var(--amber)" stroke-width="1.2"/>
-                                    <text class="diag-title" x="302" y="305" fill="var(--amber)">Built-in Web Server</text>
-                                    <text class="diag-subtitle" x="302" y="328">SPA / WebDAV / Markdown hosting</text>
-                                </g>
-                                <g class="diag-group">
-                                    <rect class="diag-card" x="510" y="375" width="210" height="60" rx="8"/>
-                                    <text class="diag-title" x="522" y="400">Observability</text>
-                                    <text class="diag-subtitle" x="522" y="420">Access logs · Prometheus · Trace</text>
-                                </g>
-                                <g class="diag-group">
-                                    <rect class="diag-card" x="290" y="375" width="190" height="60" rx="8"/>
-                                    <text class="diag-title" x="302" y="400">Integration</text>
-                                    <text class="diag-subtitle" x="302" y="420">MCP/AI · middleware · .lite.yaml</text>
-                                </g>
-
-                                <rect class="diag-card" x="795" y="80" width="230" height="150" rx="10" stroke-dasharray="4,2"/>
-                                <text class="diag-title" x="807" y="105">Service Discovery (Providers)</text>
-                                <g class="diag-group">
-                                    <circle cx="817" cy="130" r="4" fill="var(--accent)"/>
-                                    <text class="diag-subtitle" x="827" y="134">litemesh / litedeploy (SSE)</text>
-                                </g>
-                                <g class="diag-group">
-                                    <circle cx="817" cy="155" r="4" fill="var(--accent)"/>
-                                    <text class="diag-subtitle" x="827" y="159">consul / docker (Labels &amp; Tags)</text>
-                                </g>
-                                <g class="diag-group">
-                                    <circle cx="817" cy="180" r="4" fill="var(--accent)"/>
-                                    <text class="diag-subtitle" x="827" y="184">discovery (Consul-compatible Blocking Query)</text>
-                                </g>
-                                <g class="diag-group">
-                                    <circle cx="817" cy="205" r="4" fill="var(--accent)"/>
-                                    <text class="diag-subtitle" x="827" y="209">k8s / nacos / etcd (via discovery)</text>
-                                </g>
-
-                                <rect class="diag-card" x="795" y="255" width="230" height="205" rx="10"/>
-                                <text class="diag-title" x="807" y="280">Proxied Backends</text>
-                                <g class="diag-group">
-                                    <rect class="diag-card" x="807" y="295" width="205" height="40" rx="6"/>
-                                    <text class="diag-subtitle" x="819" y="320" font-weight="600">API Service</text>
-                                </g>
-                                <g class="diag-group">
-                                    <rect class="diag-card" x="807" y="345" width="205" height="40" rx="6"/>
-                                    <text class="diag-subtitle" x="819" y="370" font-weight="600">Backend Server 1 / 2</text>
-                                </g>
-                                <g class="diag-group">
-                                    <rect class="diag-card" x="807" y="395" width="205" height="40" rx="6"/>
-                                    <text class="diag-subtitle" x="819" y="420" font-weight="600">L4 TCP/UDP targets</text>
-                                </g>
-                            </svg>
-                        </div>
-                        <p class="arch-caption">
-                            Want the full in-gateway request flow (inverted pipeline, control/data plane separation,
-                            lock-free data plane and atomic hot reload)? Read
-                            <a href="../docs/en/litegate_architecture.html">Architecture &amp; Request Lifecycle →</a>
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section" id="capabilities">
-                <div class="container">
-                    <div class="section-head" data-animate>
-                        <p class="eyebrow">Capabilities</p>
-                        <h2>One gateway, nine jobs that used to need several components</h2>
-                        <p>
-                            Every item below is supported natively on the main path — no glue scripts.
-                        </p>
-                    </div>
-                    <div class="capability-grid">
-                        <article class="capability-card" data-animate>
-                            <h3>Site &amp; content hosting</h3>
-                            <p>Static sites, SPAs, Markdown and WebDAV: one site file hosts your frontend assets, no extra layer to bolt on.</p>
-                        </article>
-                        <article class="capability-card" data-animate>
-                            <h3>Automatic HTTPS &amp; certs</h3>
-                            <p>DNS-01, wildcards, auto-renewal and On-Demand TLS — manual issue, replace and reload folded back into the entry layer.</p>
-                        </article>
-                        <article class="capability-card" data-animate>
-                            <h3>Dynamic DNS (DDNS)</h3>
-                            <p>A records sync automatically once a site is declared. Built-in Aliyun, Cloudflare, Huawei Cloud and Tencent Cloud — no pointing new domains by hand first.</p>
-                        </article>
-                        <article class="capability-card" data-animate>
-                            <h3>Service discovery</h3>
-                            <p>Five providers — litemesh, litedeploy, consul, docker, discovery — add a label to go live; mixed sources merge automatically.</p>
-                        </article>
-                        <article class="capability-card" data-animate>
-                            <h3>Cluster config center</h3>
-                            <p>In a multi-node cluster, site YAML and certificates live in Litemesh KV: write once, auto-sync and hot-reload across every node; certs are issued once under a distributed lock and shared cluster-wide — no per-node config to maintain.</p>
-                        </article>
-                        <article class="capability-card" data-animate>
-                            <h3>Frontend releases</h3>
-                            <p>Zip the build to OSS and write one KV key; every node downloads, switches atomically and keeps previous versions for rollback.</p>
-                        </article>
-                        <article class="capability-card capability-card-ai" data-animate>
-                            <h3>MCP autopilot</h3>
-                            <p>Built-in MCP server with 20+ tools — AI assistants create sites, edit routes, read schemas, hot-reload and troubleshoot directly.</p>
-                        </article>
-                        <article class="capability-card" data-animate>
-                            <h3>Identity &amp; SaaS entry (IDS)</h3>
-                            <p>Remote auth, OIDC, tenant-context injection and sid routing — close to a real multi-tenant SaaS entry plane.</p>
-                        </article>
-                        <article class="capability-card" data-animate>
-                            <h3>Security &amp; observability</h3>
-                            <p>WAF, dynamic rate limiting, IP rules, CORS, Litemesh mTLS, plus access logs, Dashboard and Prometheus metrics.</p>
-                        </article>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section section-scenarios" id="scenarios">
-                <div class="container">
-                    <div class="section-head" data-animate>
-                        <p class="eyebrow">Scenarios</p>
-                        <h2>Where it feels better than a plain reverse proxy</h2>
-                        <p>
-                            Not every project needs LiteGate, but these scenarios feel its value sooner.
-                        </p>
-                    </div>
-                    <div class="scenario-grid">
-                        <article class="scenario-card" data-animate>
-                            <h3>Sites, docs &amp; admin panels</h3>
-                            <p>Static sites and backend APIs behind one entry, with less glue and duplicate config.</p>
-                        </article>
-                        <article class="scenario-card" data-animate>
-                            <h3>Small products on private cloud or VPS</h3>
-                            <p>Single binary, Docker, automatic HTTPS and DNS-based certs fit lightweight, multi-domain reality.</p>
-                        </article>
-                        <article class="scenario-card" data-animate>
-                            <h3>Microservices</h3>
-                            <p>Services register to Litemesh and are consumed by LiteGate automatically; east-west calls run over mTLS zero-trust, and routing follows instances as they change.</p>
-                        </article>
-                        <article class="scenario-card" data-animate>
-                            <h3>Multi-tenant SaaS</h3>
-                            <p>Identity-driven routing, tenant-context injection and sid splitting — closer to what a SaaS entry actually needs.</p>
-                        </article>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section" id="quickstart">
-                <div class="container">
-                    <div class="section-head section-head-left" data-animate>
-                        <p class="eyebrow">Quick Start</p>
-                        <h2>Get your first response, then decide</h2>
-                        <p>
-                            The best first try: bring up a same-domain frontend + backend site in Lite mode.
-                        </p>
-                    </div>
-                    <div class="quickstart-shell" data-animate>
-                        <div class="terminal-card">
-                            <div class="terminal-head">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                            <div class="terminal">
-                                <div class="terminal-line"><span class="comment"># sites/hello.lite.yaml</span></div>
-                                <div class="terminal-line"><span class="cmd">localhost:</span></div>
-                                <div class="terminal-line"><span class="cmd">&nbsp;&nbsp;respond: "Hello, LiteGate!"</span></div>
-                                <div class="terminal-line"><span class="prompt">$</span><span class="cmd">./litegate</span></div>
-                                <div class="terminal-line"><span class="prompt">$</span><span class="cmd">curl http://localhost/</span></div>
-                                <div class="terminal-line"><span class="comment"># Hello, LiteGate!</span></div>
-                                <div class="terminal-line"><span class="prompt">$</span><span class="cmd">litegate -t</span></div>
-                                <div class="terminal-line"><span class="comment"># config check passed</span></div>
-                            </div>
-                        </div>
-                        <div class="quickstart-copy">
-                            <div class="quickstart-block">
-                                <h3>Bring a site up in a few lines of YAML</h3>
-                                <p>Just want to feel how LiteGate works? This is the shortest path. Same-domain frontend/backend and automatic HTTPS are ready by default.</p>
-                            </div>
-                            <div class="quickstart-block quickstart-block-ai">
-                                <h3>Or let AI configure it</h3>
-                                <p>With the built-in MCP on, describe the scenario to AI — it reads the schema, generates config, saves it and verifies the entry is actually reachable.</p>
-                            </div>
-                            <div class="quickstart-actions">
-                                <a href="../docs/en/litegate_quickstart.html" class="btn btn-primary">Read Quick Start →</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <footer class="footer">
-            <div class="container footer-layout">
-                <div class="footer-brand">
-                    <a href="#" class="brand brand-footer">
-                        <span class="brand-mark">L</span>
-                        <span class="brand-text">LiteGate</span>
-                    </a>
-                    <p>A unified entry gateway that grows from a simple website entry to private cloud, dynamic service discovery and multi-tenant SaaS.</p>
-                    <p class="footer-hosted">This very site is served by LiteGate — a live demo of its hosting and entry capabilities on a real site.</p>
-                </div>
-                <div class="footer-links">
-                    <div>
-                        <h4>Project</h4>
-                        <a href="https://github.com/jamesleeon/LiteGate" target="_blank" rel="noreferrer">GitHub</a>
-                        <a href="https://github.com/jamesleeon/LiteGate/blob/master/ROADMAP.md" target="_blank" rel="noreferrer">Roadmap</a>
-                        <a href="https://github.com/jamesleeon/LiteGate/blob/master/CHANGELOG.md" target="_blank" rel="noreferrer">Changelog</a>
-                    </div>
-                    <div>
-                        <h4>Docs</h4>
-                        <a href="../docs/en/index.html">Documentation Hub</a>
-                        <a href="../docs/en/litegate_architecture.html">Architecture</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
+<!-- ── Syntax ── -->
+<section id="syntax" class="alt">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">Site YAML v2</p>
+      <h2>A config language that reads better than a Caddyfile</h2>
+      <p>Paths are keys, actions are values. Simple sites are as short as a Caddyfile; the difference shows as rules pile up: no directive order to memorize, and CORS and rate limits live right under the route without extra plugins.</p>
     </div>
 
-    <script src="../main.js"></script>
+    <div data-tabs data-animate>
+      <div class="tabs" role="tablist" aria-label="Comparison scenarios">
+        <button class="tab" role="tab" id="t-spa" aria-controls="p-spa" aria-selected="true">SPA + API</button>
+        <button class="tab" role="tab" id="t-lb" aria-controls="p-lb" aria-selected="false" tabindex="-1">Strip prefix + load balancing</button>
+        <button class="tab" role="tab" id="t-gov" aria-controls="p-gov" aria-selected="false" tabindex="-1">CORS + rate limit</button>
+      </div>
+
+      <div class="tab-panel compare" id="p-spa" role="tabpanel" aria-labelledby="t-spa">
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml<span class="label badge-ours">LiteGate</span></div>
+<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<span class="p">/api</span>: <span class="s">127.0.0.1:8080</span>
+<span class="k">spa</span>: <span class="s">./dist</span></pre>
+        </div>
+        <div class="code-window theirs">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>Caddyfile<span class="label">Caddy</span></div>
+<pre>app.example.com {
+  handle /api/* {
+    reverse_proxy 127.0.0.1:8080
+  }
+  handle {
+    root * ./dist
+    try_files {path} /index.html
+    file_server
+  }
+}</pre>
+        </div>
+        <p class="verdict"><strong>3 lines versus 10.</strong> SPA fallback is a single <code>spa:</code> key, and <code>/api</code> matches by path segment, covering both <code>/api</code> and <code>/api/...</code>.</p>
+      </div>
+
+      <div class="tab-panel compare" id="p-lb" role="tabpanel" aria-labelledby="t-lb" hidden>
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/api.yaml<span class="label badge-ours">LiteGate</span></div>
+<pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
+<span class="p">/v1</span>:
+  <span class="k">proxy</span>: <span class="s">10.0.0.5:8080, 10.0.0.6:8080</span>
+  <span class="k">strip_prefix</span>: <span class="s">true</span></pre>
+        </div>
+        <div class="code-window theirs">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>Caddyfile<span class="label">Caddy</span></div>
+<pre>api.example.com {
+  handle_path /v1/* {
+    reverse_proxy 10.0.0.5:8080 10.0.0.6:8080
+  }
+}</pre>
+        </div>
+        <p class="verdict"><strong>Field names say what they do.</strong> <code>strip_prefix: true</code> instead of remembering the difference between <code>handle</code> and <code>handle_path</code>; multiple backends are round-robin by default.</p>
+      </div>
+
+      <div class="tab-panel compare" id="p-gov" role="tabpanel" aria-labelledby="t-gov" hidden>
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/api.yaml<span class="label badge-ours">LiteGate</span></div>
+<pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
+<span class="p">/api</span>:
+  <span class="k">proxy</span>: <span class="s">localhost:8080</span>
+  <span class="k">cors</span>:
+    <span class="k">allowed_origins</span>: [<span class="s">https://web.example.com</span>]
+  <span class="k">rate_limit</span>: {<span class="k">rate</span>: <span class="s">10</span>, <span class="k">key</span>: <span class="s">ip</span>}</pre>
+        </div>
+        <div class="code-window theirs">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>Caddyfile<span class="label">Caddy + caddy-ratelimit</span></div>
+<pre>{
+  order rate_limit before reverse_proxy
+}
+api.example.com {
+  @preflight method OPTIONS
+  handle /api/* {
+    header Access-Control-Allow-Origin https://web.example.com
+    header Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    respond @preflight 204
+    rate_limit {
+      zone api {
+        key    {remote_host}
+        events 10
+        window 1s
+      }
+    }
+    reverse_proxy localhost:8080
+  }
+}</pre>
+        </div>
+        <p class="verdict"><strong>Policy declared in place.</strong> Caddy has no built-in CORS or rate limiting: CORS means hand-written headers and preflight handling, and rate limiting needs a separately compiled third-party plugin plus a global directive order.</p>
+      </div>
+    </div>
+
+    <div class="reasons">
+      <div class="reason" data-animate>
+        <h3>Order doesn't matter</h3>
+        <p>Routes are ordered by priority and match specificity, not by where they appear in the file. Two routes with identical match conditions are an error rather than a silent override.</p>
+      </div>
+      <div class="reason" data-animate>
+        <h3>Shorthand to full form, same format</h3>
+        <p>When you need exact paths, method or header matching, or reusable named services, add <code>routes</code> and <code>services</code> to the same file. Shorthand and full forms mix freely.</p>
+      </div>
+      <div class="reason" data-animate>
+        <h3>Tool friendly</h3>
+        <p>It's just YAML: editor highlighting, <code>litegate -t</code> validation, versioning in Git, and AI assistants can create and edit sites through the built-in MCP server.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Cross-network ── -->
+<section id="network">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">Connectivity</p>
+      <h2>Publish private services, reach cloud resources, centralize egress</h2>
+      <p>Three directions, three features, all on the same port 443. No frp, bastion host, or separate proxy service to deploy.</p>
+    </div>
+
+    <div class="net-list">
+      <article class="card net-row" data-animate>
+        <div class="net-text">
+        <span class="tag">CONNECT</span>
+        <h3>Publish private services to the internet</h3>
+        <div class="flow" aria-hidden="true">
+          <svg viewBox="0 0 300 120">
+            <defs>
+              <marker id="ah1" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 z"/></marker>
+              <marker id="ah1t" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow tls" d="M0,0 L8,4 L0,8 z"/></marker>
+            </defs>
+            <g class="node"><rect x="4" y="44" width="76" height="34" rx="8"/><text x="42" y="65" text-anchor="middle">Visitor</text></g>
+            <g class="node hub"><rect x="112" y="40" width="76" height="42" rx="8"/><text x="150" y="59" text-anchor="middle">Cloud</text><text class="sub" x="150" y="73" text-anchor="middle">sees SNI only</text></g>
+            <g class="node"><rect x="220" y="6" width="76" height="34" rx="8"/><text x="258" y="27" text-anchor="middle">Home A</text></g>
+            <g class="node"><rect x="220" y="82" width="76" height="34" rx="8"/><text x="258" y="103" text-anchor="middle">Home B</text></g>
+            <path class="edge" d="M80,61 L110,61" marker-end="url(#ah1)"/>
+            <path class="edge tls" d="M220,23 C200,23 200,52 190,54" marker-end="url(#ah1t)"/>
+            <path class="edge tls" d="M220,99 C200,99 200,70 190,68" marker-end="url(#ah1t)"/>
+          </svg>
+        </div>
+        <p>The internal node dials out to the cloud, so homes and data centers open no inbound ports. One Cloud serves many Homes, and each Home can only publish the domains it is authorized for. TLS terminates on the internal node: private keys never leave it and the cloud never sees plaintext.</p>
+        <a class="card-link" href="../docs/en/user/09-advanced/connect.md">Connect guide</a>
+        </div>
+        <div class="net-code">
+          <div class="code-window"><div class="code-head">Home · config.yaml</div>
+<pre><span class="k">connect</span>:
+  <span class="k">client</span>:
+    <span class="k">enabled</span>: <span class="s">true</span>
+    <span class="k">name</span>: <span class="s">home</span>
+    <span class="k">remote</span>: <span class="s">https://connect.example.com</span>
+    <span class="k">token_file</span>: <span class="s">/etc/litegate/secrets/home.token</span>
+    <span class="k">publish_sites</span>: <span class="s">true</span></pre></div>
+        </div>
+      </article>
+
+      <article class="card net-row" data-animate>
+        <div class="net-text">
+        <span class="tag">FORWARD</span>
+        <h3>Reach cloud databases from your laptop, safely</h3>
+        <div class="flow" aria-hidden="true">
+          <svg viewBox="0 0 300 120">
+            <defs>
+              <marker id="ah2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 z"/></marker>
+              <marker id="ah2t" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow tls" d="M0,0 L8,4 L0,8 z"/></marker>
+            </defs>
+            <g class="node"><rect x="4" y="40" width="80" height="42" rx="8"/><text x="44" y="59" text-anchor="middle">Laptop</text><text class="sub" x="44" y="73" text-anchor="middle">127.0.0.1:3306</text></g>
+            <g class="node hub"><rect x="112" y="40" width="76" height="42" rx="8"/><text x="150" y="59" text-anchor="middle">LiteGate</text><text class="sub" x="150" y="73" text-anchor="middle">token auth</text></g>
+            <g class="node"><rect x="216" y="40" width="80" height="42" rx="8"/><text x="256" y="59" text-anchor="middle">RDS</text><text class="sub" x="256" y="73" text-anchor="middle">inside VPC</text></g>
+            <path class="edge tls" d="M84,61 L110,61" marker-end="url(#ah2t)"/>
+            <path class="edge" d="M188,61 L214,61" marker-end="url(#ah2)"/>
+            <text class="lbl" x="97" y="34" text-anchor="middle">TLS 443</text>
+          </svg>
+        </div>
+        <p>Map MySQL, Redis, or SSH inside a VPC to a port on a developer's machine. The server locks the domain to one Stream, so clients cannot choose another target, and the Stream's IP rules, session limits, and timeouts still apply.</p>
+        <a class="card-link" href="../docs/zh-cn/database-proxy-solution.md">Database access guide (Chinese)</a>
+        </div>
+        <div class="net-code">
+          <div class="code-window"><div class="code-head">laptop</div>
+<pre><span class="t">$</span> litegate forward \
+    --remote https://db-tunnel.example.com \
+    --local 127.0.0.1:3306 \
+    --token-file ./rds.token</pre></div>
+        </div>
+      </article>
+
+      <article class="card net-row" data-animate>
+        <div class="net-text">
+        <span class="tag">FORWARD PROXY</span>
+        <h3>Egress for machines without a public IP</h3>
+        <div class="flow" aria-hidden="true">
+          <svg viewBox="0 0 300 120">
+            <defs>
+              <marker id="ah3" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 z"/></marker>
+              <marker id="ah3t" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow tls" d="M0,0 L8,4 L0,8 z"/></marker>
+            </defs>
+            <g class="node"><rect x="4" y="40" width="80" height="42" rx="8"/><text x="44" y="59" text-anchor="middle">Server</text><text class="sub" x="44" y="73" text-anchor="middle">HTTPS_PROXY</text></g>
+            <g class="node hub"><rect x="112" y="40" width="76" height="42" rx="8"/><text x="150" y="59" text-anchor="middle">LiteGate</text><text class="sub" x="150" y="73" text-anchor="middle">ACL · audit</text></g>
+            <g class="node"><rect x="216" y="40" width="80" height="42" rx="8"/><text x="256" y="59" text-anchor="middle">Public APIs</text><text class="sub" x="256" y="73" text-anchor="middle">payments · AI</text></g>
+            <path class="edge tls" d="M84,61 L110,61" marker-end="url(#ah3t)"/>
+            <path class="edge" d="M188,61 L214,61" marker-end="url(#ah3)"/>
+            <text class="lbl" x="97" y="34" text-anchor="middle">CONNECT</text>
+          </svg>
+        </div>
+        <p>A standard HTTP CONNECT forward proxy, mounted on 443 and triggered by hostname. It supports account authentication and destination ACLs; with probe resistance on, unauthenticated requests just see an ordinary website.</p>
+        <a class="card-link" href="../docs/zh-cn/forward-vs-forward-proxy.md">Forward vs Forward Proxy (Chinese)</a>
+        </div>
+        <div class="net-code">
+          <div class="code-window"><div class="code-head">config.yaml</div>
+<pre><span class="k">ingress_plugins</span>:
+  - <span class="k">name</span>: <span class="s">egress</span>
+    <span class="k">type</span>: <span class="s">forward_proxy</span>
+    <span class="k">entrypoints</span>: [<span class="s">websecure</span>]
+    <span class="k">config</span>:
+      <span class="k">hosts</span>: [<span class="s">proxy.example.com</span>]
+      <span class="k">username</span>: <span class="s">ops</span>
+      <span class="k">password_env</span>: <span class="s">LITEGATE_PROXY_PASSWORD</span>
+      <span class="k">probe_resistance</span>: <span class="s">true</span></pre></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ── Security ── -->
+<section id="security" class="alt">
+  <div class="wrap">
+    <div class="split" data-animate>
+      <div>
+        <p class="kicker">Encrypted ClientHello</p>
+        <h2>Encrypt even which site is visited</h2>
+        <p>Plain HTTPS exposes the domain name (SNI) in the clear during the handshake. With ECH, the network sees only a public name; the real domain is encrypted inside the ClientHello, and LiteGate decrypts it to pick the certificate and route as usual.</p>
+        <ul class="checklist">
+          <li>Generates ECH keys and publishes HTTPS (type 65) records through your DNS provider</li>
+          <li>Sites keep using ordinary ACME certificates</li>
+          <li>Multiple public-name groups; keys stored in files or cluster KV</li>
+          <li>Clients without ECH keep working unchanged</li>
+        </ul>
+        <a class="card-link" href="../docs/en/user/06-certificates/ech.md">ECH guide</a>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml</div>
+<pre><span class="k">ech</span>:
+  <span class="k">enabled</span>: <span class="s">true</span>
+  <span class="k">public_name</span>: <span class="s">ech.example.com</span>   <span class="c"># the only name on the wire</span>
+  <span class="k">dns_provider</span>: <span class="s">cloudflare</span>
+  <span class="k">domains</span>:                       <span class="c"># real sites to hide</span>
+    - <span class="s">app.example.com</span>
+    - <span class="s">admin.example.com</span></pre>
+      </div>
+    </div>
+
+    <div class="split reverse" data-animate>
+      <div>
+        <p class="kicker">Automatic certificates</p>
+        <h2>Automatic certificates, even at home</h2>
+        <p>Give a site a domain and its certificate is obtained and renewed automatically. On home networks where port 80 is unreachable, configure a DNS provider and the whole zone switches to DNS-01. Failures back off instead of exhausting the CA's rate limits.</p>
+        <ul class="checklist">
+          <li>HTTP-01, TLS-ALPN-01, DNS-01 (wildcards)</li>
+          <li>Aliyun, Cloudflare, Huawei Cloud, and Tencent Cloud built in; more via plugins</li>
+          <li>On-Demand TLS for SaaS customers bringing their own domains</li>
+          <li>Local CA: trusted HTTPS for <code>*.localhost</code> development</li>
+        </ul>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml · home network</div>
+<pre><span class="k">auto_cert</span>:
+  <span class="k">dns_providers</span>:
+    - <span class="k">name</span>: <span class="s">cloudflare</span>
+      <span class="k">type</span>: <span class="s">cloudflare</span>
+      <span class="k">enabled</span>: <span class="s">true</span>
+      <span class="k">domains</span>: [<span class="s">"*.home.example.com"</span>]
+      <span class="k">config</span>:
+        <span class="k">api_token</span>: <span class="s">env://CF_API_TOKEN</span>
+<span class="c"># The wildcard is issued first and reused by new sites;</span>
+<span class="c"># other names in the same zone also use DNS-01</span></pre>
+      </div>
+    </div>
+
+    <div class="split" data-animate>
+      <div>
+        <p class="kicker">L4 + L7</p>
+        <h2>Websites and TLS services share 443</h2>
+        <p>LiteGate reads the SNI before the TLS handshake and hands matching connections to a TCP upstream; everything else continues to HTTPS. Protocols that start with TLS, such as Redis TLS and gRPC, can share 443 directly. For MySQL and PostgreSQL, which begin with a plaintext handshake, use Forward above.</p>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>streams/redis.yaml</div>
+<pre><span class="k">site</span>: <span class="s">tcp://redis.example.com</span>   <span class="c"># matched by SNI on 443</span>
+<span class="k">proxy</span>: <span class="s">10.0.0.30:6380</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Platform ── -->
+<section id="platform">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">Platform</p>
+      <h2>From a single VPS to multi-tenant SaaS</h2>
+      <p>Small projects only need the few lines above. As things grow, turn these on when you need them, without switching gateways.</p>
+    </div>
+    <div class="features" data-animate>
+      <div class="feature">
+        <h3>Service discovery and tag-based publishing</h3>
+        <p>Works with Consul, Litemesh, Docker, and Kubernetes. A backend registers with tags and is mounted on the matching site automatically, so frontend and backend ship independently.</p>
+      </div>
+      <div class="feature">
+        <h3>Multi-tenant routing (IDS)</h3>
+        <p>After a route matches and before forwarding, your Go plugin identifies the tenant, allows or rejects the request, picks tenant-specific instances, and applies per-tenant rate limits.</p>
+      </div>
+      <div class="feature">
+        <h3>Cluster config and shared certificates</h3>
+        <p>Sites, certificates, and ECH keys can live in Litemesh or Consul KV. Write once and every node hot-reloads; one node issues a certificate and all of them use it.</p>
+      </div>
+      <div class="feature">
+        <h3>Compile-time plugins</h3>
+        <p><code>litegate build --with</code> builds third-party plugins into the binary: Streams, Actions, middleware, load balancers, DNS providers, and more.</p>
+      </div>
+      <div class="feature">
+        <h3>Built-in MCP</h3>
+        <p>AI assistants such as Claude Code and Cursor can inspect sites, create configuration, hot-reload, and diagnose errors over MCP.</p>
+      </div>
+      <div class="feature">
+        <h3>Security and observability</h3>
+        <p>OIDC, JWT, and API key auth, IP rules, and scan protection, plus a built-in dashboard, access logs, Prometheus metrics, and tracing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Quick start ── -->
+<section id="quickstart" class="alt">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">Quick start</p>
+      <h2>Your first response in a minute</h2>
+    </div>
+    <div class="steps">
+      <div class="step" data-animate>
+        <h3>Install</h3>
+        <p>Download a binary from Releases, or install with Go:</p>
+        <div class="code-window"><pre><span class="t">$</span> go install \
+  github.com/jamesleeon/LiteGate/cmd/litegate@latest</pre></div>
+      </div>
+      <div class="step" data-animate>
+        <h3>Write a site</h3>
+        <p>Create <code>sites/hello.yaml</code> in the working directory:</p>
+        <div class="code-window"><pre><span class="k">site</span>: <span class="s">localhost</span>
+<span class="k">respond</span>: <span class="s">"Hello, LiteGate!"</span></pre></div>
+      </div>
+      <div class="step" data-animate>
+        <h3>Run</h3>
+        <p>No <code>config.yaml</code> needed to start:</p>
+        <div class="code-window"><pre><span class="t">$</span> ./litegate
+<span class="t">$</span> curl http://localhost/
+<span class="c">Hello, LiteGate!</span></pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap" data-animate>
+    <h2>Open source, MIT licensed</h2>
+    <p>Try it, file issues, send pull requests. The configuration format may still change before 1.0, so check the changelog before upgrading.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+      <a class="btn btn-ghost" href="../docs/en/">Read the docs</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="#"><span class="brand-mark">L</span>LiteGate</a>
+      <p class="note">An HTTP / TCP gateway in a single binary. This site is served by LiteGate.</p>
+    </div>
+    <div>
+      <h4>Project</h4>
+      <ul>
+        <li><a href="https://github.com/jamesleeon/LiteGate">GitHub</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/releases">Releases</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/CHANGELOG.md">Changelog</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/ROADMAP.md">Roadmap</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Docs</h4>
+      <ul>
+        <li><a href="../docs/en/">Docs home</a></li>
+        <li><a href="../docs/en/user/03-configuration/site-config.md">Site configuration (v2)</a></li>
+        <li><a href="../docs/en/user/03-configuration/l4-guide.md">L4 / SNI routing</a></li>
+        <li><a href="../docs/en/ARCHITECTURE_WHITE_PAPER.md">Architecture whitepaper</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Community</h4>
+      <ul>
+        <li><a href="https://github.com/jamesleeon/LiteGate/issues">Issues</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/CONTRIBUTING.md">Contributing</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/SECURITY.md">Security</a></li>
+        <li><a href="../index.html" data-lang-switch="zh">中文</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
 </body>
 </html>
