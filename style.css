@@ -210,6 +210,11 @@ h3 { font-size: 19px; margin: 0 0 8px; letter-spacing: -0.2px; }
 .reason h3 { margin-top: 14px; font-size: 17px; }
 .reason p { color: var(--text-2); margin: 0; font-size: 15px; }
 
+/* ── Architecture ────────────────────────────────── */
+.arch-section { padding-top: 24px; }
+.arch-figure { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.arch-figure img { display: block; width: 100%; min-width: 760px; height: auto; margin: 0 auto; }
+
 /* ── Discovery ───────────────────────────────────── */
 .split.discovery { align-items: start; }
 .flow-steps { list-style: none; counter-reset: fs; padding: 0; margin: 0 0 8px; }
