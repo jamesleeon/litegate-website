@@ -33,6 +33,38 @@ This represents standard site or route authentication declared inside static YAM
 
 ---
 
+#### Protecting APIs and subscriptions with JWT
+
+`auth.type: jwt` lets the gateway verify JWTs issued by your application, without calling back into the backend. Choose one key source:
+
+| Field | Use when | Notes |
+|---|---|---|
+| `secret` | Tokens are signed with an HS256/384/512 shared key | Write a reference: `env://APP_JWT_SECRET`, `file:///etc/litegate/jwt.key` or `${APP_JWT_SECRET}`; never paste the key into the site file |
+| `jwks_url` | An identity provider signs with RS/ES keys and publishes a JWKS | e.g. `https://idp.example.com/.well-known/jwks.json` |
+
+Each source pins its algorithm family (HS only for `secret`, RS/ES only for `jwks_url`) to prevent algorithm-confusion attacks; `alg: none` is always rejected.
+
+```yaml
+site: app.example.com
+/api:
+  auth:
+    type: jwt
+    secret: env://APP_JWT_SECRET
+    token_from: [header, cookie:lg_token]   # Authorization: Bearer first, then the cookie
+    subject_claim: user_id
+    tenant_claim: tenant_id                 # optional
+  proxy: 127.0.0.1:8080
+```
+
+- `token_from`: token sources in order. `header` (the default) is `Authorization: Bearer`; `cookie:<name>` reads a cookie. Browsers' `EventSource` cannot set headers, so notification subscriptions usually read an HttpOnly cookie. Query-string tokens are not supported because they leak into logs.
+- `subject_claim` / `tenant_claim` make the token the gateway's **verified identity**. A token without the configured claim is rejected with 401. Notifications use the identity for per-subscriber progress (`offline: auth.subscriber`) and tenant subjects (`{auth.tenant}`). Without them the token is only verified.
+- `issuer` / `audience` check `iss` / `aud` when set.
+- Any verified token ends long-lived responses (such as notification streams) at its `exp`, whether or not an identity is mapped. A token without `exp` has no bound, so issuers should always set it.
+- Numeric claims are kept exact, so 18-digit snowflake IDs keep their precision.
+- Client-supplied `X-Lito-*` and `X-Tenant-ID` headers are stripped at ingress and cannot be forged.
+
+The named middleware `type: jwt_auth` takes the same fields (comma-separated `token_from` and `audience`) for reuse across routes.
+
 ### 1.2 L4/L7 Dynamic Authentication: `remote_auth`
 
 This serves as the primary ingress integration point for LiteGate and the Litemesh Identity Service (IDS), executing under the `Action.RemoteAuth` runtime scope.

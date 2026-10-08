@@ -632,6 +632,53 @@ site: example.com
 
 A generic `action` must declare `type` explicitly and cannot sit alongside `proxy` or other action keys. Standard V2 shorthand is preferred whenever possible.
 
+### 6.8 Notification publishing and SSE subscriptions (`publish` / `subscribe`)
+
+With the NATS plugin and its default connection configured:
+
+```yaml
+site: :18085
+/publish:
+  publish: notify.demo
+  offline: true
+/events/a:
+  subscribe: notify.demo
+  offline: browser-a
+/events/b:
+  subscribe: notify.demo
+  offline: browser-b
+file_server: ./www
+```
+
+Shortcuts match an exact path. `publish` accepts POST; `subscribe` accepts GET. When CORS is configured inline or through `use`, the compiler generates method-specific OPTIONS preflight routes that apply the corresponding GET subscription or POST publishing/ACK policy. Default quotas are isolated by site: subscriptions within one site share a limit of 100 connections. An explicit `notify.sse.tenant` overrides the grouping. Earlier shortcuts grouped by connection; the new default also changes durable identities. To retain existing progress, explicitly set the previous tenant value, or resync current business state before switching.
+
+Boolean `publish: true` selects the publishing portal; a string such as `publish: notify.demo` selects NATS publishing. Quoted `publish: "true"` or `"false"` is rejected to avoid ambiguity.
+
+Omitting `offline`, or setting it to `false`, selects Core NATS online delivery without offline replay. Publisher `offline: true` waits for a JetStream PubAck. Subscriber `offline` supplies a stable identity. POST `{"ack_token":"..."}` with `Content-Type: application/json` to the **same subscription path** to acknowledge a successful application operation. The generated ACK route retains authentication and other route governance.
+
+Stream names are stable for the connection and subject. Defaults are file storage, LimitsPolicy, seven days of message retention, one replica, and seven days of consumer inactivity retention. The first publication or subscription creates the stream if missing, so subscribers may connect first. New identities start with new messages; reconnecting identities replay unacknowledged messages within retention. Each identity has independent acknowledgment progress; a new connection with the same identity takes over the previous session. Delivery is at least once: handlers must be idempotent. Producers still need reliable retries for failures before publication succeeds.
+
+Optional site defaults:
+
+```yaml
+notify:
+  connection: default
+  retention: 168h             # message and inactive-consumer retention: 1m..720h
+  replicas: 1                 # 1..5, depending on the NATS cluster
+  ack_secret_ref: shared.notify_ack_secret
+  sse:
+    heartbeat: 15s
+    max_connections: 100
+```
+
+The signing reference resolves to a secret of at least 32 bytes in plugin configuration. Without an explicit reference, a single process uses a random signing key that survives configuration reloads. After process restart, old ACK tokens become invalid; reconnecting clients obtain new deliveries and tokens. Configuration loading emits one warning when the default process key is used, explaining that cross-node ACKs return 403. Multiple gateways must share the same configured signing key for cross-node ACKs. Retention settings apply to newly created streams; they do not update existing stream policies.
+
+Use `offline: auth.subscriber` for a verified `X-Lito-Subscriber` identity in production. Authentication must establish that trusted identity (for example `auth: {type: jwt, subject_claim: ..., tenant_claim: ...}`); offline progress, session leases and ACK tokens are bound to the verified tenant plus subscriber. A fixed subject is shared by every authenticated tenant, so isolate tenants with `subscribe: notify.{auth.tenant}.orders`: subscriptions accept only `{auth.tenant}` and `{auth.subscriber}`, publishes may also use `{body.x}`, `{header.x}` and `{query.x}`, and offline mode creates a stream covering `notify.*.orders`. Shortcut connection quotas are per site and `notify.sse.tenants` is not supported; use an explicit NATS action with `sse.tenants` for per-tenant quotas. Fixed identities such as `browser-a` are suitable for demos and do not replace authentication.
+
+The reliable browser helper in `examples/nats-events/browser-client.js` defaults its ACK URL to the subscription URL. Existing separate `ackURL` values remain supported.
+
+Use explicit `action: {type: nats, ...}` for dynamic subjects, existing stream/consumer bindings, or other advanced features. Shortcut names may differ from existing bindings: consumer progress is not automatically migrated. Retain explicit bindings or plan a switch with a current-state resync. Automatically created stream subjects must not overlap another existing stream.
+
 ## 7. Routing Selection and Execution Order
 
 The gateway first selects the matching site, then selects the matching route within that site, and finally executes that route's governance pipeline and terminal action.

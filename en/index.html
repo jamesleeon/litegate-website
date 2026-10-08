@@ -370,22 +370,13 @@
         <div class="code-window">
           <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml</div>
 <pre><span class="k">site</span>: <span class="s">app.example.com</span>
-<span class="p">/notify/</span>:                    <span class="c"># publish: POST /notify/&lt;topic&gt;</span>
-  <span class="k">ip_restriction</span>: { <span class="k">allow_ips</span>: [<span class="s">10.0.0.0/8</span>] }
-  <span class="k">action</span>:
-    <span class="k">type</span>: <span class="s">nats</span>
-    <span class="k">mode</span>: <span class="s">publish</span>
-    <span class="k">subject_from</span>: <span class="s">path.1</span>       <span class="c"># /notify/config → notify.config</span>
-    <span class="k">subject_prefix</span>: <span class="s">notify</span>
-    <span class="k">subject_allowlist</span>: [<span class="s">config</span>, <span class="s">order</span>]
-<span class="p">/events/config</span>:              <span class="c"># subscribe</span>
-  <span class="k">use</span>: <span class="s">login</span>                  <span class="c"># login check</span>
-  <span class="k">action</span>:
-    <span class="k">type</span>: <span class="s">nats</span>
-    <span class="k">mode</span>: <span class="s">subscribe</span>
-    <span class="k">subject</span>: <span class="s">notify.config</span>
-    <span class="k">sse</span>: { <span class="k">tenant</span>: <span class="s">app</span> }</pre>
+<span class="p">/notify</span>:                        <span class="c"># publish: Header key selects the topic</span>
+  <span class="k">publish</span>: <span class="s">notify.{header.key}</span>
+<span class="p">/events/config</span>:                 <span class="c"># subscribe to configuration signals</span>
+  <span class="k">subscribe</span>: <span class="s">notify.config</span></pre>
         </div>
+
+        <p>This example uses online signals. Configure authentication with JWT, forward auth or another middleware as needed. Offline replay requires offline: true on publish, an independent subscriber identity and a reliable ACK client. <a class="card-link" href="../docs/zh-cn/user/09-advanced/notify-jwt-integration.md">Configuration and limits (Chinese) →</a></p>
 
         <div data-tabs>
           <div class="tabs" role="tablist" aria-label="Publishing and subscribing">
@@ -397,7 +388,8 @@
           <div class="tab-panel" id="p-pub" role="tabpanel" aria-labelledby="t-pub">
             <div class="code-window">
               <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>any language<span class="label">signal after a change</span></div>
-<pre><span class="t">$</span> curl -X POST http://10.0.0.10/notify/config \
+<pre><span class="t">$</span> curl -X POST http://10.0.0.10/notify \
+    -H "key: config" \
     -H "Content-Type: application/json" \
     -d '{"type":"config.changed","key":"store-001","version":42}'</pre>
             </div>

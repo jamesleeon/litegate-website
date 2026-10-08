@@ -151,26 +151,89 @@ routes:
 
 - **发布路由只对内网开放。** 除了 `ip_restriction`，最好再给网关使用的 NATS 账号只授予 `notify.>` 的发布权限。这是 NATS 服务端强制的第二道防线。
 - **`subject_allowlist` 是必需的。** 不在名单里的主题直接返回 403，生产方写错主题会马上发现。
-- **订阅路由的鉴权交给业务后端。** `forward_auth` 会把请求里的 `Cookie`、`Authorization` 转给 `/api/auth/check`。后端只需要写一个"检查登录是否有效"的接口，登录体系不用改。
+- **订阅路由一定要鉴权。** 上面用 `forward_auth` 把请求里的 `Cookie`、`Authorization` 转给后端的 `/api/auth/check`，后端只需要写一个"检查登录是否有效"的接口；但每建立一条连接都要回调一次后端。业务系统使用 JWT 时，推荐改用下一节的方式，由网关直接验签。
 - 前缀匹配必须写 `prefix`；写成 `path` 是精确匹配，`/internal/notify/workorder` 会匹配不上。
 
-### 5.3 多租户隔离
+### 5.3 订阅鉴权：用 JWT Cookie 保护订阅（推荐）
 
-如果不同租户只能收到自己的信号，可以让网关把已验证的租户身份写进主题：
+不加鉴权的订阅，任何人连上来都能收到信号。信号虽然不带业务数据，但仍会暴露单号、业务节奏，大量匿名连接还会耗尽连接额度。业务系统已经在用 JWT 时，只需让同一个 JWT 也出现在 Cookie 里，网关就能自己验证，不再回调后端：
 
-```yaml
-  - match: { path: /events/workorder }
-    action:
-      type: nats
-      mode: subscribe
-      subject_template: notify.{auth.tenant}.workorder
-      sse:
-        tenants: [tenant_a, tenant_b]
+```text
+登录成功 ──▶ 后端照常返回 JWT，另外下发 Set-Cookie: lg_token=<同一个 JWT>; HttpOnly
+new EventSource('/events/workorder') ──▶ 浏览器自动带上 Cookie ──▶ 网关验签通过才建立订阅
+令牌过期 ──▶ 网关断开推送流 ──▶ 浏览器重连时带上续签后的 Cookie，重新验证
 ```
 
-`{auth.tenant}` 只认网关验证过的身份，目前**需要配合 [IDS 身份治理](../05-middleware/ids-governance.md)** 才能提供；`forward_auth`、JWT 等认证方式不会产生这个身份。客户端在 URL 里带 `?tenant=xxx` 也改变不了订阅范围。
+网关配置：
 
-没有接入 IDS 的话，有两种做法：按租户拆成不同的路由和主题，各自挂不同的鉴权；或者坚持约定 1，信号里不带数据，靠拉取接口的权限检查兜底。
+```yaml
+site: app.example.com
+/events/workorder:
+  auth:
+    type: jwt
+    secret: env://APP_JWT_SECRET      # 和业务后端签发 JWT 用的是同一个密钥
+    token_from: [cookie:lg_token]
+    subject_claim: user_id
+    tenant_claim: tenant_id
+  subscribe: notify.{auth.tenant}.workorder   # 每个租户一个主题，见 5.4 节
+```
+
+业务后端要在**所有**签发或更换令牌的地方同步写这个 Cookie，并在退出时清除：
+
+| 时机 | 后端要做的事 |
+|---|---|
+| 登录成功 | 写 Cookie |
+| 令牌续签（例如在响应头里下发新令牌的滑动续签） | **同一个响应里**重新写 Cookie。只更新前端 localStorage 不够：业务接口还能用，订阅重连却会一直 401 |
+| 退出登录 | 写一个立即过期的同名 Cookie（`Max-Age=0`）。HttpOnly Cookie 只能由服务端清除，前端脚本删不掉 |
+
+```go
+http.SetCookie(w, &http.Cookie{
+
+```go
+http.SetCookie(w, &http.Cookie{
+	Name:     "lg_token",
+	Value:    token,           // 与返回给前端的 JWT 相同
+	Path:     "/events",       // 只在订阅路径上发送
+	Expires:  expiresAt,       // 与 JWT 的 exp 一致
+	HttpOnly: true,            // 页面脚本读不到，XSS 偷不走
+	Secure:   true,            // 只经 HTTPS 发送
+	SameSite: http.SameSiteLaxMode,
+})
+```
+
+在下面两个条件都满足时，令牌的携带方式不用改，`new EventSource('/events/workorder')` 会自动带上 Cookie：页面和订阅地址同源；订阅路径落在 Cookie 的 `Path` 之内。生产环境应明确设置 `Secure`、`SameSite`，并让 `Expires` 和 JWT 的 `exp` 一致，规则见 [MDN Set-Cookie](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie)。需要注意以下几点：
+
+- **401 要引导重新登录。** 没有 Cookie 或令牌已过期时，网关返回 401，原生 `EventSource` 收到非 200 的响应后会永久停止重连。应用应在 `onerror` 中判断登录状态，重新登录后再新建 `EventSource`。
+- **令牌过期，推送就停。** 只要 JWT 验证通过，网关就会在 `max_duration` 和令牌 `exp` 中较早的时刻断开连接，断开原因记为 `auth_expired`，与是否配置 `subject_claim` 无关。没有 `exp` 的令牌没有过期边界，连接只受 `max_duration` 限制，签发方应始终写入 `exp`。
+- **CSRF。** 订阅是只读的 GET 请求；离线模式的 ACK 必须是 `Content-Type: application/json`，普通表单发不出这种请求。`Path=/events` 能让这个 Cookie 只出现在订阅路径上。
+- **跨域订阅。** 页面和网关不同源时，使用 `new EventSource(url, { withCredentials: true })`，Cookie 设为 `SameSite=None; Secure`，订阅路由配置允许凭证的 CORS。
+- **离线进度按租户和用户区分。** 加上 `offline: auth.subscriber`，离线进度、会话租约和确认凭据都绑定"租户 + `subject_claim`"，不同租户里相同的用户 ID 互不影响，也不能互相确认消息。这个值只能包含字母、数字、`_`、`-`，最长 128 个字符。
+- **离线模式需要可靠订阅客户端。** 离线模式推送的是 `{sequence, ack_token, payload}`，业务处理完成后必须 POST ACK，否则这个用户会一直停在第一条消息上。原来直接读取 `event.data` 的前端代码要换成可靠客户端 [browser-client.js](../../../../examples/nats-events/browser-client.js)（Go 用 `pkg/eventclient`）。只需在线信号时不加 `offline`，前端处理方式不变。
+- **改不了登录流程时**，退回到 5.2 节的 `forward_auth`，由后端校验登录状态。
+
+字段的完整说明见 [认证概述](../05-middleware/authentication.md#用-jwt-保护接口和订阅)。
+
+### 5.4 多租户隔离
+
+固定主题（如 `notify.workorder`）会被所有通过鉴权的租户共同订阅。不同租户只能收到自己的信号时，把已验证的身份写进主题：
+
+```yaml
+/publish:                                   # 内网发布方在正文里给出租户
+  publish: notify.{body.tenant_id}.workorder
+  offline: true
+/events/workorder:                          # 订阅方只能订阅自己租户的主题
+  auth: { type: jwt, secret: env://APP_JWT_SECRET, token_from: [cookie:lg_token], subject_claim: user_id, tenant_claim: tenant_id }
+  subscribe: notify.{auth.tenant}.workorder
+  offline: auth.subscriber
+```
+
+- 订阅主题只能使用 `{auth.tenant}`、`{auth.subscriber}`，它们只来自网关验证过的身份：5.3 节 JWT 的 `tenant_claim`、`subject_claim`，或者 [IDS 身份治理](../05-middleware/ids-governance.md)。写 `{query.x}`、`{body.x}` 会在加载时被拒绝，客户端在 URL 里带 `?tenant=xxx` 也改变不了订阅范围。
+- `{auth.subscriber}` 可以做"按用户的私信"，例如 `notify.user.{auth.subscriber}`。
+- 发布路由是内网路由，可以从正文、请求头、查询参数里取（`{body.x}`、`{header.x}`、`{query.x}`）。
+- 离线模式下，发布和订阅两边自动共用一个覆盖 `notify.*.workorder` 的 stream。
+- 连接限额按站点统计。需要按租户分配限额时，用完整写法 `action: {type: nats, ...}` 的 `sse.tenants` 白名单。
+
+只用 `forward_auth` 时不会产生租户身份。这种情况有两种做法：按租户拆成不同的路由和主题，各自挂不同的鉴权；或者坚持约定 1，信号里不带数据，靠拉取接口的权限检查兜底。
 
 ## 6. 生产方：发一个 HTTP 请求
 
@@ -577,6 +640,8 @@ shared:
 **这套方案不保证的事：** 消息不持久化、不重放，也不知道客户端是否处理了某条信号。这些都由第 3 节的约定兜底，所以只适合"信号 + 拉取"的模式。如果一条消息本身就是数据，必须逐条送达并由应用确认，请使用 [可靠事件通知](../04-actions/nats-events.md)。它的成本高得多：每个订阅者对应一个 JetStream 持久消费者。
 
 ## 11. 从自建 SSE 迁移
+
+JWT、Cookie 续签、多租户隔离、可靠 ACK、租户停用及 MCP 操作的配置与限制，集中见 [Notify 与业务 JWT 接入](./notify-jwt-integration.md)。
 
 1. 部署 NATS，按第 5 节配置发布路由和订阅路由。
 2. 业务后端写一个"检查登录"接口给 `forward_auth` 用，通常复用现有的鉴权逻辑。

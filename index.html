@@ -370,22 +370,13 @@
         <div class="code-window">
           <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml</div>
 <pre><span class="k">site</span>: <span class="s">app.example.com</span>
-<span class="p">/notify/</span>:                    <span class="c"># 发布：POST /notify/&lt;主题&gt;</span>
-  <span class="k">ip_restriction</span>: { <span class="k">allow_ips</span>: [<span class="s">10.0.0.0/8</span>] }
-  <span class="k">action</span>:
-    <span class="k">type</span>: <span class="s">nats</span>
-    <span class="k">mode</span>: <span class="s">publish</span>
-    <span class="k">subject_from</span>: <span class="s">path.1</span>       <span class="c"># /notify/config → notify.config</span>
-    <span class="k">subject_prefix</span>: <span class="s">notify</span>
-    <span class="k">subject_allowlist</span>: [<span class="s">config</span>, <span class="s">order</span>]
-<span class="p">/events/config</span>:              <span class="c"># 订阅</span>
-  <span class="k">use</span>: <span class="s">login</span>                  <span class="c"># 登录校验</span>
-  <span class="k">action</span>:
-    <span class="k">type</span>: <span class="s">nats</span>
-    <span class="k">mode</span>: <span class="s">subscribe</span>
-    <span class="k">subject</span>: <span class="s">notify.config</span>
-    <span class="k">sse</span>: { <span class="k">tenant</span>: <span class="s">app</span> }</pre>
+<span class="p">/notify</span>:                        <span class="c"># 发布：Header key 选择主题</span>
+  <span class="k">publish</span>: <span class="s">notify.{header.key}</span>
+<span class="p">/events/config</span>:                 <span class="c"># 订阅配置通知</span>
+  <span class="k">subscribe</span>: <span class="s">notify.config</span></pre>
         </div>
+
+        <p>示例为在线通知；鉴权由用户通过 JWT、forward auth 等配置。需要离线补发时，发布加 offline: true，订阅配置独立身份并使用可靠 ACK 客户端。 <a class="card-link" href="docs/zh-cn/user/09-advanced/notify-jwt-integration.md">配置与限制 →</a></p>
 
         <div data-tabs>
           <div class="tabs" role="tablist" aria-label="发布与订阅方式">
@@ -397,7 +388,8 @@
           <div class="tab-panel" id="p-pub" role="tabpanel" aria-labelledby="t-pub">
             <div class="code-window">
               <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>任何语言<span class="label">状态变化后发一个信号</span></div>
-<pre><span class="t">$</span> curl -X POST http://10.0.0.10/notify/config \
+<pre><span class="t">$</span> curl -X POST http://10.0.0.10/notify \
+    -H "key: config" \
     -H "Content-Type: application/json" \
     -d '{"type":"config.changed","key":"store-001","version":42}'</pre>
             </div>

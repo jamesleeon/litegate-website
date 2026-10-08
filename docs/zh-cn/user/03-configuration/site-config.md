@@ -5,6 +5,34 @@
 
 # 站点配置参考 (`sites/*.yaml`)
 
+## Notify 简写与业务 JWT
+
+```yaml
+site: app.example.com
+notify:
+  ack_secret_ref: shared.notify_ack_secret
+  retention: 168h
+  replicas: 1
+/events/workorder:
+  auth:
+    type: jwt
+    secret: env://APP_JWT_SECRET
+    token_from: [cookie:lg_token]
+    subject_claim: user_id
+    tenant_claim: tenant_id
+  subscribe: notify.{auth.tenant}.workorder
+  offline: auth.subscriber
+```
+
+- 精确路径上的 publish: notify.topic 接受 POST，subscribe 接受 GET；publish: true 是发布门户，不能写字符串 "true"。
+- secret（HS256/384/512）与 jwks_url（RS/ES）二选一。token_from 按顺序选 header 或 cookie:name；tenant_claim 要求 subject_claim。JWT exp 到期断流，没有 exp 时只受 max_duration 限制。issuer/audience 应符合签发约定。登录及续签同步更新 Cookie，退出删除 Cookie。
+- 固定 subject 是共享广播，tenant_claim 本身不隔离消息。订阅模板只允许 {auth.tenant}、{auth.subscriber}。发布还允许 {body.x}/{header.x}/{query.x}，请求指定目标租户需另行授权；不要公开无鉴权发布路由。模板值和消费身份只允许字母、数字、下划线、短横线，最长 128 字符。
+- 发布 offline: true 等待 JetStream PubAck；订阅 offline 使用稳定身份或 auth.subscriber。自动生成同路径 POST ACK，继承鉴权。客户端处理 sequence/ack_token/payload 后以 application/json POST ACK，成功返回 204，原生 EventSource 不会自动确认。服务端 durable 进度不依赖 Last-Event-ID。
+- 不同身份独立确认，同身份新连接抢占旧连接。新 consumer 从创建之后开始接收；每次重连同步当前业务状态，重复投递需幂等。保留期默认 168h，范围 1m..720h；默认 replicas: 1、connection: default；首次发布或订阅自动建流，已有 stream 策略不会自动改写。
+- 多节点需共享至少 32 字节的 ack_secret_ref；默认随机密钥只适合单进程。简写配额默认按站点共享 100 连接，不支持 notify.sse.tenants；按租户限额用完整 action。每个 consumer 一条未确认消息，吞吐受 ACK 往返限制。
+- IDS NotifySubscriber 可选，不假设插件有缓存。插件通知是 Core NATS + Resync，不是 JetStream 离线补发。清缓存不会撤销已有 SSE，直接 JWT 验签也不会自动得知租户停用或撤销。
+- MCP enable_jwt_for_site 只保护代理路由，支持 secret/jwks_url、token_from、subject_claim、tenant_claim。通知路由显式写 auth；通过 get_site_config → get_config_guide → validate_site_config → save_site_config 保存完整配置。详见 [Notify 与 JWT 接入限制](../09-advanced/notify-jwt-integration.md)。
+
 每个站点对应一个 YAML 文件，默认放在 `./sites` 目录。LiteGate 会扫描该目录并在变更后热加载。
 
 > [!TIP]

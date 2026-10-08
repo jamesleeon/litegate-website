@@ -5,6 +5,37 @@
 
 # Site configuration reference (`sites/*.yaml`)
 
+## Notify shortcuts and business JWT
+
+```yaml
+site: app.example.com
+notify:
+  ack_secret_ref: shared.notify_ack_secret
+  retention: 168h
+  replicas: 1
+/events/workorder:
+  auth:
+    type: jwt
+    secret: env://APP_JWT_SECRET
+    token_from: [cookie:lg_token]
+    subject_claim: user_id
+    tenant_claim: tenant_id
+  subscribe: notify.{auth.tenant}.workorder
+  offline: auth.subscriber
+```
+
+Exact-path publish accepts POST; subscribe accepts GET. publish: true means the portal, not NATS. JWT requires exactly one of secret (HS256/384/512) or jwks_url (RS/ES). token_from selects header or cookie:name in order; tenant_claim requires subject_claim. Match issuer/audience to the issuer's contract. Token exp bounds the stream even without identity mapping; tokens without exp only use max_duration. Update the cookie on login AND renewal, and clear it on logout.
+
+A fixed subject is shared broadcast, not tenant isolation. Subscription templates allow only {auth.tenant} and {auth.subscriber}; publish additionally accepts {body.x}, {header.x}, {query.x}, requiring authorization for client-selected targets. Never expose an unauthenticated publishing endpoint. Identity/template values allow letters, digits, underscore and hyphen, at most 128 characters.
+
+Publish offline: true waits for JetStream PubAck. Subscribe offline uses a stable identity or auth.subscriber; the same-path POST ACK inherits authentication. Handle sequence/ack_token/payload, then POST application/json with ack_token; success is 204. EventSource does not ACK automatically. Durable server progress, not Last-Event-ID, provides offline recovery. Different identities ACK independently; a new connection takes over the same identity. New consumers start with new messages; resync current business state on reconnect and make processing idempotent.
+
+Defaults: connection default, retention 168h (1m..720h), replicas 1. First publish or subscribe creates the stream; existing stream policies are not rewritten. Multiple nodes need the same ack_secret_ref resolving to at least 32 bytes; random process keys are for single-process use. Default quotas share 100 connections per site. notify.sse.tenants is unsupported; use explicit actions for tenant quotas. One unacknowledged message per consumer limits throughput by ACK latency.
+
+IDS NotifySubscriber is optional, without assuming a cache. Plugin notifications use Core NATS plus Resync, not JetStream offline replay. Cache invalidation does not revoke established SSE; JWT verification cannot automatically detect tenant disablement or token revocation.
+
+MCP enable_jwt_for_site supports secret/jwks_url, token_from, subject_claim and tenant_claim, but protects PROXY routes only. For notification routes explicitly configure auth using get_site_config → get_config_guide → validate_site_config → save_site_config, preserving the full existing site.
+
 Each site is one YAML file, by default under `./sites`. LiteGate scans that directory and hot-reloads on change.
 
 > [!TIP]

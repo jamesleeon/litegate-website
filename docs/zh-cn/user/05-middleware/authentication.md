@@ -52,6 +52,38 @@ litegate -secret
 
 需要集中维护用户、用户组权限、双因素认证或向后端传递身份时，可使用 [Authelia / Forward Auth](./forward-auth.md)；需要标准身份提供方登录时，使用下文的 OIDC。
 
+#### 用 JWT 保护接口和订阅
+
+`auth.type: jwt` 由网关直接校验业务系统签发的 JWT，不需要再回调业务后端。两种验签方式二选一：
+
+| 字段 | 适用 | 说明 |
+|---|---|---|
+| `secret` | 业务系统用 HS256/384/512 共享密钥签发 | 写成引用：`env://APP_JWT_SECRET`、`file:///etc/litegate/jwt.key` 或 `${APP_JWT_SECRET}`，不要把密钥明文写进站点文件 |
+| `jwks_url` | 身份提供方用 RS/ES 私钥签发并公开 JWKS | 例如 `https://idp.example.com/.well-known/jwks.json` |
+
+两种方式各自锁定算法族：配置 `secret` 时只接受 HS 系列，配置 `jwks_url` 时只接受 RS/ES 系列，避免算法混淆攻击；`alg: none` 一律拒绝。
+
+```yaml
+site: app.example.com
+/api:
+  auth:
+    type: jwt
+    secret: env://APP_JWT_SECRET
+    token_from: [header, cookie:lg_token]   # 先找 Authorization: Bearer，再找 Cookie
+    subject_claim: user_id                  # 用户标识
+    tenant_claim: tenant_id                 # 租户标识（可选）
+  proxy: 127.0.0.1:8080
+```
+
+- `token_from`：令牌来源，按顺序查找。`header` 表示 `Authorization: Bearer`（缺省），`cookie:<名称>` 表示读取 Cookie。浏览器的 `EventSource` 无法设置请求头，订阅推送时通常读取 HttpOnly Cookie。出于日志泄露的考虑，不支持从 URL 查询参数取令牌。
+- `subject_claim` / `tenant_claim`：把令牌声明为网关的**已验证身份**。配置后，令牌里缺少对应 claim 会直接返回 401；验证通过后，事件通知用它区分订阅者（`offline: auth.subscriber`）和租户（`{auth.tenant}`）。不配置时只做验签。
+- `issuer`、`audience`：配置后校验 `iss`、`aud`。
+- 只要验证通过，长连接（例如事件推送）都会在令牌 `exp` 到期时断开，与是否配置身份映射无关；没有 `exp` 的令牌不设边界，连接只受各自的最长时长限制，签发方应始终写入 `exp`。
+- 数字 claim 按原样保留，18 位雪花 ID 不会丢精度。
+- 客户端自行携带的 `X-Lito-*`、`X-Tenant-ID` 等身份头会在入口处被清除，伪造不了。
+
+多个路由共用一份配置时，可以使用命名中间件 `type: jwt_auth`，字段相同（`token_from`、`audience` 用逗号分隔）。
+
 ### 1.2 OIDC 认证：`remote_auth`
 托管 OAuth2 标准协议的回跳与会话维持，走 `Action.RemoteAuth`。由 `OIDCHandler` 中间件执行登录重定向与会话生命周期维护。详见 [OIDC 指南](./oidc.md)。
 

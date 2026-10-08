@@ -647,6 +647,53 @@ site: example.com
 
 通用 `action` 必须显式声明 `type`，不能再并列写 `proxy` 等动作。优先使用常规 V2 写法；高级字段按相应动作参考填写。
 
+### 6.8 通知发布与 SSE 订阅（`publish` / `subscribe`）
+
+NATS 插件启用并配置默认连接后，通知路由可以直接写为：
+
+```yaml
+site: :18085
+/publish:
+  publish: notify.demo
+  offline: true
+/events/a:
+  subscribe: notify.demo
+  offline: browser-a
+/events/b:
+  subscribe: notify.demo
+  offline: browser-b
+file_server: ./www
+```
+
+`publish` 接受 POST；`subscribe` 接受 GET。通知简写使用精确路径匹配，不包含子路径。配置 CORS（内联或通过 `use`）时，编译器还会生成 OPTIONS 预检路由，分别应用 GET 订阅与 POST 发布/ACK 的 CORS 策略。默认连接配额按站点隔离，同站点简写订阅共享默认 100 个连接；显式 `notify.sse.tenant` 可覆盖此分组。早期简写版本按连接生成默认分组；升级后默认分组改变，也会改变 durable 消费身份。需要保留旧进度时，显式填写原来的 `notify.sse.tenant`，或先同步当前业务状态再切换。
+
+`publish: true`（布尔值）是发布门户，`publish: notify.demo`（字符串）是 NATS 发布；带引号的 `publish: "true"` / `"false"` 会被明确拒绝，避免混淆。
+
+省略 `offline`（或设为 `false`）表示 Core NATS 在线通知，不保留离线消息。发布侧的 `offline: true` 写入 JetStream，收到 PubAck 后才返回成功。订阅侧的 `offline` 是稳定订阅身份；GET 建立 SSE，POST **同一路径**提交 `{"ack_token":"..."}` 确认消息。ACK 必须使用 `Content-Type: application/json`。编译器自动生成 ACK 路由，并保留订阅路由的鉴权、中间件等治理配置。
+
+同一连接与 subject 自动生成稳定的 stream 名称，使用 file storage、LimitsPolicy、默认 7 天消息保留、1 副本；订阅者无活动默认保留 7 天。首次发布或首次订阅会自动建流，所以可以先打开订阅页。首次创建订阅者只接收创建之后的消息；重连恢复其未确认消息。不同身份独立确认，同一身份的多个连接会发生会话抢占。交付可能重复，业务处理应幂等，处理成功后才 ACK。发布到网关之前的失败仍需要发布方可靠重试。
+
+高级默认值可在站点集中设置：
+
+```yaml
+notify:
+  connection: default
+  retention: 168h             # 消息和无活动订阅者的保留期：1m..720h
+  replicas: 1                 # 1..5，按 NATS 集群能力配置
+  ack_secret_ref: shared.notify_ack_secret
+  sse:
+    heartbeat: 15s
+    max_connections: 100
+```
+
+`ack_secret_ref` 引用插件配置中的密钥（至少 32 字节），不在站点文件填写密钥本身。单进程未指定密钥时使用进程级随机签名密钥，配置热加载不会改变它；进程重启后旧 ACK token 失效，客户端重连获取新的投递和 token。使用默认进程密钥时，配置加载日志会输出一次 Warn，说明负载均衡下跨节点 ACK 会返回 403。多节点必须配置相同的共享签名密钥，才能跨节点 ACK。保留期配置用于自动创建的新 stream，不会改写既有 stream 的保留策略；调整已有 stream 请通过 NATS 管理工具操作。
+
+生产应用可用 `offline: auth.subscriber` 从经过验证的 `X-Lito-Subscriber` 身份获取消费进度，不应让所有访客共用一个固定身份。该配置要求认证链生成可信身份（例如 `auth: {type: jwt, subject_claim: ..., tenant_claim: ...}`）；离线进度、会话租约和 ACK 凭据都绑定"已验证租户 + 订阅者"。固定 subject 会被所有通过鉴权的租户共同订阅，按租户隔离时写 `subscribe: notify.{auth.tenant}.orders`：订阅只接受 `{auth.tenant}`、`{auth.subscriber}`，发布可以使用 `{body.x}`、`{header.x}`、`{query.x}`，离线模式自动建立覆盖 `notify.*.orders` 的 stream。简写的连接限额按站点统计，不支持 `notify.sse.tenants`；需要按租户分配限额时，使用完整 NATS action 的 `sse.tenants`。固定 `browser-a`、`browser-b` 适合演示，不代替鉴权。
+
+浏览器可靠订阅示例 `examples/nats-events/browser-client.js` 默认在订阅 URL 上 ACK，无需再传 `ackURL`；原有独立 ACK URL 仍受支持。
+
+复杂的动态 subject、独立 stream/consumer 绑定或其他高级 NATS 功能仍使用完整 `action: {type: nats, ...}`。从完整配置迁移时，自动生成的名称可能不同，不会自动迁移旧 consumer 进度；应保留原绑定配置，或规划切换并同步当前业务状态。自动 stream 的 subject 不得与已有其他 stream 重叠。
+
 ## 7. 路由选择与执行顺序
 
 先选中站点，再在站点内选择路由，最后执行该路由的治理和动作。
