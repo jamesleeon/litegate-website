@@ -19,7 +19,7 @@ LiteGate 是一个动态网关：把静态站点、API 反代、自动证书、�
 - 托管静态站 + 反代 API：[站点配置](user/03-configuration/site-config.md) · [serve](user/04-actions/serve.md) · [proxy](user/04-actions/proxy.md) · [前端 ZIP 同步](serve_kv_mode.md)
 - 网关模板与 API 页面聚合：[Template Action](user/04-actions/template.md) · [Caddy templates 对比](caddy-template-vs-litegate-template.md)
 - 反代 PHP / PHP-FPM：[FastCGI 配置](fastcgi_config.md)
-- 自动 HTTPS：[Auto-Cert](user/06-certificates/auto-cert.md) · [按需 TLS](user/06-certificates/on-demand-cert.md) · [DDNS](user/06-certificates/ddns.md)
+- 自动 HTTPS：[Auto-Cert](user/06-certificates/auto-cert.md) · [按需 TLS](user/06-certificates/on-demand-cert.md) · [DDNS](user/06-certificates/ddns.md) · [添加 DNS 服务商](user/06-certificates/dns-providers.md)
 - 共享 443 承载 HTTPS 与 L4 TCP：[SNI 端口共享与 Unix Socket](user/09-advanced/shared-443-l4-stream.md)
 - 通过 443 安全访问 MySQL / PostgreSQL：[LiteGate Forward 数据库隧道](database-proxy-solution.md)
 - 将云 RDS 代理到本地：[RDS Forward 完整部署指南](rds-forward-guide.md)
@@ -58,6 +58,8 @@ LiteGate 是一个动态网关：把静态站点、API 反代、自动证书、�
 
 ## 🔌 生态集成
 
+- [Authelia / Forward Auth](user/05-middleware/forward-auth.md)：通过鉴权中间件统一保护站点，支持登录跳转与身份头注入
+
 - [HTTP → NATS 旧业务资产整合方案](https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/nats_legacy_asset_integration_design.md)：以可选客户端 Action 接入 Delphi/FPC 等存量业务，不嵌入 NATS Server
 - [Kubernetes 消费与声明式路由实战指南](litegate_kubernetes_user_guide.md) · [轻量级设计方案](litegate_lightweight_k8s_integration.md)
 - [Docker Provider 部署指南](litegate_docker_provider_deployment_guide.md)
@@ -81,3 +83,6 @@ LiteGate 是一个动态网关：把静态站点、API 反代、自动证书、�
 - [IDS 插件开发注意事项与避坑指南](ids-plugin-caveats.md)：单例并发、Context 传递、业务拒绝 vs 错误、Header 白名单与缓存穿透防护
 - [OpenAPI MD5 IDS Provider](openapi-md5-ids-plugin.md)：兼容旧 MD5 Body 签名协议，验证成功后转发默认下游
 - [IDS 测试规范](https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/ids_testing_guide.md)
+
+
+- [NATS 实时事件订阅](user/04-actions/nats-sse.md): `type: nats` / `mode: subscribe`.

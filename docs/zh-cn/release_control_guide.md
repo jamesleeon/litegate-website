@@ -17,12 +17,12 @@ LiteGate 内置的**配置灰度发布**能力：把对站点/流配置的修改
 
 ### 启用前提（重要）
 
-发布控制面**只在本地文件模式下生效**。当启用了 Consul 或 LiteMesh 的配置下发（`consul.enabled` 或 `litemesh.enabled`）时，配置由 KV 中心下发，发布控制面会**自动禁用**——此时配置发布应由 KV 侧的流程负责。
+发布控制面支持本地文件、Consul 和 LiteMesh。配置后端由 `roles.config_watch` 决定；仅开启服务发现不会切换配置后端。KV 模式将站点和流配置保存到站点前缀下的 `_release.json`，以一次 CAS 写入提交完整快照。
 
 启动日志会明确告诉你当前状态：
 
 - 已启用：`Configuration release control plane successfully initialized`
-- 未启用：`Consul, LiteMesh mode active or Release Control disabled. Configuration release control plane disabled.`
+- 未启用：`Configuration release control disabled.`
 
 ---
 
@@ -45,9 +45,9 @@ dashboard:
 
 1. `dashboard.enabled: true`（控制面通过 Dashboard 暴露）；
 2. `dashboard.release_control.enabled: true`；
-3. **未**启用 Consul / LiteMesh 配置下发（即本地文件模式）。
+3. 当前配置后端可读写，发布历史目录可写。
 
-启用后，草稿与发布历史存放在进程工作目录下的 `./.litegate/releases/`（详见 [第 7 节](#7-存储与限制)）。
+草稿与发布历史保存在本地：默认是站点目录同级的 `.litegate/releases/`，未配置站点目录时使用 `./.litegate/releases/`；可以通过 `dashboard.release_control.store_dir` 指定（详见第 8 节）。
 
 ---
 
@@ -58,7 +58,7 @@ dashboard:
 | **Release（发布版本）** | 一次配置快照，包含若干 ConfigArtifact、校验报告、diff 摘要、状态、创建/发布信息。 |
 | **ConfigArtifact（配置制品）** | 一个配置文件单元。字段：`kind`（`site`/`stream`）、`name`（文件名，如 `example.com.yaml`）、`content`（YAML 原文）、`checksum`（SHA256）、`source`、`path`。 |
 | **Draft（草稿）** | 尚未发布的工作版本。同一时刻只保留一个「当前草稿」。 |
-| **Active（当前生效）** | 已发布并落盘生效的版本，由 `active.txt` 指针记录。 |
+| **Active（当前生效）** | 已写入配置后端并经当前网关同步重载确认的版本，由 `active.txt` 指针记录。 |
 | **Previous（上一个生效）** | 上一个生效版本，由 `previous.txt` 指针记录，用于「回滚到上一版」。 |
 
 ### 状态流转
@@ -198,13 +198,14 @@ curl -X POST -H "X-API-Key: $TOKEN" \
 
 ## 8. 存储与限制
 
-- **存储位置**：`./.litegate/releases/`（相对进程工作目录）。
+- **存储位置**：`dashboard.release_control.store_dir`，默认位置见第 2 节。
   - `revisions/{id}/manifest.json`：每个版本的完整记录；
   - `active.txt` / `previous.txt`：当前 / 上一个生效版本指针。
 - **Release ID**：`YYYYMMDD-HHMMSS-<随机十六进制>`，按时间可排序。
 - **暂无自动保留/清理策略**：历史版本会持续累积，长期运行需自行清理 `revisions/` 目录（可保留最近 N 个）。
-- **落盘先于状态提交**：发布时先写文件再更新发布记录指针；极端情况下若指针写入失败，配置可能已生效但记录未更新——本地写盘极少失败，留意即可。
-- **非本地 ConfigSource 暂不可用于生产**：当前仅本地文件源（`LocalFileSource`）接线；代码中保留的非本地回退路径**不是原子的**，接入 KV 类配置源前需补两阶段提交。
+- **提交与回滚**：先读取完整备份，再提交配置，同步检查当前网关重载结果，最后更新历史指针。配置重载或历史提交失败会恢复配置并再次重载；恢复失败会随原错误一起返回。进程中途退出和不可恢复的磁盘故障仍需要人工核对。
+- **KV 快照**：首次发布后 `_release.json` 成为站点和流配置的权威来源；旧的逐文件 KV 键保留用于迁移恢复，不再参与加载。Dashboard/MCP 直接编辑会更新快照。请通过发布接口或快照修改配置，避免继续编辑旧键。CAS 冲突会拒绝发布或补偿回滚，防止覆盖另一网关较新的配置。
+- **集群确认范围**：发布响应确认当前网关的重载结果；其他实例通过 watcher 加载完整快照，不提供所有节点确认屏障。发布历史仍保存在当前实例本地，请持久化该目录。
 
 ---
 
@@ -213,8 +214,8 @@ curl -X POST -H "X-API-Key: $TOKEN" \
 **Q：开了发布控制面，Dashboard 保存后站点不生效？**
 A：这是预期行为。保存只入草稿，需在弹窗确认发布，或调用 `POST /api/releases/{id}/publish`。
 
-**Q：为什么 Consul/LiteMesh 模式下没有这个功能？**
-A：那两种模式下配置由 KV 中心下发，发布控制面会自动禁用，发布应由 KV 侧流程负责。看启动日志可确认当前状态。
+**Q：Consul/LiteMesh 如何使用发布控制面？**
+A：打开 `dashboard.release_control.enabled` 即可，`roles.config_watch` 决定写入的 KV 后端。首次发布会将现有站点和流配置迁移为单个完整快照；所有消费该快照的网关应升级到支持快照的版本。
 
 **Q：我用脚本 POST `/api/releases` 后发布，别的站点不见了？**
 A：该接口是声明式全量替换，草稿即你给的全集，发布会清理不在集合内的配置。请传完整集合，或改走 Dashboard 的「保存→发布」累积流程。

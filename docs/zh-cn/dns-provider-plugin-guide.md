@@ -1,5 +1,15 @@
 # DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）
 
+如果你只是使用另一家 DNS 服务商，请先看 [添加 DNS 服务商](user/06-certificates/dns-providers.md)，按步骤选择、编译、配置和验证 libdns 实现，无需先学习插件开发。
+
+默认程序内置阿里云（`aliyun`）、腾讯云（`tencent` / `tencentcloud`）和 Cloudflare（`cloudflare`）。内置服务商全部是自研的轻量 HTTP 客户端，**不引用任何云厂商 SDK**；lego 只作为 ACME 协议引擎。华为云、Route 53 等其它服务商按需编译进**你自己的构建**，不影响官方发行版体积：
+
+```bash
+litegate build --dns huaweicloud --dns route53 -o litegate-custom
+```
+
+`--dns` 走 [libdns](https://github.com/libdns/libdns) 生态，不用写代码，同时获得 DNS-01、DDNS 与 ECH HTTPS 记录能力（见下文「捷径一」）。内置名称（`aliyun`、`tencent`、`tencentcloud`、`cloudflare`）保留给内置服务商。
+
 ## 扩展 ECH：插件只负责 DNS 服务商 API
 
 ECH 密钥生成、TLS 安装、轮换、旧密钥保留、文件/KV 加密持久化、Consul/LiteMesh 同步、发布租约、站点选组、重试和发布状态都由 LiteGate 内部负责。DNS 插件只读取并提交服务商的 HTTPS（类型 65）记录，不需要实现 KV，也不会收到 ECH 私钥或存储密钥。
@@ -15,7 +25,7 @@ type HTTPSDNSProvider interface {
 
 `name` 为隐藏网站的 DNS owner；`value` 为公开记录值，如 `1 . alpn="h2,h3" ech="..."`，不包含 owner/type/TTL，TTL 使用 600 秒。`owned` 是 LiteGate 根据当前/保留密钥及发布状态计算的可管理记录值列表。插件需要先读取现有 RRset，按 DNS 语义比较（不能只比较引号或参数顺序），拒绝覆盖不属于 owned 的记录；提交非空 value 时替换已拥有的记录，不能盲目覆盖整个 RRset。value 为空时只撤回 owned 中匹配的记录，保留其他记录；记录不存在时返回成功。不得改动 A/AAAA。尊重 ctx，保持幂等，返回 API 错误供核心重试；支持关闭资源时可实现 DNSCloser。
 
-HTTPS 能力独立于 DDNS，无需实现 Sync。若希望同一个插件还负责公共名称/网站的 DNS-01 证书申请，应另实现 CertDNSProviderV2 并声明 DNSCapabilityCertDNS01；否则配置覆盖这些名称的其他证书提供商。lego DNS-01 适配器不会自动获得 HTTPS 发布能力。
+HTTPS 能力独立于 DDNS，无需实现 Sync。若希望同一个插件还负责公共名称/网站的 DNS-01 证书申请，应另实现 CertDNSProviderV2 并声明 DNSCapabilityCertDNS01；否则配置覆盖这些名称的其他证书提供商。`--dns` 编入的 libdns 服务商只要实现了 `RecordGetter` 就自动具备 HTTPS 发布能力；lego 示例桥接不具备。
 
 只声明 `https_records` 的插件，其 `domains` 用于 ECH 发布范围；核心会在证书运行时副本中移除这些选择器，避免误当成 DNS-01 证书提供商。原始配置保持不变。每组 public_name 必须有证书覆盖：可使用另一个已启用的 DNS-01 证书提供商、旧版 `auto_cert.provider` + `auto_cert.domains`，或在 `tls.certs_dir` 中放入有效且覆盖该名称的 `.pem`/`.crt` 与同名 `.key` 文件。否则配置校验（包括 `-t`）直接失败。手动证书需要自行更新；校验与启动环境必须能读取它。使用独立证书提供商的示例：
 
@@ -62,7 +72,7 @@ plugin.RegisterDNSProviderV2("mydns", plugin.DNSProviderRegistration{
 
 > 本文教你如何为 LiteGate 编写自定义 **DNS Provider** 插件——接管两件事：**ACME 证书签发的 DNS-01 质询**（增删 TXT 记录）与 **动态 DNS（DDNS）同步**（把本机 IP 写到 A/AAAA 记录）。
 >
-> 适合场景：你用的 DNS 服务商不在内置清单里（内置：阿里云 / Cloudflare / 腾讯云 / 华为云），或你想用自己的 DNS API / 内部 IPAM / 私有 DNS 服务来完成证书校验与 DDNS。
+> 适合场景：你用的 DNS 服务商不在内置清单里（内置：阿里云 / 腾讯云 / Cloudflare），或你想用自己的 DNS API / 内部 IPAM / 私有 DNS 服务来完成证书校验与 DDNS。
 >
 > 契约已开放到公共包 [`github.com/jamesleeon/LiteGate/pkg/plugin`](https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin)，**第三方可在独立仓库编写并编译进去**。通用插件（Action / Middleware / LoadBalancer）见 [plugin-authoring-guide.md](plugin-authoring-guide.md)；IDS 鉴权插件见 [ids-provider-plugin-guide.md](ids-provider-plugin-guide.md)；DDNS 本身的使用见 [user/06-certificates/ddns.md](user/06-certificates/ddns.md)。
 
@@ -176,33 +186,53 @@ type DNSProviderRegistration struct {
 
 ## 三、写一个 DNS Provider 插件
 
-### 捷径：服务商已在 lego 里（推荐）
+### 捷径一：`litegate build --dns`（推荐，零代码）
 
-[lego](https://go-acme.github.io/lego/dns/) 已内置 180 多家 DNS 服务商（VegaDNS、DNSPod、Route 53、GoDaddy……）。如果你的服务商在里面，用 [`pkg/plugin/legodns`](https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin/legodns) 一次注册即可，不用自己调 API、算 TXT 记录：
+[libdns](https://github.com/libdns) 为 80 多家 DNS 服务商提供统一接口（华为云、阿里云 alidns、DNSPod、Route 53、GoDaddy、Porkbun……），每家是一个独立的小模块。LiteGate 的 [`pkg/plugin/libdnsx`](https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin/libdnsx) 把它们统一适配成 DNS 插件，`litegate build` 会替你生成注册代码：
 
-```go
-package vegadns
+```bash
+# 短名 = github.com/libdns/<名字>；可带版本
+litegate build --dns huaweicloud --dns route53@v1.6.2 -o litegate
 
-import (
-	"github.com/go-acme/lego/v5/providers/dns/vegadns"
-	"github.com/jamesleeon/LiteGate/pkg/plugin/legodns"
-)
+# 完整模块路径也可以；type= 前缀自定义配置里的 type 名
+litegate build --dns hw=github.com/libdns/huaweicloud -o litegate
 
-func init() {
-	legodns.MustRegister("vegadns", legodns.Registration{
-		Required: []string{"url", "api_key", "api_secret"}, // 配置加载期（litegate -t）就校验
-		New: func(cfg map[string]string) (legodns.ChallengeProvider, error) {
-			c := vegadns.NewDefaultConfig()
-			c.BaseURL, c.APIKey, c.APISecret = cfg["url"], cfg["api_key"], cfg["api_secret"]
-			return vegadns.NewDNSProviderConfig(c)
-		},
-	})
-}
+# 想用 libdns 版的内置服务商，必须改名（内置名称保留）
+litegate build --dns libdns_cloudflare=cloudflare -o litegate
 ```
 
-`legodns` 自动完成：能力声明（`cert_dns01`）与 Manifest、必填项校验、把 lego 的 `Timeout()` 透传为传播超时（VegaDNS 默认 12 分钟，若不透传会被 2 分钟默认值截断）、构造错误归类为 `invalid_config`。它按方法集结构化匹配、**不 import lego**，插件自己选 lego 版本。完整示例见 [examples/plugins/dns/vegadns](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/vegadns)。
+配置时 `type` 即上面的名字，`config` 的键就是该 libdns 服务商结构体的 json tag（见其 README / pkg.go.dev）：
 
-服务商不在 lego 里、或要同时支持 DDNS 时，按下面的步骤直接实现接口。
+```yaml
+auto_cert:
+  dns_providers:
+    - name: hw
+      type: huaweicloud
+      domains: ["*.example.com"]
+      config:
+        access_key_id: "${HW_AK}"
+        secret_access_key: "${HW_SK}"
+        region_id: "cn-south-1"
+```
+
+适配规则：
+
+| 服务商实现的 libdns 接口 | 获得的能力 |
+|---|---|
+| `RecordAppender` + `RecordDeleter` | `cert_dns01` |
+| 再加 `RecordGetter` | 另有 `ddns`（A/AAAA 追加/撤回）和 `https_records`（ECH） |
+
+- 字符串值按字段类型自动转换（数字、布尔；`time.Duration` 可写 `90s` 或秒数；`[]string` 可逗号分隔；其它复杂类型写内联 JSON）。**未知键直接报错**，`litegate -t` 就能发现拼写错误。
+- 保留键由 LiteGate 处理、不传给服务商：`zone`（托管域，缺省按 SOA 查找）、`ttl`、`timeout`（传播超时，默认 2m）、`polling_interval`（默认 10s）；宿主通用键 `secret_token`、`propagation_wait`、`skip_propagation_check`、`disable_complete_propagation`、`recursive_nameservers` 照常生效，同样不会传给服务商。
+- 只用 Append/Delete，**从不调用 `SetRecords`**——它会整组替换 RRset，冲掉其它节点登记的地址或并行的挑战值。
+- 只接受面向 **libdns v1 API** 的服务商版本。libdns 升 v1 时没改模块路径，老版本服务商会在编译前被检测出来并给出提示。
+- 体积只增加该服务商本身（华为云约 +200KB）；某家服务商若包了官方 SDK，膨胀的也只是你自己的构建。`litegate plugins list` 会列出编入的服务商及模块版本。
+
+### 捷径二：复用 lego 的服务商（示例，仅 DNS-01）
+
+个别服务商只在 [lego](https://go-acme.github.io/lego/dns/) 里有、libdns 里没有时，参照 [examples/plugins/dns/legodns](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/legodns)（桥接）与 [examples/plugins/dns/vegadns](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/vegadns)（用法），把桥接包复制进你自己的插件模块。它只是示例、不是 LiteGate 的支持接口，也只有 DNS-01 能力。
+
+服务商两边都没有、或需要更精细的控制时，按下面的步骤直接实现接口。
 
 ### 第 1 步：实现接口 + 注册
 
@@ -387,7 +417,7 @@ litegate build --with your-module/mydns=../your-module -o litegate
 
 2. **新插件使用 `RegisterDNSProviderV2`**。工厂拿到配置副本与 `*plugin.Dependencies`；纯配置检查放 `Registration.Validate`，不要在校验函数中联网、启动 goroutine 或修改全局状态。
 
-3. **不能覆盖内置名**。`RegisterDNSProvider("aliyun", …)` 等会返回 error。内置名：`aliyun` / `cloudflare` / `tencent` / `tencentcloud` / `huawei` / `huaweicloud`。取个不冲突的名字。
+3. **不能覆盖内置名**。`RegisterDNSProvider("aliyun", …)` 等会返回 error。内置名：`aliyun` / `tencent` / `tencentcloud` / `cloudflare`。取个不冲突的名字。
 
 4. **尊重 `ctx` 取消**。`AddTXTRecord` / `DeleteTXTRecord` / `Sync` 拿到的 `ctx` 会在网关关机或质询超时时取消——你的 HTTP 调用要带上它，别用 `context.Background()`，否则关机时会卡住或泄露。
 
@@ -432,6 +462,7 @@ DDNS 周期同步（ddns.enabled，周期/IP 变化）
 
 | 我要… | 做法 |
 |---|---|
+| 用现成服务商（华为云、Route 53……） | `litegate build --dns <名字>`，零代码，见「捷径一」 |
 | 给新 DNS 服务商加证书签发 | 实现 `plugin.CertDNSProviderV2`，用 `plugin.RegisterDNSProviderV2` 注册，配 `dns_providers[].type` + `domains` |
 | 给新 DNS 服务商加 DDNS | 实现 `plugin.DDNSProvider`，用 `plugin.RegisterDNSProviderV2` 注册并声明 `DNSCapabilityDDNS` |
 | 同时支持证书 + DDNS | 一个 provider 同时实现两组接口，并在 `Info.Capabilities` 声明两项 |

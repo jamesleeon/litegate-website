@@ -1,5 +1,7 @@
 # LiteGate CredKeeper - DNS 凭证安全托管服务使用指南
 
+> 默认 LiteGate 内置阿里云、腾讯云和 Cloudflare。本文的华为云配置需要先将对应第三方 DNS Provider 插件编译进 LiteGate；CredKeeper 可继续保存这些服务商的凭据。
+
 ## 一、背景与设计初衷
 
 在使用 ACME 协议申请泛域名（Wildcard `*.example.com`）证书时，协议强制要求执行 **DNS-01 挑战**。这意味着网关系统通常需要调用公有云厂商（如阿里云、腾讯云、华为云、Cloudflare）的 DNS API，在域名解析中动态添加 `_acme-challenge` TXT 记录。
@@ -72,7 +74,7 @@ CredKeeper Web 界面完整覆盖了 LiteGate 原生支持的全部 4 个主流 
 
 | 提供商名称 | 类型标识 (`type`) | 必填字段 | 可选字段 | 权限建议 |
 | :--- | :--- | :--- | :--- | :--- |
-| **阿里云 (Aliyun DNS)** | `aliyun` | `access_key_id`<br>`access_key_secret` | `region_id` (默认 `cn-hangzhou`) | RAM 用户授予 `AliyunDNSFullAccess` 或指定域名解析修改权限 |
+| **阿里云 (Aliyun DNS)** | `aliyun` | `access_key_id`<br>`access_key_secret` | `zone`（托管域，缺省按 SOA 自动查找） | RAM 用户授予 `AliyunDNSFullAccess` 或指定域名解析修改权限 |
 | **腾讯云 (Tencent Cloud)** | `tencent` | `secret_id`<br>`secret_key` | 无 | CAM 密钥授予 `QcloudDNSPodFullAccess` |
 | **华为云 (Huawei Cloud)** | `huawei` | `access_key_id`<br>`secret_access_key` | `region` (默认 `cn-north-1`) | IAM 用户具备 DNS Administrator 或指定域名操作权限 |
 | **Cloudflare** | `cloudflare` | **模式 1 (推荐)**：`api_token`<br>**模式 2 (传统)**：`api_key` + `email` | `timeout` (默认 `120s`) | 仅需分配 `Zone.DNS:Edit` 权限令牌，权限最小化更安全 |

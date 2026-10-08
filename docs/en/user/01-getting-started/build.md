@@ -40,8 +40,12 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o bin/litegate-
 CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o bin/litegate-linux-arm64 ./cmd/litegate
 
 # Windows
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o bin/litegate.exe ./cmd/litegate
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags winbacklog -ldflags="-s -w -checklinkname=0" -o bin/litegate.exe ./cmd/litegate
 ```
+
+> **Build Windows binaries with `-tags winbacklog -ldflags=-checklinkname=0` (`make windows` adds both).** Go gives Windows listeners an accept queue of about 200 ([golang/go#39000](https://github.com/golang/go/issues/39000)), so a burst of more new connections than that is refused. With these flags LiteGate raises the queue to 65535, adjustable with `http.listen_backlog`. Without them the build still works but keeps Go's default and logs a notice at startup. Linux and macOS need neither; their queue length comes from the OS (for example `net.core.somaxconn`).
+>
+> Regression test: `make test-backlog` (1000 simultaneous connects, none may be refused; Windows only).
 
 ---
 

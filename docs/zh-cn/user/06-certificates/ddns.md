@@ -1,6 +1,8 @@
 # DDNS 动态域名解析
 
-LiteGate 内置了 DDNS (Dynamic DNS) 功能，可以自动将网关的公网 IP 同步到 DNS 服务商的 A/AAAA 记录。支持阿里云、Cloudflare、腾讯云、华为云四大服务商。
+使用其他 DNS 服务商时，见 [添加 DNS 服务商](dns-providers.md)：兼容的 libdns 实现可以通过 `litegate build --dns` 按需编入，无需编写插件代码。
+
+LiteGate 内置了 DDNS (Dynamic DNS) 功能，可以自动将网关的公网 IP 同步到 DNS 服务商的 A/AAAA 记录。默认内置阿里云、腾讯云和 Cloudflare；华为云及其它服务商通过第三方 DNS Provider 插件按需编译。
 
 ---
 
@@ -46,9 +48,8 @@ auto_cert:
 | 服务商 | type 值 | 所需 config 参数 |
 | :--- | :--- | :--- |
 | 阿里云 DNS | `aliyun` | `access_key_id`, `access_key_secret` |
+| 腾讯云 DNSPod | `tencent` / `tencentcloud` | `secret_id`, `secret_key` |
 | Cloudflare | `cloudflare` | `api_token` |
-| 腾讯云 DNSPod | `tencent` | `secret_id`, `secret_key` |
-| 华为云 DNS | `huawei` | `access_key`, `secret_key`, `project_id` |
 
 > [!TIP]
 > 除上述内置服务商外，你可以通过 **DNS Provider 插件**接入任意 DNS 服务商（自定义 `type` 名），同一插件还可同时承担证书 DNS-01 质询。开发方式见 [DNS Provider 插件开发指南](../../dns-provider-plugin-guide.md)。
@@ -82,7 +83,7 @@ gateway.example.com.  AAAA  2001:db8::11
 gateway.example.com.  AAAA  2001:db8::12
 ```
 
-阿里云、Cloudflare 和腾讯云会追加同名记录；华为云会读取并合并整个 `records` 数组。使用 Litemesh 或 Consul 作为证书存储时，LiteGate 还会按“Provider + 域名 + 记录类型”加分布式锁，避免多个节点同时进行读改写而丢失地址：
+内置阿里云、腾讯云和 Cloudflare 会追加同名记录；第三方插件也应保留 RRset 中其它节点的地址。使用 Litemesh 或 Consul 作为证书存储时，LiteGate 还会按“Provider + 域名 + 记录类型”加分布式锁，避免多个节点同时进行读改写而丢失地址：
 
 ```yaml
 litemesh:

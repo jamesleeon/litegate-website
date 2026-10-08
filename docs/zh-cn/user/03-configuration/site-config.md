@@ -14,6 +14,8 @@
 
 ## 0. 统一站点 YAML（v2，新配置默认写法）
 
+为站点添加 Authelia 登录可直接写 `forward_auth: http://127.0.0.1:9091/api/authz/forward-auth`，与 `proxy` 平级。默认构建包含该纯 Go 插件，支持站点和路由简写、命名中间件及片段复用。完整步骤见 [Authelia / Forward Auth](../05-middleware/forward-auth.md)。
+
 > [!TIP]
 > 想直接找能复制的写法？先看 [常用场景案例](../cookbook/README.md)（反向代理、SPA、按路径分流、跨域、限流、跳转、常见报错等），每个案例都经过自动化测试。
 
@@ -854,7 +856,7 @@ action:
 | `fetch_json[].fail_policy` | string | `ignore`（忽略错误并在模版中通过 `.Errors.key` 获取错误）或 `error`（立即响应 500 异常） |
 | `fetch_json[].forward_headers` | string[] | 指定转发透传的客户端 Header 键，其值将参与缓存 Key 生成（生成时已做大小写敏感标准化） |
 
-> 模板内可用变量/方法：`{{ .Host }}`、`{{ .Path }}`、`{{ .Method }}`、`{{ .ClientIP }}`、`{{ .Time }}`、`{{ .Header "K" }}`、`{{ .Query "k" }}`、`{{ .Cookie "n" }}`、`{{ .Nonce }}`。
+> 模板内可用变量/函数：`{{ .Host }}`、`{{ .Path }}`、`{{ .Method }}`、`{{ .ClientIP }}`、`{{ .Time }}`、`{{ header "K" }}`、`{{ query "k" }}`、`{{ cookie "n" }}`、`{{ .Nonce }}`。
 > 模板内内置渲染函数：
 > - `{{ htmx }}`：渲染嵌入的 HTMX 脚本标签 `<script src="/_litegate/assets/htmx-4.0.0.min.js"></script>`（免手动下载）。
 > - `{{ markdown "## Content" }}`：将 Markdown 文本实时转换为安全 HTML。

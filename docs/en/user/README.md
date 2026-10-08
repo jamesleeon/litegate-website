@@ -106,3 +106,6 @@ This section is for users and operators, focused on three core questions:
   [Authentication](./05-middleware/authentication.md) → [Remote Auth](./05-middleware/remote-auth.md) → [WAF](./05-middleware/waf.md)
 - **Build resilient routing and zero-config mesh**:
   [Circuit Breaker](./09-advanced/circuit-breaker.md) → [Magic Ingress](./09-advanced/magic-ingress.md)
+
+
+- [NATS realtime subscriptions](04-actions/nats-sse.md): `type: nats` / `mode: subscribe`.

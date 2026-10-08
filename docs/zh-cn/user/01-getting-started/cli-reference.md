@@ -28,7 +28,9 @@ litegate [options]
 | :--- | :--- |
 | `-init` | 生成 `config.example.yaml` 并创建 `sites/`, `streams/`, `certs/` 默认目录。 |
 | `-example` | 在 `./sites` 目录下生成各类示例站点配置文件。 |
-| `-hash <password>` | 为 Dashboard 密码生成 Bcrypt 哈希值。 |
+| `-hash <password>` | 为 Dashboard、Basic Auth 或内置 SSO 用户密码生成 bcrypt 哈希值。 |
+| `-secret` | 输出一行 64 字符的十六进制随机密钥（32 个随机字节），可用于 SSO 的 `auth.secret`。 |
+| `-gen-secret` | 输出随机密钥的 Hex、Base64 和 Base64URL 三种带标签格式。 |
 | `-t` | 测试配置文件语法并退出（不启动服务）。类似 `nginx -t`。 |
 
 ### 插件与定制构建子命令
@@ -83,6 +85,13 @@ litegate -init
 litegate -hash "your-password"
 # 输出 Bcrypt 哈希值，复制到 config.yaml 的 dashboard.password 字段
 ```
+
+### 生成 SSO 会话密钥
+```bash
+litegate -secret
+# 将整行输出填入站点配置的 auth.secret
+```
+每次运行都生成新的随机密钥，不读取站点配置，也不启动服务。配置后保持密钥稳定；更换密钥会使原有登录 Cookie 失效。用户密码哈希使用 `litegate -hash 'your-password'` 单独生成。
 
 ### 测试配置语法
 ```bash

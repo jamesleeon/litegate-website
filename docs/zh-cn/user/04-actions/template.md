@@ -1,5 +1,6 @@
 # Template Action (服务端模板与站点渲染)
 
+
 `template` Action 支持使用 Go 的 `html/template` 在网关层（服务端）直接渲染高颜值、动态的 HTML 页面。它默认启用 HTML 转义以防止跨站脚本攻击（XSS），支持请求上下文数据的动态注入，并支持多文件**片段复用**。
 
 同时，LiteGate 提供了针对**自定义错误页（Error Pages）**、**SSO 自定义登录页**、**免登录公开系统状态页（Status Page）**以及 **Markdown 模板化渲染** 的完整高级集成方案。
@@ -91,9 +92,11 @@ action:
 | `{{ .Method }}` | 请求的 HTTP 方法 | `GET` |
 | `{{ .ClientIP }}` | 客户端的真实物理 IP | `192.168.1.100` |
 | `{{ .Time }}` | 当前网关时间 (RFC3339 格式) | `2026-06-17T09:00:00Z` |
-| `{{ .Header "Key" }}` | 获取指定的 HTTP 请求头值 | `{{ .Header "User-Agent" }}` |
-| `{{ .Query "key" }}` | 获取指定的 URL Query 参数值 | `{{ .Query "page" }}` |
-| `{{ .Cookie "name" }}` | 获取指定的 Cookie 值 | `{{ .Cookie "session_id" }}` |
+| `{{ header "Key" }}` | 获取指定的 HTTP 请求头值 | `{{ header "User-Agent" }}` |
+| `{{ query "key" }}` | 获取指定的 URL Query 参数值 | `{{ query "page" }}` |
+| `{{ cookie "name" }}` | 获取指定的 Cookie 值 | `{{ cookie "session_id" }}` |
+
+> 模板只能调用注册函数，不能调用对象方法（如 `{{ .Req.FormValue "x" }}`）：按名字反射调用方法会让二进制把所有依赖库的方法都编译进来（约 4MB）。`header` / `query` / `cookie` 也是函数；旧写法 `{{ .Header "X" }}` 会在加载模板时报错，并给出替换写法。
 
 ### 🛠️ 内置模板辅助函数
 
@@ -108,7 +111,7 @@ action:
 | `lower` / `upper` | 将输入字符串快速转换为全部小写或全部大写 | `{{ lower "ABC" }}` / `{{ upper "xyz" }}` |
 | `contains` / `replace` / `substr` | 提供字符串匹配包含、全部替换、以及 Rune 字符安全的切片截取操作 | `{{ replace "hello" "l" "x" }}` <br> `{{ substr "abcdef" 1 4 }}` (输出 `bcd`) |
 | `env` | 安全地读取系统指定的环境变量（仅限配置允许的环境变量白名单） | `{{ env "APP_ENV" }}` |
-| `default` | 提供空值兜底默认值（支持空串、零值、nil、空数组切片兜底） | `{{ default "游客" .Data.user.name }}` <br> `{{ .Query "role" \| default "user" }}` |
+| `default` | 提供空值兜底默认值（支持空串、零值、nil、空数组切片兜底） | `{{ default "游客" .Data.user.name }}` <br> `{{ query "role" \| default "user" }}` |
 | `toJson` | 将变量或数据结构序列化为经过 HTML 字符转义的 JSON，并作为 JavaScript 表达式输出 | `<script>const cfg = {{ toJson .Data.stats }};</script>` |
 | `fromJson` | 将 JSON 格式字符串动态反序列化为可遍历的数据结构 | `{{ $obj := fromJson .Data.rawString }}` |
 | `split` / `join` | 字符串切片拆分与元素合并拼接 | `{{ $tags := split "a,b,c" "," }}` <br> `{{ join $tags " · " }}` |
@@ -485,7 +488,7 @@ fetch_json:
   - key: stats
     url: "service://orders/api/stats"
     ttl: 10
-    cache_tags: ["orders:{{ .Header \"X-Tenant-Id\" }}"]
+    cache_tags: ["orders:{{ header \"X-Tenant-Id\" }}"]
     forward_headers: ["X-Tenant-Id"]
 ```
 

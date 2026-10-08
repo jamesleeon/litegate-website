@@ -29,6 +29,7 @@
 | 登录接口按 IP 限流 | [按 IP 限流](03-governance.md#3-限流) |
 | 去掉 `Server` 等暴露信息、防伪造身份头 | [删除请求头 / 响应头](03-governance.md#31-隐藏后端信息防止伪造身份头) |
 | 管理后台只允许内网访问 | [IP 白名单](03-governance.md#4-只允许内网访问管理后台) |
+| 为没有登录系统的应用添加统一认证 | [Authelia / Forward Auth 接入文章](../05-middleware/forward-auth.md) |
 | 多个接口共用同一套策略 | [snippets 片段复用](03-governance.md#5-多个接口共用一套策略snippets) |
 | 前端走文件 / KV，后端走服务发现自动注册 | [服务发现 + 站点文件自动合并](05-discovery.md) |
 | 服务下线时 API 不要返回前端首页 | [占位路由](05-discovery.md#2-服务下线时不要让-spa-吞掉-api-请求) |

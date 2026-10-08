@@ -1110,6 +1110,8 @@ spa: ./www
 
 ### 11.1 命名中间件 (`middlewares`)
 
+默认构建的 Forward Auth 插件支持站点和路由内联简写：`forward_auth: http://127.0.0.1:9091/api/authz/forward-auth`。完整对象支持 `address`、`uri`、`copy_headers` 等参数；它被编译成同一中间件，不需要额外命名和 `use`。站点级配置继承到各路由，路由级配置完整替换继承值。参见 [Authelia / Forward Auth 接入文章](../05-middleware/forward-auth.md)。
+
 在 `middlewares:` 字典下定义可复用的中间件资源。定义本身不会产生运行时开销，只有在站点或路由中通过 `use:` 引用时才会被挂载执行。
 
 | 属性 | 类型 | 必需 | 说明 |

@@ -40,8 +40,12 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o bin/litegate-
 CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o bin/litegate-linux-arm64 ./cmd/litegate
 
 # Windows
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o bin/litegate.exe ./cmd/litegate
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags winbacklog -ldflags="-s -w -checklinkname=0" -o bin/litegate.exe ./cmd/litegate
 ```
+
+> **Windows 构建请带上 `-tags winbacklog -ldflags=-checklinkname=0`（`make windows` 已自动带上）。** Go 在 Windows 上监听端口的等待队列只有约 200（[golang/go#39000](https://github.com/golang/go/issues/39000)），同时涌入的新连接超过这个数会被直接拒绝（connection refused）。带上这两个参数后，LiteGate 把队列调到 65535，可用 `http.listen_backlog` 调整。不带也能正常编译运行，只是保持 Go 的默认值，启动时会打印一条提示。Linux/macOS 不需要，队列长度由系统参数（如 `net.core.somaxconn`）决定。
+>
+> 回归测试：`make test-backlog`（同时发起 1000 个连接，要求零拒绝，仅限 Windows）。
 
 ---
 

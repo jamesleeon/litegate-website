@@ -139,7 +139,7 @@ Caddy 的安全前提是“模板及被模板读取/包含的内容必须可信�
 LiteGate 默认使用 Go `html/template`，动态变量会根据所在 HTML 上下文进行转义：
 
 ```gotemplate
-<p>{{ .Query "message" }}</p>
+<p>{{ query "message" }}</p>
 ```
 
 如果 `message` 含 HTML 标签，默认不会作为标签执行。只有显式调用以下能力才会绕过：

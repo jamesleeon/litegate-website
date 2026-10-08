@@ -234,6 +234,8 @@ type LoadBalancer interface {
 
 ### 4.2 请求上下文与配置（窄视图，不泄漏内部类型）
 
+Middleware 注册项可以提供可选的 `InlineConfig func(value any) (map[string]any, error)`，让统一站点 YAML 支持以插件类型名为键的站点/路由简写。它把 YAML 标量或对象转换成命名中间件的同一配置，由宿主继续调用 `Validate`，再生成普通 middleware 绑定。转换和校验必须无副作用、可并发；panic 或错误会阻止配置加载。站点声明被路由继承，路由声明替换完整配置，也可通过 snippets/import 复用。现有插件省略此字段时行为不变；示例见 `pkg/plugins/forwardauth`。
+
 ```go
 // Context —— 插件能看到的请求信息（只有这些字段）
 type Context struct {

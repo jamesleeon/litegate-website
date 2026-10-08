@@ -53,3 +53,6 @@
 
 ## 下一步
 深入了解每个 Action 的参数详情，请参考：[站点配置参考](../03-configuration/site-config.md)。
+
+
+- [NATS 实时事件订阅](../04-actions/nats-sse.md): `type: nats` / `mode: subscribe`.

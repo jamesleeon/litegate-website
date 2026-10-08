@@ -850,7 +850,7 @@ action:
 | `fetch_json[].fail_policy` | string | `ignore` (swallow the error, readable in the template as `.Errors.key`) or `error` (respond 500 immediately) |
 | `fetch_json[].forward_headers` | string[] | Client headers to forward. Their values take part in the cache key, normalized case-insensitively |
 
-> Variables and methods available in templates: `{{ .Host }}`, `{{ .Path }}`, `{{ .Method }}`, `{{ .ClientIP }}`, `{{ .Time }}`, `{{ .Header "K" }}`, `{{ .Query "k" }}`, `{{ .Cookie "n" }}`, `{{ .Nonce }}`.
+> Variables and functions available in templates: `{{ .Host }}`, `{{ .Path }}`, `{{ .Method }}`, `{{ .ClientIP }}`, `{{ .Time }}`, `{{ header "K" }}`, `{{ query "k" }}`, `{{ cookie "n" }}`, `{{ .Nonce }}`.
 > Built-in template functions:
 > - `{{ htmx }}`: emits the embedded HTMX script tag `<script src="/_litegate/assets/htmx-4.0.0.min.js"></script>`, with nothing to download by hand.
 > - `{{ markdown "## Content" }}`: converts Markdown text to safe HTML at render time.

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LiteGate · 单一二进制的 HTTP / TCP 网关</title>
-<meta name="description" content="LiteGate：三行 YAML 上线站点，自动 HTTPS 与 ECH，443 端口 SNI 分流，Connect 内网发布，Forward 安全访问云上数据库，服务发现与多租户选路，全部在一个 Go 二进制里。">
+<meta name="description" content="LiteGate：三行 YAML 上线站点，自动 HTTPS 与 ECH，443 端口 SNI 分流，Connect 内网发布，Forward 安全访问云上数据库，服务发现与多租户选路，HTTP 发布即可订阅的事件通知，全部在一个 Go 二进制里。">
 <link rel="alternate" hreflang="en" href="en/index.html">
 <link rel="stylesheet" href="style.css">
 <script>document.documentElement.classList.add("js")</script>
@@ -20,6 +20,7 @@
       <a href="#discovery">服务发现</a>
       <a href="#syntax">配置语法</a>
       <a href="#network">跨网络</a>
+      <a href="#notify">事件通知</a>
       <a href="#security">证书与 ECH</a>
       <a href="#platform">平台能力</a>
       <a href="docs/zh-cn/">文档</a>
@@ -37,7 +38,7 @@
     <div>
       <span class="eyebrow">开源 · MIT · 单一二进制</span>
       <h1>三行配置上线，<br><em>一个网关</em>收齐所有入口</h1>
-      <p class="lead">静态站点、API 反代、自动 HTTPS、443 端口 SNI 分流、内网发布与云上资产访问、服务发现与多租户选路。原来要拼好几套组件的事，LiteGate 用一个 Go 二进制、一种配置语言完成。</p>
+      <p class="lead">静态站点、API 反代、自动 HTTPS、443 端口 SNI 分流、内网发布与云上资产访问、服务发现与多租户选路、事件通知。原来要拼好几套组件的事，LiteGate 用一个 Go 二进制、一种配置语言完成。</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#quickstart">快速开始</a>
         <a class="btn btn-ghost" href="https://github.com/jamesleeon/LiteGate">在 GitHub 查看</a>
@@ -51,16 +52,16 @@
     <div class="code-stack">
       <div class="code-window">
         <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml</div>
-<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<pre><span class="k">site</span>: <span class="s">app.example.com</span>
 <span class="p">/api</span>: <span class="s">127.0.0.1:8080</span>   <span class="c"># 反代后端，含 WebSocket</span>
 <span class="k">spa</span>: <span class="s">./dist</span>            <span class="c"># 其余交给单页应用</span></pre>
       </div>
       <div class="code-window terminal">
         <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>terminal</div>
 <pre><span class="t">$</span> ./litegate
-<span class="t">$</span> curl -I http://app.example.com/
-<span class="c">HTTP/1.1 308 Permanent Redirect</span>
-<span class="c">Location: https://app.example.com/</span></pre>
+<span class="t">$</span> curl -I https://app.example.com/
+<span class="c">HTTP/2 200</span>
+<span class="c">content-type: text/html; charset=utf-8</span></pre>
       </div>
     </div>
   </div>
@@ -102,7 +103,7 @@
       <div class="code-stack">
         <div class="code-window">
           <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml<span class="label">网关上只写这一次</span></div>
-<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<pre><span class="k">site</span>: <span class="s">app.example.com</span>
 <span class="k">spa</span>: <span class="s">./dist</span></pre>
         </div>
 
@@ -169,7 +170,7 @@
         <h3>前后端分流</h3>
         <p><code>/api</code> 交给后端，其余交给单页应用，未知路由回退到 <code>index.html</code>。</p>
         <div class="code-window">
-<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<pre><span class="k">site</span>: <span class="s">app.example.com</span>
 <span class="p">/api</span>: <span class="s">127.0.0.1:8080</span>
 <span class="k">spa</span>: <span class="s">./dist</span></pre>
         </div>
@@ -178,7 +179,7 @@
         <h3>多个后端 + 去前缀</h3>
         <p>逗号分隔多个地址，默认轮询；<code>strip_prefix</code> 转发前去掉 <code>/v1</code>。</p>
         <div class="code-window">
-<pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
+<pre><span class="k">site</span>: <span class="s">api.example.com</span>
 <span class="p">/v1</span>:
   <span class="k">proxy</span>: <span class="s">10.0.0.5:8080, 10.0.0.6:8080</span>
   <span class="k">strip_prefix</span>: <span class="s">true</span></pre>
@@ -188,7 +189,7 @@
         <h3>跨域 + 限流</h3>
         <p>治理规则和转发写在同一个路由下，预检请求由网关直接应答。</p>
         <div class="code-window">
-<pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
+<pre><span class="k">site</span>: <span class="s">api.example.com</span>
 <span class="p">/api</span>:
   <span class="k">proxy</span>: <span class="s">localhost:8080</span>
   <span class="k">cors</span>:
@@ -327,8 +328,139 @@
   </div>
 </section>
 
+<!-- ── Notify hub ── -->
+<section id="notify">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">Notify Hub · 事件通知</p>
+      <h2>HTTP 发一条消息，所有订阅方都收到</h2>
+      <p>配置变更、任务完成、工单提醒，以前要部署 MQTT 服务，或者自己写 WebSocket 服务、维护连接表。现在网关就是通知中心：发布方只需一个 HTTP POST，浏览器、Go 服务和网关插件都能订阅；需要时还能离线续推。</p>
+    </div>
+
+    <div class="grid grid-2 compare" data-animate>
+      <div class="card">
+        <span class="tag">以前</span>
+        <ul>
+          <li>部署并维护 MQTT 服务，或自建 WebSocket 服务</li>
+          <li>每个客户端集成 MQTT / WebSocket SDK</li>
+          <li>业务后端维护连接表、心跳、多实例广播</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag ok">现在</span>
+        <ul>
+          <li>网关上多两条路由，不需要额外的服务</li>
+          <li>发布方 HTTP POST，订阅方一个 HTTP 长连接</li>
+          <li>鉴权、限额、监控直接复用网关已有的能力</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="split discovery notify-flow" data-animate>
+      <div>
+        <ol class="flow-steps">
+          <li><strong>发布</strong><span>任何能发 HTTP 的程序把消息 POST 到网关。不用 MQTT 客户端，也不用连接消息服务。</span></li>
+          <li><strong>广播</strong><span>网关通过 NATS 把消息送到每个网关节点，多实例、多机房自动覆盖。</span></li>
+          <li><strong>订阅</strong><span>浏览器和 Go 服务通过 SSE 订阅，网关插件声明主题直接接收。断线自动重连，连上先刷新一次状态，漏掉的消息由这次刷新补齐。</span></li>
+        </ol>
+        <a class="card-link" href="docs/zh-cn/user/09-advanced/event-notification.md">事件通知指南</a>
+      </div>
+
+      <div class="code-stack">
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml</div>
+<pre><span class="k">site</span>: <span class="s">app.example.com</span>
+<span class="p">/notify/</span>:                    <span class="c"># 发布：POST /notify/&lt;主题&gt;</span>
+  <span class="k">ip_restriction</span>: { <span class="k">allow_ips</span>: [<span class="s">10.0.0.0/8</span>] }
+  <span class="k">action</span>:
+    <span class="k">type</span>: <span class="s">nats</span>
+    <span class="k">mode</span>: <span class="s">publish</span>
+    <span class="k">subject_from</span>: <span class="s">path.1</span>       <span class="c"># /notify/config → notify.config</span>
+    <span class="k">subject_prefix</span>: <span class="s">notify</span>
+    <span class="k">subject_allowlist</span>: [<span class="s">config</span>, <span class="s">order</span>]
+<span class="p">/events/config</span>:              <span class="c"># 订阅</span>
+  <span class="k">use</span>: <span class="s">login</span>                  <span class="c"># 登录校验</span>
+  <span class="k">action</span>:
+    <span class="k">type</span>: <span class="s">nats</span>
+    <span class="k">mode</span>: <span class="s">subscribe</span>
+    <span class="k">subject</span>: <span class="s">notify.config</span>
+    <span class="k">sse</span>: { <span class="k">tenant</span>: <span class="s">app</span> }</pre>
+        </div>
+
+        <div data-tabs>
+          <div class="tabs" role="tablist" aria-label="发布与订阅方式">
+            <button class="tab" role="tab" id="t-pub" aria-controls="p-pub" aria-selected="true">发布</button>
+            <button class="tab" role="tab" id="t-web" aria-controls="p-web" aria-selected="false" tabindex="-1">浏览器</button>
+            <button class="tab" role="tab" id="t-go" aria-controls="p-go" aria-selected="false" tabindex="-1">Go 服务</button>
+            <button class="tab" role="tab" id="t-plugin" aria-controls="p-plugin" aria-selected="false" tabindex="-1">网关插件</button>
+          </div>
+          <div class="tab-panel" id="p-pub" role="tabpanel" aria-labelledby="t-pub">
+            <div class="code-window">
+              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>任何语言<span class="label">状态变化后发一个信号</span></div>
+<pre><span class="t">$</span> curl -X POST http://10.0.0.10/notify/config \
+    -H "Content-Type: application/json" \
+    -d '{"type":"config.changed","key":"store-001","version":42}'</pre>
+            </div>
+          </div>
+          <div class="tab-panel" id="p-web" role="tabpanel" aria-labelledby="t-web" hidden>
+            <div class="code-window">
+              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>app.js<span class="label">浏览器原生 API</span></div>
+<pre><span class="k">const</span> events = <span class="k">new</span> EventSource(<span class="s">'/events/config'</span>)
+events.onopen = () =&gt; reloadAll()        <span class="c">// 连上先刷新</span>
+events.onmessage = e =&gt; reload(JSON.parse(e.data))</pre>
+            </div>
+          </div>
+          <div class="tab-panel" id="p-go" role="tabpanel" aria-labelledby="t-go" hidden>
+            <div class="code-window">
+              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>main.go<span class="label">只依赖标准库</span></div>
+<pre>sub := &amp;notify.Subscriber{
+    URL:     <span class="s">"https://app.example.com/events/config"</span>,
+    OnOpen:  cache.ReloadAll,        <span class="c">// 连上先刷新</span>
+    OnEvent: cache.Apply,            <span class="c">// 按信号增量刷新</span>
+}
+<span class="k">go</span> sub.Run(ctx)                  <span class="c">// 自动重连、随机退避</span></pre>
+            </div>
+          </div>
+          <div class="tab-panel" id="p-plugin" role="tabpanel" aria-labelledby="t-plugin" hidden>
+            <div class="code-window">
+              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>provider.go<span class="label">插件自己定义主题</span></div>
+<pre><span class="k">func</span> (p *Provider) NotifySubjects() []<span class="k">string</span> {
+    <span class="k">return</span> []<span class="k">string</span>{<span class="s">"notify.tenant"</span>}
+}
+<span class="k">func</span> (p *Provider) HandleNotify(
+    ctx context.Context, n plugin.Notification) <span class="k">error</span> {
+    <span class="k">if</span> n.Resync { p.cache.InvalidateAll(); <span class="k">return</span> <span class="k">nil</span> }
+    <span class="c">// 租户关闭：只删这个租户的缓存</span>
+    p.cache.Invalidate(tenantOf(n.Data))
+    <span class="k">return</span> <span class="k">nil</span>
+}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reasons">
+      <div class="reason" data-animate>
+        <h3>支持离线消息</h3>
+        <p>需要逐条送达时启用 JetStream 持久化：离线的订阅方重连后从断点继续收，业务处理完再确认；一个订阅方确认，不影响其他订阅方。</p>
+        <a class="card-link" href="docs/zh-cn/user/04-actions/nats-events.md">可靠事件通知</a>
+      </div>
+      <div class="reason" data-animate>
+        <h3>后端不再持有长连接</h3>
+        <p>推送、心跳、断线重连、慢客户端都在网关处理。业务后端还是普通的无状态 HTTP 服务，扩到多少个实例都不用考虑广播。</p>
+      </div>
+      <div class="reason" data-animate>
+        <h3>插件也是订阅方</h3>
+        <p>IDS 插件可以放心缓存租户信息：只要声明 <code>notify.tenant</code>，租户在租户系统里一关闭，所有网关上的缓存秒级失效。</p>
+        <a class="card-link" href="docs/zh-cn/user/09-advanced/event-notification.md#9-插件订阅通知插件自己定义-subject">插件订阅通知</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── Security ── -->
-<section id="security">
+<section id="security" class="alt">
   <div class="wrap">
     <div class="split" data-animate>
       <div>
@@ -398,7 +530,7 @@
 </section>
 
 <!-- ── Platform ── -->
-<section id="platform" class="alt">
+<section id="platform">
   <div class="wrap">
     <div class="section-head" data-animate>
       <p class="kicker">平台能力</p>
@@ -435,7 +567,7 @@
 </section>
 
 <!-- ── Quick start ── -->
-<section id="quickstart">
+<section id="quickstart" class="alt">
   <div class="wrap">
     <div class="section-head" data-animate>
       <p class="kicker">快速开始</p>

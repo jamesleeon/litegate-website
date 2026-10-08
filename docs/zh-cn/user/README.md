@@ -34,6 +34,7 @@
 - [配置结构总览与最佳实践](03-configuration/config-structure.md)：先读这篇，了解配置文件的整体结构和推荐组织方式
 - [全局配置](03-configuration/global-config.md)
 - [站点配置](03-configuration/site-config.md)
+- [Rewrite：路径与查询参数改写](03-configuration/rewrite.md)：执行顺序、与 Nginx 的区别、参数操作和迁移示例
 - [L4 site 写法与场景指南](03-configuration/l4-guide.md)
 - [Stream 配置](03-configuration/stream-config.md)
 - [控制 API](03-configuration/api.md)
@@ -93,6 +94,7 @@
 - [单回调地址分流（OAuth 一个回调地址，多个后端）](09-advanced/oauth-single-callback.md)
 - [Circuit Breaker 熔断器](09-advanced/circuit-breaker.md)
 - [WebSocket](09-advanced/websocket.md)
+- [事件通知：NATS + LiteGate 通知体系（客户端 SSE 与插件订阅）](09-advanced/event-notification.md)
 - [Magic Ingress](09-advanced/magic-ingress.md)
 - [Forward 与 Connect：内网穿透总览](09-advanced/forward-and-connect.md)
 - [辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理) 的区别](../forward-vs-forward-proxy.md)
@@ -132,3 +134,6 @@
   先看 `authentication`、`remote-auth`、`waf`
 - 编写企业自研插件或定制网关
   先看 `12-plugins/README.md`、`12-plugins/authoring-guide.md`、`12-plugins/build-and-cli.md`
+
+
+- [NATS 实时事件订阅](04-actions/nats-sse.md): `type: nats` / `mode: subscribe`.

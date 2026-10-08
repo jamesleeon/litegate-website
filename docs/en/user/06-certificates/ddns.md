@@ -1,6 +1,8 @@
 # DDNS (Dynamic DNS)
 
-LiteGate features an integrated Dynamic DNS (DDNS) engine that automatically synchronizes the gateway's public WAN IP address with the A and AAAA records of your DNS cloud provider. It natively supports major providers including Alibaba Cloud DNS, Cloudflare, Tencent Cloud DNSPod, and Huawei Cloud DNS.
+For another DNS service, see [Add a DNS provider](dns-providers.md): compatible libdns modules can be compiled in with `litegate build --dns` without writing plugin code.
+
+LiteGate features an integrated Dynamic DNS (DDNS) engine that automatically synchronizes the gateway's public WAN IP address with the A and AAAA records of your DNS cloud provider. Default builds include Alibaba Cloud DNS, Tencent Cloud DNSPod, and Cloudflare. Huawei Cloud DNS and other providers require third-party DNS provider plugins compiled on demand.
 
 ---
 
@@ -45,9 +47,8 @@ auto_cert:
 | DNS Provider | `type` Identifier | Mapped Configuration parameters |
 | :--- | :--- | :--- |
 | **Alibaba Cloud DNS** | `aliyun` | `access_key_id`, `access_key_secret` |
+| **Tencent Cloud DNSPod** | `tencent` / `tencentcloud` | `secret_id`, `secret_key` |
 | **Cloudflare** | `cloudflare` | `api_token` |
-| **Tencent Cloud DNSPod** | `tencent` | `secret_id`, `secret_key` |
-| **Huawei Cloud DNS** | `huawei` | `access_key`, `secret_key`, `project_id` |
 
 > [!TIP]
 > Beyond the built-in providers above, you can integrate **any** DNS service through a **DNS Provider plugin** (with your own `type` name). The same plugin can also handle ACME certificate DNS-01 challenges. See the [DNS Provider Plugin Authoring Guide](../../dns-provider-plugin-guide.md).

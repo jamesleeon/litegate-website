@@ -490,3 +490,33 @@ func (p *provider) Evaluate(ctx context.Context, in plugin.IDSInput) (*plugin.ID
 - Selector 是硬边界；Meta 只是边界内可回退的偏好。
 - RateLimit Key 是不透明业务主体，QPS 必须大于 0；超限请求在 Action 执行前返回 429（proxy 因而不会进入服务发现）。
 - 不回传客户端伪造的内部 Header，必须生成新值并配置投影白名单。
+
+
+## 可选的事件通知与状态同步
+
+IDS 不强制使用缓存，也不强制订阅 notify。例如仅做 MD5 验签的 Provider 可以只实现 `Evaluate`，无需通知接口或 `shared.notify` 配置。只有实现 `NotifySubscriber` 并声明非空 subject 的实例才建立订阅。
+
+插件为了性能可以把租户、凭据等缓存在进程内。缓存什么、怎么删由插件自己决定，宿主不做假设；宿主提供的是**可选的通知投递**：Provider 实现可选接口 `plugin.NotifySubscriber`，声明自己关心的 subject，外部系统（如租户系统）状态变化后向这个 subject 发一个信号，宿主就把它投递给该 Provider。
+
+```go
+func (p *Provider) NotifySubjects() []string { return []string{"notify.tenant"} }
+
+func (p *Provider) HandleNotify(ctx context.Context, n plugin.Notification) error {
+	if n.Resync { // 订阅刚生效、断线重连或之前处理失败：可能漏了消息
+		p.tenants.InvalidateAll()
+		return nil
+	}
+	var signal struct {
+		TenantID string `json:"tenant_id"`
+	}
+	if json.Unmarshal(n.Data, &signal) == nil && signal.TenantID != "" {
+		p.tenants.Invalidate(signal.TenantID)
+	}
+	return nil
+}
+```
+
+声明 subject 的 Provider 实例创建时宿主才订阅，退役或关闭前退订；同一实例的回调串行执行。消息不持久化、不重投，宿主改为保证 `Resync`：订阅生效后、断线重连或丢消息后、回调返回错误或 panic 之后。`idskit.IdentityLoader.InvalidateAll` 同时隔离在途回源，旧结果不会写回缓存。租户停用后 `Evaluate` 仍须返回明确的拒绝，缓存失效只负责让它尽快读到新状态。配置方式、发布方法和 Redis 等共享缓存的处理见 [插件订阅通知](user/09-advanced/event-notification.md#9-插件订阅通知插件自己定义-subject)。
+
+
+`Resync` 表示可能漏过通知，需要按插件自身语义重新校准状态，不等同于“必须清缓存”。有缓存可以失效缓存，持有快照可以重新读取配置源，无本地状态则可直接成功返回。回调必须尊重 context 的取消和期限；宿主等待旧回调退出后才启用新订阅，保证跨连接切换也串行。

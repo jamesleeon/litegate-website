@@ -1,10 +1,20 @@
 # DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)
 
+New to provider integration? Start with [Add a DNS provider](user/06-certificates/dns-providers.md) for choosing, building, configuring and verifying a libdns provider.
+
+Default builds include Alibaba Cloud (`aliyun`), Tencent Cloud (`tencent` / `tencentcloud`), and Cloudflare (`cloudflare`). Built-in providers are lightweight hand-written HTTP clients with **no vendor SDKs**; lego is used only as the ACME protocol engine. Compile Huawei Cloud, Route 53 and other providers into **your own build** on demand, without growing the official binary:
+
+```bash
+litegate build --dns huaweicloud --dns route53 -o litegate-custom
+```
+
+`--dns` uses the [libdns](https://github.com/libdns/libdns) ecosystem: no code to write, and you get DNS-01, DDNS and ECH HTTPS records (see Shortcut 1 below). Built-in names (`aliyun`, `tencent`, `tencentcloud`, `cloudflare`) are reserved.
+
 ## ECH extension boundary
 
 LiteGate owns ECH keys, TLS installation, rotation, retention, encrypted file/KV state, Consul/LiteMesh synchronization, publisher leases, group selection and retries. A DNS plugin only reads and writes provider HTTPS (type 65) records. It does not implement KV or receive ECH private keys/storage secrets.
 
-Implement plugin.HTTPSDNSProvider (GetName and PublishHTTPS(ctx, name, value, owned)) and register via RegisterDNSProviderV2 with DNSCapabilityHTTPS (`https_records`). The capability is independent of DDNS: Sync is not required. Add CertDNSProviderV2/cert_dns01 only if the same plugin also performs certificate DNS-01 challenges; otherwise arrange a covering certificate provider. A lego DNS-01 adapter does not automatically support HTTPS records.
+Implement plugin.HTTPSDNSProvider (GetName and PublishHTTPS(ctx, name, value, owned)) and register via RegisterDNSProviderV2 with DNSCapabilityHTTPS (`https_records`). The capability is independent of DDNS: Sync is not required. Add CertDNSProviderV2/cert_dns01 only if the same plugin also performs certificate DNS-01 challenges; otherwise arrange a covering certificate provider. A libdns provider compiled in with `--dns` supports HTTPS records automatically when it implements `RecordGetter`; the lego example bridge does not.
 
 For an HTTPS-only plugin, `domains` selects ECH publication scope. LiteGate removes these selectors only in the certificate runtime copy, preserving the saved configuration. Configure a separate certificate-capable provider covering the public name and websites, such as a Cloudflare provider with `domains: ["*.example.com"]`. Both providers must operate on the appropriate authoritative zone: the record plugin manages HTTPS records, and the certificate provider manages ACME TXT records. The record plugin must be registered and compiled into the binary.
 
@@ -18,7 +28,7 @@ See the [compilable memory provider](https://github.com/jamesleeon/LiteGate/blob
 
 > This guide shows you how to write a custom **DNS Provider** plugin for LiteGate, taking over two responsibilities: the **DNS-01 challenge for ACME certificate issuance** (adding/removing TXT records) and **Dynamic DNS (DDNS) synchronization** (writing the host's IP to A/AAAA records).
 >
-> Use it when: your DNS service is not in the built-in list (built-ins: Alibaba Cloud / Cloudflare / Tencent Cloud / Huawei Cloud), or you want to use your own DNS API / internal IPAM / private DNS service for certificate validation and DDNS.
+> Use it when: your DNS service is not in the built-in list (built-ins: Alibaba Cloud / Tencent Cloud / Cloudflare), or you want to use your own DNS API / internal IPAM / private DNS service for certificate validation and DDNS.
 >
 > The contract lives in the public package [`github.com/jamesleeon/LiteGate/pkg/plugin`](https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin), so **third parties can author and compile it from a standalone repository**. For general plugins (Action / Middleware / LoadBalancer) see [plugin-authoring-guide.md](../zh-cn/plugin-authoring-guide.md); for IDS auth plugins see [ids-provider-plugin-guide.md](../zh-cn/ids-provider-plugin-guide.md); for DDNS usage itself see [user/06-certificates/ddns.md](user/06-certificates/ddns.md).
 >
@@ -37,7 +47,7 @@ LiteGate models DNS operations as a **named Provider**. Your plugin registers a 
 
 Both build on a **marker interface** `plugin.DNSProvider` (which only has `GetName()`). **A cert-only plugin implements just `CertDNSProvider`; a DDNS-only plugin implements just `DDNSProvider`; one that needs both implements both.** The core asserts the capability at the point of use: if the required capability is missing, it returns a clear error there — it never silently fails mid-flight.
 
-> Built-in providers (aliyun / cloudflare / tencent / tencentcloud / huawei / huaweicloud) and your third-party plugin go through the **same public registry and the same assertion path** — built-in features eat their own dog food.
+> Built-in providers (aliyun / cloudflare) and your third-party plugin go through the **same public registry and the same assertion path** — built-in features eat their own dog food.
 
 ---
 
@@ -120,33 +130,53 @@ type DNSProviderFactoryWithDependencies func(config map[string]string, deps *Dep
 
 ## 3. Writing a DNS Provider plugin
 
-### Shortcut: the provider already exists in lego (recommended)
+### Shortcut 1: `litegate build --dns` (recommended, no code)
 
-[lego](https://go-acme.github.io/lego/dns/) ships 180+ DNS providers (VegaDNS, DNSPod, Route 53, GoDaddy, ...). If yours is among them, register it with [`pkg/plugin/legodns`](https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin/legodns) — no API calls or TXT derivation to write:
+[libdns](https://github.com/libdns) offers one interface for 80+ DNS providers (Huawei Cloud, Alibaba alidns, DNSPod, Route 53, GoDaddy, Porkbun, ...), each in its own small module. LiteGate's [`pkg/plugin/libdnsx`](https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin/libdnsx) adapts all of them into DNS plugins, and `litegate build` generates the registration code for you:
 
-```go
-package vegadns
+```bash
+# Short name = github.com/libdns/<name>; a version is optional
+litegate build --dns huaweicloud --dns route53@v1.6.2 -o litegate
 
-import (
-	"github.com/go-acme/lego/v5/providers/dns/vegadns"
-	"github.com/jamesleeon/LiteGate/pkg/plugin/legodns"
-)
+# Full module paths work too; a type= prefix sets the config type name
+litegate build --dns hw=github.com/libdns/huaweicloud -o litegate
 
-func init() {
-	legodns.MustRegister("vegadns", legodns.Registration{
-		Required: []string{"url", "api_key", "api_secret"}, // checked at config load (litegate -t)
-		New: func(cfg map[string]string) (legodns.ChallengeProvider, error) {
-			c := vegadns.NewDefaultConfig()
-			c.BaseURL, c.APIKey, c.APISecret = cfg["url"], cfg["api_key"], cfg["api_secret"]
-			return vegadns.NewDNSProviderConfig(c)
-		},
-	})
-}
+# The libdns flavour of a built-in provider needs another name (built-in names are reserved)
+litegate build --dns libdns_cloudflare=cloudflare -o litegate
 ```
 
-`legodns` handles the capability declaration (`cert_dns01`) and manifest, required-key validation, forwarding lego's `Timeout()` as the propagation timeout (VegaDNS defaults to 12 minutes; without forwarding, the 2-minute default would cut it short), and classifying constructor failures as `invalid_config`. It matches lego's method set structurally and **does not import lego**, so the plugin picks its own lego version. Full example: [examples/plugins/dns/vegadns](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/vegadns).
+The config `type` is that name, and the `config` keys are the json tags of the libdns provider struct (see its README / pkg.go.dev):
 
-If the provider is not in lego, or you also need DDNS, implement the interfaces directly as below.
+```yaml
+auto_cert:
+  dns_providers:
+    - name: hw
+      type: huaweicloud
+      domains: ["*.example.com"]
+      config:
+        access_key_id: "${HW_AK}"
+        secret_access_key: "${HW_SK}"
+        region_id: "cn-south-1"
+```
+
+Adaptation rules:
+
+| libdns interfaces the provider implements | Capabilities |
+|---|---|
+| `RecordAppender` + `RecordDeleter` | `cert_dns01` |
+| plus `RecordGetter` | also `ddns` (append/withdraw A/AAAA) and `https_records` (ECH) |
+
+- String values are converted to the field type (numbers, booleans; `time.Duration` as `90s` or seconds; `[]string` comma-separated; other complex types as inline JSON). **Unknown keys are rejected**, so `litegate -t` catches typos.
+- Reserved keys are handled by LiteGate and never reach the provider: `zone` (hosted zone, SOA lookup by default), `ttl`, `timeout` (propagation timeout, default 2m), `polling_interval` (default 10s). The host-level keys `secret_token`, `propagation_wait`, `skip_propagation_check`, `disable_complete_propagation` and `recursive_nameservers` keep working and are not passed on either.
+- Only Append/Delete are used, **never `SetRecords`**: it replaces a whole RRset and would drop addresses or parallel challenge values owned by other nodes.
+- Only provider releases targeting the **libdns v1 API** are accepted. libdns kept its module path for v1, so older providers are detected before compiling, with a clear message.
+- Only the provider itself is added (Huawei Cloud is about +200KB); a provider wrapping a vendor SDK only grows your own build. `litegate plugins list` shows the compiled-in providers and their module versions.
+
+### Shortcut 2: reuse a lego provider (example, DNS-01 only)
+
+When a provider exists only in [lego](https://go-acme.github.io/lego/dns/) and not in libdns, follow [examples/plugins/dns/legodns](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/legodns) (bridge) and [examples/plugins/dns/vegadns](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/vegadns) (usage) and copy the bridge into your own plugin module. It is an example, not a supported LiteGate API, and covers DNS-01 only.
+
+When neither ecosystem has your provider, or you need finer control, implement the interfaces directly as below.
 
 ### Step 1: Implement the interfaces + register
 
@@ -319,7 +349,7 @@ The right-hand side of a local replacement is the directory containing the plugi
 
 2. **Choose the right factory.** Use `RegisterDNSProvider` for simple providers that only need `config`. Use `RegisterDNSProviderWithDependencies` when you want LiteGate to inject `*plugin.Dependencies`, currently including `Logger`; `Discovery` is optional/not guaranteed for DNS providers.
 
-3. **You can't override a built-in name.** `RegisterDNSProvider("aliyun", …)` and the like return an error. Built-in names: `aliyun` / `cloudflare` / `tencent` / `tencentcloud` / `huawei` / `huaweicloud`. Pick a non-conflicting name.
+3. **You can't override a built-in name.** `RegisterDNSProvider("aliyun", …)` and the like return an error. Built-in names: `aliyun` / `tencent` / `tencentcloud` / `cloudflare`. Pick a non-conflicting name.
 
 4. **Honor `ctx` cancellation.** The `ctx` passed to `AddTXTRecord` / `DeleteTXTRecord` / `Sync` is canceled on gateway shutdown or challenge timeout — pass it to your HTTP calls, don't use `context.Background()`, or you'll hang/leak on shutdown.
 
@@ -361,6 +391,7 @@ Cert-manager record sync (e.g. service-host auto sync, SyncRecordWithProvider)
 
 | I want to… | How |
 |---|---|
+| Use an existing provider (Huawei Cloud, Route 53, ...) | `litegate build --dns <name>`, no code; see Shortcut 1 |
 | Add certificate issuance for a new DNS service | Implement `plugin.CertDNSProvider`, register with `plugin.RegisterDNSProvider` or `plugin.RegisterDNSProviderWithDependencies`, configure `dns_providers[].type` + `domains` |
 | Add DDNS for a new DNS service | Implement `plugin.DDNSProvider`, register with `plugin.RegisterDNSProvider` or `plugin.RegisterDNSProviderWithDependencies`, configure `dns_providers[].ddns` |
 | Support both certificates + DDNS | One provider implements both interface groups |

@@ -41,6 +41,8 @@ routes:
 
 `rewrite` 是功能最全的内部改写器，一个中间件同时处理路径和查询。
 
+完整的内联配置、执行顺序、查询参数语义，以及从 Nginx `last` 迁移的示例，见 [Rewrite：路径与查询参数改写](../03-configuration/rewrite.md)。
+
 ```yaml
 middlewares:
   api-rewrite:

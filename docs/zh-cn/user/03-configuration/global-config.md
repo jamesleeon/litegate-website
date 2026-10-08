@@ -47,6 +47,7 @@ http:
   # upstream_transport_shards: 1  # 可选。每个上游实例分摊到几个连接池，降低高并发下的连接池锁竞争；默认 1 = 不分片
   # upstream_buffer_size: 32768   # 可选。上游 HTTP/1 连接读写缓冲（字节，4096～65536，默认 32768）；大响应体会绕过缓冲直接读写
   # upstream_client: fast         # 可选。默认 fast：明文 HTTP/1.1 后端用同步连接池（开销更低），TLS/mTLS/HTTP2/gRPC/WebSocket 自动走标准客户端；写 standard 则全部使用 Go 标准 Transport
+  # listen_backlog: 65535        # 可选。仅 Windows：TCP 等待接受队列长度（1～65535，默认 65535）。需用 make windows 构建才生效；Go 默认只有约 200，突发大量新连接时会被拒绝
   # drain_delay: 5               # 摘流等待秒数；不写 = 自动，0 = 关闭，N = 固定 N 秒
   # drain_delay_ms: 250          # 可选毫秒覆盖值，优先于 drain_delay
 ```
@@ -422,7 +423,7 @@ cache:
     db: 1
     tls: false
     pool_size: 20
-    min_idle_conns: 5
+    min_idle_conns: 5  # 兼容旧配置；Redigo 按需创建连接，不主动预热
     dial_timeout: "3s"
     read_timeout: "2s"
     write_timeout: "2s"
@@ -439,7 +440,7 @@ redis:
   db: 0
   tls: false
   pool_size: 20
-  min_idle_conns: 5
+  min_idle_conns: 5  # 兼容旧配置；Redigo 按需创建连接，不主动预热
   dial_timeout: "3s"
   read_timeout: "2s"
   write_timeout: "2s"
@@ -591,7 +592,8 @@ auth_providers:
 | `notify_url` | string | 可选。Token 事件通知 Webhook 回调地址 |
 | `auth_url` | string | 非 OIDC 标准 OAuth2 服务的授权发起地址 |
 | `token_url` | string | 非 OIDC 标准 OAuth2 服务的 Token 交换接口地址 |
-| `clock_skew` | string | JWT 校验时钟容忍偏差，例如 `5m` |
+| `user_info_url` | string | 可选 OAuth2 用户信息 JSON 接口，以 Bearer Token 请求。GitHub 默认使用 `/user`；获取失败会拒绝登录。通用 OAuth2 使用身份访问规则时应配置此接口。 |
+| `clock_skew` | string | OIDC 过期、签发和生效时间校验的非负容忍偏差，例如 `5m`；默认 `0` 严格校验。 |
 | `allowed_signing_algs` | string[] | 允许的 JWT 签名算法列表，例如 `["RS256", "ES256"]` |
 | `introspection_url` | string | RFC 7662 Token 内省接口地址 |
 | `introspection_interval` | string | Token 内省刷新周期，例如 `5m` |

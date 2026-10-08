@@ -19,7 +19,7 @@ The full manual is at **[User Guide Index](user/README.md)**, organized by usage
 **By goal:**
 - Host a static site + proxy an API: [Site Config](user/03-configuration/site-config.md) · [serve](user/04-actions/serve.md) · [proxy](user/04-actions/proxy.md) · [Serve KV / ZIP sync](serve_kv_mode.md)
 - Serve PHP / PHP-FPM: [FastCGI Config](fastcgi_config.md)
-- Automatic HTTPS: [Auto-Cert](user/06-certificates/auto-cert.md) · [On-Demand TLS](user/06-certificates/on-demand-cert.md) · [DDNS](user/06-certificates/ddns.md)
+- Automatic HTTPS: [Auto-Cert](user/06-certificates/auto-cert.md) · [On-Demand TLS](user/06-certificates/on-demand-cert.md) · [DDNS](user/06-certificates/ddns.md) · [Add a DNS provider](user/06-certificates/dns-providers.md)
 - Service discovery: [Litemesh](user/07-discovery/litemesh.md) · [Consul](user/07-discovery/consul.md) · [Tag Architecture](user/02-concepts/tag-architecture.md) · [Service Tags Guide](user/03-configuration/tag-dsl.md) · [Tag Reference](user/03-configuration/tag-reference.md)
 - SaaS entry controls: [Authentication](user/05-middleware/authentication.md) · [Remote Auth](user/05-middleware/remote-auth.md) · [WAF](user/05-middleware/waf.md)
 - Observability: [Dashboard](user/08-observability/dashboard.md) · [Metrics](user/08-observability/metrics.md) · [Access Log](user/08-observability/access-log.md)
@@ -54,3 +54,6 @@ Understand LiteGate's tag-driven design and the request lifecycle.
 
 - [IDS Development Guide](ids_development_guide.md)
 - [IDS Testing Guide](https://github.com/jamesleeon/LiteGate/blob/master/docs/en/ids_testing_guide.md)
+
+
+- [NATS realtime subscriptions](user/04-actions/nats-sse.md): `type: nats` / `mode: subscribe`.

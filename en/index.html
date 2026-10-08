@@ -20,6 +20,7 @@
       <a href="#discovery">Discovery</a>
       <a href="#syntax">Syntax</a>
       <a href="#network">Connectivity</a>
+      <a href="#notify">Notifications</a>
       <a href="#security">Certificates &amp; ECH</a>
       <a href="#platform">Platform</a>
       <a href="../docs/en/">Docs</a>
@@ -51,16 +52,16 @@
     <div class="code-stack">
       <div class="code-window">
         <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml</div>
-<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<pre><span class="k">site</span>: <span class="s">app.example.com</span>
 <span class="p">/api</span>: <span class="s">127.0.0.1:8080</span>   <span class="c"># backend, WebSockets included</span>
 <span class="k">spa</span>: <span class="s">./dist</span>            <span class="c"># everything else is the SPA</span></pre>
       </div>
       <div class="code-window terminal">
         <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>terminal</div>
 <pre><span class="t">$</span> ./litegate
-<span class="t">$</span> curl -I http://app.example.com/
-<span class="c">HTTP/1.1 308 Permanent Redirect</span>
-<span class="c">Location: https://app.example.com/</span></pre>
+<span class="t">$</span> curl -I https://app.example.com/
+<span class="c">HTTP/2 200</span>
+<span class="c">content-type: text/html; charset=utf-8</span></pre>
       </div>
     </div>
   </div>
@@ -102,7 +103,7 @@
       <div class="code-stack">
         <div class="code-window">
           <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml<span class="label">the only gateway config</span></div>
-<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<pre><span class="k">site</span>: <span class="s">app.example.com</span>
 <span class="k">spa</span>: <span class="s">./dist</span></pre>
         </div>
 
@@ -169,7 +170,7 @@
         <h3>Frontend and API</h3>
         <p><code>/api</code> goes to the backend; everything else is the SPA, with unknown routes falling back to <code>index.html</code>.</p>
         <div class="code-window">
-<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<pre><span class="k">site</span>: <span class="s">app.example.com</span>
 <span class="p">/api</span>: <span class="s">127.0.0.1:8080</span>
 <span class="k">spa</span>: <span class="s">./dist</span></pre>
         </div>
@@ -178,7 +179,7 @@
         <h3>Several backends, prefix stripped</h3>
         <p>Comma-separate addresses for round-robin by default; <code>strip_prefix</code> removes <code>/v1</code> before forwarding.</p>
         <div class="code-window">
-<pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
+<pre><span class="k">site</span>: <span class="s">api.example.com</span>
 <span class="p">/v1</span>:
   <span class="k">proxy</span>: <span class="s">10.0.0.5:8080, 10.0.0.6:8080</span>
   <span class="k">strip_prefix</span>: <span class="s">true</span></pre>
@@ -188,7 +189,7 @@
         <h3>CORS and rate limiting</h3>
         <p>Policy sits on the same route as the forwarding; the gateway answers preflight requests itself.</p>
         <div class="code-window">
-<pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
+<pre><span class="k">site</span>: <span class="s">api.example.com</span>
 <span class="p">/api</span>:
   <span class="k">proxy</span>: <span class="s">localhost:8080</span>
   <span class="k">cors</span>:
@@ -327,8 +328,138 @@
   </div>
 </section>
 
+<!-- ── Notify hub ── -->
+<section id="notify">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">Notify Hub</p>
+      <h2>POST one message, every subscriber gets it</h2>
+      <p>Config changes, finished jobs, ticket alerts: these used to need an MQTT broker, or a home-grown WebSocket service with its own connection table. Now the gateway is the notification hub. Publishers send a single HTTP POST; browsers, Go services and gateway plugins subscribe, with offline delivery when you need it.</p>
+    </div>
+
+    <div class="grid grid-2 compare" data-animate>
+      <div class="card">
+        <span class="tag">Before</span>
+        <ul>
+          <li>Run and operate an MQTT broker or a custom WebSocket service</li>
+          <li>Integrate an MQTT / WebSocket SDK into every client</li>
+          <li>Backends track connections, heartbeats and cross-instance broadcast</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag ok">Now</span>
+        <ul>
+          <li>Two more routes on the gateway, no extra service</li>
+          <li>Publishers POST over HTTP; subscribers hold one HTTP stream</li>
+          <li>Authentication, quotas and monitoring come from the gateway</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="split discovery notify-flow" data-animate>
+      <div>
+        <ol class="flow-steps">
+          <li><strong>Publish</strong><span>Anything that speaks HTTP POSTs a message to the gateway. No MQTT client, no broker connection.</span></li>
+          <li><strong>Broadcast</strong><span>The gateway hands the message to NATS, which reaches every gateway node across instances and sites.</span></li>
+          <li><strong>Subscribe</strong><span>Browsers and Go services subscribe over SSE; gateway plugins declare a subject and receive it directly. Clients reconnect automatically and reload state on connect, so anything missed while offline is caught up.</span></li>
+        </ol>
+        <a class="card-link" href="../docs/zh-cn/user/09-advanced/event-notification.md">Event notification guide (Chinese)</a>
+      </div>
+
+      <div class="code-stack">
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml</div>
+<pre><span class="k">site</span>: <span class="s">app.example.com</span>
+<span class="p">/notify/</span>:                    <span class="c"># publish: POST /notify/&lt;topic&gt;</span>
+  <span class="k">ip_restriction</span>: { <span class="k">allow_ips</span>: [<span class="s">10.0.0.0/8</span>] }
+  <span class="k">action</span>:
+    <span class="k">type</span>: <span class="s">nats</span>
+    <span class="k">mode</span>: <span class="s">publish</span>
+    <span class="k">subject_from</span>: <span class="s">path.1</span>       <span class="c"># /notify/config → notify.config</span>
+    <span class="k">subject_prefix</span>: <span class="s">notify</span>
+    <span class="k">subject_allowlist</span>: [<span class="s">config</span>, <span class="s">order</span>]
+<span class="p">/events/config</span>:              <span class="c"># subscribe</span>
+  <span class="k">use</span>: <span class="s">login</span>                  <span class="c"># login check</span>
+  <span class="k">action</span>:
+    <span class="k">type</span>: <span class="s">nats</span>
+    <span class="k">mode</span>: <span class="s">subscribe</span>
+    <span class="k">subject</span>: <span class="s">notify.config</span>
+    <span class="k">sse</span>: { <span class="k">tenant</span>: <span class="s">app</span> }</pre>
+        </div>
+
+        <div data-tabs>
+          <div class="tabs" role="tablist" aria-label="Publishing and subscribing">
+            <button class="tab" role="tab" id="t-pub" aria-controls="p-pub" aria-selected="true">Publish</button>
+            <button class="tab" role="tab" id="t-web" aria-controls="p-web" aria-selected="false" tabindex="-1">Browser</button>
+            <button class="tab" role="tab" id="t-go" aria-controls="p-go" aria-selected="false" tabindex="-1">Go service</button>
+            <button class="tab" role="tab" id="t-plugin" aria-controls="p-plugin" aria-selected="false" tabindex="-1">Gateway plugin</button>
+          </div>
+          <div class="tab-panel" id="p-pub" role="tabpanel" aria-labelledby="t-pub">
+            <div class="code-window">
+              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>any language<span class="label">signal after a change</span></div>
+<pre><span class="t">$</span> curl -X POST http://10.0.0.10/notify/config \
+    -H "Content-Type: application/json" \
+    -d '{"type":"config.changed","key":"store-001","version":42}'</pre>
+            </div>
+          </div>
+          <div class="tab-panel" id="p-web" role="tabpanel" aria-labelledby="t-web" hidden>
+            <div class="code-window">
+              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>app.js<span class="label">native browser API</span></div>
+<pre><span class="k">const</span> events = <span class="k">new</span> EventSource(<span class="s">'/events/config'</span>)
+events.onopen = () =&gt; reloadAll()        <span class="c">// reload on connect</span>
+events.onmessage = e =&gt; reload(JSON.parse(e.data))</pre>
+            </div>
+          </div>
+          <div class="tab-panel" id="p-go" role="tabpanel" aria-labelledby="t-go" hidden>
+            <div class="code-window">
+              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>main.go<span class="label">standard library only</span></div>
+<pre>sub := &amp;notify.Subscriber{
+    URL:     <span class="s">"https://app.example.com/events/config"</span>,
+    OnOpen:  cache.ReloadAll,        <span class="c">// reload on connect</span>
+    OnEvent: cache.Apply,            <span class="c">// refresh per signal</span>
+}
+<span class="k">go</span> sub.Run(ctx)                  <span class="c">// reconnects with jitter</span></pre>
+            </div>
+          </div>
+          <div class="tab-panel" id="p-plugin" role="tabpanel" aria-labelledby="t-plugin" hidden>
+            <div class="code-window">
+              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>provider.go<span class="label">the plugin owns its subject</span></div>
+<pre><span class="k">func</span> (p *Provider) NotifySubjects() []<span class="k">string</span> {
+    <span class="k">return</span> []<span class="k">string</span>{<span class="s">"notify.tenant"</span>}
+}
+<span class="k">func</span> (p *Provider) HandleNotify(
+    ctx context.Context, n plugin.Notification) <span class="k">error</span> {
+    <span class="k">if</span> n.Resync { p.cache.InvalidateAll(); <span class="k">return</span> <span class="k">nil</span> }
+    <span class="c">// tenant disabled: drop just that tenant</span>
+    p.cache.Invalidate(tenantOf(n.Data))
+    <span class="k">return</span> <span class="k">nil</span>
+}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reasons">
+      <div class="reason" data-animate>
+        <h3>Offline delivery</h3>
+        <p>When every message must arrive, turn on JetStream persistence: offline subscribers resume where they left off and acknowledge after processing. One subscriber's ACK never affects the others.</p>
+        <a class="card-link" href="../docs/en/user/04-actions/nats-events.md">Durable events</a>
+      </div>
+      <div class="reason" data-animate>
+        <h3>No long-lived connections in your backend</h3>
+        <p>Push, heartbeats, reconnects and slow clients are handled by the gateway. Backends stay stateless HTTP services and scale out without thinking about broadcast.</p>
+      </div>
+      <div class="reason" data-animate>
+        <h3>Plugins subscribe too</h3>
+        <p>An IDS plugin can cache tenants safely: declare <code>notify.tenant</code> and a tenant disabled in your tenant system is dropped from every gateway's cache within seconds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── Security ── -->
-<section id="security">
+<section id="security" class="alt">
   <div class="wrap">
     <div class="split" data-animate>
       <div>
@@ -398,7 +529,7 @@
 </section>
 
 <!-- ── Platform ── -->
-<section id="platform" class="alt">
+<section id="platform">
   <div class="wrap">
     <div class="section-head" data-animate>
       <p class="kicker">Platform</p>
@@ -435,7 +566,7 @@
 </section>
 
 <!-- ── Quick start ── -->
-<section id="quickstart">
+<section id="quickstart" class="alt">
   <div class="wrap">
     <div class="section-head" data-animate>
       <p class="kicker">Quick start</p>

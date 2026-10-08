@@ -257,7 +257,15 @@ h3 { font-size: 19px; margin: 0 0 8px; letter-spacing: -0.2px; }
 .card.example .code-window { margin-top: auto; }
 .card ul { margin: 0; padding-left: 18px; color: var(--text-2); font-size: 15px; }
 .card ul li { margin: 4px 0; }
+.card .tag.ok { color: var(--accent); background: var(--accent-soft); }
 .card-link { display: inline-block; margin-top: 16px; font-weight: 600; font-size: 14.5px; }
+
+/* ── Notify hub ──────────────────────────────────── */
+.compare { margin-bottom: 56px; }
+.compare .card { padding: 22px 26px; }
+.compare .tag { margin-bottom: 10px; }
+.notify-flow pre { font-size: 12.5px; }
+.reason .card-link { margin-top: 10px; font-size: 14px; }
 .card-link::after { content: " →"; }
 
 /* ── Connectivity rows ───────────────────────────── */

@@ -53,3 +53,6 @@ Renders `.md` files in a directory as beautiful HTML preview pages in real-time.
 
 ## Next Steps
 To learn more about the configuration parameters for each Action, see: [Site Configuration Reference](../03-configuration/site-config.md).
+
+
+- [NATS realtime subscriptions](../04-actions/nats-sse.md): `type: nats` / `mode: subscribe`.

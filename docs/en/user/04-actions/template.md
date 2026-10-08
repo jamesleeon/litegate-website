@@ -1,5 +1,6 @@
 # Template Action (Server-Side Templates)
 
+
 The `template` action renders dynamic HTML on the server using Go's `html/template`. Output is HTML-escaped by default (XSS-safe), the request context (headers / query / cookies / client IP …) is injected, and multi-file **partial reuse** (header / footer / nav) is supported.
 
 > Use cases: error/status pages, lightweight pages with a bit of dynamic data, or multi-page sites that share one layout. Equivalent to Caddy's `templates`.
@@ -38,7 +39,7 @@ action:
   <body>
     <h1>{{ .Host }}{{ .Path }}</h1>
     <p>Method: {{ .Method }} Time: {{ .Time }}</p>
-    <p>UA: {{ .Header "User-Agent" }}</p>
+    <p>UA: {{ header "User-Agent" }}</p>
   </body>
 </html>
 ```
@@ -109,20 +110,22 @@ How it works:
 
 The render context (`.`) exposes:
 
-| Field / Method | Description |
+| Field / Function | Description |
 | :--- | :--- |
 | `{{ .Host }}` | Request Host |
 | `{{ .Path }}` | Request path |
 | `{{ .Method }}` | HTTP method |
 | `{{ .ClientIP }}` | Real client IP |
 | `{{ .Time }}` | Current time (RFC3339) |
-| `{{ .Header "Key" }}` | A specific request header |
-| `{{ .Query "key" }}` | A specific query parameter |
-| `{{ .Cookie "name" }}` | A specific cookie value |
-| `{{ .Req }}` | Raw `*http.Request` (advanced) |
+| `{{ header "Key" }}` | A specific request header |
+| `{{ query "key" }}` | A specific query parameter |
+| `{{ cookie "name" }}` | A specific cookie value |
+| `{{ .Req }}` | Raw `*http.Request` (advanced; fields only) |
 | `{{ .Data.<key> }}` | Parsed JSON for a `fetch_json` entry (see §10) |
 | `{{ .Errors.<key> }}` | Error message for a failed `fetch_json` entry (`ignore` policy) |
 | `{{ .Nonce }}` | Per-request cryptographically secure nonce for CSP |
+
+> Templates call registered functions only, never methods on the data (such as `{{ .Req.FormValue "x" }}`): calling methods by name through reflection makes the linker keep every method of every dependency (about 4MB). `header` / `query` / `cookie` are functions too; the old `{{ .Header "X" }}` form fails when the template loads, and the error shows the replacement.
 
 ### 🛠️ Built-in Template Helper Functions
 
@@ -363,7 +366,7 @@ fetch_json:
   - key: stats
     url: "service://orders/api/stats"
     ttl: 10
-    cache_tags: ["orders:{{ .Header \"X-Tenant-Id\" }}"]
+    cache_tags: ["orders:{{ header \"X-Tenant-Id\" }}"]
     forward_headers: ["X-Tenant-Id"]
 ```
 

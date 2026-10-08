@@ -47,6 +47,7 @@ http:
   # upstream_transport_shards: 1  # Optional. Connection pools per upstream endpoint, to cut pool-lock contention under high concurrency; default 1 = off
   # upstream_buffer_size: 32768   # Optional. Upstream HTTP/1 connection read/write buffer in bytes (4096..65536, default 32768); large bodies bypass it
   # upstream_client: fast         # Optional. Default fast: plaintext HTTP/1.1 upstreams use a synchronous pool (lower overhead) and TLS/mTLS/HTTP2/gRPC/WebSocket automatically use the standard client; standard uses Go's net/http Transport everywhere
+  # listen_backlog: 65535        # Optional. Windows only: TCP accept queue length (1..65535, default 65535). Needs a `make windows` build; Go's default is about 200, so connection bursts get refused
   # drain_delay: 5               # drain wait in seconds; omitted = auto, 0 = off, N = fixed N seconds
   # drain_delay_ms: 250          # optional millisecond override, taking precedence over drain_delay
 ```
@@ -438,7 +439,7 @@ cache:
     db: 1
     tls: false
     pool_size: 20
-    min_idle_conns: 5
+    min_idle_conns: 5  # legacy compatibility; Redigo creates connections on demand
     dial_timeout: "3s"
     read_timeout: "2s"
     write_timeout: "2s"
@@ -455,7 +456,7 @@ redis:
   db: 0
   tls: false
   pool_size: 20
-  min_idle_conns: 5
+  min_idle_conns: 5  # legacy compatibility; Redigo creates connections on demand
   dial_timeout: "3s"
   read_timeout: "2s"
   write_timeout: "2s"
@@ -616,7 +617,8 @@ Field reference:
 | `notify_url` | string | Optional. Webhook URL to notify business systems on token events |
 | `auth_url` | string | Authorization endpoint for standard non-OIDC OAuth2 providers |
 | `token_url` | string | Token exchange endpoint for standard non-OIDC OAuth2 providers |
-| `clock_skew` | string | Permitted JWT clock skew tolerance, e.g. `5m` |
+| `user_info_url` | string | Optional OAuth2 user-info JSON endpoint, called with a bearer token. GitHub defaults to its `/user` endpoint; errors reject login. Configure this for identity-based access rules with generic OAuth2. |
+| `clock_skew` | string | Nonnegative OIDC tolerance for expiry, issued-at and not-before checks, e.g. `5m`; default `0` uses strict checks. |
 | `allowed_signing_algs` | string[] | Allowed JWT signing algorithms, e.g. `["RS256", "ES256"]` |
 | `introspection_url` | string | RFC 7662 Token Introspection endpoint |
 | `introspection_interval` | string | Token introspection refresh interval, e.g. `5m` |

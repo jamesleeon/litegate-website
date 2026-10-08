@@ -1,5 +1,6 @@
 # Status Action (System Status Dashboard)
 
+
 The `status` Action enables the gateway to render a premium, responsive system status monitoring dashboard directly to users or administrators. It automatically collects traffic metrics, QPS, latency, live metrics, and historical health status for all sites and proxy routes within the gateway, without the need to deploy complex third-party stacks like Prometheus and Grafana.
 
 It also supports multi-tenant security isolation and structured JSON output for third-party scrapers.
