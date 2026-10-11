@@ -117,3 +117,8 @@ action:
 1. **分层限速**:在 catch-all 的 `/` 路由上设一个较大的 `rate_limit` 作为第一道防线,在 `/api/compute` 等高成本接口上设更严的限制。
 2. **结合 IP 规则**:配合 [IP 限制](./ip-restriction.md)(`allow_ips` / `deny_ips`),在恶意来源消耗路由配额前就拦掉。
 3. **速率 + 并发并用**:`rate_limit` 控吞吐、`limit_conn` 控在途并发,两者叠加形成对后端的分层保护。
+
+
+## ?????
+
+????????????????? [????](bandwidth.md)?

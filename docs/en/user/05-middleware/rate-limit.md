@@ -98,3 +98,8 @@ action:
 1. **Layered throttling**: Put a broad `rate_limit` on a catch-all `/` route as a first line of defense, and tighter limits on expensive endpoints (e.g. `/api/compute`).
 2. **Combine with IP rules**: Pair rate limiting with [IP Restriction](./ip-restriction.md) (`allow_ips` / `deny_ips`) to block or isolate bad actors before they consume the route budget.
 3. **Pair rate + concurrency**: Use `rate_limit` for throughput and `limit_conn` for in-flight concurrency together for layered backend protection.
+
+
+## Large transfers
+
+See [bandwidth limits](bandwidth.md) for byte quotas and request body protection.

@@ -109,3 +109,6 @@ This section is for users and operators, focused on three core questions:
 
 
 - [NATS realtime subscriptions](04-actions/nats-sse.md): `type: nats` / `mode: subscribe`.
+
+
+- [Large transfers, bandwidth limits and request body protection](05-middleware/bandwidth.md)
