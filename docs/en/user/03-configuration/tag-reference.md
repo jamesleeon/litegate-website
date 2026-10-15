@@ -43,9 +43,46 @@ Prefix `litegate.entrypoints.<name>.`
 
 | Property | Value | Meaning |
 | :--- | :--- | :--- |
-| `address` | [ip]:port | Opens a new HTTP listener. The port must be listed in service_discovery.tag_entrypoints.allowed_ports and must not reuse a config.yaml entrypoint name or port. |
-| `protocols` | http | Optional; tag-defined entrypoints only support http. |
-| `tls.enabled` | bool | Whether the listener terminates TLS. |
+| `address` | [ip]:port | Creates a listener on an allowed port. TCP/UDP tags accept :port or 0.0.0.0:port and cannot claim an existing operator or static listener. |
+| `protocols` | http\|tcp\|udp | Optional for HTTP; TCP/UDP require one explicit protocol matching the router. |
+| `tls.enabled` | bool | TLS termination is supported on HTTP entrypoints; configure TCP passthrough on its Router. |
+
+## TCP Router
+
+Prefix `litegate.tcp.routers.<name>.`
+
+| Property | Value | Meaning |
+| :--- | :--- | :--- |
+| `entrypoints` | list | Explicit TCP entrypoints; TLS routes sharing a port merge before publication. |
+| `service` | name | An explicitly declared local TCP Service of the registering workload. |
+| `match.sni` | list | Exact or *.domain SNI for passthrough; exact then most specific wildcard; unmatched traffic is rejected. |
+| `tls.enabled` | bool | TLS requires passthrough=true; tag-defined termination is unsupported. |
+| `tls.passthrough` | bool | Forwards ClientHello and subsequent bytes unchanged; requires TLS and explicit SNI. |
+
+## TCP Service
+
+Prefix `litegate.tcp.services.<name>.`
+
+| Property | Value | Meaning |
+| :--- | :--- | :--- |
+| `loadbalancer.server.port` | int | TCP target port of the registering service; host mode requires its TCP published binding. |
+
+## UDP Router
+
+Prefix `litegate.udp.routers.<name>.`
+
+| Property | Value | Meaning |
+| :--- | :--- | :--- |
+| `entrypoints` | list | Explicit UDP entrypoints, one router per port; all TLS/SNI properties are rejected. |
+| `service` | name | An explicitly declared local UDP Service of the registering workload. |
+
+## UDP Service
+
+Prefix `litegate.udp.services.<name>.`
+
+| Property | Value | Meaning |
+| :--- | :--- | :--- |
+| `loadbalancer.server.port` | int | UDP target port with UDP-specific published binding; endpoint changes or zero instances close old sessions. |
 
 ## HTTP Router
 
@@ -53,6 +90,8 @@ Prefix `litegate.http.routers.<name>.`
 
 | Property | Value | Meaning |
 | :--- | :--- | :--- |
+| `tls.enabled` | bool | Require an already TLS-enabled entrypoint; never changes the listener. |
+| `tls.options` | name@file | Reference an operator-owned resources.tlsoptions policy. Requires a TLS entrypoint; one Host cannot declare conflicting policies across ports. |
 | `entrypoints` | list | Entrypoints to attach to; default web,websecure. Any config.yaml entrypoint may be referenced. |
 | `rule` | rule | Traefik-style rule such as Host(`a.com`) && PathPrefix(`/api`); exclusive with match.*. |
 | `priority` | int | Higher values match first. |
@@ -66,6 +105,11 @@ Prefix `litegate.http.routers.<name>.`
 | `match.headers.<header>` | value | Request header equality; the header name keeps its case. |
 | `match.query.<param>` | value | Query parameter equality. |
 | `ids.provider` | name | IDS plugin name; setting it enables IDS. |
+| `ids.response_hook.enabled` | true \| false | Enable OnResponse on the same IDS provider; login, refresh and logout may need it, API does not. |
+| `ids.response_hook.timeout` | duration | Response callback timeout, default 500ms. |
+| `ids.response_hook.max_concurrency` | integer | Response callback concurrency limit, default 100. |
+| `ids.response_hook.fail_policy` | deny \| allow | Response callback failure policy, default deny; use deny for login binding. |
+| `ids.selector_merge_policy` | intersect \| override | IDS and static selector merge policy, default intersect. |
 | `ids.operation` | name | Operation passed to the plugin, such as login, resolve or logout. |
 | `ids.failpolicy` | deny \| allow | Behaviour when the plugin fails; default deny, allow fails open only when safe. |
 | `ids.allowedheaders` | list | Headers the plugin may project to the upstream. |
@@ -82,6 +126,10 @@ Prefix `litegate.http.services.<name>.`
 
 | Property | Value | Meaning |
 | :--- | :--- | :--- |
+| `weighted.services.<slot>.name` | service name | Weighted child reference. Each slot declares name and weight; children retain separate backend pools. |
+| `weighted.services.<slot>.weight` | 1..1000000 | Child group weight, independent of its replica count. |
+| `failover.service` | service name | Primary service reference; no healthy backend selects fallback before a real attempt. |
+| `failover.fallback` | service name | Fallback service reference. Failures share the root request retry and timeout budget. |
 | `discovery.name` | name | Optional; when set it must equal the registering service (a Service always describes it). |
 | `discovery.selector.match.<key>` | value | Hard boundary: only instances whose metadata `<key>` equals the value. |
 | `discovery.selector.meta.<key>` | value | Soft preference: matching instances first, falling back to the complete hard-match set. |
@@ -90,9 +138,30 @@ Prefix `litegate.http.services.<name>.`
 | `loadbalancer.server.port` | port | Overrides the instance port; 0 or unset uses the reported port. |
 | `loadbalancer.server.scheme` | http \| https \| h2c \| grpc \| grpcs | Upstream protocol. |
 | `loadbalancer.serverstransport` | name | ServersTransport to use. |
+| `healthcheck.enabled` | bool | Explicitly enables active health checks. |
+| `healthcheck.timeout` | duration | Timeout for one probe. |
+| `healthcheck.protocol` | http\|https\|tcp\|grpc\|grpcs | Probe protocol. |
+| `healthcheck.grpcservice` | string | gRPC health service name. |
+| `healthcheck.healthythreshold` | int | Consecutive successes for recovery; default 1. |
+| `healthcheck.unhealthythreshold` | int | Consecutive failures for removal; default 3. |
+| `healthcheck.initialready` | bool | False blocks traffic before the first probe; omitted preserves optimistic startup. |
+| `retry.onstatus` | list | HTTP statuses eligible for retry. |
+| `retry.methods` | list | Methods eligible for status retry; omitted uses idempotent methods. |
+| `loadbalancer.sticky.cookie.name` | string | Sticky cookie name. |
+| `loadbalancer.sticky.cookie.ttl` | int | Cookie TTL in seconds; default 1800. |
+| `loadbalancer.sticky.cookie.secure` | bool | Explicit Secure attribute; omitted follows HTTPS. |
+| `loadbalancer.sticky.cookie.httponly` | bool | HttpOnly attribute; default true. |
+| `loadbalancer.sticky.cookie.samesite` | lax\|strict\|none | SameSite; default lax; none requires Secure. |
+| `loadbalancer.sticky.cookie.path` | string | Cookie path; default /. |
+| `loadbalancer.sticky.cookie.domain` | string | Cookie domain; omitted uses the current host. |
 | `healthcheck.path` | path | Active health-check path. |
 | `healthcheck.interval` | duration | Active health-check interval. |
 | `retry.attempts` | int | Retry attempts. |
+| `circuitbreaker.strategy` | consecutive \| failure_rate | Breaker policy; default consecutive, or failure_rate for a sliding window. |
+| `circuitbreaker.window` | seconds | Sliding-window duration; default 30 seconds, range 1–3600. |
+| `circuitbreaker.minimumrequests` | int | Minimum effective window samples; default 20, excluding client cancellations. |
+| `circuitbreaker.slowthresholdms` | milliseconds | Slow-call threshold, range 0–3600000; calls strictly above it count as breaker failures. Default 0 disables; supported by both strategies. |
+| `circuitbreaker.failureratio` | float | Failure fraction in (0,1]; default 0.5, for failure_rate only. With a slow-call threshold, uses the combined fraction of failed or slow calls. |
 | `circuitbreaker.enabled` | bool | Enables the circuit breaker. |
 | `circuitbreaker.timeout` | seconds | How long the breaker stays open; default 60. |
 | `circuitbreaker.maxrequests` | int | Requests allowed while half-open; default 1. |
@@ -104,18 +173,37 @@ Prefix `litegate.http.serverstransports.<name>.`
 
 | Property | Value | Meaning |
 | :--- | :--- | :--- |
+| `tls.servername` | DNS name | Upstream TLS SNI; does not change HTTP Host. |
+| `tls.rootca` | PEM | PEM trust anchors; gateway file paths are rejected. |
+| `dialtimeout` | duration | Connection timeout; zero inherits defaults. |
+| `tlshandshaketimeout` | duration | TLS handshake timeout; zero inherits defaults. |
+| `responseheadertimeout` | duration | Response header timeout; zero inherits defaults. |
+| `idleconntimeout` | duration | Idle connection timeout; zero inherits defaults. |
+| `maxidleconnsperhost` | int | Maximum idle HTTP connections per host. Explicit limits use one standard pool, disabling sharding and FastH1. Unsupported for grpc/h2c upstreams and gRPC health probes; zero inherits defaults. |
+| `maxconnsperhost` | int | Maximum pooled HTTP connections per host. Explicit limits use one standard pool. Upgraded raw tunnels require limit_conn. Unsupported for grpc/h2c upstreams and gRPC health probes; zero inherits defaults. |
 | `tls.enabled` | bool | Use TLS to the upstream; scheme defaults to https. |
 | `tls.insecureskipverify` | bool | Skip upstream certificate verification; not allowed with clientcertificate. |
 | `tls.clientcertificate` | litemesh | Mutual TLS with the Litemesh identity. |
 
 ## HTTP Middleware
 
-Written `litegate.http.middlewares.<name>.<type>.<property>=<value>`; the properties are the same as the `config` of that middleware type in site YAML and are validated by the middleware itself. Built-in types: `api_key`, `basic_auth`, `chain`, `circuit_breaker`, `compress`, `cors`, `headers`, `jwt_auth`, `limit_conn`, `mirror`, `ratelimit`, `redirect_regex`, `redirect_scheme`, `remote_auth`, `replace_path_regex`, `retry`, `rewrite`, `strip_prefix`. A middleware has exactly one type. `retry` and `circuit_breaker` are deprecated (still working, with a load-time warning); use the Service's `retry.attempts` and `circuitbreaker.*` instead.
+Written `litegate.http.middlewares.<name>.<type>.<property>=<value>`; the properties are the same as the `config` of that middleware type in site YAML and are validated by the middleware itself. Built-in types: `api_key`, `basic_auth`, `chain`, `circuit_breaker`, `compress`, `cors`, `csrf`, `headers`, `ip_restriction`, `jwt_auth`, `limit_conn`, `mirror`, `ratelimit`, `redirect_regex`, `redirect_scheme`, `remote_auth`, `replace_path_regex`, `retry`, `rewrite`, `strip_prefix`. A middleware has exactly one type. `retry` and `circuit_breaker` are deprecated (still working, with a load-time warning); use the Service's `retry.attempts` and `circuitbreaker.*` instead.
+
+### Route IP access control
+
+The `ip_restriction` middleware accepts `allow_ips` and `deny_ips` as comma-separated IPv4, IPv6 or CIDR values. At least one is required; empty items and invalid addresses are rejected at load time. Deny takes precedence over allow. Reference it in a Router's `middlewares` to restrict that route while retaining global and site restrictions. It uses the ingress-resolved client IP; forwarding headers only affect IP resolution through trusted proxies.
+
+```text
+litegate.http.routers.admin.match.path_prefix=/admin
+litegate.http.routers.admin.middlewares=internal-only
+litegate.http.middlewares.internal-only.ip_restriction.allow_ips=10.0.0.0/8,192.168.0.0/16,fd00::/8
+```
 
 ## Other tags
 
 | Tag | Scope | Meaning |
 | :--- | :--- | :--- |
+| `litegate.swarm.lbswarm` | provider | Swarm: true selects the Service VIP on an explicit non-ingress network; false keeps Task addresses. VIP rejects instance selectors, tag preferences and gray routing. |
 | `litegate.enable` | provider | Docker/Swarm: explicitly opt the container in or out of discovery (true/false). Unset: any litegate.* label opts in. |
 | `litegate.docker.network` | provider | Docker/Swarm: network whose address is used to reach the container. |
 | `litegate.docker.usehostport` | provider | Docker: reach the container through its published host port (not supported on Swarm). |

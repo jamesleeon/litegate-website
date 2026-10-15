@@ -7,14 +7,13 @@ LiteGate features a powerful server-side Markdown compilation engine, enabling y
 ## 1. Basic Configuration
 
 ```yaml
-domain: docs.example.com
+site: docs.example.com
 routes:
   - name: internal-docs
     match:
       path_prefix: /
-    action:
-      type: markdown
-      root: "./docs-repo"    # Filesystem path to your markdown files
+    markdown:
+      root: "./docs-repo" # Filesystem path to your markdown files
 ```
 
 ---
@@ -54,14 +53,15 @@ By combining the WebDAV action with the Markdown action, you can establish a rob
 
 ```yaml
 # sites/wiki.yaml
-domain: wiki.local
+site: wiki.local
 routes:
   - name: view
-    match: { path_prefix: "/view" }
-    action: { type: markdown, root: "./data/wiki" }
+    match: {path_prefix: "/view"}
+    markdown: {root: "./data/wiki"}
   - name: edit
-    match: { path_prefix: "/edit" }
-    action: { type: webdav, root: "./data/wiki", strip_prefix: "/edit" }
+    match: {path_prefix: "/edit"}
+    strip_prefix: "/edit"
+    webdav: "./data/wiki"
 ```
 
 ---

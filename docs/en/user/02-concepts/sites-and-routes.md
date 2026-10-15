@@ -12,8 +12,8 @@ A **Site** corresponds to a unique domain name (Domain). It represents the small
 - **File Location**: Usually placed under the `sites/*.yaml` folder, where the file name corresponds to the domain name.
 
 ### Site-Level Global Settings
-- `domain`: The domain name of the site (e.g., `example.com`).
-- `force_https`: Whether to automatically enforce redirection from HTTP to HTTPS in browsers.
+- `site`: The domain name of the site (e.g., `example.com`).
+- `https`: Whether to automatically enforce redirection from HTTP to HTTPS in browsers.
 - `middleware`: Security policies (e.g., authentication, rate limiting) shared by all routes under this domain.
 
 ---
@@ -100,20 +100,16 @@ Suppose you have defined two routes:
 ## 5. Sample Configuration File
 
 ```yaml
-domain: api.demo.com
+site: api.demo.com
 routes:
   - name: auth-engine
     match:
       path_prefix: /auth
-    action:
-      type: proxy
-      upstream: ["10.0.0.1:9000"]
-      
+    proxy: ["10.0.0.1:9000"]
   - name: default-handler
     match:
       path_prefix: /
-    action:
-      type: respond
+    respond:
       status: 200
       body: "Default API Gateway Response"
 ```

@@ -22,15 +22,17 @@ LiteGate employs a standard **Longest Prefix Matching** strategy. This means tha
 
 ## 2. Order of Match Attempt (List Order)
 
-If two routes have identical path prefixes, LiteGate attempts to match them in the **order they are declared** from top to bottom in the configuration file.
+v2 rejects duplicate normalized matches. Distinguish routes sharing a prefix by method or header conditions; use priority for overlapping complex rules.
 
 ```yaml
+site: example.com
 routes:
   - name: first-match
-    match: { path_prefix: "/data" }
-    
+    match: {path_prefix: "/data", method: [GET]}
+    respond: first-match
   - name: second-match
-    match: { path_prefix: "/data" } # This route will never match because it is intercepted above.
+    match: {path_prefix: "/data", method: [POST]}
+    respond: second-match
 ```
 
 ---

@@ -45,7 +45,7 @@ Once enabled:
 - `my-app.internal` — matches `my-app.internal` exactly, and its subdomains like `x.my-app.internal`;
 - Domains not in the list are **never** signed by the Local CA (public domains still go through ACME).
 
-This restriction ensures that even if the Root CA private key leaks, the impact is confined to local/internal domains.
+This allow-list restricts LiteGate's normal signing requests, not an attacker holding a leaked Root CA private key. Protect that key; clients receive only the root certificate.
 
 ---
 
@@ -95,5 +95,6 @@ Then `https://app.localhost` is trusted HTTPS with no certificate warning.
 ---
 
 ## Further Reading
+- [LAN CAs and service mTLS](lan-ca-and-mtls.md)
 - [Auto-Cert](./auto-cert.md)
 - [On-Demand TLS](./on-demand-cert.md)

@@ -406,7 +406,8 @@ service_discovery:
       provider: "docker"
       socket_path: "/var/run/docker.sock"
       network_mode: "internal"     # internal (container network IP) or external (host port-mapped IP)
-      swarm_mode: false            # enable Swarm mode (false enables adaptive detection)
+      swarm_mode: false            # explicit Swarm mode
+      swarm_auto_detect: false     # opt in to manager-only detection
 
   tag_entrypoints:
     allowed_ports: []              # ports service tags may open (HTTP entrypoints and TCP/UDP streams), e.g. [8080, 15432]
@@ -414,7 +415,23 @@ service_discovery:
 
 Service tags (`litegate.entrypoints.<name>.address`, `litegate.tcp.port`, `litegate.udp.port`) may open a listener only on a port listed in `tag_entrypoints.allowed_ports`, and never with the name or port of an entrypoint in this file. When the list is empty, tags cannot open ports and may only reference existing entrypoints (`web` and `websecure` by default). See the Service Tags Guide.
 
-`network_mode` selects between the container network IP (`internal`) and the host port-mapped IP (`external`). `swarm_mode` left at `false` enables adaptive detection.
+`network_mode` selects between the container network IP (`internal`) and the host port-mapped IP (`external`). Swarm detection is opt-in through `swarm_auto_detect: true` or `LITEGATE_SWARM_AUTO_DETECT=true`; `swarm_mode: true` explicitly enables Swarm without detection. Detection failures reject startup rather than silently selecting standalone mode.
+
+Docker catalogs also accept `constraints`, a strict expression composed of `Label("key", "value")`, `LabelRegex("key", "regex")`, `!`, `&&`, `||`, and parentheses. It filters original container/Service labels on complete snapshots and event refreshes, including declarations with zero Tasks. Invalid expressions reject startup. For example: `constraints: 'Label("team", "payments") && !LabelRegex("environment", "^test$")'`.
+
+An SSH endpoint uses pure Go SSH and executes the fixed command `docker system dial-stdio`; the remote host must provide Docker CLI access for that user. The same client performs Swarm detection and later discovery calls. Operator authentication and host trust are configured on the catalog:
+
+```yaml
+socket_path: "ssh://root@192.168.50.44:22"
+ssh:
+  password_env: "LITEGATE_DOCKER_SSH_PASSWORD"
+  known_hosts_file: "/etc/litegate/known_hosts"
+  connect_timeout: "10s"
+  # private_key_file: "/etc/litegate/docker_ed25519"
+  # agent_socket: "/run/ssh-agent.sock"
+```
+
+The password comes only from the named environment variable; URL passwords are rejected. Private keys and an SSH agent are optional operator alternatives. With no explicit authentication, `SSH_AUTH_SOCK` is used. Host verification uses the configured known_hosts file (default `~/.ssh/known_hosts`) and negotiates algorithms matching pinned keys; unknown or changed keys fail. Connection setup, authentication and remote execution share the bounded `connect_timeout`. Established HTTP streams outlive their initial dial context and close when the client stops or a stream deadline expires.
 
 > [!NOTE]
 > `catalogs` is an array. The old single-object `catalog` form is gone from the current code.
@@ -427,7 +444,13 @@ Service tags (`litegate.entrypoints.<name>.address`, `litegate.tcp.port`, `liteg
 ```yaml
 cache:
   local_ttl: "60s"
-  proxy_cache_max_entries: 10000  # maximum reverse-proxy cache entries; evicted by LRU to prevent OOM
+  proxy_cache_max_entries: 10000  # local proxy-cache LRU entry limit
+  proxy_cache:
+    backend: local              # local | redis; Redis must also be enabled below
+    namespace: default          # separate environments
+    max_object_bytes: 262144    # 256KB
+    redis_timeout: 200ms
+    # stale_while_revalidate: 0s # Redis defaults to zero; local otherwise honors upstream
   redis:
     enabled: false
     mode: "standalone"              # standalone or cluster
@@ -463,7 +486,7 @@ redis:
   max_retries: 2
 ```
 
-`proxy_cache_max_entries` bounds the reverse-proxy content cache, evicting by LRU so it cannot grow into an OOM. `addr` is an alias for `address`; `addrs` lists Redis Cluster nodes.
+`proxy_cache_max_entries` bounds local response-cache entries. Select `cache.proxy_cache.backend: redis` explicitly for shared multi-node responses; enabling Redis alone does not switch this backend. Connections prefer enabled cache.redis, then global redis. Configure Redis capacity independently. Redis failures bypass caching; stale responses are disabled by default. Successful proxy writes can invalidate named read routes with `on_success.invalidate_proxy_cache`. Dashboard `POST /api/proxy-cache/purge` supports all/site/route/key scopes with existing authentication. `addr` is an alias for `address`; `addrs` lists Redis Cluster nodes.
 
 ---
 
@@ -659,6 +682,8 @@ real_ip:
 ```
 
 * **`trusted_proxies`**: which upstream proxies the gateway trusts when resolving the real client IP from `X-Forwarded-For`. Normally just the specific IPs of your front-facing load balancers. Empty by default: no peer is trusted, `X-Forwarded-For` is ignored and the client IP is the direct connection address. When nginx or another proxy runs on the same host in front of LiteGate, add `127.0.0.1` explicitly.
+Per-IP limits use the client address resolved at ingress, never the raw request header. XFF is honored only when the direct peer belongs to `real_ip.trusted_proxies` (or a Unix ingress protected by filesystem permissions). All same-name fields form one chain, scanned right to left for the first untrusted IP; IPv4/IPv6 representations are canonicalized. Invalid or empty boundary hops fall back to the direct peer. The front proxy must overwrite incoming XFF or append the client IP it actually observes on the right of the complete chain. A gateway cannot authenticate client-supplied addresses blindly passed through by its trusted proxy. Do not trust public client networks, `0.0.0.0/0` or `::/0`.
+
 * **`selector_trusted_clients`**: the networks allowed to perform east-west instance routing via `X-Selector-Sid`. Only requests originating inside these ranges may have that header honoured for physical instance isolation; a `X-Selector-Sid` arriving from anywhere else is stripped at ingress, so it cannot be forged externally. If unset, this falls back to `trusted_proxies`.
 
 ---
@@ -899,3 +924,6 @@ Proxy objects and named Services reference this configuration with `resolver: co
 Set site-level `ech: ech.example.com` or `ech: ech.example.net` to select the public name and its DNS provider; domains are derived automatically. Boolean true is accepted only with one group; false disables ECH. Groups independently manage keys, rotation, DNS publication and KV leases. Default prefixes are litegate/ech/<public_name>/. Root key_prefix is a parent directory; group-level key_prefix is an exact, unique prefix. Legacy single-group configs keep their original state path and litegate/ech/default/ prefix. Site selection reloads live; group configuration changes require restart.
 
 Third-party ECH DNS providers implement `plugin.HTTPSDNSProvider` and register the `https_records` capability. LiteGate owns ECH keys, rotation, KV synchronization, leases and retries; plugins only publish/withdraw public HTTPS records. HTTPS-only providers need separate certificate coverage; their domain selectors are excluded from certificate DNS-01 routing at runtime.
+# SSH host certificates
+
+Docker SSH also supports matching `@cert-authority` entries in known_hosts. Host certificates retain strict CA, principal and revocation verification; untrusted certificates never bypass pinned-key verification.

@@ -28,8 +28,9 @@ auto_cert:
 
 ### Site Declaration YAML
 ```yaml
-domain: "*"  # Pair with catch-all wildcard configurations
-force_https: true
+site: "*" # Pair with catch-all wildcard configurations
+https: true
+respond: Hello, LiteGate!
 ```
 
 ---

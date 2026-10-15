@@ -93,7 +93,7 @@ socks5:
 
 SOCKS5 selects destinations per connection and requires an allowlist; it does not
 use a fixed `proxy`. Use `litegate -t` before applying configuration. MCP clients
-should read `get_stream_config_schema`, validate with `validate_stream_config`,
+should read `get_config_guide(topic=stream, lang=en)` (use `lang=zh` for Chinese) or `get_stream_config_schema`, validate with `validate_stream_config`,
 then save with `save_stream_config`. Saving is not proof that reload succeeded;
 inspect runtime streams and test connectivity after applying changes.
 
@@ -137,3 +137,12 @@ and a shared Stream unless the Stream taking precedence is intentional.
 
 See [Stream field reference](stream-config.md) for advanced TLS routes, UDP,
 PROXY protocol, service discovery and operational details.
+
+### Load-balancing policies and scope
+
+- `lb_policy` supports `round_robin` (default), `ip_hash`, `weighted` / `weighted_round_robin` (smooth weighted round robin), `least_conn`, `p2c`, and registered plugin policies. L4 does not support the HTTP `cookie` policy.
+- When every entry in `backends` (including `tls_routes[].backends`) is a static `upstream`, `lb_policy` selects the backend. The default is round robin. Weighted round robin uses each backend's `weight`; omitted or non-positive weights count as 1. IP hash preserves the backend for a client IP while the candidate pool remains unchanged.
+- Discovered `service_name` instances use `lb_policy`. Lists containing discovery targets retain two selection stages: backend weights randomly select a target service/backend, then `lb_policy` selects an instance within that service. IP hash in these lists provides affinity within a service, not across target services.
+- `least_conn` compares active TCP connections or UDP virtual sessions and selects uniformly at random among ties. UDP selects a backend when a client-source/destination session is created and reuses it for subsequent datagrams. Idle expiry or closure releases the session count.
+- `p2c` compares two candidates by active count, then EWMA latency. TCP measures successful connection establishment; UDP measures the first upstream datagram to the first backend response, once per session. One-way sessions without a response do not supply latency samples. These are not per-request application latency measurements.
+- Static backend selection changes from weighted random to round robin by default. Set `lb_policy: weighted` explicitly for weighted traffic distribution.

@@ -9,14 +9,12 @@ LiteGate **原生支持** WebSocket 协议代理，无需额外配置。当客�
 只需正常配置 `proxy` Action 即可：
 
 ```yaml
-domain: ws.example.com
+site: ws.example.com
 routes:
   - name: websocket-api
     match:
       path_prefix: /ws
-    action:
-      type: proxy
-      upstream: ["10.0.0.5:8080"]
+    proxy: ["10.0.0.5:8080"]
 ```
 
 LiteGate 会自动处理 `Connection: Upgrade` 和 `Upgrade: websocket` 头部。
@@ -28,10 +26,9 @@ LiteGate 会自动处理 `Connection: Upgrade` 和 `Upgrade: websocket` 头部�
 WebSocket 连接通常是长生命周期的。如果遇到连接被意外断开的情况，请调整超时参数：
 
 ```yaml
-action:
-  type: proxy
-  upstream: ["10.0.0.5:8080"]
-  flush_interval: -1          # 启用即时刷新（推荐）
+site: example.com
+flush_interval: -1 # 启用即时刷新（推荐）
+proxy: ["10.0.0.5:8080"]
 ```
 
 ---

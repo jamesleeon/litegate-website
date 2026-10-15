@@ -19,12 +19,12 @@ LiteGate features an integrated high-performance ACME client that orchestrates t
 Best suited for deployments where port 80 is exposed publicly on the internet.
 
 ```yaml
-domain: example.com
-force_https: true # Activating HTTPS forcing implicitly activates Auto-Cert
+site: example.com
+https: true # Activating HTTPS forcing implicitly activates Auto-Cert
 routes:
   - name: my-app
-    match: { path_prefix: "/" }
-    action: { type: proxy, upstream: ["localhost:8080"] }
+    match: {path_prefix: "/"}
+    proxy: ["localhost:8080"]
 ```
 
 ### TLS-ALPN-01 Challenge (Port 443, No Port 80 or DNS Needed)
@@ -175,5 +175,5 @@ To force a renewal, physically delete the target domain's certificate files (e.g
 ---
 
 ## Further Reading
-- [Configuring Global Auto-Cert Parameters](../03-configuration/global-config.md#2-automated-certificate-auto-cert)
+- [Configuring Global Auto-Cert Parameters](../03-configuration/global-config.md)
 - [Production Deployment Recommendations](../10-deployment/production.md)

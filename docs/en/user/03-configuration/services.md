@@ -1,6 +1,6 @@
 # Named Services and Configuration Layers
 
-This page covers `services` / `serverstransports` in site configuration, and where a capability belongs: a route, a middleware or a Service. The last section lists what to check when upgrading from an older version.
+This page covers `services` / `transports` in site configuration, and where a capability belongs: a route, a middleware or a Service. The last section lists what to check when upgrading from an older version.
 
 ---
 
@@ -27,15 +27,16 @@ To decide where a setting belongs, ask whether it needs to know the backend:
 Before: each route repeats the upstream settings.
 
 ```yaml
+site: example.com
 routes:
-  - match: { path_prefix: /orders }
+  - match: {path_prefix: /orders}
     action:
       type: proxy
       service_name: orders
       lb_policy: least_conn
       timeout: 5
       retry: 2
-  - match: { path_prefix: /v2/orders }
+  - match: {path_prefix: /v2/orders}
     action:
       type: proxy
       service_name: orders
@@ -47,18 +48,18 @@ routes:
 Now: define "how to reach the backend" once and reference it by name.
 
 ```yaml
+site: api.example.com
 services:
   orders:
-    discovery: { name: orders }
+    discovery: {name: orders}
     timeout: 5s
-    loadbalancer: { strategy: least_conn }
-    retry: { attempts: 2 }
-
-routes:
-  - match: { path_prefix: /orders }
-    action: { service: orders }
-  - match: { path_prefix: /v2/orders }
-    action: { service: orders }
+    loadbalancer: {strategy: least_conn}
+    retry: {attempts: 2}
+    circuitbreaker: {enabled: true, timeout: 60, maxrequests: 1, tripthreshold: 3}
+/orders:
+  service: orders
+/v2/orders:
+  service: orders
 ```
 
 Both forms behave the same, and the old form keeps working. Routes referencing the same Service share health and circuit-breaker state; a discovery-based Service also shares one load balancer, while static `servers` keep a round-robin position per route.
@@ -105,36 +106,78 @@ services:
 | `healthcheck.path` / `healthcheck.interval` | same | Active health check |
 | `retry.attempts` | `retry.attempts` | Number of retries after a failure |
 | `circuitbreaker.enabled` / `timeout` / `maxrequests` / `tripthreshold` | same | Circuit breaker: on/off, open duration in seconds, half-open requests, consecutive failures that trip it |
+| `circuitbreaker.strategy` / `window` / `minimumrequests` / `failureratio` | same | Sliding-window failure-rate policy; see [circuit breaking](../09-advanced/circuit-breaker.md) |
+| `circuitbreaker.slowthresholdms` | same | Slow-call threshold in milliseconds, default 0 (disabled), range 0–3600000; calls strictly above it also count as breaker failures |
 
 Note: these keys follow the tag spelling (`maxrequests`, `serverstransport`), not the underscore form.
 
-## 4. `serverstransports` Fields
+### Static upstreams with sliding-window breaking (no registry required)
+
+YAML `services` defines local upstreams and does not require service registration. Use `servers` directly with the sliding-window policy:
 
 ```yaml
-serverstransports:
+site: api.example.com
+services:
+  payment:
+    to: ["http://127.0.0.1:8080", "http://127.0.0.1:8081"]
+    timeout: 5s
+    circuitbreaker:
+      enabled: true
+      strategy: failure_rate
+      window: 30
+      minimumrequests: 20
+      failureratio: 0.5
+      timeout: 30
+      maxrequests: 1
+/api/payment:
+  service: payment
+```
+
+Statistics are per address; choose either `servers` or `discovery`. Request timeout `timeout: 5s` differs from open-state duration `circuitbreaker.timeout: 30`. See [circuit breaking](../09-advanced/circuit-breaker.md) for details.
+
+### Isolating slow upstreams by latency
+
+Add `slowthresholdms: 500` to the `circuitbreaker` above to count calls exceeding 500ms as breaker failures, including HTTP 200 responses. Each instance needs at least 20 effective completed calls in the last 30 seconds. When the combined fraction of failed or slow calls reaches 50%, requests to that instance are blocked for 30 seconds. Each call counts once, and the response that triggers opening is still returned to the client.
+
+After cooldown, half-open probes must succeed within the latency threshold to restore traffic; a slow probe reopens the circuit. Add Service `retry: {attempts: 1}` to try another upstream after a fast breaker rejection. When all upstreams are unavailable and the final error is a breaker rejection, the response is 503.
+
+The threshold measures HTTP RoundTrip through response headers, excludes body reads, and does not interrupt a request. Service `timeout` still controls individual request timeouts. Both static `servers` and `discovery` support it; `consecutive` also counts slow calls toward the failure streak. See [latency-based circuit breaking](../09-advanced/circuit-breaker.md#latency-based-circuit-breaking) for a full example and cancellation handling.
+
+## 4. `transports` Fields
+
+```yaml
+site: example.com
+transports:
   mesh:
     tls:
-      enabled: true               # TLS to the upstream; scheme defaults to https when the Service sets none
+      enabled: true # TLS to the upstream; scheme defaults to https when the Service sets none
       clientcertificate: litemesh # mutual TLS with the Litemesh identity
-      insecureskipverify: false   # skip upstream certificate checks; not allowed with clientcertificate
+      insecureskipverify: false # skip upstream certificate checks; not allowed with clientcertificate
+respond: Hello, LiteGate!
 ```
 
 ---
 
 ## 5. Reference Rules
 
-*   The Service referenced by `action.service` must be defined in the same site's `services`; otherwise loading fails.
-*   `type` may be omitted when referencing a Service; it defaults to `proxy`.
+*   The Service referenced by V2 route `service` (or compatibility `action.service`) must be defined in the same site's `services`; otherwise loading fails.
+*   Use `service: name` directly in v2. When using an advanced `action` block, specify `type: proxy` explicitly.
 *   **A route's backend has exactly one source of configuration.** A route that references a `service` cannot also set these upstream fields inline: `service_name`, `upstream`, `lb_policy`, `timeout`, `retry`, `circuit_breaker`, `health_check`, `route_selector`, `route_meta`, `service_port`, `proto`, `insecure_skip_verify`, `mtls`. Loading fails otherwise.
-*   Fields that are not Service settings, such as `strip_prefix` and `headers`, stay on the action:
+*   In V2, governance fields such as `strip_prefix` and `request_headers` go directly on the path route; reference named middleware with `use`:
 
 ```yaml
-routes:
-  - match: { path_prefix: /api/orders }
-    middlewares: [web-cors]
-    action:
-      service: orders
-      strip_prefix: /api
+site: api.example.com
+services:
+  orders:
+    to: ["http://127.0.0.1:8080"]
+middlewares:
+  web-cors:
+    type: cors
+    config: {allowed_origins: "https://app.example.com"}
+/api/orders:
+  use: web-cors
+  service: orders
+  strip_prefix: /api
 ```
 
 ---

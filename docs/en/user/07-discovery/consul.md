@@ -1,62 +1,61 @@
-# Consul Service Discovery Integration
+# Consul Service Discovery
 
-LiteGate supports integrating HashiCorp Consul as an upstream service catalog provider. The gateway periodically synchronizes active instances registered under the Consul Catalog, dynamically adjusting active load-balancing pools based on Consul health check states.
-
----
-
-## 1. Global Activation
-
-Configure your Consul agent connections globally in `config.yaml`:
+Configure a catalog in global config.yaml, then reference the registered service by discovery.name in a site YAML file. Registration does not by itself require automatic tag routing; use the following explicit YAML route or the resource tag model below.
 
 ```yaml
 service_discovery:
   catalogs:
     - enabled: true
-      provider: "consul"
-      url: "http://127.0.0.1:8500" # Typically targets the local Consul Agent
-      token: "ACL-TOKEN-HERE"      # Mandated if ACL rules are active
+      provider: consul
+      url: "http://127.0.0.1:8500"
 ```
 
----
-
-## 2. Binding Upstreams in Route Configurations
-
-Once defined globally, reference active Consul services in any route using `upstream_type: consul`:
+Site YAML:
 
 ```yaml
-domain: api.example.com
-routes:
-  - name: user-service-route
-    match: 
-      path_prefix: "/users"
-    action:
-      type: proxy
-      upstream_type: consul
-      service_name: "user-api" # Matches the Consul Catalog service identifier
-      lb_policy: round_robin
+site: api.example.com
+services:
+  orders:
+    discovery:
+      name: orders
+    timeout: 5s
+    circuitbreaker:
+      enabled: true
+      strategy: failure_rate
+      window: 30
+      minimumrequests: 20
+      failureratio: 0.5
+/orders:
+  service: orders
+  rate_limit:
+    rate: 100
+    key: ip
+    algorithm: sliding_window_log
+    window: 1m
 ```
 
----
+## Traffic protection on registered services
 
-## 3. Dynamic Health Checking & Evictions
+Register this identical resource tag set on every orders instance. Rate limiting admits at most 100 requests per client IP in a one-minute sliding log window. Circuit breaking tracks completed upstream outcomes independently per backend address over 30 seconds, opening at 20 samples and a failure ratio of 0.5. Rate-limit window accepts a duration (1m) or integer milliseconds; breaker window is integer seconds (30). Deregistration removes an instance after the discovery update reaches the gateway; requests during that propagation interval can still fail. Backend failures remain breaker samples. Do not mix named resources with shortcut tags.
 
-To safeguard traffic, LiteGate exclusively routes requests to Consul service instances marked in a **Passing** health state:
-- **Periodic Syncing**: The gateway polls the catalog agent every **5 seconds** (interval is configurable) to perform delta instance evaluations.
-- **Failover Eviction**: If an instance shifts to a **Critical** state in Consul, LiteGate evicts it from the active load-balancer target list during the subsequent synchronization loop.
+```properties
+litegate.http.routers.orders.match.hosts=api.example.com
+litegate.http.routers.orders.match.path_prefix=/orders
+litegate.http.routers.orders.service=orders
+litegate.http.routers.orders.middlewares=orders-limit
+litegate.http.middlewares.orders-limit.ratelimit.qps=100
+litegate.http.middlewares.orders-limit.ratelimit.key=ip
+litegate.http.middlewares.orders-limit.ratelimit.algorithm=sliding_window_log
+litegate.http.middlewares.orders-limit.ratelimit.window=1m
+litegate.http.services.orders.circuitbreaker.enabled=true
+litegate.http.services.orders.circuitbreaker.strategy=failure_rate
+litegate.http.services.orders.circuitbreaker.window=30
+litegate.http.services.orders.circuitbreaker.minimumrequests=20
+litegate.http.services.orders.circuitbreaker.failureratio=0.5
+```
 
----
+For MCP generation, read `get_config_guide(topic="traffic")`, then run `preview_service_tags`: errors must be fixed; review warnings before applying. For YAML, run `validate_site_config` before `save_site_config`.
 
-## 4. Architectural Comparison: Consul vs. Litemesh
+The registered service name must match discovery.name. Do not configure the same route in both YAML and automatic tags. Discovery update latency depends on the provider and connection; this guide promises no fixed propagation time or automatic transport encryption. Configure authentication and transport security separately.
 
-| Capability | Consul Catalog | Litemesh Mesh |
-| :--- | :--- | :--- |
-| **Sync Mechanism** | Pull-Based Polling | Event-Driven Push (Server-Sent Events) |
-| **Latency Threshold** | Seconds (1s to 5s) | Milliseconds (< 500ms) |
-| **Tenant Isolation** | Consul Namespace namespaces | Tenant Steering (via SID/Env tags) |
-| **Primary Scope** | Legacy Microservice Networks | Modern Cloud-Native Zero-Trust Meshes |
-
----
-
-## Further Reading
-- [Integrating Litemesh Service Discoveries](./litemesh.md)
-- [Understanding Load Balancing Policies](../02-concepts/actions.md#负载均衡协议)
+[Discovery overview](./overview.md) · [Rate limiting](../05-middleware/rate-limit.md) · [Circuit breaker](../09-advanced/circuit-breaker.md)

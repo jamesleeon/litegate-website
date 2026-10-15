@@ -12,12 +12,12 @@
 你只需要在路由的 `action` 中将类型指定为 `status`，即可在对应路径上启用状态面板：
 
 ```yaml
+site: example.com
 routes:
   - name: "system-status"
     match:
       path: "/status"
-    action:
-      type: "status" # Set type to status
+    status: {}
 ```
 
 访问该路由路径（如 `http://example.com/status`）即可看到系统状态仪表盘。
@@ -29,15 +29,16 @@ routes:
 `status` Action 提供了丰富的自定义参数，允许你定制看板的标题、可见范围、模板以及是否展示后端实例等：
 
 ```yaml
+site: example.com
 action:
   type: "status"
   title: "LiteGate Platform Status" # Custom dashboard title
-  host: "self"                     # "self" to filter by current host, or "*" for all sites
-  show_instances: false            # Whether to render detailed backend physical instances
-  template: "./site/status.html"   # Optional path to a custom template
-  template_root: "./site"          # Optional path to template partials root
-  template_debug: false            # Enable debug mode (reload template every request)
-  template_production: true        # Enable production mode (cache compiled template)
+  host: "self" # "self" to filter by current host, or "*" for all sites
+  show_instances: false # Whether to render detailed backend physical instances
+  template: "./site/status.html" # Optional path to a custom template
+  template_root: "./site" # Optional path to template partials root
+  template_debug: false # Enable debug mode (reload template every request)
+  template_production: true # Enable production mode (cache compiled template)
 ```
 
 | 字段 | 类型 | 默认值 | 说明 |
@@ -59,6 +60,7 @@ action:
 状态页的自定义模板与 [`template` action](./template.md) 共用同一套加载引擎，因此**同样支持从 litemesh / Consul KV 分布式加载**：模板内容存在 KV 里，多节点无需本地分发文件，纯内存编译、KV 变更热更新、拉取失败自动回退上一份缓存。
 
 ```yaml
+site: example.com
 action:
   type: "status"
   title: "LiteGate Platform Status"
@@ -66,7 +68,7 @@ action:
   template_kv_mode: true
   template_kv_provider: "litemesh"
   template_kv_prefix: "litegate/tmpl/status-a/"
-  template: "status.html"   # 相对 prefix 的主模板 key 后缀
+  template: "status.html" # 相对 prefix 的主模板 key 后缀
 ```
 
 资源边界（≤100 片段 / 单片段 ≤1MB / 总量 ≤10MB）与安全提示（KV 写入权限视同代码部署权限）同 `template` action；KV 模式下 `{{ markdown "x.md" }}` 的文件加载形式不可用（仅支持内联）。

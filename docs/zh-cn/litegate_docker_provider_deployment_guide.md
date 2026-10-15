@@ -1,5 +1,7 @@
 # LiteGate Docker Provider 部署与配置官方指南
 
+> **catalog 标识迁移**：原来的 `discovery.instance: docker/0` 等位置引用已不再生效，请改用 catalog 的 `name`。未命名 catalog 使用内部哈希标识，需要显式引用时请先起名。每 catalog TLS、Windows named pipe 和迁移示例见 [Docker catalog 标识和连接配置](docker_catalog_identity_and_transport.md)。
+
 LiteGate 提供内置的高性能、零侵入式 **Docker 动态服务发现（Docker Provider）** 引擎。通过直接监听 Docker 守护进程（Docker Daemon）的实时事件流（Events Stream），LiteGate 能够秒级感应容器的启动、销毁和健康状态变更，动态调整其内部的反向代理 Upstream 负载均衡环，真正做到**业务上线即路由，业务下线即剥离**。
 
 本指南将深入介绍 Docker Provider 的核心工作机制、网关参数配置、容器标签（Labels）定义规范、主流部署拓扑结构以及生产级最佳实践。

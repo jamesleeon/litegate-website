@@ -20,18 +20,17 @@ WAF 默认扫描并可拦截以下模式:
 在路由的 `action` 下加 `waf` 块:
 
 ```yaml
+site: example.com
 routes:
   - name: app
     match:
       path_prefix: /
-    action:
-      type: proxy
-      upstream:
-        - "localhost:8080"
-      waf:
-        enabled: true
-        block_mode: true       # true = 拦截并返回 403;false = 仅记录日志/指标
-        sensitivity: medium    # low | medium | high
+    waf:
+      enabled: true
+      block_mode: true # true = 拦截并返回 403;false = 仅记录日志/指标
+      sensitivity: medium # low | medium | high
+    proxy:
+      - "localhost:8080"
 ```
 
 | 字段 | 类型 | 作用 |

@@ -23,14 +23,11 @@ The static configuration is typically used to declare:
 The most common example is:
 
 ```yaml
-domain: a.example.com
+site: a.example.com
 routes:
   - match:
       path_prefix: /
-    action:
-      type: serve
-      root: "/srv/www/app"
-      spa: true
+    spa: "/srv/www/app"
 ```
 
 This part represents the "frontend entrance" or "stable traffic contracts."

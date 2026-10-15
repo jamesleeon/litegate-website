@@ -28,8 +28,9 @@ disable_trace_id: true
 在站点配置 `sites/*.yaml` 中：
 
 ```yaml
-domain: example.com
+site: example.com
 disable_trace_id: true
+respond: Hello, LiteGate!
 ```
 
 ---

@@ -68,13 +68,13 @@ plugin.RegisterDNSProviderV2("mydns", plugin.DNSProviderRegistration{
 
 通过 `litegate build --with your-module/mydns -o litegate` 编入插件后，`auto_cert.dns_providers[].type` 填注册名（如 mydns），ECH 的 dns_provider 填该配置项的 name。沿用普通 ECH 配置，KV/storage 仍配置在主 ech 块，不传给插件。未声明能力或声明后未实现接口都会被拒绝。
 
-可编译示例见 [memory DNS 插件](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/memory/memory.go)，展示所有权检查、更新与撤回；该示例仅内存存储，不会修改权威 DNS，不适用于生产发布。部署与客户端验证见 [ECH 配置指南](user/06-certificates/ech.md)。
+可编译示例见 [memory DNS 插件](../../examples/plugins/dns/memory/memory.go)，展示所有权检查、更新与撤回；该示例仅内存存储，不会修改权威 DNS，不适用于生产发布。部署与客户端验证见 [ECH 配置指南](user/06-certificates/ech.md)。
 
 > 本文教你如何为 LiteGate 编写自定义 **DNS Provider** 插件——接管两件事：**ACME 证书签发的 DNS-01 质询**（增删 TXT 记录）与 **动态 DNS（DDNS）同步**（把本机 IP 写到 A/AAAA 记录）。
 >
 > 适合场景：你用的 DNS 服务商不在内置清单里（内置：阿里云 / 腾讯云 / Cloudflare），或你想用自己的 DNS API / 内部 IPAM / 私有 DNS 服务来完成证书校验与 DDNS。
 >
-> 契约已开放到公共包 [`github.com/jamesleeon/LiteGate/pkg/plugin`](https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin)，**第三方可在独立仓库编写并编译进去**。通用插件（Action / Middleware / LoadBalancer）见 [plugin-authoring-guide.md](plugin-authoring-guide.md)；IDS 鉴权插件见 [ids-provider-plugin-guide.md](ids-provider-plugin-guide.md)；DDNS 本身的使用见 [user/06-certificates/ddns.md](user/06-certificates/ddns.md)。
+> 契约已开放到公共包 [`github.com/jamesleeon/LiteGate/pkg/plugin`](../../pkg/plugin)，**第三方可在独立仓库编写并编译进去**。通用插件（Action / Middleware / LoadBalancer）见 [plugin-authoring-guide.md](user/12-plugins/authoring-guide.md)；IDS 鉴权插件见 [ids-provider-plugin-guide.md](ids-provider-plugin-guide.md)；DDNS 本身的使用见 [user/06-certificates/ddns.md](user/06-certificates/ddns.md)。
 
 ---
 
@@ -97,7 +97,7 @@ LiteGate 把 DNS 操作抽象成一个**带名字的 Provider**。你的插件�
 
 ## 二、接口契约（`pkg/plugin/dns.go`）
 
-全部定义在 [pkg/plugin/dns.go](https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin/dns.go)：
+全部定义在 [pkg/plugin/dns.go](../../pkg/plugin/dns.go)：
 
 ```go
 // marker：所有 DNS 插件的基接口
@@ -188,7 +188,7 @@ type DNSProviderRegistration struct {
 
 ### 捷径一：`litegate build --dns`（推荐，零代码）
 
-[libdns](https://github.com/libdns) 为 80 多家 DNS 服务商提供统一接口（华为云、阿里云 alidns、DNSPod、Route 53、GoDaddy、Porkbun……），每家是一个独立的小模块。LiteGate 的 [`pkg/plugin/libdnsx`](https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin/libdnsx) 把它们统一适配成 DNS 插件，`litegate build` 会替你生成注册代码：
+[libdns](https://github.com/libdns) 为 80 多家 DNS 服务商提供统一接口（华为云、阿里云 alidns、DNSPod、Route 53、GoDaddy、Porkbun……），每家是一个独立的小模块。LiteGate 的 [`pkg/plugin/libdnsx`](../../pkg/plugin/libdnsx) 把它们统一适配成 DNS 插件，`litegate build` 会替你生成注册代码：
 
 ```bash
 # 短名 = github.com/libdns/<名字>；可带版本
@@ -230,7 +230,7 @@ auto_cert:
 
 ### 捷径二：复用 lego 的服务商（示例，仅 DNS-01）
 
-个别服务商只在 [lego](https://go-acme.github.io/lego/dns/) 里有、libdns 里没有时，参照 [examples/plugins/dns/legodns](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/legodns)（桥接）与 [examples/plugins/dns/vegadns](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/vegadns)（用法），把桥接包复制进你自己的插件模块。它只是示例、不是 LiteGate 的支持接口，也只有 DNS-01 能力。
+个别服务商只在 [lego](https://go-acme.github.io/lego/dns/) 里有、libdns 里没有时，参照 [examples/plugins/dns/legodns](../../examples/plugins/dns/legodns)（桥接）与 [examples/plugins/dns/vegadns](../../examples/plugins/dns/vegadns)（用法），把桥接包复制进你自己的插件模块。它只是示例、不是 LiteGate 的支持接口，也只有 DNS-01 能力。
 
 服务商两边都没有、或需要更精细的控制时，按下面的步骤直接实现接口。
 
@@ -341,7 +341,7 @@ auto_cert:
 
 默认行为：lego 会向权威 NS 轮询，确认 TXT 记录已传播后再让 CA 校验；总时长默认 2 分钟、间隔 10 秒。你可以两种方式干预：
 
-- **配置级**（无需写代码）：在 `config` 里设 `propagation_wait: "60s"`、`skip_propagation_check: "true"`、`disable_complete_propagation: "true"`、`recursive_nameservers: "1.1.1.1,8.8.8.8"`（核心在 [internal/cert/interface.go](https://github.com/jamesleeon/LiteGate/blob/master/internal/cert/interface.go) 的 `buildDNSChallengeOptions` 里解析）。
+- **配置级**（无需写代码）：在 `config` 里设 `propagation_wait: "60s"`、`skip_propagation_check: "true"`、`disable_complete_propagation: "true"`、`recursive_nameservers: "1.1.1.1,8.8.8.8"`（核心在 [internal/cert/interface.go](../../internal/cert/interface.go) 的 `buildDNSChallengeOptions` 里解析）。
 - **代码级**：实现 `DNSPropagationChecker` 完全接管等待逻辑；实现 `DNSOptionalTimeout` 改总时长/间隔。
 
 > 所有方法收到的 `ctx` 就是这次 ACME 订单的 context：进程关闭或集群里失去证书锁时会被取消，请把它传给服务商 SDK 的 HTTP 调用。删除记录时宿主会换成一个不随订单取消的 context，保证 TXT 记录被清理。
@@ -358,7 +358,7 @@ func (p *provider) GetTimeout() (time.Duration, time.Duration) {
 
 LiteGate 有两条写 A/AAAA 记录的路径，对你的接口要求不同：
 
-- **独立的 DDNS 周期任务**（`auto_cert.dns_providers[].ddns`）：走 [internal/ddns/provider.go](https://github.com/jamesleeon/LiteGate/blob/master/internal/ddns/provider.go) 的 `NewProvider`，**直接调 `DDNSProvider.Sync(ctx, domain, ip)`**，记录类型由 `ip` 是 IPv4/IPv6 决定。这条路径只认 `DDNSProvider`。
+- **独立的 DDNS 周期任务**（`auto_cert.dns_providers[].ddns`）：走 [internal/ddns/provider.go](../../internal/ddns/provider.go) 的 `NewProvider`，**直接调 `DDNSProvider.Sync(ctx, domain, ip)`**，记录类型由 `ip` 是 IPv4/IPv6 决定。这条路径只认 `DDNSProvider`。
 - **证书管理器的记录同步**（如服务 Host 自动同步等，经 `CertificateManager.SyncRecordWithProvider`）：经 `externalCertProviderAdapter.SyncRecord` 桥接，此处**优先**找 `DNSSyncRecordRouter.SyncRecord`（你能拿到明确的 `recordType`），找不到再回退到 `DDNSProvider.Sync`。
 
 需要在第二条路径上精细控制记录类型时，实现 `DNSSyncRecordRouter`：
@@ -405,9 +405,9 @@ litegate build --with your-module/mydns@v1.2.3 -o litegate
 litegate build --with your-module/mydns=../your-module -o litegate
 ```
 
-最小复制模板见 [examples/plugin-template](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugin-template)，覆盖 DNS Provider V2 的可编译内存实现见 [examples/plugins/dns/memory](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/memory)。内存实现不会修改权威 DNS，只用于学习与测试。
+最小复制模板见 [examples/plugin-template](../../examples/plugin-template)，覆盖 DNS Provider V2 的可编译内存实现见 [examples/plugins/dns/memory](../../examples/plugins/dns/memory)。内存实现不会修改权威 DNS，只用于学习与测试。
 
-> 也可以在本仓库内 in-tree 开发（把包放仓库里、在 [cmd/litegate/plugins.go](https://github.com/jamesleeon/LiteGate/blob/master/cmd/litegate/plugins.go) 空导入），但**独立仓库 + 用户拥有 main 是推荐方式**。
+> 也可以在本仓库内 in-tree 开发（把包放仓库里、在 [cmd/litegate/plugins.go](../../cmd/litegate/plugins.go) 空导入），但**独立仓库 + 用户拥有 main 是推荐方式**。
 
 ---
 
@@ -453,8 +453,8 @@ DDNS 周期同步（ddns.enabled，周期/IP 变化）
   └─ 等待在途任务 → DNSCloser.Close(ctx)
 ```
 
-- 内置 provider 通过内部 `RegisterProvider` 注册时，会**先反查公共注册表防重名，再把名字保留进公共注册表**（见 [internal/cert/interface.go](https://github.com/jamesleeon/LiteGate/blob/master/internal/cert/interface.go) 与 [internal/ddns/registerprovider.go](https://github.com/jamesleeon/LiteGate/blob/master/internal/ddns/registerprovider.go)）。
-- 第三方 provider 经 `externalCertProviderAdapter`（[internal/cert/interface.go](https://github.com/jamesleeon/LiteGate/blob/master/internal/cert/interface.go)）桥接到内部 `CertProvider`：`WaitForPropagation` 探测 `DNSPropagationChecker`、`SyncRecord` 优先 `DNSSyncRecordRouter` 再回退 `DDNSProvider.Sync`、`GetTimeout` 探测 `DNSOptionalTimeout`（缺省 2min/10s）。
+- 内置 provider 通过内部 `RegisterProvider` 注册时，会**先反查公共注册表防重名，再把名字保留进公共注册表**（见 [internal/cert/interface.go](../../internal/cert/interface.go) 与 [internal/ddns/registerprovider.go](../../internal/ddns/registerprovider.go)）。
+- 第三方 provider 经 `externalCertProviderAdapter`（[internal/cert/interface.go](../../internal/cert/interface.go)）桥接到内部 `CertProvider`：`WaitForPropagation` 探测 `DNSPropagationChecker`、`SyncRecord` 优先 `DNSSyncRecordRouter` 再回退 `DDNSProvider.Sync`、`GetTimeout` 探测 `DNSOptionalTimeout`（缺省 2min/10s）。
 
 ---
 

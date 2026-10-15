@@ -17,7 +17,7 @@ notify:
   auth:
     type: jwt
     secret: env://APP_JWT_SECRET
-    token_from: [cookie:lg_token]
+    token_from: ['cookie:lg_token']
     subject_claim: user_id
     tenant_claim: tenant_id
   subscribe: notify.{auth.tenant}.workorder
@@ -74,7 +74,7 @@ spa: ./dist
 - With child routes, put root authentication/rate limiting in an explicit `/` route; use site use for middleware covering all routes. Boolean true and string "true" strip_prefix both require prefix matching.
 - MCP enable_jwt/apikey/oidc_for_site tools support single-document v2 and legacy standard sites. v2 edits proxy route AST nodes while retaining comments and shorthand; repeated calls do not duplicate bindings. JWT/API Key update same-name definitions and reject type conflicts; OIDC updates route remote_auth. Static/SPA routes receive no new authentication. Use full YAML editing, validation and saving for legacy Lite or multi-document files.
 
-The following root/match/action tables describe the internal model and legacy standard format. v2 uses `site`, `https`, `transports` and `use` instead of legacy `domain`, `force_https`, `serverstransports` and route `middlewares`. Do not copy a legacy root example unchanged into v2.
+All examples below use v2; routes and action remain supported for advanced configurations.
 
 ### Listener port shorthand
 
@@ -224,7 +224,7 @@ transports:
     tls: {enabled: true, insecureskipverify: false}
 services:
   orders:
-    to: [https://127.0.0.1:8080]
+    to: ['https://127.0.0.1:8080']
     timeout: 500ms
     retry: 2
     health: /health
@@ -232,7 +232,7 @@ services:
 /orders:
   service: orders
 /api:
-  proxy: {to: localhost:8080, timeout: 2s, retry: 2, lb: least_conn, health: /health}
+  proxy: {to: 'localhost:8080', timeout: 2s, retry: 2, lb: least_conn, health: /health}
 ```
 
 ### Legacy fields versus v2
@@ -248,91 +248,28 @@ services:
 | fastcgi_*, insecure_skip_verify, host, sticky_* and advanced fields | action: {type: proxy, ...} |
 | action: {service: x} | service: x or proxy: {service: x}; generic action requires type |
 
-Sections 1–9 describe legacy standard YAML and the internal model. Do not copy their route fields directly into v2.
+The examples below use v2; complex routes may use routes and advanced action mappings.
 
-## 0.1 Legacy Lite mode (still supported)
-
-When manually rewriting Lite as v2, explicitly set `https: true` to retain HTTP→HTTPS redirects: Lite defaults to true, while v2 defaults to false. Existing Lite files need no migration.
-
-The following legacy Lite examples are retained for existing files. Use unified v2 for new configurations.
-Name the file `.lite.yaml` (for example `example.com.lite.yaml`) and the structure collapses dramatically, with no deep nesting. New configurations no longer default to this format.
-
-The idea: **the top-level key is the domain; the keys under it are paths (starting with `/`) or site-wide properties.**
-
-### Lite reverse proxy
-```yaml
-api.example.com:
-  /v1:
-    proxy: 127.0.0.1:8080
-  /v2:
-    proxy: 127.0.0.1:8081
-```
-
-### Lite SPA and static assets
-```yaml
-docs.example.com:
-  /:
-    root: /var/www/html
-    spa: true
-  /images:
-    root: /var/www/images
-```
-
-### Directives lite mode supports
-Under a route path (below `/xxx:`), lite mode supports these shortcuts:
-- `proxy`: upstream address to reverse-proxy to (e.g. `127.0.0.1:8080`)
-- `root`: directory to serve static files from
-- `spa`: boolean; with `root` present, enables single-page-app fallback routing
-- `redirect`: redirect target URL
-- `respond`: return this static text directly
-- `headers`: inject request headers (map)
-- `res_headers`: override response headers (map)
-
-The following may **only appear at site level** (directly under the domain). Written into a route they are rejected outright, because `LiteRoute` is decoded strictly with KnownFields:
-- `webdav`: directory to serve WebDAV from
-- `https`: boolean; disables the forced HTTPS redirect (default true)
-- `entrypoints`: the listeners this site binds to
-
-Within one route the actions are mutually exclusive — only one takes effect, in the order `proxy` > `root` > `respond` > `redirect`.
-
-### Site-level actions
-Lite mode lets you omit the `/` and hang a directive directly on the domain.
-```yaml
-simple.example.com:
-  https: false               # disable the forced HTTPS redirect (default true)
-  proxy: 127.0.0.1:3000      # same as configuring proxy under /
-  headers:
-    X-Forwarded-App: legacy  # sent upstream by proxy only; not a security response header
-```
-
-Legacy Lite site headers are inherited by every route beneath. For new sites, unified v2 provides route governance and the action escape hatch for advanced features.
-
----
-
-## 1. Root fields (standard mode)
+## 1. Root fields (v2)
 
 ```yaml
-domain: "example.com"          # Required. The site's domain
+site: "example.com" # Required. The site's domain
 entrypoints: ["web", "websecure"] # Optional. Listeners to bind to (empty binds to all of them)
-port: 0                        # Optional. A dedicated port for this site; 0 uses the global listeners
-force_https: true              # Optional. Redirect HTTP to HTTPS automatically
-connect_override: home         # Optional. Allow this Connect peer to take over the same exact hostname
-description: "User Center"        # Optional. Site description
-disable_trace_id: false        # Optional. Suppress X-Trace-Id injection
-
+port: 0 # Optional. A dedicated port for this site; 0 uses the global listeners
+https: true # Optional. Redirect HTTP to HTTPS automatically
+connect_override: home # Optional. Allow this Connect peer to take over the same exact hostname
+description: "User Center" # Optional. Site description
+disable_trace_id: false # Optional. Suppress X-Trace-Id injection
 # Optional. Custom certificate and key paths; once set this certificate is used instead of global auto-issuance
 tls:
   enabled: true
   cert_file: "./certs/example.com.crt"
   key_file: "./certs/example.com.key"
-
 defaults:
-  timeout: 30                  # Optional. Default timeout, in seconds
-
+  timeout: 30 # Optional. Default timeout, in seconds
 ip_restriction:
   allow_ips: ["192.168.0.0/16"]
   deny_ips: []
-
 # Middleware definitions (optional)
 middlewares:
   limit-10:
@@ -343,14 +280,11 @@ middlewares:
     type: "strip_prefix"
     config:
       prefixes: "/api"
-
 routes:
   - name: "default"
     match:
       path_prefix: "/"
-    action:
-      type: "proxy"
-      upstream: ["127.0.0.1:8080"]
+    proxy: ["127.0.0.1:8080"]
 ```
 
 `connect_override` supports zero-downtime migration of an existing Cloud Site to LiteGate Connect. It must name a configured `connect.server.peers` entry and is valid only for an exact DNS hostname. The local route remains active until that peer registers the same hostname; after takeover, an offline peer remains fail-closed and does not fall back to the local upstream.
@@ -359,10 +293,10 @@ Field reference:
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `domain` | string | Required. The site's domain |
+| `site` | string | Required. The site's domain |
 | `entrypoints` | string[] | Optional. Names of the global listeners to bind to (e.g. `["web", "websecure"]`); empty binds to all of them |
 | `port` | int | Optional. A dedicated listening port for this site |
-| `force_https` | bool | Optional. Redirect HTTP to HTTPS automatically |
+| `https` | bool | Optional. Redirect HTTP to HTTPS automatically |
 | `description` | string | Optional. Site description |
 | `disable_trace_id` | bool | Optional. Suppress the `X-Trace-Id` response header |
 | `tls` | object | Optional. Custom (purchased) TLS certificate configuration |
@@ -375,8 +309,8 @@ Field reference:
 | `ip_restriction` | object | Optional. Site-level IP allow/deny list |
 | `middlewares` | map | Optional. Middleware definitions (like Traefik's middlewares) |
 | `services` | map | Optional. Named Service definitions, referenced by routes with `action.service` (see section 4) |
-| `serverstransports` | map | Optional. Upstream transport settings (TLS / mTLS) referenced by services |
-| `routes` | array | Required. The route list |
+| `transports` | map | Optional. Upstream transport settings (TLS / mTLS) referenced by services |
+| `routes` | array | Optional. Explicit routes; path shorthand or a site-level action can also be used |
 
 ---
 
@@ -388,7 +322,7 @@ recommended in production. A target may be a dedicated L4/SOCKS5 Stream, a local
 Site, or a remote service registered through Connect.
 
 ```yaml
-domain: forward.example.com
+site: forward.example.com
 forward:
   target:
     type: stream # stream, site, or connect
@@ -411,32 +345,35 @@ by an existing HTTPS certificate; for example, `*.example.com` covers
 `routes` match in order, but when several overlap — with a complex `rule` DSL, say — `priority` controls the matching order precisely.
 
 ```yaml
+site: example.com
+middlewares:
+  limit-10:
+    type: ratelimit
+    config: {qps: "10"}
 routes:
   - name: "api-v1"
-    priority: 100                 # Optional. Match priority; higher matches first
+    priority: 100 # Optional. Match priority; higher matches first
     match:
       path_prefix: "/api/v1"
       method: ["GET", "POST"]
       header:
         X-Env: "staging"
-    middlewares: ["limit-10"]      # reference a middleware
+    use: ["limit-10"] # reference a middleware
     ip_restriction:
       deny_ips: ["1.2.3.4"]
-    action:
-      type: "proxy"
-      upstream: ["127.0.0.1:8080"]
+    proxy: ["127.0.0.1:8080"]
 ```
 
 ### Route fields
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `name` | string | Required. Unique route identifier |
+| `name` | string | Optional. Unique route identifier |
 | `priority` | int | Optional. Match priority (default `0`; with mixed matching or the Rule DSL, higher wins) |
-| `match` | object | Required. Path and condition matching block |
-| `middlewares` | string[] | Optional. Middleware names to attach |
+| `match` | object | Optional. Path and condition matching block; omitted matches all requests |
+| `use` | string / string[] | Optional. Middleware names to attach |
 | `ip_restriction` | object | Optional. Route-specific IP allow/deny list, overriding the site-level one |
-| `action` | object | Required. What to do when the route matches |
+| `action` | object | Advanced action configuration; direct proxy, respond, webdav and other shorthand is also supported |
 
 ### The `match` block
 
@@ -466,8 +403,10 @@ Every `action` type supports the following:
 | `type` | string | Required. Built in: `proxy`, `serve`, `respond`, `redirect`, `block`, `list`, `webdav`, `markdown`, `template`, `status` |
 | `headers` | map[string]string | Request header injection (when proxying) or response headers (in some cases) |
 | `res_headers` | map[string]string | Override upstream response headers |
-| `rate_limit` | float64 | QPS rate limit |
-| `rate_limit_policy` | string | `static` or `adaptive` |
+| `rate_limit` | float64 | Requests per configured window (default 1s); 0 disables |
+| `rate_limit_policy` | string | `static` or `adaptive` (`adaptive` only supports `token_bucket` with 1s window) |
+| `rate_limit_algorithm` | string | `token_bucket` (default), `sliding_window`, `sliding_window_log`, or `fixed_window` |
+| `rate_limit_window` | string | Window duration (e.g. `500ms`, `1s`, `10s`, `1m`, min 1ms), for all algorithms |
 | `auth` | object | Basic / JWT authentication |
 | `cors` | object | CORS configuration |
 | `waf` | object | WAF configuration |
@@ -487,15 +426,15 @@ Every `action` type supports the following:
 ## 4. Proxy
 
 ```yaml
+site: example.com
 action:
   type: proxy
   namespace: "default"
-  upstream_type: static            # Optional. Common values: static / consul / litemesh / external
   upstream: ["127.0.0.1:8080"]
   service_name: "order-api"
   service_tag: "v2"
   host: "backend.internal"
-  proto: "http"                    # http / https / ws / wss / fastcgi / grpc
+  proto: "http" # http / https / ws / wss / fastcgi / grpc
   insecure_skip_verify: false
   strip_prefix: "/api"
   prepend_prefix: "/gateway"
@@ -506,12 +445,10 @@ action:
   prefer_h2: false
   mtls: false
   flush_interval: 0
-  
   # Governance and observability parameters (optional)
-  gray_weight: 10                  # canary weight (10 sends 10% of traffic to this route)
-  log_level: "info"                # per-route log level override
-  enable_tracing: true             # enable distributed tracing for this proxy path
-
+  gray_weight: 10 # canary weight (10 sends 10% of traffic to this route)
+  log_level: "info" # per-route log level override
+  enable_tracing: true # enable distributed tracing for this proxy path
   health_check:
     enabled: true
     path: "/health"
@@ -532,10 +469,10 @@ site: api.example.com
   proxy: 10.0.0.11:8080, 10.0.0.12:8080
 /legacy:
   proxy: 10.0.0.13:8080
-  upstream_client: standard     # off: this route always uses Go's net/http Transport
+  upstream_client: standard # off: this route always uses Go's net/http Transport
 /orders:
   proxy: 10.0.0.14:8080
-  upstream_client: fast         # enforced: this route must be able to use the fast client, or the site fails to load
+  upstream_client: fast # enforced: this route must be able to use the fast client, or the site fails to load
 ```
 
 - The default and a site-level `fast` mean "use it where possible": `https://`, `grpc`, `prefer_h2` and mTLS/TLS routes quietly keep the standard client. A route-level `fast` is strict and those configurations fail to load; discovered endpoints are only known at runtime and fall back with one warning logged per endpoint.
@@ -549,21 +486,21 @@ site: api.example.com
 For PHP-FPM and other FastCGI backends:
 
 ```yaml
+site: example.com
 action:
   type: proxy
-  upstream_type: static
-  proto: "fastcgi"                 # must be fastcgi
-  fastcgi_root: "/var/www/html"    # Required when proto is fastcgi. The backend's document root
-  fastcgi_split_path: ".php"       # Optional. Suffix splitting script from PATH_INFO, default ".php"
-  fastcgi_extensions: [".php"]     # Optional. Allow-list of executable extensions, default [".php"]. "*" allows all, with the obvious risk
-  fastcgi_params:                   # Optional. Extra CGI environment variables passed to PHP-FPM
+  proto: "fastcgi" # must be fastcgi
+  fastcgi_root: "/var/www/html" # Required when proto is fastcgi. The backend's document root
+  fastcgi_split_path: ".php" # Optional. Suffix splitting script from PATH_INFO, default ".php"
+  fastcgi_extensions: [".php"] # Optional. Allow-list of executable extensions, default [".php"]. "*" allows all, with the obvious risk
+  fastcgi_params: # Optional. Extra CGI environment variables passed to PHP-FPM
     APP_ENV: production
     REDIRECT_STATUS: "200"
-  fastcgi_keep_conn: true          # Optional. Reuse pooled connections, default false
-  fastcgi_max_idle_conns: 10       # Optional. Maximum idle connections kept in the pool, default 2
-  fastcgi_idle_timeout: 60         # Optional. Idle connection reclaim timeout in seconds; 0 means never
+  fastcgi_keep_conn: true # Optional. Reuse pooled connections, default false
+  fastcgi_max_idle_conns: 10 # Optional. Maximum idle connections kept in the pool, default 2
+  fastcgi_idle_timeout: 60 # Optional. Idle connection reclaim timeout in seconds; 0 means never
   upstream:
-    - "fastcgi://127.0.0.1:9000"   # a backend addressed over TCP
+    - "fastcgi://127.0.0.1:9000" # a backend addressed over TCP
     # or a Unix socket:
     # - "unix:///var/run/php-fpm.sock"
 ```
@@ -596,7 +533,7 @@ Field reference:
 | `passive_failure_status` | int[] | Optional. Status codes counted against passive health and outlier ejection (e.g. `[500, 502, 503, 504]`) |
 | `xff_mode` | string | Optional. X-Forwarded-For handling: `transparent` (pass through untouched) or `boundary` (sanitize at the boundary) |
 | `disable_chunked` | bool | Disable chunked transfer; buffers the body to compute its length and returns 413 above 2 MiB |
-| `lb_policy` | string | Load-balancing policy: `round_robin`, `ip_hash`, `weighted_round_robin`, `p2c` (power-of-two-choices over in-flight requests and latency), `least_conn`, `cookie` (session affinity) |
+| `lb_policy` | string | Load-balancing policy: `round_robin`, `ip_hash`, `weighted` / `weighted_round_robin` (aliases for smooth weighted round robin), `p2c` (power-of-two-choices over in-flight requests and latency), `least_conn` (fewest in-flight requests, uniform random selection among ties), `cookie` (session affinity) |
 | `prefer_h2` | bool | Prefer HTTP/2 |
 | `upstream_client` | string | Follows the global `http.upstream_client` (default `fast`: synchronous pool for plaintext HTTP/1.1 upstreams, standard client for the rest); `standard` turns it off; a route-level `fast` is strict. See below |
 | `mtls` | bool | Enable mTLS |
@@ -611,36 +548,32 @@ Field reference:
 All of these go on a proxy route's `action`:
 
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream: ["127.0.0.1:8080"]
-
   # Reverse-proxy content cache
   proxy_cache: true
-  proxy_cache_ttl: 30              # cache seconds, default 10; also honours upstream Cache-Control, taking the shorter
-  proxy_cache_key: "{host}:{uri}:{header.Accept-Language}"  # optional; {uri} includes the query string, {path} does not
-
+  proxy_cache_ttl: 30 # cache seconds, default 10; also honours upstream Cache-Control, taking the shorter
+  proxy_cache_key: "{host}:{uri}:{header.Accept-Language}" # optional; {uri} includes the query string, {path} does not
   # URL regexp rewrite (runs before auth / WAF / rate limiting)
   rewrite:
     pattern: "^/old/(.*)$"
     target: "/new/$1"
-
   # Cookie session affinity
-  lb_policy: cookie                # others: round_robin / ip_hash / weighted_round_robin / p2c / least_conn
-  sticky_cookie_name: "LG_STICKY_BACKEND"   # optional, this is the default
-  sticky_cookie_ttl: 1800                    # optional, seconds, default 1800
-
+  lb_policy: cookie # others: round_robin / ip_hash / weighted / weighted_round_robin / p2c / least_conn
+  sticky_cookie_name: "LG_STICKY_BACKEND" # optional, this is the default
+  sticky_cookie_ttl: 1800 # optional, seconds, default 1800
   # Concurrency limit
   limit_conn: 100
-  limit_conn_key: "ip"            # "ip" limits per client IP; empty limits the route as a whole
-
+  limit_conn_key: "ip" # "ip" limits per client IP; empty limits the route as a whole
   # First-class gRPC: proto: grpc (cleartext h2c; with mtls:true it upgrades to grpcs / TLS)
   proto: grpc
 ```
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `proxy_cache` | bool | Enable content caching. Automatically bypassed for requests carrying `Authorization`/`Cookie`, responses with `Set-Cookie`/`private`, unknown `Vary` dimensions, non-GET/HEAD methods, and WS/gRPC/SSE |
+| `proxy_cache` | bool | Enable response caching. Credential-bearing requests require an explicit nonempty identity key. Set-Cookie/private responses, unknown Vary dimensions, incomplete bodies, non-GET/HEAD methods, and WS/gRPC/SSE bypass caching |
 | `proxy_cache_ttl` | int | Cache lifetime in seconds, default 10 |
 | `proxy_cache_key` | string | Custom cache-key template supporting `{host}`/`{uri}` (with query string)/`{path}`/`{method}`/`{header.X}` |
 | `rewrite.pattern` / `rewrite.target` | string | Go regexp rewrite of `URL.Path`, `$1` referencing a capture group; does not re-run route matching |
@@ -651,7 +584,9 @@ action:
 | `limit_conn_key` | string | `ip` limits per client IP; empty limits the route as a whole |
 | `proto: grpc` | string | First-class gRPC proxying with automatic HTTP/2 and trailer pass-through; upgrades to grpcs when `mtls:true` |
 
-> Related global settings (config.yaml): multi-node cookie affinity needs `sticky_key` (a shared 32-byte hex key); `cache.proxy_cache_max_entries` caps the number of cached entries.
+> Related global settings (config.yaml): multi-node cookie affinity needs `sticky_key` (a shared 32-byte hex key). `cache.proxy_cache.backend` selects local or redis; enabling cache.redis alone does not switch proxy caching. `cache.proxy_cache_max_entries` caps local entries. Proxy-cache object size defaults to 256KB. Redis stale responses default to disabled.
+
+Proxy response invalidation: successful upstream 2xx writes can use `on_success.invalidate_proxy_cache: [read-route-name]`, or `["*"]` for the current site. Existing `invalidate_cache` only clears template fetch_json tags. Dashboard `POST /api/proxy-cache/purge` accepts scope all/site/route/key and uses existing authentication and CSRF checks. Redis invalidation rotates generations without full database scans; older fills cannot revive invalidated responses. Local scope invalidation conservatively clears the whole process cache. Failed Redis write-side invalidation is logged, retried up to three times, and exposed as `X-LiteGate-Cache-Invalidation: failed`; retries are not durable.
 
 ---
 
@@ -662,26 +597,22 @@ action:
 When the user asks to "keep the old service running and move some traffic to a new one by query or header", the AI must generate two proxy routes: a high-priority conditional route pointing at the new service, and a low-priority catch-all keeping the old one. Do not claim that a rewrite will jump to another route.
 
 ```yaml
+site: example.com
 routes:
   - name: oauth-new
     priority: 100
     match:
       path: "/oauthcallback"
       rule: 'Query("state", "optional_state_id")'
-    action:
-      type: proxy
-      upstream: ["new-oauth-service:8080"]
-      rewrite:
-        pattern: "^/oauthcallback$"
-        target: "/new_oauthcallback"
-
+    rewrite:
+      pattern: "^/oauthcallback$"
+      target: "/new_oauthcallback"
+    proxy: ["new-oauth-service:8080"]
   - name: oauth-old
     priority: 10
     match:
       path: "/oauthcallback"
-    action:
-      type: proxy
-      upstream: ["old-oauth-service:8080"]
+    proxy: ["old-oauth-service:8080"]
 ```
 
 MCP call order: read and preserve the existing configuration with `get_site_config`, validate the complete YAML with `validate_site_config`, and only then call `save_site_config`. Do not use `create_proxy_site` to modify such a site — it can only produce a single route. After saving, call `lookup_route` at least twice, to verify the conditional match and the catch-all separately.
@@ -691,61 +622,58 @@ MCP call order: read and preserve the existing configuration with `get_site_conf
 When the page is rendered by LiteGate's `template` action and the backend only exposes a JSON API, cache invalidation and the HTMX protocol can stay in gateway configuration:
 
 ```yaml
-- name: create-todo
-  match:
-    path: "/api/todos"
-    method: ["POST"]
-  action:
-    type: proxy
-    upstream_type: static
-    upstream: ["127.0.0.1:9000"]
+site: example.com
+routes:
+  - name: create-todo
+    match:
+      path: "/api/todos"
+      method: ["POST"]
     on_success:
       invalidate_cache: ["todos"]
       htmx_trigger: ["todos-changed"]
       discard_body: true
+    proxy: ["127.0.0.1:9000"]
 ```
 
 Success means strictly `200` through `299`. On `3xx`, `4xx` and `5xx` none of these actions run and the error body still reaches the client. `htmx_trigger` overrides an upstream response header of the same name; `invalidate_cache` corresponds to `fetch_json.cache_tags`. The YAML route match field is `method`; in the JSON representation it is `methods`.
 
 Templates may come from files under `template_root`, or from litemesh/Consul KV with `template_kv_mode` enabled; `on_success` is independent of how templates are stored.
 
-### Referencing a named Service (legacy standard: `services` / `serverstransports`)
+### Referencing a named Service (v2: `services` / `transports`)
 
 Define "how to reach the backend" once as a site-level named Service and reference it from routes with `action.service`.
 The keys are the same as the service discovery tags `litegate.http.services.<name>.*` and `litegate.http.serverstransports.<name>.*`, and so are the validation rules.
 
 ```yaml
-serverstransports:
+site: example.com
+transports:
   mesh:
     tls:
       enabled: true
-      clientcertificate: litemesh    # mutual TLS with the Litemesh identity
+      clientcertificate: litemesh # mutual TLS with the Litemesh identity
       insecureskipverify: false
-
 services:
   orders:
     discovery:
-      name: orders                   # service name in discovery; mutually exclusive with servers
+      name: orders # service name in discovery; mutually exclusive with servers
       selector:
-        match: { version: v2 }       # hard boundary: only instances whose metadata matches
-        meta: { zone: a }            # soft preference: preferred, falls back when none match
-    timeout: 5s                      # end-to-end timeout of one request; 500ms etc. allowed
+        match: {version: v2} # hard boundary: only instances whose metadata matches
+        meta: {zone: a} # soft preference: preferred, falls back when none match
+    timeout: 5s # end-to-end timeout of one request; 500ms etc. allowed
     loadbalancer:
       strategy: least_conn
-      server: { port: 8080, scheme: https }
+      server: {port: 8080, scheme: https}
       serverstransport: mesh
-    healthcheck: { path: /health, interval: 10s }
-    retry: { attempts: 2 }
-    circuitbreaker: { enabled: true, timeout: 60, maxrequests: 1, tripthreshold: 3 }
-
+    healthcheck: {path: /health, interval: 10s}
+    retry: {attempts: 2}
+    circuitbreaker: {enabled: true, timeout: 60, maxrequests: 1, tripthreshold: 3}
   legacy:
-    servers: ["http://10.0.0.1:8080", "http://10.0.0.2:8080"]   # static backends
-
+    to: ["http://10.0.0.1:8080", "http://10.0.0.2:8080"] # static backends
 routes:
-  - match: { path_prefix: /orders }
-    action: { type: proxy, service: orders }
-  - match: { path_prefix: /v2/orders }
-    action: { service: orders }        # type defaults to proxy
+  - match: {path_prefix: /orders}
+    service: orders
+  - match: {path_prefix: /v2/orders}
+    service: orders
 ```
 
 Rules:
@@ -761,41 +689,39 @@ Rules:
 ### `serve`
 
 ```yaml
-action:
-  type: serve
+site: example.com
+compress: true
+spa:
   root: "/var/www/html"
   index: "index.html"
   file: ""
   not_found_file: "404.html"
-  spa: true
-  compress: true
   cache_control: "public, max-age=3600"
-  try_files: ["{path}", "/index.php"]   # Optional. Fall back through candidate files; a last entry starting with / is an internal redirect fallback (max 5, to prevent loops). Suits a PHP front controller
-  
+  try_files: ["{path}", "/index.php"] # Optional. Fall back through candidate files; a last entry starting with / is an internal redirect fallback (max 5, to prevent loops). Suits a PHP front controller
   # --- Serve KV auto-deployment mode (optional) ---
-  kv_mode: true                    # enable hot deployment of a static ZIP
-  kv_provider: "litemesh"          # driver: litemesh, consul, http
-  kv_key: "litegate/config/main"   # key to watch; for http, the full endpoint URL
-  keep_versions: 3                 # how many historical version bundles to keep locally (default 3)
+  kv_mode: true # enable hot deployment of a static ZIP
+  kv_provider: "litemesh" # driver: litemesh, consul, http
+  kv_key: "litegate/config/main" # key to watch; for http, the full endpoint URL
+  keep_versions: 3 # how many historical version bundles to keep locally (default 3)
 ```
 
 ### `webdav`
 
 ```yaml
-action:
-  type: webdav
+site: example.com
+webdav:
   root: "/data/shared"
   web_ui: true
   read_only: false
-  direct_download: true            # Optional. Allow direct file download, skipping the web player or serving as an attachment
-  allow_browse: true               # Optional. Let anonymous visitors browse directories in the web UI (pairs with auth)
+  direct_download: true # Optional. Allow direct file download, skipping the web player or serving as an attachment
+  allow_browse: true # Optional. Let anonymous visitors browse directories in the web UI (pairs with auth)
 ```
 
 ### `markdown`
 
 ```yaml
-action:
-  type: markdown
+site: example.com
+markdown:
   root: "./docs"
   index: "README.md"
   render_markdown: true
@@ -832,31 +758,30 @@ Field reference:
 Server-side template rendering. The main template and its partials use `html/template`, which applies context-sensitive escaping against XSS automatically.
 
 ```yaml
+site: example.com
 action:
   type: template
-  template: "./site/pages/index.html"   # Main template file (under KV mode, the main template's key in KV storage); or inline it with body
-  template_root: "./site"               # Optional. Root scanned for partials, reusable as {{ template "partials/header.html" . }} (only when template_kv_mode is false)
-  body: ""                              # Inline template string (alternative to template)
+  template: "./site/pages/index.html" # Main template file (under KV mode, the main template's key in KV storage); or inline it with body
+  template_root: "./site" # Optional. Root scanned for partials, reusable as {{ template "partials/header.html" . }} (only when template_kv_mode is false)
+  body: "" # Inline template string (alternative to template)
   status: 200
   content_type: "text/html; charset=utf-8"
   headers: {}
-
   # --- Template KV auto-deployment mode (optional) ---
-  template_kv_mode: true                # load template files from KV storage
-  template_kv_provider: "litemesh"      # KV driver: litemesh or consul
+  template_kv_mode: true # load template files from KV storage
+  template_kv_provider: "litemesh" # KV driver: litemesh or consul
   template_kv_prefix: "litegate/templates/" # KV key prefix watched for template files
-  template_kv_namespace: "default"      # Optional. Litemesh-only namespace
-
+  template_kv_namespace: "default" # Optional. Litemesh-only namespace
   # Fetch backend JSON APIs concurrently at render time (merged into .Data)
   fetch_json:
-    - key: "weather"                      # merged key name, reachable as {{ .Data.weather }}
-      url: "http://api.weather.local/v1"  # JSON endpoint fetched at render time (supports request context such as {{.Path}})
-      ttl: 60                             # cache lifetime, in seconds
-      timeout: 5                          # request timeout, in seconds
-      allow_private: false                # allow requests to private IPs (SSRF protection)
-      max_body_size: 2097152              # maximum response body, default 2MB
-      fail_policy: "ignore"               # failure policy: "ignore" (swallow and return empty) or "error" (respond 500)
-      forward_headers: ["Authorization"]  # client headers forwarded to the backend endpoint
+    - key: "weather" # merged key name, reachable as {{ .Data.weather }}
+      url: "http://api.weather.local/v1" # JSON endpoint fetched at render time (supports request context such as {{.Path}})
+      ttl: 60 # cache lifetime, in seconds
+      timeout: 5 # request timeout, in seconds
+      allow_private: false # allow requests to private IPs (SSRF protection)
+      max_body_size: 2097152 # maximum response body, default 2MB
+      fail_policy: "ignore" # failure policy: "ignore" (swallow and return empty) or "error" (respond 500)
+      forward_headers: ["Authorization"] # client headers forwarded to the backend endpoint
 ```
 
 | Field | Type | Description |
@@ -899,19 +824,18 @@ action:
 ### Combining HTMX with a backend API (fetch_json)
 
 ```yaml
-domain: "dashboard.example.com"
+site: "dashboard.example.com"
 routes:
   - name: "realtime-dashboard"
     match:
       path_prefix: "/"
-    action:
-      type: "template"
+    template:
       template: "./pages/dashboard.html"
       fetch_json:
         - key: "metrics"
           url: "http://metrics-service.internal:8000/api/v1/stats?domain={{.Host}}"
-          allow_private: true  # allow reaching the internal metrics service
-          ttl: 5               # short cache for fast refresh
+          allow_private: true # allow reaching the internal metrics service
+          ttl: 5 # short cache for fast refresh
           fail_policy: "ignore"
 ```
 
@@ -944,21 +868,21 @@ And in the main template `./pages/dashboard.html`:
 Renders a system status dashboard, collecting live traffic, QPS and latency metrics plus historical health for every site and proxy route in the gateway.
 
 ```yaml
+site: example.com
 action:
   type: status
-  title: "Service Status"                  # Optional. Status page heading, default "LiteGate System Status"
-  host: "self"                          # Optional. "self" shows only the domain being visited; empty (default) shows every site
-  template: "./site/pages/status.html"   # Optional. Custom status page template path (same usage as the template action)
-  template_root: "./site"               # Optional. Root scanned for partials
-  template_debug: false                 # Optional. Debug mode (templates not cached)
-  template_production: true             # Optional. Production mode (templates cached)
-  show_instances: false                 # Optional. Show the backend instances beneath each proxy route (default false)
-
+  title: "Service Status" # Optional. Status page heading, default "LiteGate System Status"
+  host: "self" # Optional. "self" shows only the domain being visited; empty (default) shows every site
+  template: "./site/pages/status.html" # Optional. Custom status page template path (same usage as the template action)
+  template_root: "./site" # Optional. Root scanned for partials
+  template_debug: false # Optional. Debug mode (templates not cached)
+  template_production: true # Optional. Production mode (templates cached)
+  show_instances: false # Optional. Show the backend instances beneath each proxy route (default false)
   # --- Template KV auto-deployment mode (optional) ---
-  template_kv_mode: true                # load the status page template from KV storage
-  template_kv_provider: "litemesh"      # KV driver: litemesh or consul
+  template_kv_mode: true # load the status page template from KV storage
+  template_kv_provider: "litemesh" # KV driver: litemesh or consul
   template_kv_prefix: "litegate/templates/" # KV key prefix watched for the status page template
-  template_kv_namespace: "default"      # Optional. Litemesh-only namespace
+  template_kv_namespace: "default" # Optional. Litemesh-only namespace
 ```
 
 | Field | Type | Description |
@@ -984,8 +908,8 @@ action:
 ### `respond`
 
 ```yaml
-action:
-  type: respond
+site: example.com
+respond:
   status: 200
   body: "Hello, LiteGate!"
   content_type: "text/plain; charset=utf-8"
@@ -994,8 +918,8 @@ action:
 ### `redirect`
 
 ```yaml
-action:
-  type: redirect
+site: example.com
+redirect:
   location: "https://new-site.com{path}"
   status: 301
 ```
@@ -1055,6 +979,9 @@ circuit_breaker:
   trip_threshold: 3
 ```
 
+
+Select `strategy: failure_rate` for a sliding time window. Legacy action fields are `window_seconds` (default 30, range 1–3600), `minimum_requests` (default 20) and `failure_ratio` (default 0.5, range (0,1]). These require the failure-rate strategy; omitted strategy preserves consecutive failures. Service / registry tag spellings are `strategy`, `window`, `minimumrequests`, `failureratio`. See [circuit breaking](../09-advanced/circuit-breaker.md).
+
 ---
 
 ## 8. IDS Providers (`ids`) and OIDC (`remote_auth`)
@@ -1086,7 +1013,7 @@ site: api.example.com
 | `options` | Plugin-defined string parameters, not built-in business rules |
 | `header_projection` | allowed_headers controls trusted headers forwarded downstream |
 
-IDS runs before the action, including proxy, respond and serve. Only proxy consumes discovery filters; the plugin cannot replace the selected Service. openapi-md5 is registered by the default entry point; upgrade to a binary containing it before use. See the [IDS Provider guide](../../ids_development_guide.md).
+IDS runs before the action, including proxy, respond and serve. Only proxy consumes discovery filters; the plugin cannot replace the selected Service. openapi-md5 is registered by the default entry point; upgrade to a binary containing it before use. See the [IDS Provider guide](../../ids-provider-plugin-guide.md).
 
 remote_auth supports enabled, provider, callback_path, enforce, inject_claims, default_redirect_back and fail_policy, using a global OIDC / OAuth2 auth_providers entry. Its retained sign_method field does not provide an MD5 IDS plugin.
 
@@ -1142,7 +1069,7 @@ tls:
 
 A leading `-` removes a response header at commit time; its value must be empty. An ordinary name with an empty value still sets an empty header. Route declarations override inherited site declarations. Setting and removing the same header in one declaration is rejected. Legacy `res_headers` supports removal too.
 
-The numeric `rate_limit: 10` shares a bucket within a site and route. The mapping `{rate: 10, key: ip}` gives each client IP its own bucket; `key: route` shares it. Legacy actions use `rate_limit: 10` plus `rate_limit_key: ip`; named `ratelimit` middleware accepts `config: {qps: "10", key: ip}`. Rates are requests per second with the existing token-bucket burst behavior. Forwarded client addresses honor global `trusted_proxies`. Redis-backed limits remain distributed when keyed by IP.
+The numeric `rate_limit: 10` shares a bucket within a site and route. The mapping `{rate: 10, key: ip}` gives each client IP its own bucket; `key: route` shares it. Legacy actions use `rate_limit: 10` plus `rate_limit_key: ip`; named `ratelimit` middleware accepts `config: {qps: "10", key: ip}`. Rates are requests per configured window (one second by default); the default algorithm is token_bucket. Forwarded client addresses honor global `trusted_proxies`. Redis-backed limits remain distributed when keyed by IP.
 
 TLS policies work with automatic certificates independently of the manual-certificate `enabled` flag. Versions accept only `1.2` and `1.3`; the minimum defaults to 1.2 and an omitted maximum is unrestricted. HTTP/3 requires TLS 1.3, so a site capped at TLS 1.2 cannot use HTTP/3.
 
@@ -1186,11 +1113,11 @@ Site-level `matchers` define reusable conditions. Use `match: "@name"` to refere
 ```yaml
 site: example.com
 matchers:
-  blocked: { path: [/xmlrpc.php, "*.sql"] }
-  post: { method: POST }
+  blocked: {path: [/xmlrpc.php, "*.sql"]}
+  post: {method: POST}
 routes:
   - match: "@blocked"
-    respond: { status: 403 }
+    respond: {status: 403}
   - match: "@post"
     proxy: localhost:6001
 proxy: localhost:8080
@@ -1258,3 +1185,26 @@ routes:
 `site: https://a.b.com` is equivalent to `site: a.b.com` with `https: true`, using the existing TLS and HTTP-to-HTTPS redirect behavior. A trailing `/` is allowed; URL paths, queries and user information are rejected. Combining it with `https: false` is an error. Explicit ports retain the existing `site: host:port` listener behavior and default HTTPS redirect target port rules.
 
 Set site-level ech: ech.example.com alongside site: to select a configured ech.groups public name and DNS provider. Names are derived automatically. Multiple groups require explicit selection; one group also accepts true, and false disables ECH. Requires global ech.enabled, HTTPS port 443 and TLS 1.3; unknown groups and wildcard/IP/passthrough sites are rejected. Selection reloads live; transfers withdraw old records before the new group publishes. Legacy global domains remain enabled even with a false flag.
+
+
+## Traffic protection on registered services
+
+Register this identical resource tag set on every orders instance. Rate limiting admits at most 100 requests per client IP in a one-minute sliding log window. Circuit breaking tracks completed upstream outcomes independently per backend address over 30 seconds, opening at 20 samples and a failure ratio of 0.5. Rate-limit window accepts a duration (1m) or integer milliseconds; breaker window is integer seconds (30). Deregistration removes an instance after the discovery update reaches the gateway; requests during that propagation interval can still fail. Backend failures remain breaker samples. Do not mix named resources with shortcut tags.
+
+```properties
+litegate.http.routers.orders.match.hosts=api.example.com
+litegate.http.routers.orders.match.path_prefix=/orders
+litegate.http.routers.orders.service=orders
+litegate.http.routers.orders.middlewares=orders-limit
+litegate.http.middlewares.orders-limit.ratelimit.qps=100
+litegate.http.middlewares.orders-limit.ratelimit.key=ip
+litegate.http.middlewares.orders-limit.ratelimit.algorithm=sliding_window_log
+litegate.http.middlewares.orders-limit.ratelimit.window=1m
+litegate.http.services.orders.circuitbreaker.enabled=true
+litegate.http.services.orders.circuitbreaker.strategy=failure_rate
+litegate.http.services.orders.circuitbreaker.window=30
+litegate.http.services.orders.circuitbreaker.minimumrequests=20
+litegate.http.services.orders.circuitbreaker.failureratio=0.5
+```
+
+For MCP generation, read `get_config_guide(topic="traffic")`, then run `preview_service_tags`: errors must be fixed; review warnings before applying. For YAML, run `validate_site_config` before `save_site_config`.

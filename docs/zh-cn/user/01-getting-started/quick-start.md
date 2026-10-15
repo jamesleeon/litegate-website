@@ -32,17 +32,8 @@ litegate
 ```bash
 mkdir -p sites
 cat > sites/hello.yaml << 'EOF'
-domain: localhost
-routes:
-  - name: welcome
-    match:
-      path_prefix: /
-    action:
-      type: respond
-      status: 200
-      body: "Hello, LiteGate! 您的网关已就绪。"
-      headers:
-        Content-Type: text/plain; charset=utf-8
+site: localhost
+respond: "Hello, LiteGate!"
 EOF
 ```
 
@@ -67,17 +58,15 @@ curl http://localhost/
 
 ```yaml
 # sites/web.yaml
-domain: web.local
+site: web.local
 routes:
   - name: frontend
     match:
       path_prefix: /
-    action:
-      type: serve
+    compress: true # 开启 Gzip/Brotli 压缩
+    spa:
       root: ./dist
       index: index.html
-      spa: true            # 支持单页应用 (SPA) 路由
-      compress: true       # 开启 Gzip/Brotli 压缩
 ```
 
 ---
@@ -88,15 +77,13 @@ routes:
 
 ```yaml
 # sites/api.yaml
-domain: api.example.com
+site: api.example.com
 routes:
   - name: user-service
     match:
       path_prefix: /api/v1
-    action:
-      type: proxy
-      upstream: ["localhost:8080"]
-      strip_prefix: true # 转发时移除 /api/v1 前缀
+    strip_prefix: true # 转发时移除 /api/v1 前缀
+    proxy: ["localhost:8080"]
 ```
 
 ---
@@ -106,15 +93,13 @@ routes:
 只要你的机器具备公网 IP 且域名解析已指向本机，只需一行配置：
 
 ```yaml
-domain: example.com
-force_https: true # 开启自动申请证书并强制跳转 HTTPS
+site: example.com
+https: true # 开启自动申请证书并强制跳转 HTTPS
 routes:
   - name: secure-app
     match:
       path_prefix: /
-    action:
-      type: proxy
-      upstream: ["localhost:3000"]
+    proxy: ["localhost:3000"]
 ```
 
 ---
@@ -122,5 +107,5 @@ routes:
 ## 下一步建议
 
 - 了解 [Sites 与 Routes 的深度关系](../02-concepts/sites-and-routes.md)。
-- 探索 [多种 Action 类型](../README.md#4-action)（如 WebDAV, Markdown 渲染）。
+- 探索 [多种 Action 类型](../README.md)（如 WebDAV, Markdown 渲染）。
 - 为你的 API [添加认证保护](../05-middleware/authentication.md)。

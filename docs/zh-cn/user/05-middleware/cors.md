@@ -10,12 +10,10 @@
 
 ```yaml
 # app.example.com：前端静态文件由网关内置 serve 提供
-domain: app.example.com
+site: app.example.com
 routes:
-  - match: { path_prefix: / }
-    action:
-      type: serve
-      root: /var/www/app
+  - match: {path_prefix: /}
+    serve: /var/www/app
 ```
 
 后端服务注册到 LiteGate 的服务发现（如 LiteMesh / Consul）时，通过标签声明同一个域名下的 `/api` 路径，
@@ -35,8 +33,9 @@ routes:
 最简单的写法是只打开开关：
 
 ```yaml
+site: example.com
 routes:
-  - match: { path_prefix: / }
+  - match: {path_prefix: /}
     action:
       type: proxy
       service_name: my-backend
@@ -64,9 +63,9 @@ routes:
 ### 方式 A：路由内联配置 (推荐)
 
 ```yaml
-domain: api.example.com
+site: api.example.com
 routes:
-  - match: { path_prefix: /api }
+  - match: {path_prefix: /api}
     action:
       type: proxy
       service_name: backend-svc
@@ -88,20 +87,19 @@ routes:
 在站点的 `middlewares` 中定义，然后在多个路由中通过名字引用。
 
 ```yaml
-domain: api.example.com
+site: api.example.com
 middlewares:
   web-cors:
     type: cors
     config:
       allowed_origins: "https://web.example.com, https://admin.example.com"
       allow_credentials: "true"
-
 routes:
-  - match: { path_prefix: /api }
+  - match: {path_prefix: /api}
     action:
       type: proxy
       service_name: backend-svc
-    middlewares: ["web-cors"]
+    use: ["web-cors"]
 ```
 
 服务发现标签中的写法：

@@ -7,7 +7,7 @@ Cloud。
 Connect 与 Forward 的区别、如何选择和组合见 [Forward 与 Connect 总览](forward-and-connect.md)。
 
 本文是运维配置指南。协议、所有权和安全设计见
-[LiteGate Connect 设计文档](https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/litegate-connect-design.md)；如何选择模式、如何用 Connect 落地私有化数据通道，
+[LiteGate Connect 设计文档](connect.md)；如何选择模式、如何用 Connect 落地私有化数据通道，
 见 [Connect 场景与架构指南](connect-scenarios.md)。
 
 ## 1. 上线前准备
@@ -145,7 +145,7 @@ Token 不接受明文 `--token` 参数，以免出现在 shell 历史和进程�
 ## 4. Home Site 示例
 
 ```yaml
-domain: camera.home.example.com
+site: camera.home.example.com
 entrypoints:
   - websecure
 tls:
@@ -156,10 +156,8 @@ routes:
   - name: camera
     match:
       path_prefix: /
-    action:
-      type: proxy
-      upstream:
-        - http://192.168.1.50:8080
+    proxy:
+      - http://192.168.1.50:8080
 ```
 
 客户端 TLS 最终在 Home / Private 终止，因此私钥与证书必须由本地持有（Cloud 仅做 4 层 SNI 盲转发）。
@@ -235,7 +233,7 @@ socks5:
 Cloud 只需一个使用 `target.type: connect` 的 Forward Site：
 
 ```yaml
-domain: forward.example.com
+site: forward.example.com
 forward:
   target:
     type: connect
@@ -253,16 +251,14 @@ TCP 和 SOCKS5 Stream；原生 QUIC/UDP 数据面尚未实现。
 在现有 Cloud Site 上添加指定 Peer 的迁移授权：
 
 ```yaml
-domain: camera.example.com
+site: camera.example.com
 connect_override: home
 routes:
   - name: old-cloud-upstream
     match:
       path_prefix: /
-    action:
-      type: proxy
-      upstream:
-        - http://127.0.0.1:8080
+    proxy:
+      - http://127.0.0.1:8080
 ```
 
 `connect_override` 只能用于精确域名，值必须是 Cloud 已配置的 Peer 名称。配置授权本身不会立即

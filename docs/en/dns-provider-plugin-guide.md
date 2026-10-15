@@ -24,15 +24,15 @@ name is the hidden DNS owner. value is a public presentation-format record such 
 
 Compile with `litegate build --with your-module/mydns -o litegate`. Set dns_providers[].type to the registration name and ech.dns_provider to that configured entry's name. ECH storage/KV remains a core configuration, not a plugin responsibility. Missing capability declarations or implementations fail validation/startup.
 
-See the [compilable memory provider](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/memory/memory.go) for ownership checks, update and withdrawal. It is an in-memory demonstration, not a production authoritative DNS writer. See the [ECH deployment/client guide](user/06-certificates/ech.md).
+See the [compilable memory provider](../../examples/plugins/dns/memory/memory.go) for ownership checks, update and withdrawal. It is an in-memory demonstration, not a production authoritative DNS writer. See the [ECH deployment/client guide](user/06-certificates/ech.md).
 
 > This guide shows you how to write a custom **DNS Provider** plugin for LiteGate, taking over two responsibilities: the **DNS-01 challenge for ACME certificate issuance** (adding/removing TXT records) and **Dynamic DNS (DDNS) synchronization** (writing the host's IP to A/AAAA records).
 >
 > Use it when: your DNS service is not in the built-in list (built-ins: Alibaba Cloud / Tencent Cloud / Cloudflare), or you want to use your own DNS API / internal IPAM / private DNS service for certificate validation and DDNS.
 >
-> The contract lives in the public package [`github.com/jamesleeon/LiteGate/pkg/plugin`](https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin), so **third parties can author and compile it from a standalone repository**. For general plugins (Action / Middleware / LoadBalancer) see [plugin-authoring-guide.md](../zh-cn/plugin-authoring-guide.md); for IDS auth plugins see [ids-provider-plugin-guide.md](../zh-cn/ids-provider-plugin-guide.md); for DDNS usage itself see [user/06-certificates/ddns.md](user/06-certificates/ddns.md).
+> The contract lives in the public package [`github.com/jamesleeon/LiteGate/pkg/plugin`](../../pkg/plugin), so **third parties can author and compile it from a standalone repository**. For general plugins (Action / Middleware / LoadBalancer) see [plugin-authoring-guide.md](user/12-plugins/authoring-guide.md); for IDS auth plugins see [ids-provider-plugin-guide.md](ids-provider-plugin-guide.md); for DDNS usage itself see [user/06-certificates/ddns.md](user/06-certificates/ddns.md).
 >
-> *(Note: the two plugin guides linked above currently exist in Chinese only.)*
+
 
 ---
 
@@ -53,7 +53,7 @@ Both build on a **marker interface** `plugin.DNSProvider` (which only has `GetNa
 
 ## 2. The interface contract (`pkg/plugin/dns.go`)
 
-Everything is defined in [pkg/plugin/dns.go](https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin/dns.go):
+Everything is defined in [pkg/plugin/dns.go](../../pkg/plugin/dns.go):
 
 ```go
 // marker: base interface for all DNS plugins
@@ -132,7 +132,7 @@ type DNSProviderFactoryWithDependencies func(config map[string]string, deps *Dep
 
 ### Shortcut 1: `litegate build --dns` (recommended, no code)
 
-[libdns](https://github.com/libdns) offers one interface for 80+ DNS providers (Huawei Cloud, Alibaba alidns, DNSPod, Route 53, GoDaddy, Porkbun, ...), each in its own small module. LiteGate's [`pkg/plugin/libdnsx`](https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin/libdnsx) adapts all of them into DNS plugins, and `litegate build` generates the registration code for you:
+[libdns](https://github.com/libdns) offers one interface for 80+ DNS providers (Huawei Cloud, Alibaba alidns, DNSPod, Route 53, GoDaddy, Porkbun, ...), each in its own small module. LiteGate's [`pkg/plugin/libdnsx`](../../pkg/plugin/libdnsx) adapts all of them into DNS plugins, and `litegate build` generates the registration code for you:
 
 ```bash
 # Short name = github.com/libdns/<name>; a version is optional
@@ -174,7 +174,7 @@ Adaptation rules:
 
 ### Shortcut 2: reuse a lego provider (example, DNS-01 only)
 
-When a provider exists only in [lego](https://go-acme.github.io/lego/dns/) and not in libdns, follow [examples/plugins/dns/legodns](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/legodns) (bridge) and [examples/plugins/dns/vegadns](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/vegadns) (usage) and copy the bridge into your own plugin module. It is an example, not a supported LiteGate API, and covers DNS-01 only.
+When a provider exists only in [lego](https://go-acme.github.io/lego/dns/) and not in libdns, follow [examples/plugins/dns/legodns](../../examples/plugins/dns/legodns) (bridge) and [examples/plugins/dns/vegadns](../../examples/plugins/dns/vegadns) (usage) and copy the bridge into your own plugin module. It is an example, not a supported LiteGate API, and covers DNS-01 only.
 
 When neither ecosystem has your provider, or you need finer control, implement the interfaces directly as below.
 
@@ -278,7 +278,7 @@ auto_cert:
 
 Default behavior: lego polls the authoritative NS to confirm the TXT record has propagated before letting the CA validate; the default total is 2 minutes with a 10-second interval. You can intervene in two ways:
 
-- **Config-level** (no code): set `propagation_wait: "60s"`, `skip_propagation_check: "true"`, `disable_complete_propagation: "true"`, or `recursive_nameservers: "1.1.1.1,8.8.8.8"` in `config` (parsed by `buildDNSChallengeOptions` in [internal/cert/interface.go](https://github.com/jamesleeon/LiteGate/blob/master/internal/cert/interface.go)).
+- **Config-level** (no code): set `propagation_wait: "60s"`, `skip_propagation_check: "true"`, `disable_complete_propagation: "true"`, or `recursive_nameservers: "1.1.1.1,8.8.8.8"` in `config` (parsed by `buildDNSChallengeOptions` in [internal/cert/interface.go](../../internal/cert/interface.go)).
 - **Context**: every method receives the ACME order's context; it is cancelled on shutdown or when this node loses the cluster certificate lock, so pass it to your SDK's HTTP calls. Cleanup runs with a context that is not cancelled with the order, so TXT records are still removed.
 - **Resolvers**: `auto_cert.propagation_dns` is process-wide (lego v5 shares one resolver set); a provider's `recursive_nameservers` is checked by LiteGate for that provider only.
 - **Code-level**: implement `DNSPropagationChecker` to fully take over the waiting logic; implement `DNSOptionalTimeout` to change the total/interval.
@@ -293,7 +293,7 @@ func (p *provider) GetTimeout() (time.Duration, time.Duration) {
 
 LiteGate has **two paths** that write A/AAAA records, with different interface requirements:
 
-- **Standalone DDNS periodic task** (`auto_cert.dns_providers[].ddns`): goes through `NewProvider` in [internal/ddns/provider.go](https://github.com/jamesleeon/LiteGate/blob/master/internal/ddns/provider.go) and **directly calls `DDNSProvider.Sync(ctx, domain, ip)`**, with the record type determined by whether `ip` is IPv4/IPv6. This path only recognizes `DDNSProvider`.
+- **Standalone DDNS periodic task** (`auto_cert.dns_providers[].ddns`): goes through `NewProvider` in [internal/ddns/provider.go](../../internal/ddns/provider.go) and **directly calls `DDNSProvider.Sync(ctx, domain, ip)`**, with the record type determined by whether `ip` is IPv4/IPv6. This path only recognizes `DDNSProvider`.
 - **Cert-manager record sync** (e.g. automatic service-host sync, via `CertificateManager.SyncRecordWithProvider`): bridged through `externalCertProviderAdapter.SyncRecord`, which **prefers** `DNSSyncRecordRouter.SyncRecord` (where you get an explicit `recordType`) and falls back to `DDNSProvider.Sync`.
 
 Implement `DNSSyncRecordRouter` when you need fine-grained record-type control on the second path:
@@ -337,9 +337,9 @@ litegate build --with your-module/mydns@v1.2.3 -o litegate
 litegate build --with your-module/mydns=../your-module -o litegate
 ```
 
-The right-hand side of a local replacement is the directory containing the plugin's `go.mod`. See [examples/plugin-template](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugin-template) for a copyable starter and [examples/plugins/dns/memory](https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/memory) for a compilable DNS Provider V2 example. The in-memory provider is for learning and tests only; it does not change authoritative DNS.
+The right-hand side of a local replacement is the directory containing the plugin's `go.mod`. See [examples/plugin-template](../../examples/plugin-template) for a copyable starter and [examples/plugins/dns/memory](../../examples/plugins/dns/memory) for a compilable DNS Provider V2 example. The in-memory provider is for learning and tests only; it does not change authoritative DNS.
 
-> You can also develop in-tree in this repo (put the package in the repo and blank-import it in [cmd/litegate/plugins.go](https://github.com/jamesleeon/LiteGate/blob/master/cmd/litegate/plugins.go)), but **a standalone repo + user-owned main is the recommended approach**.
+> You can also develop in-tree in this repo (put the package in the repo and blank-import it in [cmd/litegate/plugins.go](../../cmd/litegate/plugins.go)), but **a standalone repo + user-owned main is the recommended approach**.
 
 ---
 
@@ -382,8 +382,8 @@ Cert-manager record sync (e.g. service-host auto sync, SyncRecordWithProvider)
   └─ cert.GetSyncProvider → adapter prefers DNSSyncRecordRouter.SyncRecord, falls back to DDNSProvider.Sync
 ```
 
-- When a built-in provider registers via the internal `RegisterProvider`, it **first reverse-checks the public registry to prevent name clashes, then reserves the name in the public registry** (see [internal/cert/interface.go](https://github.com/jamesleeon/LiteGate/blob/master/internal/cert/interface.go) and [internal/ddns/registerprovider.go](https://github.com/jamesleeon/LiteGate/blob/master/internal/ddns/registerprovider.go)).
-- A third-party provider is bridged to the internal `CertProvider` by `externalCertProviderAdapter` ([internal/cert/interface.go](https://github.com/jamesleeon/LiteGate/blob/master/internal/cert/interface.go)): `WaitForPropagation` probes `DNSPropagationChecker`; `SyncRecord` prefers `DNSSyncRecordRouter` then falls back to `DDNSProvider.Sync`; `GetTimeout` probes `DNSOptionalTimeout` (defaulting to 2min/10s).
+- When a built-in provider registers via the internal `RegisterProvider`, it **first reverse-checks the public registry to prevent name clashes, then reserves the name in the public registry** (see [internal/cert/interface.go](../../internal/cert/interface.go) and [internal/ddns/registerprovider.go](../../internal/ddns/registerprovider.go)).
+- A third-party provider is bridged to the internal `CertProvider` by `externalCertProviderAdapter` ([internal/cert/interface.go](../../internal/cert/interface.go)): `WaitForPropagation` probes `DNSPropagationChecker`; `SyncRecord` prefers `DNSSyncRecordRouter` then falls back to `DDNSProvider.Sync`; `GetTimeout` probes `DNSOptionalTimeout` (defaulting to 2min/10s).
 
 ---
 

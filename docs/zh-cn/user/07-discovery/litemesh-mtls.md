@@ -1,5 +1,7 @@
 # Litemesh mTLS 接入指南
 
+完整的局域网 HTTPS、客户端根 CA 信任和服务间 mTLS 实测配置见[局域网 CA 与服务间 mTLS 实战](../06-certificates/lan-ca-and-mtls.md)。
+
 本文说明后端服务如何启用 Litemesh mTLS、如何注册到 Litemesh，以及 LiteGate 如何根据 Litemesh 标签和元数据启用 mTLS 访问。
 
 适用场景：
@@ -266,8 +268,7 @@ LiteGate 发现该标签后，会执行以下行为：
 站点配置只需要使用 Litemesh 发现：
 
 ```yaml
-domain: api.example.com
-
+site: api.example.com
 routes:
   - name: user-service
     match:
@@ -282,8 +283,7 @@ routes:
 如果你希望在路由上强制声明后端 SPIFFE ID，也可以使用：
 
 ```yaml
-domain: api.example.com
-
+site: api.example.com
 routes:
   - name: user-service
     match:

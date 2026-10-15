@@ -17,7 +17,7 @@ notify:
   auth:
     type: jwt
     secret: env://APP_JWT_SECRET
-    token_from: [cookie:lg_token]
+    token_from: ['cookie:lg_token']
     subject_claim: user_id
     tenant_claim: tenant_id
   subscribe: notify.{auth.tenant}.workorder
@@ -76,7 +76,7 @@ spa: ./dist
 - 有子路由时，鉴权/限流等根路由处理写在显式 `/` 路由；全站中间件用站点 use。布尔 true 或字符串 "true" 的 strip_prefix 都要求前缀匹配。
 - MCP `enable_jwt/apikey/oidc_for_site` 支持单文档 v2 与旧标准配置。v2 在 AST 上修改代理路由，保留注释与简写，重复调用不重复绑定；JWT/API Key 更新同名定义，类型冲突报错，OIDC 更新路由 remote_auth。静态/SPA 路由不会因本次操作被新增鉴权。旧 Lite 与多文档文件请使用完整 YAML 编辑、校验与保存。
 
-后文根字段、match 与 action 表格作为内部模型和旧标准格式参考；v2 使用 `site`、`https`、`transports`、`use` 分别代替旧站点的 `domain`、`force_https`、`serverstransports`、路由 `middlewares`。不要把旧根字段示例整体复制成 v2。
+后续示例统一使用 v2；routes 和 action 是复杂场景的合法写法。
 
 ### 监听端口简写
 
@@ -226,7 +226,7 @@ transports:
     tls: {enabled: true, insecureskipverify: false}
 services:
   orders:
-    to: [https://127.0.0.1:8080]
+    to: ['https://127.0.0.1:8080']
     timeout: 500ms
     retry: 2
     health: /health
@@ -234,7 +234,7 @@ services:
 /orders:
   service: orders
 /api:
-  proxy: {to: localhost:8080, timeout: 2s, retry: 2, lb: least_conn, health: /health}
+  proxy: {to: 'localhost:8080', timeout: 2s, retry: 2, lb: least_conn, health: /health}
 ```
 
 ### 旧标准字段与 v2 对照
@@ -250,91 +250,28 @@ services:
 | fastcgi_*、insecure_skip_verify、host、sticky_* 等高级字段 | action: {type: proxy, ...} |
 | action: {service: x} | service: x 或 proxy: {service: x}；通用 action 必须显式写 type |
 
-第 1–9 节为旧标准格式与内部模型参考，不能直接将其路由字段复制到 v2。
+后续示例均为 v2；复杂路由可使用 routes 列表，高级选项可使用 action 映射。
 
-## 0.1 旧 Lite 写法（继续兼容）
-
-手工将 Lite 改写为 v2 时，如需保留 HTTP→HTTPS 跳转，必须显式写 `https: true`：Lite 缺省 true，v2 缺省 false。已有 Lite 文件无需迁移。
-
-下面保留旧 Lite 示例，供维护现有文件时参考。新配置使用上面的统一 v2 写法。
-只需要将文件命名为 `.lite.yaml`（例如 `example.com.lite.yaml`），即可极大地简化配置结构，避免深层嵌套。新建配置不再默认输出此格式。
-
-极简模式的核心思想：**顶层键名即为域名，次级键名为路径（以 `/` 开头）或全局属性。**
-
-### 极简反向代理示例
-```yaml
-api.example.com:
-  /v1:
-    proxy: 127.0.0.1:8080
-  /v2:
-    proxy: 127.0.0.1:8081
-```
-
-### 极简 SPA (单页应用) 与静态资源示例
-```yaml
-docs.example.com:
-  /:
-    root: /var/www/html
-    spa: true
-  /images:
-    root: /var/www/images
-```
-
-### 极简模式支持的 Action
-在路由路径下（`/xxx:` 之下），极简模式支持以下快捷指令：
-- `proxy`: 反向代理上游地址 (如 `127.0.0.1:8080`)
-- `root`: 静态文件根目录路径
-- `spa`: 布尔值，当存在 `root` 时，启用单页应用回退路由
-- `redirect`: 重定向目标 URL
-- `respond`: 直接响应静态文本字符串
-- `headers`: 注入请求头 (map)
-- `res_headers`: 覆盖响应头 (map)
-
-以下指令**只能写在站点级**（直接挂在域名下）。写进路由会被解析器直接拒绝（`LiteRoute` 以 KnownFields 严格解码）：
-- `webdav`: 启用 WebDAV 的根目录路径
-- `https`: 布尔值，关闭强制 HTTPS 跳转（默认 true）
-- `entrypoints`: 挂载的入口监听器列表
-
-同一路由内动作互斥，只有一个会生效，优先级为 `proxy` > `root` > `respond` > `redirect`。
-
-### 全局级动作
-极简模式允许省略 `/`，直接将指令挂在域名下。
-```yaml
-simple.example.com:
-  https: false               # 关闭强制 HTTPS 跳转 (默认 true)
-  proxy: 127.0.0.1:3000      # 相当于在 / 下配置 proxy
-  headers:
-    X-Forwarded-App: legacy  # 仅 proxy 向上游发送；不是安全响应头
-```
-
-维护旧 Lite 文件时，其表达范围仍有限；新配置可统一用 v2 的路由治理字段与 action 高级出口。
-
----
-
-## 1. 根字段 (标准模式)
+## 1. 根字段（v2）
 
 ```yaml
-domain: "example.com"          # 必填。站点域名
+site: "example.com" # 必填。站点域名
 entrypoints: ["web", "websecure"] # 可选。挂载的全局入口监听器列表（缺省自动挂载至所有可用入口）
-port: 0                        # 可选。为该站点单独监听一个端口；0 表示使用全局监听
-force_https: true              # 可选。自动将 HTTP 重定向到 HTTPS
-connect_override: home         # 可选。仅授权指定 Connect Peer 接管同名精确域名
-description: "用户中心"        # 可选。站点描述
-disable_trace_id: false        # 可选。禁用 X-Trace-Id 注入
-
+port: 0 # 可选。为该站点单独监听一个端口；0 表示使用全局监听
+https: true # 可选。自动将 HTTP 重定向到 HTTPS
+connect_override: home # 可选。仅授权指定 Connect Peer 接管同名精确域名
+description: "用户中心" # 可选。站点描述
+disable_trace_id: false # 可选。禁用 X-Trace-Id 注入
 # 可选。自定义付费证书与私钥路径配置（启用后优先使用此证书，不使用全局自动申请证书）
 tls:
   enabled: true
   cert_file: "./certs/example.com.crt"
   key_file: "./certs/example.com.key"
-
 defaults:
-  timeout: 30                  # 可选。默认超时，单位：秒
-
+  timeout: 30 # 可选。默认超时，单位：秒
 ip_restriction:
   allow_ips: ["192.168.0.0/16"]
   deny_ips: []
-
 # 中间件定义（可选）
 middlewares:
   limit-10:
@@ -345,14 +282,11 @@ middlewares:
     type: "strip_prefix"
     config:
       prefixes: "/api"
-
 routes:
   - name: "default"
     match:
       path_prefix: "/"
-    action:
-      type: "proxy"
-      upstream: ["127.0.0.1:8080"]
+    proxy: ["127.0.0.1:8080"]
 ```
 
 `connect_override` 用于把现有 Cloud Site 零中断迁移到 LiteGate Connect。它只接受
@@ -364,10 +298,10 @@ routes:
 
 | 字段 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| `domain` | string | 必填。站点域名 |
+| `site` | string | 必填。站点域名 |
 | `entrypoints` | string[] | 可选。绑定的全局入口监听器名称列表（如 `["web", "websecure"]`）；留空表示挂载至所有入口 |
 | `port` | int | 可选。站点独立监听端口 |
-| `force_https` | bool | 可选。HTTP 自动跳转 HTTPS |
+| `https` | bool | 可选。HTTP 自动跳转 HTTPS |
 | `description` | string | 可选。站点描述 |
 | `disable_trace_id` | bool | 可选。禁用响应头 `X-Trace-Id` |
 | `tls` | object | 可选。自定义付费 TLS 证书配置结构体 |
@@ -380,8 +314,8 @@ routes:
 | `ip_restriction` | object | 可选。站点级 IP 白名单 / 黑名单 |
 | `middlewares` | map | 可选。中间件定义（类似 Traefik 的 Middlewares） |
 | `services` | map | 可选。命名 Service 定义，路由通过 `action.service` 引用（见第 4 节） |
-| `serverstransports` | map | 可选。上游传输配置 (TLS / mTLS)，由 Service 引用 |
-| `routes` | array | 必填。路由列表 |
+| `transports` | map | 可选。上游传输配置 (TLS / mTLS)，由 Service 引用 |
+| `routes` | array | 可选。显式路由列表；也可使用路径简写或站点级动作 |
 
 ---
 
@@ -392,7 +326,7 @@ Token 至少 32 字节，生产环境推荐 `token_file`。目标可以是专用
 本机 L7 Site，或由 Connect 注册的远端服务：
 
 ```yaml
-domain: forward.example.com
+site: forward.example.com
 forward:
   target:
     type: stream # stream、site 或 connect
@@ -414,32 +348,35 @@ forward:
 `routes` 按顺序匹配，但当多条路由出现重叠（例如使用了复杂的 `rule` DSL）时，可以通过配置 `priority` 精确控制匹配顺序。
 
 ```yaml
+site: example.com
+middlewares:
+  limit-10:
+    type: ratelimit
+    config: {qps: "10"}
 routes:
   - name: "api-v1"
-    priority: 100                 # 可选。匹配优先级，数值越大越先匹配
+    priority: 100 # 可选。匹配优先级，数值越大越先匹配
     match:
       path_prefix: "/api/v1"
       method: ["GET", "POST"]
       header:
         X-Env: "staging"
-    middlewares: ["limit-10"]      # 引用中间件
+    use: ["limit-10"] # 引用中间件
     ip_restriction:
       deny_ips: ["1.2.3.4"]
-    action:
-      type: "proxy"
-      upstream: ["127.0.0.1:8080"]
+    proxy: ["127.0.0.1:8080"]
 ```
 
 ### 路由基本字段说明
 
 | 字段 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| `name` | string | 必填。路由唯一标识名称 |
+| `name` | string | 可选。路由唯一标识名称 |
 | `priority` | int | 可选。匹配优先级（默认为 `0`。在混合匹配或使用 Rule DSL 时，数值大者优先匹配） |
-| `match` | object | 必填。路径与条件匹配块 |
-| `middlewares` | string[] | 可选。要挂载的中间件标识列表 |
+| `match` | object | 可选。路径与条件匹配块；省略时匹配全部请求 |
+| `use` | string / string[] | 可选。要挂载的中间件标识列表 |
 | `ip_restriction` | object | 可选。本条路由专属的 IP 白/黑名单（覆盖站点级配置） |
-| `action` | object | 必填。命中后执行的核心动作类型与配置参数 |
+| `action` | object | 高级动作配置；也可直接使用 proxy、respond、webdav 等简写 |
 
 ### `match` 匹配块说明
 
@@ -469,8 +406,10 @@ routes:
 | `type` | string | 必填。内置支持：`proxy`、`serve`、`respond`、`redirect`、`block`、`list`、`webdav`、`markdown`、`template`、`status` |
 | `headers` | map[string]string | 请求头注入（代理场景）或响应头（部分场景） |
 | `res_headers` | map[string]string | 覆盖上游响应头 |
-| `rate_limit` | float64 | QPS 限流 |
-| `rate_limit_policy` | string | `static` 或 `adaptive` |
+| `rate_limit` | float64 | 每个配置窗口的请求额度，默认窗口 1s；0 禁用 |
+| `rate_limit_policy` | string | `static` 或 `adaptive`（自适应调节仅支持 `token_bucket` 且限 1s 窗口） |
+| `rate_limit_algorithm` | string | `token_bucket`（默认）、`sliding_window`、`sliding_window_log` 或 `fixed_window` |
+| `rate_limit_window` | string | 窗口长度（如 `500ms`、`1s`、`10s`、`1m`，最小 1ms），支持全算法 |
 | `auth` | object | Basic / JWT 认证 |
 | `cors` | object | CORS 配置 |
 | `waf` | object | WAF 配置 |
@@ -490,15 +429,15 @@ routes:
 ## 4. Proxy
 
 ```yaml
+site: example.com
 action:
   type: proxy
   namespace: "default"
-  upstream_type: static            # 可选。常见值：static / consul / litemesh / external
   upstream: ["127.0.0.1:8080"]
   service_name: "order-api"
   service_tag: "v2"
   host: "backend.internal"
-  proto: "http"                    # http / https / ws / wss / fastcgi / grpc
+  proto: "http" # http / https / ws / wss / fastcgi / grpc
   insecure_skip_verify: false
   strip_prefix: "/api"
   prepend_prefix: "/gateway"
@@ -509,12 +448,10 @@ action:
   prefer_h2: false
   mtls: false
   flush_interval: 0
-  
   # 服务治理与可观测参数 (可选)
-  gray_weight: 10                  # 灰度权重值 (如 10 表示 10% 流量流入当前路由)
-  log_level: "info"                # 单条路由级的特定日志级别覆盖
-  enable_tracing: true             # 开启当前代理链路的分布式 Tracing 追踪
-
+  gray_weight: 10 # 灰度权重值 (如 10 表示 10% 流量流入当前路由)
+  log_level: "info" # 单条路由级的特定日志级别覆盖
+  enable_tracing: true # 开启当前代理链路的分布式 Tracing 追踪
   health_check:
     enabled: true
     path: "/health"
@@ -535,10 +472,10 @@ site: api.example.com
   proxy: 10.0.0.11:8080, 10.0.0.12:8080
 /legacy:
   proxy: 10.0.0.13:8080
-  upstream_client: standard     # 关闭：该路由始终用 Go 标准 Transport
+  upstream_client: standard # 关闭：该路由始终用 Go 标准 Transport
 /orders:
   proxy: 10.0.0.14:8080
-  upstream_client: fast         # 强制：该路由必须能走快速通道，否则加载报错
+  upstream_client: fast # 强制：该路由必须能走快速通道，否则加载报错
 ```
 
 - 默认值与站点级 `fast` 是"能用就用"：`https://`、`grpc`、`prefer_h2`、mTLS/TLS 等路由自动保持标准客户端，不报错。路由上显式写 `fast` 则严格校验，这些配置加载即报错；服务发现的后端运行时才确定协议，不满足时回落并对每个后端记录一次警告日志。
@@ -552,21 +489,21 @@ site: api.example.com
 对于 PHP-FPM 等 FastCGI 后端服务，可以使用以下配置进行代理转发：
 
 ```yaml
+site: example.com
 action:
   type: proxy
-  upstream_type: static
-  proto: "fastcgi"                 # 必须指定为 fastcgi
-  fastcgi_root: "/var/www/html"    # 仅当 proto 为 fastcgi 时必填，指定 FastCGI 在后端的 Document Root
-  fastcgi_split_path: ".php"       # 可选。切分脚本与 PATH_INFO 的后缀，默认为 ".php"
-  fastcgi_extensions: [".php"]     # 可选。允许执行的扩展名白名单，默认为 [".php"]。支持 "*" 放行所有，需注意安全隐患
-  fastcgi_params:                   # 可选。传给 PHP-FPM 的额外安全 CGI 环境变量
+  proto: "fastcgi" # 必须指定为 fastcgi
+  fastcgi_root: "/var/www/html" # 仅当 proto 为 fastcgi 时必填，指定 FastCGI 在后端的 Document Root
+  fastcgi_split_path: ".php" # 可选。切分脚本与 PATH_INFO 的后缀，默认为 ".php"
+  fastcgi_extensions: [".php"] # 可选。允许执行的扩展名白名单，默认为 [".php"]。支持 "*" 放行所有，需注意安全隐患
+  fastcgi_params: # 可选。传给 PHP-FPM 的额外安全 CGI 环境变量
     APP_ENV: production
     REDIRECT_STATUS: "200"
-  fastcgi_keep_conn: true          # 可选。是否启用连接复用池，默认为 false
-  fastcgi_max_idle_conns: 10       # 可选。连接池中允许保留的最大空闲连接数，默认为 2
-  fastcgi_idle_timeout: 60         # 可选。空闲连接超时回收时间（秒），默认 0 表示永不超时
+  fastcgi_keep_conn: true # 可选。是否启用连接复用池，默认为 false
+  fastcgi_max_idle_conns: 10 # 可选。连接池中允许保留的最大空闲连接数，默认为 2
+  fastcgi_idle_timeout: 60 # 可选。空闲连接超时回收时间（秒），默认 0 表示永不超时
   upstream:
-    - "fastcgi://127.0.0.1:9000"   # 支持通过 TCP 端口指定后端
+    - "fastcgi://127.0.0.1:9000" # 支持通过 TCP 端口指定后端
     # 或者使用 Unix Socket 格式：
     # - "unix:///var/run/php-fpm.sock"
 ```
@@ -599,7 +536,7 @@ action:
 | `passive_failure_status` | int[] | 可选。计入被动熔断健康度与异常节点剔除的状态码列表（如 `[500, 502, 503, 504]`） |
 | `xff_mode` | string | 可选。X-Forwarded-For 传递模式：`transparent` (完全透传) 或 `boundary` (边界清洗) |
 | `disable_chunked` | bool | 禁用 chunked 传输；缓冲请求体计算长度，超过 2 MiB 返回 413 |
-| `lb_policy` | string | 负载均衡策略。支持 `round_robin` (轮询)、`ip_hash` (源IP哈希)、`weighted_round_robin` (权重轮询)、`p2c` (结合活跃请求数与延迟的双随机选择)、`least_conn` (最少连接数)、`cookie` (会话保持) |
+| `lb_policy` | string | 负载均衡策略。支持 `round_robin` (轮询，默认)、`ip_hash` (源IP哈希)、`weighted` / `weighted_round_robin` (平滑加权轮询，同一算法的别名)、`p2c` (先比较活跃请求数，再比较延迟的双候选选择)、`least_conn` (最少活跃请求数，同负载时随机均匀选择)、`cookie` (会话保持) 或已注册的插件策略 |
 | `prefer_h2` | bool | 优先 HTTP/2 |
 | `upstream_client` | string | 默认跟随全局 `http.upstream_client`（默认 `fast`：明文 HTTP/1.1 后端走同步连接池，其他自动用标准客户端）；`standard` 关闭；路由上写 `fast` 为严格模式。见下文 |
 | `mtls` | bool | 启用 mTLS |
@@ -614,36 +551,32 @@ action:
 以下字段均配置在 proxy 路由的 `action` 上：
 
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream: ["127.0.0.1:8080"]
-
   # 反向代理内容缓存
   proxy_cache: true
-  proxy_cache_ttl: 30              # 缓存秒数，默认 10；同时尊重上游 Cache-Control 取更短值
-  proxy_cache_key: "{host}:{uri}:{header.Accept-Language}"  # 可选；{uri} 含查询串，{path} 不含
-
+  proxy_cache_ttl: 30 # 缓存秒数，默认 10；同时尊重上游 Cache-Control 取更短值
+  proxy_cache_key: "{host}:{uri}:{header.Accept-Language}" # 可选；{uri} 含查询串，{path} 不含
   # URL 正则重写（在鉴权 / WAF / 限流之前执行）
   rewrite:
     pattern: "^/old/(.*)$"
     target: "/new/$1"
-
   # Cookie 会话保持
-  lb_policy: cookie                # 其它可选：round_robin / ip_hash / weighted_round_robin / p2c / least_conn
-  sticky_cookie_name: "LG_STICKY_BACKEND"   # 可选，默认即此
-  sticky_cookie_ttl: 1800                    # 可选，秒，默认 1800
-
+  lb_policy: cookie # 其它可选：round_robin / ip_hash / weighted / weighted_round_robin / p2c / least_conn
+  sticky_cookie_name: "LG_STICKY_BACKEND" # 可选，默认即此
+  sticky_cookie_ttl: 1800 # 可选，秒，默认 1800
   # 并发连接限制
   limit_conn: 100
-  limit_conn_key: "ip"            # "ip" 按客户端 IP；留空按路由全局
-
+  limit_conn_key: "ip" # "ip" 按客户端 IP；留空按路由全局
   # gRPC 一等公民：proto: grpc（明文 h2c；配合 mtls:true 自动升级为 grpcs / TLS）
   proto: grpc
 ```
 
 | 字段 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| `proxy_cache` | bool | 开启内容缓存。带 `Authorization`/`Cookie` 请求、`Set-Cookie`/`private` 响应、未知 `Vary` 维度、非 GET/HEAD、WS/gRPC/SSE 会自动绕过 |
+| `proxy_cache` | bool | 开启响应缓存。带凭据请求必须配置非空身份 Key；Set-Cookie/private 响应、未知 Vary、不完整正文、非 GET/HEAD、WS/gRPC/SSE 自动绕过 |
 | `proxy_cache_ttl` | int | 缓存秒数，默认 10 |
 | `proxy_cache_key` | string | 自定义缓存 Key 模板，支持 `{host}`/`{uri}`（含查询串）/`{path}`/`{method}`/`{header.X}` |
 | `rewrite.pattern` / `rewrite.target` | string | Go 正则重写 `URL.Path`，`$1` 引用捕获组；不会重新触发路由匹配 |
@@ -654,7 +587,9 @@ action:
 | `limit_conn_key` | string | `ip` 按客户端 IP；留空按路由全局 |
 | `proto: grpc` | string | gRPC 一等公民代理，自动 HTTP/2 + trailer 透传；`mtls:true` 时升级为 grpcs |
 
-> 全局相关（config.yaml）：多节点 Cookie 会话保持需配 `sticky_key`（32 字节 hex 共享密钥）；`cache.proxy_cache_max_entries` 控制缓存条目上限。
+> 全局相关（config.yaml）：多节点 Cookie 会话保持需配 `sticky_key`（32 字节 hex 共享密钥）。`cache.proxy_cache.backend` 显式选择 local 或 redis，仅启用 cache.redis 不会切换代理缓存。`cache.proxy_cache_max_entries` 仅限制本地条目；单对象默认 256KB，Redis 默认关闭旧内容返回。
+
+代理响应清理：上游 2xx 写操作可配置 `on_success.invalidate_proxy_cache: [读取路由名称]`，或 `["*"]` 清理当前站点。原有 invalidate_cache 仍只清理模板 fetch_json 标签。Dashboard 的 `POST /api/proxy-cache/purge` 支持 all/site/route/key 范围，沿用鉴权与 CSRF 检查。Redis 切换失效版本，不扫描全库，旧填充不能恢复失效响应；本地范围清理保守清空本进程全部缓存。写后 Redis 清理失败会记录日志、最多重试三次并返回 `X-LiteGate-Cache-Invalidation: failed`，重试不持久化。
 
 ---
 
@@ -665,26 +600,22 @@ action:
 当用户要求“老服务不停，按 query/header 把部分流量迁到新服务”时，AI 必须生成两条 proxy route：高优先级条件 route 直接指向新服务，低优先级兜底 route 保留老服务。不得声称 rewrite 会跳转到新 route。
 
 ```yaml
+site: example.com
 routes:
   - name: oauth-new
     priority: 100
     match:
       path: "/oauthcallback"
       rule: 'Query("state", "optional_state_id")'
-    action:
-      type: proxy
-      upstream: ["new-oauth-service:8080"]
-      rewrite:
-        pattern: "^/oauthcallback$"
-        target: "/new_oauthcallback"
-
+    rewrite:
+      pattern: "^/oauthcallback$"
+      target: "/new_oauthcallback"
+    proxy: ["new-oauth-service:8080"]
   - name: oauth-old
     priority: 10
     match:
       path: "/oauthcallback"
-    action:
-      type: proxy
-      upstream: ["old-oauth-service:8080"]
+    proxy: ["old-oauth-service:8080"]
 ```
 
 MCP 操作顺序：先用 `get_site_config` 读取并保留现有配置，再用 `validate_site_config` 校验完整 YAML，最后才能调用 `save_site_config`。不得使用只能生成单 route 的 `create_proxy_site` 修改此类站点。保存后应至少调用两次 `lookup_route`，分别验证条件命中与兜底流量。
@@ -694,61 +625,58 @@ MCP 操作顺序：先用 `get_site_config` 读取并保留现有配置，再用
 当页面由 LiteGate `template` 渲染、业务后端只提供 JSON API 时，可以把缓存失效和 HTMX 协议留在网关配置中：
 
 ```yaml
-- name: create-todo
-  match:
-    path: "/api/todos"
-    method: ["POST"]
-  action:
-    type: proxy
-    upstream_type: static
-    upstream: ["127.0.0.1:9000"]
+site: example.com
+routes:
+  - name: create-todo
+    match:
+      path: "/api/todos"
+      method: ["POST"]
     on_success:
       invalidate_cache: ["todos"]
       htmx_trigger: ["todos-changed"]
       discard_body: true
+    proxy: ["127.0.0.1:9000"]
 ```
 
 成功严格指 `200` 到 `299`。`3xx`、`4xx`、`5xx` 不执行这些动作，错误响应体仍会返回客户端。`htmx_trigger` 会覆盖上游同名响应头；`invalidate_cache` 对应 `fetch_json.cache_tags`。YAML 路由匹配字段名是 `method`，JSON 表示中为 `methods`。
 
 模板可以来自 `template_root` 指向的目录文件，也可以开启 `template_kv_mode` 从 litemesh/Consul KV 加载；`on_success` 与模板存储方式无关。
 
-### 引用命名 Service（旧标准格式：`services` / `serverstransports`）
+### 引用命名 Service（v2：`services` / `transports`）
 
 把“怎么到达后端”定义为站点级的命名 Service，多条路由通过 `action.service` 引用。
 键名与服务发现标签 `litegate.http.services.<name>.*`、`litegate.http.serverstransports.<name>.*` 一致，校验规则也相同。
 
 ```yaml
-serverstransports:
+site: example.com
+transports:
   mesh:
     tls:
       enabled: true
-      clientcertificate: litemesh    # 使用 Litemesh 身份做双向 TLS
+      clientcertificate: litemesh # 使用 Litemesh 身份做双向 TLS
       insecureskipverify: false
-
 services:
   orders:
     discovery:
-      name: orders                   # 服务发现中的服务名；与 servers 二选一
+      name: orders # 服务发现中的服务名；与 servers 二选一
       selector:
-        match: { version: v2 }       # 硬边界：只选 metadata 匹配的实例
-        meta: { zone: a }            # 软偏好：优先命中，无命中时回退
-    timeout: 5s                      # 单个请求端到端超时，支持 500ms 等写法
+        match: {version: v2} # 硬边界：只选 metadata 匹配的实例
+        meta: {zone: a} # 软偏好：优先命中，无命中时回退
+    timeout: 5s # 单个请求端到端超时，支持 500ms 等写法
     loadbalancer:
       strategy: least_conn
-      server: { port: 8080, scheme: https }
+      server: {port: 8080, scheme: https}
       serverstransport: mesh
-    healthcheck: { path: /health, interval: 10s }
-    retry: { attempts: 2 }
-    circuitbreaker: { enabled: true, timeout: 60, maxrequests: 1, tripthreshold: 3 }
-
+    healthcheck: {path: /health, interval: 10s}
+    retry: {attempts: 2}
+    circuitbreaker: {enabled: true, timeout: 60, maxrequests: 1, tripthreshold: 3}
   legacy:
-    servers: ["http://10.0.0.1:8080", "http://10.0.0.2:8080"]   # 静态后端
-
+    to: ["http://10.0.0.1:8080", "http://10.0.0.2:8080"] # 静态后端
 routes:
-  - match: { path_prefix: /orders }
-    action: { type: proxy, service: orders }
-  - match: { path_prefix: /v2/orders }
-    action: { service: orders }        # 省略 type 时即为 proxy
+  - match: {path_prefix: /orders}
+    service: orders
+  - match: {path_prefix: /v2/orders}
+    service: orders
 ```
 
 规则：
@@ -764,41 +692,39 @@ routes:
 ### `serve`
 
 ```yaml
-action:
-  type: serve
+site: example.com
+compress: true
+spa:
   root: "/var/www/html"
   index: "index.html"
   file: ""
   not_found_file: "404.html"
-  spa: true
-  compress: true
   cache_control: "public, max-age=3600"
-  try_files: ["{path}", "/index.php"]   # 可选。按候选物理文件回退；最后一项以 / 开头则作为 fallback 内部重定向（最多 5 次防环路）。适合 PHP 前端控制器
-  
+  try_files: ["{path}", "/index.php"] # 可选。按候选物理文件回退；最后一项以 / 开头则作为 fallback 内部重定向（最多 5 次防环路）。适合 PHP 前端控制器
   # --- Serve KV 动态自动部署模式 (可选) ---
-  kv_mode: true                    # 启用静态 ZIP 自动同步热部署功能
-  kv_provider: "litemesh"          # 驱动提供商: litemesh, consul, http
-  kv_key: "litegate/config/main"   # 监听的键名。如果是 http 则是完整接口 URL
-  keep_versions: 3                 # 本地最多保留的历史版本包数量 (默认 3)
+  kv_mode: true # 启用静态 ZIP 自动同步热部署功能
+  kv_provider: "litemesh" # 驱动提供商: litemesh, consul, http
+  kv_key: "litegate/config/main" # 监听的键名。如果是 http 则是完整接口 URL
+  keep_versions: 3 # 本地最多保留的历史版本包数量 (默认 3)
 ```
 
 ### `webdav`
 
 ```yaml
-action:
-  type: webdav
+site: example.com
+webdav:
   root: "/data/shared"
   web_ui: true
   read_only: false
-  direct_download: true            # 可选。允许文件直链下载（跳过网页播放器或直接作为附件下载）
-  allow_browse: true               # 可选。是否允许游客免登录在 WebUI 中浏览目录（配合 auth 使用）
+  direct_download: true # 可选。允许文件直链下载（跳过网页播放器或直接作为附件下载）
+  allow_browse: true # 可选。是否允许游客免登录在 WebUI 中浏览目录（配合 auth 使用）
 ```
 
 ### `markdown`
 
 ```yaml
-action:
-  type: markdown
+site: example.com
+markdown:
   root: "./docs"
   index: "README.md"
   render_markdown: true
@@ -835,31 +761,30 @@ action:
 服务端模板渲染（主模板或局部片段采用 `html/template` 进行上下文敏感的 XSS 自动转义防御）。
 
 ```yaml
+site: example.com
 action:
   type: template
-  template: "./site/pages/index.html"   # 主模板文件（若启用 KV 模式，为 KV 存储中的主模板 Key 名称）；或用 body 内联
-  template_root: "./site"               # 可选。片段扫描根目录，主模板可 {{ template "partials/header.html" . }} 复用片段（仅在 template_kv_mode 为 false 时有效）
-  body: ""                              # 内联模板字符串（与 template 二选一）
+  template: "./site/pages/index.html" # 主模板文件（若启用 KV 模式，为 KV 存储中的主模板 Key 名称）；或用 body 内联
+  template_root: "./site" # 可选。片段扫描根目录，主模板可 {{ template "partials/header.html" . }} 复用片段（仅在 template_kv_mode 为 false 时有效）
+  body: "" # 内联模板字符串（与 template 二选一）
   status: 200
   content_type: "text/html; charset=utf-8"
   headers: {}
-
   # --- Template KV 动态自动部署模式 (可选) ---
-  template_kv_mode: true                # 是否启用 KV 存储加载模板文件
-  template_kv_provider: "litemesh"      # KV 驱动提供商，可填 litemesh, consul
+  template_kv_mode: true # 是否启用 KV 存储加载模板文件
+  template_kv_provider: "litemesh" # KV 驱动提供商，可填 litemesh, consul
   template_kv_prefix: "litegate/templates/" # 监听并读取模板文件的 KV 键前缀
-  template_kv_namespace: "default"      # 可选。Litemesh 专属命名空间
-
+  template_kv_namespace: "default" # 可选。Litemesh 专属命名空间
   # 后端 JSON API 实时并发拉取（合并到模版 .Data 里）
   fetch_json:
-    - key: "weather"                      # 合并后的键名，模板中通过 {{ .Data.weather }} 访问
-      url: "http://api.weather.local/v1"  # 实时获取的 JSON 接口地址（支持 {{.Path}} 等请求上下文参数渲染）
-      ttl: 60                             # 缓存生存期，单位：秒
-      timeout: 5                          # 请求超时，单位：秒
-      allow_private: false                # 是否允许发起私网/内网 IP 访问（SSRF 物理防绕过）
-      max_body_size: 2097152              # 允许的最大 Body 大小，默认 2MB
-      fail_policy: "ignore"               # 接口调用失败策略："ignore" (忽略并返回空) 或 "error" (直接报错 500)
-      forward_headers: ["Authorization"]  # 透传到后端接口的客户端请求头列表
+    - key: "weather" # 合并后的键名，模板中通过 {{ .Data.weather }} 访问
+      url: "http://api.weather.local/v1" # 实时获取的 JSON 接口地址（支持 {{.Path}} 等请求上下文参数渲染）
+      ttl: 60 # 缓存生存期，单位：秒
+      timeout: 5 # 请求超时，单位：秒
+      allow_private: false # 是否允许发起私网/内网 IP 访问（SSRF 物理防绕过）
+      max_body_size: 2097152 # 允许的最大 Body 大小，默认 2MB
+      fail_policy: "ignore" # 接口调用失败策略："ignore" (忽略并返回空) 或 "error" (直接报错 500)
+      forward_headers: ["Authorization"] # 透传到后端接口的客户端请求头列表
 ```
 
 | 字段 | 类型 | 说明 |
@@ -902,19 +827,18 @@ action:
 ### HTMX 与后端 API (Fetch JSON) 结合示例
 
 ```yaml
-domain: "dashboard.example.com"
+site: "dashboard.example.com"
 routes:
   - name: "realtime-dashboard"
     match:
       path_prefix: "/"
-    action:
-      type: "template"
+    template:
       template: "./pages/dashboard.html"
       fetch_json:
         - key: "metrics"
           url: "http://metrics-service.internal:8000/api/v1/stats?domain={{.Host}}"
-          allow_private: true  # 允许访问内部监控服务
-          ttl: 5               # 快速刷新缓存
+          allow_private: true # 允许访问内部监控服务
+          ttl: 5 # 快速刷新缓存
           fail_policy: "ignore"
 ```
 
@@ -947,21 +871,21 @@ routes:
 系统状态仪表盘页面渲染。会自动收集网关内所有的 site 和代理路由的流量、QPS、延迟等 live 指标及历史健康状况。
 
 ```yaml
+site: example.com
 action:
   type: status
-  title: "服务状态监控"                  # 可选。状态页面的大标题，默认 "LiteGate System Status"
-  host: "self"                          # 可选。配置为 "self" 仅展示当前被访问域名（站点）的数据；留空（默认）展示全局所有站点
-  template: "./site/pages/status.html"   # 可选。自定义状态页面的模板路径（与 template 场景用法相同）
-  template_root: "./site"               # 可选。片段扫描根目录
-  template_debug: false                 # 可选。开启调试模式（不缓存模板）
-  template_production: true             # 可选。开启生产模式（缓存模板）
-  show_instances: false                 # 可选。是否在代理路由监控中展示具体的后端物理服务实例列表 (默认 false)
-
+  title: "服务状态监控" # 可选。状态页面的大标题，默认 "LiteGate System Status"
+  host: "self" # 可选。配置为 "self" 仅展示当前被访问域名（站点）的数据；留空（默认）展示全局所有站点
+  template: "./site/pages/status.html" # 可选。自定义状态页面的模板路径（与 template 场景用法相同）
+  template_root: "./site" # 可选。片段扫描根目录
+  template_debug: false # 可选。开启调试模式（不缓存模板）
+  template_production: true # 可选。开启生产模式（缓存模板）
+  show_instances: false # 可选。是否在代理路由监控中展示具体的后端物理服务实例列表 (默认 false)
   # --- Template KV 动态自动部署模式 (可选) ---
-  template_kv_mode: true                # 是否启用 KV 存储加载状态面板模板文件
-  template_kv_provider: "litemesh"      # KV 驱动提供商，可填 litemesh, consul
+  template_kv_mode: true # 是否启用 KV 存储加载状态面板模板文件
+  template_kv_provider: "litemesh" # KV 驱动提供商，可填 litemesh, consul
   template_kv_prefix: "litegate/templates/" # 监听并读取状态面板模板文件的 KV 键前缀
-  template_kv_namespace: "default"      # 可选。Litemesh 专属命名空间
+  template_kv_namespace: "default" # 可选。Litemesh 专属命名空间
 ```
 
 | 字段 | 类型 | 说明 |
@@ -987,8 +911,8 @@ action:
 ### `respond`
 
 ```yaml
-action:
-  type: respond
+site: example.com
+respond:
   status: 200
   body: "Hello, LiteGate!"
   content_type: "text/plain; charset=utf-8"
@@ -997,8 +921,8 @@ action:
 ### `redirect`
 
 ```yaml
-action:
-  type: redirect
+site: example.com
+redirect:
   location: "https://new-site.com{path}"
   status: 301
 ```
@@ -1057,6 +981,9 @@ circuit_breaker:
   max_requests: 1
   trip_threshold: 3
 ```
+
+
+使用 `strategy: failure_rate` 启用滑动时间窗口。旧式 action 字段为 `window_seconds`（默认 30，范围 1–3600）、`minimum_requests`（默认 20）和 `failure_ratio`（默认 0.5，范围 (0,1]），必须配合窗口策略使用；省略 strategy 保持连续失败策略。Service / 注册中心标签对应拼写为 `strategy`、`window`、`minimumrequests`、`failureratio`。详见[熔断](../09-advanced/circuit-breaker.md)。
 
 ---
 
@@ -1145,7 +1072,7 @@ tls:
 
 响应头名称前加 `-` 表示在响应提交时删除上游返回的字段，值必须为空字符串。普通名称配空字符串仍表示设置空值。站点配置会继承到路由，路由可覆盖同名字段；同一层不能同时设置和删除同一字段。旧式 `res_headers` 也支持删除。
 
-`rate_limit: 10` 保持按站点和路由共享额度；`rate_limit: {rate: 10, key: ip}` 按客户端 IP 分配独立额度，`key: route` 表示共享。旧式 action 可写 `rate_limit: 10` 和 `rate_limit_key: ip`；命名 `ratelimit` 中间件可写 `config: {qps: "10", key: ip}`。单位为每秒请求数，沿用令牌桶突发额度。IP 使用网关已经解析的客户端地址，转发头只在全局 `trusted_proxies` 信任范围内生效；配置 Redis 时 IP 额度也使用分布式限流。
+`rate_limit: 10` 保持按站点和路由共享额度；`rate_limit: {rate: 10, key: ip}` 按客户端 IP 分配独立额度，`key: route` 表示共享。旧式 action 可写 `rate_limit: 10` 和 `rate_limit_key: ip`；命名 `ratelimit` 中间件可写 `config: {qps: "10", key: ip}`。默认窗口 1s 时单位为每秒请求数；自定义 window 时为每个窗口的请求额度，默认使用令牌桶。IP 使用网关已经解析的客户端地址，转发头只在全局 `trusted_proxies` 信任范围内生效；配置 Redis 时 IP 额度也使用分布式限流。
 
 TLS 策略独立于手动证书的 `enabled` 开关，可与自动证书共用。`min_version` 默认 `1.2`，`max_version` 未设置时不限制最高版本；两者只接受 `1.2`、`1.3`。HTTP/3 始终至少使用 TLS 1.3，限制最高版本为 1.2 的站点不能使用 HTTP/3。
 
@@ -1189,11 +1116,11 @@ spa: ./public
 ```yaml
 site: example.com
 matchers:
-  blocked: { path: [/xmlrpc.php, "*.sql"] }
-  post: { method: POST }
+  blocked: {path: [/xmlrpc.php, "*.sql"]}
+  post: {method: POST}
 routes:
   - match: "@blocked"
-    respond: { status: 403 }
+    respond: {status: 403}
   - match: "@post"
     proxy: localhost:6001
 proxy: localhost:8080
@@ -1261,3 +1188,26 @@ routes:
 `site: https://a.b.com` 等价于 `site: a.b.com` 加 `https: true`，使用现有 TLS 和 HTTP 到 HTTPS 重定向机制。允许末尾 `/`，不允许 URL 路径、查询参数或用户信息。与 `https: false` 同时配置会报错。显式端口沿用现有 `site: host:port` 的监听规则；HTTPS 跳转仍使用现有默认目标端口规则。
 
 站点级 `ech: ech.example.com` 与 `site:` 同级，选择主配置 ech.groups 中的公共域名及其 DNS 提供商。域名自动收集，不需要重复配置 domains；多组必须显式选择，单组允许 ech: true，ech: false 关闭。要求主配置 ech.enabled、HTTPS 443 和 TLS 1.3；拒绝未知组、通配符/IP/透传站点。站点选组可热加载，换组时先撤回旧记录再由新组发布；旧全局 domains 列表继续启用，不受 false 取消。
+
+
+## 注册服务的限流与熔断
+
+在 orders 服务的每个实例上注册相同的资源标签。限流按客户端 IP，在一分钟滑动日志窗口内最多放行 100 次请求；熔断按后端地址分别统计最近 30 秒完成的调用，至少 20 个样本且失败率达到 0.5 时打开。限流 window 接受时长（1m）或整数毫秒；熔断 window 使用整数秒（30）。实例注销在发现更新到达网关后才从候选集中移除，传播期间的调用仍可能失败；后端实际失败仍应计入熔断。不要混用命名资源和快捷标签。
+
+```properties
+litegate.http.routers.orders.match.hosts=api.example.com
+litegate.http.routers.orders.match.path_prefix=/orders
+litegate.http.routers.orders.service=orders
+litegate.http.routers.orders.middlewares=orders-limit
+litegate.http.middlewares.orders-limit.ratelimit.qps=100
+litegate.http.middlewares.orders-limit.ratelimit.key=ip
+litegate.http.middlewares.orders-limit.ratelimit.algorithm=sliding_window_log
+litegate.http.middlewares.orders-limit.ratelimit.window=1m
+litegate.http.services.orders.circuitbreaker.enabled=true
+litegate.http.services.orders.circuitbreaker.strategy=failure_rate
+litegate.http.services.orders.circuitbreaker.window=30
+litegate.http.services.orders.circuitbreaker.minimumrequests=20
+litegate.http.services.orders.circuitbreaker.failureratio=0.5
+```
+
+通过 MCP 生成时，先读取 `get_config_guide(topic="traffic")`，再运行 `preview_service_tags`：修复所有 error，确认 warning 后应用。YAML 配置先运行 `validate_site_config`，再运行 `save_site_config`。

@@ -1,5 +1,7 @@
 # OIDC / OAuth2 认证配置指南
 
+完整接入示例见 [authentik OIDC 配置样例](authentik.md)。
+
 LiteGate 通过路由上的 `remote_auth.provider` 提供 OIDC / OAuth2 认证能力（`ids` 是独立的 IDS Provider 插件入口，不用于 OIDC 登录）。它支持标准 OIDC Provider，也支持标准 OAuth2 Provider，并通过 Redis 保存登录状态与会话。
 
 ---
@@ -112,7 +114,7 @@ oidc_security:
 在具体路由上启用认证：
 
 ```yaml
-domain: "app.example.com"
+site: "app.example.com"
 routes:
   - name: "protected-api"
     match:

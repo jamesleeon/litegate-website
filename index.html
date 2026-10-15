@@ -17,6 +17,7 @@
     <a class="brand" href="#"><span class="brand-mark">L</span>LiteGate</a>
     <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
     <nav class="nav-links" aria-label="主导航">
+      <a href="features.html">功能列表</a>
       <a href="#discovery">服务发现</a>
       <a href="#syntax">配置语法</a>
       <a href="#network">跨网络</a>
@@ -41,6 +42,7 @@
       <p class="lead">静态站点、API 反代、自动 HTTPS、443 端口 SNI 分流、内网发布与云上资产访问、服务发现与多租户选路、事件通知。原来要拼好几套组件的事，LiteGate 用一个 Go 二进制、一种配置语言完成。</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#quickstart">快速开始</a>
+        <a class="btn btn-ghost" href="features.html">完整功能列表 →</a>
         <a class="btn btn-ghost" href="https://github.com/jamesleeon/LiteGate">在 GitHub 查看</a>
       </div>
       <ul class="hero-meta">
@@ -445,7 +447,7 @@ events.onmessage = e =&gt; reload(JSON.parse(e.data))</pre>
       <div class="reason" data-animate>
         <h3>插件也是订阅方</h3>
         <p>IDS 插件可以放心缓存租户信息：只要声明 <code>notify.tenant</code>，租户在租户系统里一关闭，所有网关上的缓存秒级失效。</p>
-        <a class="card-link" href="docs/zh-cn/user/09-advanced/event-notification.md#9-插件订阅通知插件自己定义-subject">插件订阅通知</a>
+        <a class="card-link" href="docs/zh-cn/user/09-advanced/event-notification.md">插件订阅通知</a>
       </div>
     </div>
   </div>
@@ -620,10 +622,10 @@ events.onmessage = e =&gt; reload(JSON.parse(e.data))</pre>
     <div>
       <h4>文档</h4>
       <ul>
+        <li><a href="features.html">完整功能列表</a></li>
         <li><a href="docs/zh-cn/">文档首页</a></li>
         <li><a href="docs/zh-cn/user/03-configuration/site-config.md">站点配置（v2）</a></li>
         <li><a href="docs/zh-cn/user/cookbook/README.md">常用场景案例</a></li>
-        <li><a href="docs/zh-cn/ARCHITECTURE_WHITE_PAPER_ZH.md">架构白皮书</a></li>
       </ul>
     </div>
     <div>

@@ -20,18 +20,17 @@ By default the WAF scans for and can block these patterns:
 Add a `waf` block under the route's `action`:
 
 ```yaml
+site: example.com
 routes:
   - name: app
     match:
       path_prefix: /
-    action:
-      type: proxy
-      upstream:
-        - "localhost:8080"
-      waf:
-        enabled: true
-        block_mode: true       # true = reject with 403; false = log/metric only
-        sensitivity: medium    # low | medium | high
+    waf:
+      enabled: true
+      block_mode: true # true = reject with 403; false = log/metric only
+      sensitivity: medium # low | medium | high
+    proxy:
+      - "localhost:8080"
 ```
 
 | Field | Type | Purpose |

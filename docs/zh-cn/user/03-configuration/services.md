@@ -1,6 +1,6 @@
 # 命名 Service 与配置分层
 
-本文介绍站点配置中的 `services` / `serverstransports`，以及一个能力应该写在路由、中间件还是 Service 里。最后一节是从旧版本升级的注意事项。
+本文介绍站点配置中的 `services` / `transports`，以及一个能力应该写在路由、中间件还是 Service 里。最后一节是从旧版本升级的注意事项。
 
 ---
 
@@ -10,8 +10,8 @@
 
 | 问题 | 写在哪里 | 典型内容 |
 |---|---|---|
-| **去哪里？** | 路由 `routes[].match`、`priority` | Host、路径、方法、请求头匹配 |
-| **进出时做什么？** | 中间件 `middlewares`（或 action 内联字段） | CORS、鉴权、限流、WAF、改写、压缩、缓存 |
+| **去哪里？** | V2 路径键或 `match`、`priority` | Host、路径、方法、请求头匹配 |
+| **进出时做什么？** | 命名中间件 `middlewares` + `use`，或路由治理字段 | CORS、鉴权、限流、WAF、改写、压缩、缓存 |
 | **怎么到达后端？** | **Service** `services` | 服务发现、负载均衡、超时、重试、熔断、健康检查、上游 TLS |
 | **谁来生成响应？** | action `type` | proxy、serve、template、respond、redirect …… |
 
@@ -27,15 +27,16 @@
 以前写法：每条路由各自写一遍上游配置。
 
 ```yaml
+site: example.com
 routes:
-  - match: { path_prefix: /orders }
+  - match: {path_prefix: /orders}
     action:
       type: proxy
       service_name: orders
       lb_policy: least_conn
       timeout: 5
       retry: 2
-  - match: { path_prefix: /v2/orders }
+  - match: {path_prefix: /v2/orders}
     action:
       type: proxy
       service_name: orders
@@ -47,18 +48,18 @@ routes:
 新写法：把“怎么到达后端”定义一次，路由按名字引用。
 
 ```yaml
+site: api.example.com
 services:
   orders:
-    discovery: { name: orders }
+    discovery: {name: orders}
     timeout: 5s
-    loadbalancer: { strategy: least_conn }
-    retry: { attempts: 2 }
-
-routes:
-  - match: { path_prefix: /orders }
-    action: { service: orders }
-  - match: { path_prefix: /v2/orders }
-    action: { service: orders }
+    loadbalancer: {strategy: least_conn}
+    retry: {attempts: 2}
+    circuitbreaker: {enabled: true, timeout: 60, maxrequests: 1, tripthreshold: 3}
+/orders:
+  service: orders
+/v2/orders:
+  service: orders
 ```
 
 两种写法效果相同，旧写法继续有效。引用同一个 Service 的路由共享健康状态与熔断状态；通过服务发现的 Service 还共享负载均衡器，静态 `servers` 由每条路由各自维护轮询计数。
@@ -105,36 +106,78 @@ services:
 | `healthcheck.path` / `healthcheck.interval` | 同名 | 主动健康检查 |
 | `retry.attempts` | `retry.attempts` | 失败重试次数 |
 | `circuitbreaker.enabled` / `timeout` / `maxrequests` / `tripthreshold` | 同名 | 熔断：开启、打开持续秒数、半开请求数、触发的连续失败数 |
+| `circuitbreaker.strategy` / `window` / `minimumrequests` / `failureratio` | 同名 | 滑动窗口失败率策略，详见[熔断](../09-advanced/circuit-breaker.md) |
+| `circuitbreaker.slowthresholdms` | 同名 | 慢调用阈值（毫秒），默认 0 禁用，范围 0–3600000；严格超过阈值也计为熔断失败 |
 
 注意：这里的键名沿用标签写法（`maxrequests`、`serverstransport`），不是下划线形式。
 
-## 4. `serverstransports` 字段
+### 静态上游与滑动窗口熔断（无需注册中心）
+
+YAML 中的 `services` 是本地上游定义，不代表必须注册服务。直接使用 `servers` 即可启用滑动窗口策略：
 
 ```yaml
-serverstransports:
+site: api.example.com
+services:
+  payment:
+    to: ["http://127.0.0.1:8080", "http://127.0.0.1:8081"]
+    timeout: 5s
+    circuitbreaker:
+      enabled: true
+      strategy: failure_rate
+      window: 30
+      minimumrequests: 20
+      failureratio: 0.5
+      timeout: 30
+      maxrequests: 1
+/api/payment:
+  service: payment
+```
+
+按地址分别统计；`servers` 与 `discovery` 二选一。请求超时 `timeout: 5s` 与熔断打开时长 `circuitbreaker.timeout: 30` 是不同参数。完整说明见[熔断配置](../09-advanced/circuit-breaker.md)。
+
+### 按延迟隔离慢后端
+
+在上面的 `circuitbreaker` 中添加 `slowthresholdms: 500`，即可将耗时超过 500ms 的调用计为熔断失败，即使响应为 HTTP 200。每个实例最近 30 秒至少完成 20 次有效调用，其中失败或慢调用的合并比例达到 50% 时，暂停访问该实例 30 秒。同一次调用只计一次，触发熔断的响应仍返回客户端。
+
+冷却结束后允许半开探测，只有成功且不超过延迟阈值才恢复；慢探测会再次打开熔断器。可以在 Service 中添加 `retry: {attempts: 1}`，在遇到熔断快速拒绝时尝试其他后端。全部后端不可用且最终为熔断拒绝时返回 503。
+
+该阈值衡量 HTTP RoundTrip 到响应头返回的耗时，不包含响应体读取，也不会中途终止请求；单次请求超时仍由 Service `timeout` 控制。静态 `servers` 和 `discovery` 均支持；`consecutive` 策略也会将慢调用计入连续失败。完整示例及取消请求的处理见[按延迟熔断](../09-advanced/circuit-breaker.md#按延迟熔断)。
+
+## 4. `transports` 字段
+
+```yaml
+site: example.com
+transports:
   mesh:
     tls:
-      enabled: true               # 上游使用 TLS；Service 未写 scheme 时默认 https
+      enabled: true # 上游使用 TLS；Service 未写 scheme 时默认 https
       clientcertificate: litemesh # 使用 Litemesh 身份做双向 TLS
-      insecureskipverify: false   # 跳过上游证书校验，不能与 clientcertificate 同用
+      insecureskipverify: false # 跳过上游证书校验，不能与 clientcertificate 同用
+respond: Hello, LiteGate!
 ```
 
 ---
 
 ## 5. 引用规则
 
-*   `action.service` 引用的 Service 必须在同一站点的 `services` 中定义，否则加载失败。
-*   引用 Service 时可以省略 `type`，默认为 `proxy`。
+*   V2 路由 `service`（兼容写法为 `action.service`）引用的 Service 必须在同一站点的 `services` 中定义，否则加载失败。
+*   v2 直接用 service: 名称 引用后端；高级 action 必须显式写 type。
 *   **一条路由的后端只有一个配置来源。** 引用了 `service` 的路由不能再内联上游字段：`service_name`、`upstream`、`lb_policy`、`timeout`、`retry`、`circuit_breaker`、`health_check`、`route_selector`、`route_meta`、`service_port`、`proto`、`insecure_skip_verify`、`mtls`，否则加载失败。
-*   `strip_prefix`、`headers` 等不属于 Service 的字段照常写在 action 里：
+*   `strip_prefix`、`request_headers` 等治理字段在 V2 中直接写在路径路由上；命名中间件使用 `use` 引用：
 
 ```yaml
-routes:
-  - match: { path_prefix: /api/orders }
-    middlewares: [web-cors]
-    action:
-      service: orders
-      strip_prefix: /api
+site: api.example.com
+services:
+  orders:
+    to: ["http://127.0.0.1:8080"]
+middlewares:
+  web-cors:
+    type: cors
+    config: {allowed_origins: "https://app.example.com"}
+/api/orders:
+  use: web-cors
+  service: orders
+  strip_prefix: /api
 ```
 
 ---

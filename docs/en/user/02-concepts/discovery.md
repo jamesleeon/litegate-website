@@ -56,9 +56,10 @@ LiteGate supports two ways of binding routes with discovery: **Static Declarativ
 If you maintain static site YAML configurations, you can bind a route directly to service discovery by specifying the `service_name`:
 
 ```yaml
+site: example.com
 action:
   type: proxy
-  upstream_type: consul  # litemesh / litedeploy / docker / consul / external
+  upstream_type: consul # litemesh / litedeploy / docker / consul / external
   service_name: order-api # Registered service name
 ```
 

@@ -47,20 +47,17 @@ graph TD
 在 `sites/yourdomain.yaml` 中配置：
 
 ```yaml
-domain: example.com
+site: example.com
 routes:
   - match:
       path_prefix: /
-    action:
-      type: serve
-      root: /var/www/my-app           # 本地用于存放版本文件的基础目录
-      spa: true                        # 开启单页应用 (SPA) 路由支持
-      
+    spa:
+      root: /var/www/my-app # 本地用于存放版本文件的基础目录
       # --- KV Mode 核心字段 ---
-      kv_mode: true                    # 开启 KV 同步模式
-      kv_provider: litemesh            # 支持: litemesh, consul, http
+      kv_mode: true # 开启 KV 同步模式
+      kv_provider: litemesh # 支持: litemesh, consul, http
       kv_key: litegate/config/front/main # 监听的 KV 键名或 HTTP URL
-      keep_versions: 3                 # 本地最多保留的历史版本数量 (默认 3)
+      keep_versions: 3 # 本地最多保留的历史版本数量 (默认 3)
 ```
 
 ### 2.2 字段说明
@@ -95,7 +92,7 @@ LiteGate 监听的 KV 值（Payload）必须是一个标准的 **JSON 结构体*
 ### 3.2 极简发布三步走
 
 1. **打包**：`zip -r main-12.zip dist/` 并上传到存储服务，得到链接：`https://oss.example.com/front/main-12.zip`。
-2. **计算 SHA256**：`sha256sum main-12.zip`，得到：`2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824`。
+2. **计算 SHA256**：`litegate -hashfile main-12.zip`，得到：`2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824`。
 3. **写入 KV**：
    * **Litemesh KV 用户**：
      ```bash

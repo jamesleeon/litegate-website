@@ -56,9 +56,10 @@ LiteGate 支持两种路由与发现的绑定方式：**静态声明绑定** 和
 如果你有固定的站点 YAML 配置文件，你只需在站点路由中声明 `service_name`，即可将该路由绑定到服务发现：
 
 ```yaml
+site: example.com
 action:
   type: proxy
-  upstream_type: consul  # litemesh / litedeploy / docker / consul / external
+  upstream_type: consul # litemesh / litedeploy / docker / consul / external
   service_name: order-api # 声明服务名
 ```
 

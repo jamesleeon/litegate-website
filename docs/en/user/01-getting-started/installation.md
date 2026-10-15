@@ -6,7 +6,7 @@ LiteGate is a lightweight, high-performance cloud-native gateway supporting mult
 
 - **Operating System**: Linux, Windows, macOS
 - **Architecture**: amd64, arm64
-- **Go Version**: 1.21+ (Only required for building from source)
+- **Go Version**: As declared in `go.mod` (source builds only); see [build environment setup](build-environment.md)
 
 ---
 

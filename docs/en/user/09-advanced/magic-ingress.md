@@ -78,6 +78,5 @@ graph TD
 ---
 
 ## Further Reading
-- [Magic Ingress Deep Architecture Blueprint](../../magic_ingress_architecture.md)
 - [Activating Litemesh Zero-Trust Integration](../07-discovery/litemesh.md)
 - [Automated TLS Certificate Pipelines](../06-certificates/auto-cert.md)

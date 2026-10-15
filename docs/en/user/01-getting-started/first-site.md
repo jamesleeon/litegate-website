@@ -33,8 +33,8 @@ To balance across several backends or strip the path prefix, turn the path key i
 ```yaml
 site: https://api.example.com
 /api/v1:
-  proxy: 10.0.0.5:8080, 10.0.0.6:8080   # several addresses, round robin by default
-  strip_prefix: true                    # remove /api/v1 before forwarding
+  proxy: 10.0.0.5:8080, 10.0.0.6:8080 # several addresses, round robin by default
+  strip_prefix: true # remove /api/v1 before forwarding
 spa: /var/www/my-app/dist
 ```
 

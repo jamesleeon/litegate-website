@@ -1,0 +1,160 @@
+{
+  "title": "LiteGate Operations Overview",
+  "uid": "litegate-overview",
+  "schemaVersion": 38,
+  "refresh": "10s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "site",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "query": "label_values(litegate_http_requests_total, site)",
+        "refresh": 1,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "title": "Global KPIs",
+      "type": "row"
+    },
+    {
+      "id": 2,
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 1 },
+      "title": "Total HTTP QPS",
+      "type": "stat",
+      "targets": [ { "expr": "sum(rate(litegate_http_requests_total[1m]))", "legendFormat": "QPS" } ],
+      "fieldConfig": { "defaults": { "unit": "reqps", "thresholds": { "mode": "absolute", "steps": [ { "color": "green" }, { "color": "red", "value": 80 } ] } } },
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto" }
+    },
+    {
+      "id": 3,
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 1 },
+      "title": "Total Proxy QPS",
+      "type": "stat",
+      "targets": [ { "expr": "sum(rate(litegate_proxy_requests_total[1m]))", "legendFormat": "QPS" } ],
+      "fieldConfig": { "defaults": { "unit": "reqps", "thresholds": { "mode": "absolute", "steps": [ { "color": "green" }, { "color": "red", "value": 80 } ] } } },
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto" }
+    },
+    {
+      "id": 4,
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 1 },
+      "title": "Active Tunnels (WebSocket)",
+      "type": "stat",
+      "targets": [ { "expr": "sum(litegate_proxy_active_tunnels)", "legendFormat": "Tunnels" } ],
+      "fieldConfig": { "defaults": { "unit": "short", "thresholds": { "mode": "absolute", "steps": [ { "color": "green" }, { "color": "red", "value": 80 } ] } } },
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto" }
+    },
+    {
+      "id": 5,
+      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 1 },
+      "title": "Proxy Failure Rate (5m)",
+      "type": "stat",
+      "targets": [ { "expr": "100 * sum(rate(litegate_proxy_requests_total{site=~\"$site\",result!=\"ok\"}[5m])) / clamp_min(sum(rate(litegate_proxy_requests_total{site=~\"$site\"}[5m])), 0.001)", "legendFormat": "Failure Rate" } ],
+      "fieldConfig": { "defaults": { "unit": "percent", "thresholds": { "mode": "absolute", "steps": [ { "color": "green" }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 5 } ] } } },
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto" }
+    },
+    {
+      "id": 13,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 7 },
+      "title": "Cumulative Statistics",
+      "type": "row"
+    },
+    {
+      "id": 14,
+      "title": "Total Cumulative Requests",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 8 },
+      "targets": [ { "expr": "sum(litegate_http_requests_total)", "legendFormat": "Total Requests" } ],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "palette-classic" } } },
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto" }
+    },
+    {
+      "id": 15,
+      "title": "Total Cumulative HTTP Traffic",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 8 },
+      "targets": [ { "expr": "sum(litegate_http_response_bytes_total)", "legendFormat": "Total Traffic" } ],
+      "fieldConfig": { "defaults": { "unit": "decbytes", "color": { "mode": "palette-classic" } } },
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto" }
+    },
+    {
+      "id": 21,
+      "title": "Total Cumulative L4 Traffic",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 8 },
+      "targets": [ { "expr": "sum(litegate_stream_bytes_total)", "legendFormat": "L4 Traffic" } ],
+      "fieldConfig": { "defaults": { "unit": "decbytes", "color": { "mode": "palette-classic" } } },
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto" }
+    },
+    {
+      "id": 6,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+      "title": "HTTP and Proxy Details",
+      "type": "row"
+    },
+    {
+      "id": 7,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 15 },
+      "title": "Proxy Requests by Result",
+      "type": "piechart",
+      "targets": [ { "expr": "sum by (result) (rate(litegate_proxy_requests_total{site=~\"$site\"}[5m]))", "legendFormat": "{{result}}" } ],
+      "options": { "pieType": "pie", "displayLabels": ["percent", "name"], "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 8,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 15 },
+      "title": "Proxy Upstream Status Classes",
+      "type": "timeseries",
+      "targets": [ { "expr": "sum by (status_class) (rate(litegate_proxy_upstream_status_total[1m]))", "legendFormat": "{{status_class}}" } ],
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 9,
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 23 },
+      "title": "Proxy Latency (95th percentile)",
+      "type": "timeseries",
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum by (le, upstream) (rate(litegate_proxy_duration_seconds_bucket[5m])))", "legendFormat": "{{upstream}} - P95" },
+        { "expr": "histogram_quantile(0.50, sum by (le, upstream) (rate(litegate_proxy_duration_seconds_bucket[5m])))", "legendFormat": "{{upstream}} - P50" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 10,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 31 },
+      "title": "Service Discovery",
+      "type": "row"
+    },
+    {
+      "id": 11,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
+      "title": "Discovery Instances",
+      "type": "timeseries",
+      "targets": [ { "expr": "sum by (source, service) (litegate_discovery_instances_total)", "legendFormat": "{{source}} - {{service}}" } ],
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 12,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
+      "title": "Discovery Reconnects",
+      "type": "timeseries",
+      "targets": [ { "expr": "sum by (provider) (rate(litegate_discovery_watch_reconnects_total[5m]))", "legendFormat": "{{provider}}" } ],
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } }
+    }
+  ]
+}

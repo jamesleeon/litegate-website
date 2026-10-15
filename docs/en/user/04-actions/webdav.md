@@ -1,76 +1,84 @@
-# WebDAV Action (File Management Service)
+# WebDAV file sharing (v2)
 
-LiteGate features an integrated high-performance WebDAV engine, enabling you to mount designated directories on your server directly as network drive shares. It supports cross-platform access (Windows, macOS, Linux) and integrates seamlessly with edge-level authentication pipelines.
+Save as `sites/webdav.yaml` or `webdav.yaml` under the active KV site prefix; both sources use the same YAML.
 
----
-
-## 1. Basic WebDAV Configuration
+## Basic configuration
 
 ```yaml
-domain: cloud.example.com
-routes:
-  - name: my-storage
-    match:
-      path_prefix: /dav
-    action:
-      type: webdav
-      root: "/data/shared"   # Physical host directory exposed as WebDAV
-      strip_prefix: "/dav"   # CRITICAL: Always strip the path prefix matches, otherwise WebDAV queries will fail
+site: https://cloud.example.com
+webdav: ./shared
 ```
 
----
+This example exposes read/write access and is suitable only for trusted environments. Create the directory first; relative paths resolve from LiteGate's working directory. HTTPS issuance requires suitable global configuration and domain validation.
 
-## 2. Permissions and Security Rules
+## Path mounting and authentication
 
-> [!IMPORTANT]
-> **Production Best Practice**: In production, always wrap your WebDAV actions inside an `authentication` middleware pipeline to prevent unauthorized file leaks or mutations.
+Use `litegate -hash "your-password"` to generate a bcrypt password hash, and replace users.alice with the generated hash:
 
 ```yaml
-domain: cloud.example.com
-routes:
-  - name: dav-private
-    match:
-      path_prefix: /
-    action:
-      type: webdav
-      root: "./private-data"
-      auth:
-        type: basic
-        realm: "Private Storage"
-        users:
-          alice: "<sha256-hash>"     # generate with: litegate -hash "your-password"
-        permissions:
-          alice: "rw"                # rw (read-write) or ro (read-only)
+site: https://cloud.example.com
+/dav:
+  webdav:
+    root: ./private-data
+    web_ui: true
+    browse: false
+    direct_download: false
+  auth:
+    type: basic
+    realm: Private Storage
+    users:
+      alice: "<bcrypt-hash>"
+    permissions:
+      alice: rw
 ```
 
----
+Connect to `https://cloud.example.com/dav/`. The handler automatically uses the matched /dav prefix; no additional strip_prefix is required. Do not rewrite the prefix away a second time.
 
-## 3. Mounting WebDAV to Operating Systems
+- auth sits alongside webdav; file-service options belong inside webdav.
+- rw permits reading and writing; ro makes an account read-only. webdav.read_only: true defaults to read-only, but explicit rw accounts can override it; set every account to ro when all users must be read-only.
+- web_ui enables the browser interface; browse: false and direct_download: false prevent anonymous browsing and direct downloads.
+- WebDAV needs methods including PROPFIND, PUT, MKCOL, DELETE, MOVE, COPY, and LOCK. Do not restrict the route to GET/POST.
+- Files reside in a local directory; WebDAV does not support kv_mode. Loading site configuration from KV does not store files in KV.
 
-### Windows (File Explorer)
-1. Open **This PC**, then select **Map network drive** at the top panel.
-2. In the folder path input, enter the endpoint: `https://cloud.example.com/dav` (or your mapped directory path).
-3. If protected by an authentication middleware, check **Connect using different credentials** and enter your credentials.
+## Administrator login without anonymous sharing
 
-### macOS (Finder)
-1. Open Finder, then press `Cmd + K` (or select **Go > Connect to Server...**).
-2. Enter the target server URL: `https://cloud.example.com/dav` (HTTPS is highly recommended).
-3. Click **Connect** and input your authentication username and password when prompted.
+This uses LiteGate's built-in form login and SSO cookie with a local administrator account; no OIDC provider is needed. Use a dedicated hostname for the whole WebDAV site so the same configuration handles `/_auth/login`:
 
----
+```yaml
+site: https://files.example.com
+webdav:
+  root: ./private-data
+  web_ui: true
+  browse: false
+  direct_download: false
+auth:
+  type: sso
+  sso_enabled: true
+  allow_anonymous: false
+  secret: "REPLACE_WITH_A_RANDOM_SECRET_AT_LEAST_32_BYTES"
+  cookie_secure: true
+  cookie_same_site: lax
+  session_ttl: 3600
+  users:
+    admin: "<bcrypt-hash>"
+  permissions:
+    admin: rw
+```
 
-## 4. Troubleshooting & FAQ
+Generate the password hash with `litegate -hash "your-password"`. Replace secret with a random key of at least 32 bytes. Give this private site its own key to avoid accepting SSO cookies issued by other sites. Define only administrator accounts permitted to enter; permissions control read/write access, not a login allowlist.
 
-### Unable to Mutate, Delete, or Rename Files?
-- **Host Permissions**: Ensure that the process owner running LiteGate has read/write filesystem permissions on your configured `root` directory.
-- **Prefix Alignment**: Check that your `strip_prefix` configuration is aligned and correctly matches the incoming routing path.
+Visit `https://files.example.com/` in a browser; unauthenticated visitors are redirected to login. Anonymous directory browsing and direct file downloads are disabled. Regular WebDAV clients use Basic Auth with the same admin account; they generally cannot complete browser form login. This restricts authorization. To prevent public network connections, also use private listeners, a VPN or IP restrictions.
 
-### Large File Uploads Timing Out?
-- Adjust the global configuration network parameters: `http.write_timeout`.
-- If running LiteGate behind a reverse proxy (e.g., Nginx), adjust client body size limits (such as Nginx's `client_max_body_size`).
+For external identity providers such as Keycloak or Authentik, see [OIDC](../05-middleware/oidc.md). The remote_auth session differs from WebDAV's local-account SSO; enabling OIDC alone does not enforce an administrator role.
 
----
+## Connecting and troubleshooting
 
-## Further Reading
-- [Configuring Basic Auth Pipelines](../05-middleware/authentication.md)
-- [Serving Assets via the Serve Action](./serve.md)
+Enter the HTTPS URL, username, and password in your OS or WebDAV client. For 401, check authentication; for 403, check account permissions, read_only, and filesystem permissions. For path errors, ensure the front proxy preserves /dav. For upload failures, check disk space and front-proxy size/time limits; do not use the nonexistent http.write_timeout field. For HTTPS failures, check DNS, certificates, and listeners first.
+
+Validate with `litegate -t -config config.yaml`.
+
+## Further reading
+
+- [v2 site configuration](../03-configuration/site-config.md)
+- [Basic Auth](../05-middleware/basic-auth.md)
+- [Static file serving](serve.md)

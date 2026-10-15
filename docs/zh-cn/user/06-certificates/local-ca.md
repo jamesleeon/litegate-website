@@ -45,7 +45,7 @@ tls:
 - `my-app.internal` —— 精确匹配 `my-app.internal`，也匹配其子域 `x.my-app.internal`；
 - 不在白名单内的域名**不会**被本地 CA 签发（公网域名仍走 ACME）。
 
-这一限制确保即使 Root CA 私钥泄露，影响也被限定在本地/内网域名内。
+此白名单限制 LiteGate 正常运行时的签发请求，不能限制持有已泄露 Root CA 私钥的人。必须保护根私钥；客户端只接收根证书。
 
 ---
 
@@ -95,5 +95,6 @@ proxy: 127.0.0.1:3000
 ---
 
 ## 延伸阅读
+- [局域网 CA 与服务间 mTLS 实战](lan-ca-and-mtls.md)
 - [Auto-Cert 自动证书](./auto-cert.md)
 - [On-Demand TLS 按需签发](./on-demand-cert.md)

@@ -12,12 +12,12 @@ It also supports multi-tenant security isolation and structured JSON output for 
 Simply set the route action type to `status` to enable the dashboard on that path:
 
 ```yaml
+site: example.com
 routes:
   - name: "system-status"
     match:
       path: "/status"
-    action:
-      type: "status" # Set type to status
+    status: {}
 ```
 
 Accessing this route (e.g., `http://example.com/status`) will render the system status dashboard.
@@ -29,15 +29,16 @@ Accessing this route (e.g., `http://example.com/status`) will render the system 
 The `status` Action offers custom parameters to fine-tune the dashboard title, scope, template, and backend instance visibility:
 
 ```yaml
+site: example.com
 action:
   type: "status"
   title: "LiteGate Platform Status" # Custom dashboard title
-  host: "self"                     # "self" to filter by current host, or "*" for all sites
-  show_instances: false            # Whether to render detailed backend physical instances
-  template: "./site/status.html"   # Optional path to a custom template
-  template_root: "./site"          # Optional path to template partials root
-  template_debug: false            # Enable debug mode (reload template every request)
-  template_production: true        # Enable production mode (cache compiled template)
+  host: "self" # "self" to filter by current host, or "*" for all sites
+  show_instances: false # Whether to render detailed backend physical instances
+  template: "./site/status.html" # Optional path to a custom template
+  template_root: "./site" # Optional path to template partials root
+  template_debug: false # Enable debug mode (reload template every request)
+  template_production: true # Enable production mode (cache compiled template)
 ```
 
 | Field | Type | Default | Description |
@@ -59,6 +60,7 @@ action:
 The status page's custom template shares the same loading engine as the [`template` action](./template.md), so it **also supports distributed loading from litemesh / Consul KV**: the template lives in KV, clustered nodes need no local file distribution, compilation is in-memory, changes hot-reload on KV updates, and a failed fetch falls back to the last cached build.
 
 ```yaml
+site: example.com
 action:
   type: "status"
   title: "LiteGate Platform Status"
@@ -66,7 +68,7 @@ action:
   template_kv_mode: true
   template_kv_provider: "litemesh"
   template_kv_prefix: "litegate/tmpl/status-a/"
-  template: "status.html"   # main template key suffix relative to the prefix
+  template: "status.html" # main template key suffix relative to the prefix
 ```
 
 The resource boundaries (≤100 partials / ≤1MB each / ≤10MB total) and the security note (KV write access equals a code-deploy privilege) are the same as the `template` action; in KV mode the file-loading form of `{{ markdown "x.md" }}` is unavailable (inline only).

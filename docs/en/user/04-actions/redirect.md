@@ -9,13 +9,12 @@ The `redirect` action enables LiteGate to execute instant HTTP-level redirection
 Instantly steer all incoming traffic on an old domain `old.com` permanently to a new domain name:
 
 ```yaml
-domain: old.example.com
+site: old.example.com
 routes:
   - name: domain-migration
     match:
       path_prefix: /
-    action:
-      type: redirect
+    redirect:
       location: "https://new.example.com{path}" # The {path} variable retains the original request path
       status: 301 # HTTP 301 Moved Permanently
 ```
@@ -28,12 +27,11 @@ Under the hood, enabling the site parameter `force_https: true` compiles down to
 
 ### Manual Configuration Example
 ```yaml
-domain: web.local
+site: web.local
 routes:
   - name: force-ssl
-    match: { path_prefix: "/" }
-    action:
-      type: redirect
+    match: {path_prefix: "/"}
+    redirect:
       location: "https://web.local{path}"
       status: 307 # HTTP 307 Temporary Redirect
 ```

@@ -145,7 +145,7 @@ site: blog.example.com
 spa: /var/www/blog
 ```
 
-旧的 `domain:` 标准格式和 `.lite.yaml` 文件仍然可以正常加载，无需迁移。v2 会编译成与旧标准格式相同的内部模型，下文按这个内部模型讲解各层的职责；v2 中对应的字段名（如 `site`、`https`、`transports`、`use`）见 [站点配置](site-config.md) 第 0 节。
+以下站点示例统一使用 v2；复杂场景仍可使用 routes、match 和 action。字段参考见 [站点配置](site-config.md)。
 
 ### 3.2 结构
 
@@ -154,15 +154,15 @@ spa: /var/www/blog
 ```text
 site.yaml
 │
-├── domain                 站点域名（必填）
+├── site                 站点域名（必填）
 ├── entrypoints            挂在哪些入口上（缺省为全部入口）
-├── force_https            HTTP 自动跳转 HTTPS
+├── https            HTTP 自动跳转 HTTPS
 ├── tls                    本站点自定义证书（可选）
 ├── ip_restriction         站点级 IP 规则（对所有路由生效）
 ├── max_request_body_size / error_pages / defaults   站点级默认值
 │
 │ ── 定义区：起名字，供路由引用 ──
-├── serverstransports      上游传输方式（TLS / mTLS）
+├── transports      上游传输方式（TLS / mTLS）
 ├── services               后端：怎么到达（发现、负载均衡、超时、重试、熔断）
 ├── middlewares            中间件：进出时做什么（CORS、鉴权、限流 ……）
 │
@@ -172,7 +172,7 @@ site.yaml
     ├── priority           显式优先级（一般不需要）
     ├── match              去哪里：path / path_prefix / rule / method / header / query
     ├── ip_restriction     本路由的 IP 规则
-    ├── middlewares        引用定义区的中间件名，按阶段执行
+    ├── use        引用定义区的中间件名，按阶段执行
     └── action             谁来响应
         ├── type           proxy / serve / template / respond / redirect / webdav / list / markdown / status
         ├── service        (proxy) 引用定义区的 Service
@@ -183,8 +183,8 @@ site.yaml
 **引用关系：**
 
 ```text
-routes[].middlewares  ──按名字引用──▶  middlewares
-routes[].action.service ──按名字引用──▶ services ──引用──▶ serverstransports
+routes[].use  ──按名字引用──▶  middlewares
+routes[].action.service ──按名字引用──▶ services ──引用──▶ transports
 entrypoints            ──按名字引用──▶  config.yaml 的 entrypoints
 ```
 
@@ -195,41 +195,35 @@ entrypoints            ──按名字引用──▶  config.yaml 的 entrypoin
 下面是一个常见形态：前端静态页面 + 多个 API 后端 + 旧接口跳转。
 
 ```yaml
-domain: shop.example.com
-force_https: true
-
+site: shop.example.com
+https: true
 # ── 定义区 ─────────────────────────────────────────────
-
-serverstransports:
+transports:
   mesh:
     tls:
       enabled: true
-      clientcertificate: litemesh     # 与后端双向 TLS
-
+      clientcertificate: litemesh # 与后端双向 TLS
 services:
-  orders:                             # 通过服务发现找到实例
+  orders: # 通过服务发现找到实例
     discovery:
       name: orders
     timeout: 10s
     loadbalancer:
       strategy: least_conn
       serverstransport: mesh
-    healthcheck: { path: /health, interval: 10s }
-    retry: { attempts: 2 }
-    circuitbreaker: { enabled: true, tripthreshold: 5 }
-
+    healthcheck: {path: /health, interval: 10s}
+    retry: {attempts: 2}
+    circuitbreaker: {enabled: true, tripthreshold: 5}
   payments:
     discovery:
       name: payments
       selector:
-        match: { env: prod }          # 只选生产实例
-    timeout: 30s                      # 支付回调慢，单独放宽
-    loadbalancer: { strategy: round_robin }
-
-  legacy-cms:                         # 没有接入服务发现的老系统
-    servers: ["http://10.0.3.21:8080", "http://10.0.3.22:8080"]
+        match: {env: prod} # 只选生产实例
+    timeout: 30s # 支付回调慢，单独放宽
+    loadbalancer: {strategy: round_robin}
+  legacy-cms: # 没有接入服务发现的老系统
+    to: ["http://10.0.3.21:8080", "http://10.0.3.22:8080"]
     timeout: 5s
-
 middlewares:
   api-limit:
     type: ratelimit
@@ -239,60 +233,45 @@ middlewares:
     type: jwt_auth
     config:
       jwks_url: "https://auth.example.com/.well-known/jwks.json"
-  api-common:                         # 把常用组合打包，路由只引用一个名字
+  api-common: # 把常用组合打包，路由只引用一个名字
     type: chain
     config:
       middlewares: "api-limit,api-auth"
-
 # ── 使用区 ─────────────────────────────────────────────
-
 routes:
   - name: orders-api
-    match: { path_prefix: /api/orders }
-    middlewares: [api-common]
-    action:
-      service: orders
-      strip_prefix: /api
-
-  - name: payments-callback           # 第三方回调：不走 JWT，只限流
-    match: { path: /api/payments/callback, method: [POST] }
-    middlewares: [api-limit]
-    action:
-      service: payments
-      strip_prefix: /api
-
+    match: {path_prefix: /api/orders}
+    use: [api-common]
+    service: orders
+    strip_prefix: /api
+  - name: payments-callback # 第三方回调：不走 JWT，只限流
+    match: {path: /api/payments/callback, method: [POST]}
+    use: [api-limit]
+    service: payments
+    strip_prefix: /api
   - name: payments-api
-    match: { path_prefix: /api/payments }
-    middlewares: [api-common]
-    action:
-      service: payments
-      strip_prefix: /api
-
+    match: {path_prefix: /api/payments}
+    use: [api-common]
+    service: payments
+    strip_prefix: /api
   - name: cms
-    match: { path_prefix: /cms }
-    action:
-      service: legacy-cms
-
-  - name: old-help                    # 旧地址永久跳转
-    match: { path_prefix: /help }
-    action:
-      type: redirect
+    match: {path_prefix: /cms}
+    service: legacy-cms
+  - name: old-help # 旧地址永久跳转
+    match: {path_prefix: /help}
+    redirect:
       location: "https://help.example.com/"
       status: 301
-
-  - name: frontend                    # 兜底：单页应用
-    match: { path_prefix: / }
-    action:
-      type: serve
-      root: /var/www/shop
-      spa: true
-      compress: true
+  - name: frontend # 兜底：单页应用
+    match: {path_prefix: /}
+    compress: true
+    spa: /var/www/shop
 ```
 
 这份配置的组织思路：
 
 *   **后端只定义一次。** `payments` 被两条路由使用，超时、负载均衡只写在 Service 里，两条路由共享健康状态和熔断状态。
-*   **中间件按用途命名，常用组合用 `chain` 打包。** 新增 API 路由只需要写 `middlewares: [api-common]`。
+*   **中间件按用途命名，常用组合用 `chain` 打包。** 新增 API 路由只需要写 `use: [api-common]`。
 *   **前端和 API 同域。** 浏览器看到的是同一个来源，调用 `/api/...` 不需要 CORS。
 *   **特殊路由写得更具体。** 支付回调用精确路径 `path`，自然优先于 `/api/payments` 前缀。
 *   **兜底路由是 `/`。** 最长前缀匹配保证它只接住其他路由都不匹配的请求。
@@ -338,7 +317,7 @@ routes:
 |---|---|---|
 | 后端地址、负载均衡、超时 | `services` | 多条路由重复写 `service_name` / `timeout` |
 | 重试、熔断、健康检查 | `services` | `retry` / `circuit_breaker` 中间件（已弃用） |
-| 上游 TLS / mTLS | `serverstransports` | 每条路由写 `mtls` / `insecure_skip_verify` |
+| 上游 TLS / mTLS | `transports` | 每条路由写 `mtls` / `insecure_skip_verify` |
 | CORS、鉴权、限流、IP 限制 | `middlewares`，路由引用 | 每条路由各写一份内联配置 |
 | 只有一条路由用的简单设置 | action 内联字段（如 `compress: true`） | 为它单独定义一个中间件 |
 | 路径改写 | `strip_prefix`（简单去前缀）或 `rewrite`（正则） | 后端再做一次路径兼容 |
@@ -347,7 +326,7 @@ routes:
 
 判断方法见 [命名 Service 与配置分层](services.md) 第 1 节：**需要知道后端的写在 Service，不需要知道后端的写成中间件。**
 
-中间件无论以什么顺序写在 `middlewares` 列表里，都按固定阶段执行：预检（CORS）→ 请求改写 → 安全检查（IP、WAF）→ 流量控制（限流）→ 鉴权 → 鉴权后处理（镜像）→ 响应处理（压缩、缓存）。所以不用担心“限流写在鉴权前面还是后面”。同一阶段内先按中间件类型的固有顺序，类型顺序相同时再按书写顺序。
+中间件无论以什么顺序写在 `use` 列表里，都按固定阶段执行：预检（CORS）→ 请求改写 → 安全检查（IP、WAF）→ 流量控制（限流）→ 鉴权 → 鉴权后处理（镜像）→ 响应处理（压缩、缓存）。所以不用担心“限流写在鉴权前面还是后面”。同一阶段内先按中间件类型的固有顺序，类型顺序相同时再按书写顺序。
 
 ---
 

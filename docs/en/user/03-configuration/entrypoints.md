@@ -163,14 +163,12 @@ connected proxy IPs or CIDRs.
 
 ```yaml
 # sites/internal-api.yaml
-domain: internal-api.example.com
+site: internal-api.example.com
 entrypoints: [internal]
 routes:
   - match:
       path_prefix: /
-    action:
-      type: proxy
-      upstream: ["http://127.0.0.1:9000"]
+    proxy: ["http://127.0.0.1:9000"]
 ```
 
 On Linux, `interface_name` uses `SO_BINDTODEVICE`. It follows address changes because it binds the socket to the device rather than to its current IP address. LiteGate needs sufficient privilege to set this socket option. Configuring it on another operating system fails explicitly at startup.

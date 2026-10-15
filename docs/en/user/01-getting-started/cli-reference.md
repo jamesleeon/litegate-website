@@ -29,6 +29,7 @@ litegate [options]
 | `-init` | Generates `config.example.yaml` and creates default directories: `sites/`, `streams/`, `certs/`. |
 | `-example` | Generates various example site configuration files under the `./sites` directory. |
 | `-hash <password>`| Generates a Bcrypt hash value for the Admin Dashboard password. |
+| `-hashfile <path>` | Prints the file SHA256 as a single 64-character lowercase hexadecimal line and exits, for the SPA/serve KV `sha256` field. |
 | `-t` | Tests the configuration file syntax and exits (does not launch the gateway). Similar to `nginx -t`. |
 
 ### Consul Bootstrapping Parameters
@@ -111,3 +112,11 @@ The following environment variables take effect if corresponding command-line pa
 
 > [!TIP]
 > Fields within the configuration file also support the `${VAR_NAME}` environment variable substitution syntax.
+
+### Calculate a SPA/serve KV archive checksum
+
+```bash
+litegate -hashfile main-12.zip
+```
+
+Copy the output line into the KV JSON `sha256` field. The checksum covers the raw bytes of the uploaded ZIP, before extraction. No configuration file is required and no service is started.

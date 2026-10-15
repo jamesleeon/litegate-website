@@ -9,11 +9,11 @@
 将域名根目录映射到文件夹：
 
 ```yaml
-action:
-  type: serve
-  root: "./www/dist"      # 静态资源存放路径
-  index: "index.html"      # 默认 index 文件
-  compress: true           # 开启 Gzip/Brotli 压缩
+site: example.com
+compress: true # 开启 Gzip/Brotli 压缩
+serve:
+  root: "./www/dist" # 静态资源存放路径
+  index: "index.html" # 默认 index 文件
 ```
 
 ---
@@ -23,11 +23,10 @@ action:
 React 或 Vue 项目中的前端路由（如 `/user/profile`）在物理磁盘上并没有对应文件。通过 `spa` 参数，网关将所有 404 请求回退到入口，由前端路由接管。
 
 ```yaml
-action:
-  type: serve
+site: example.com
+spa:
   root: "./my-app/build"
   index: "index.html"
-  spa: true                # 关键：开启单页应用 (SPA) 路由支持
 ```
 
 ---
@@ -48,8 +47,8 @@ action:
 `serve` 默认不展示目录内容。确实需要下载目录时显式开启：
 
 ```yaml
-action:
-  type: serve
+site: example.com
+serve:
   root: "./downloads"
   browse: true
 ```
@@ -65,16 +64,15 @@ action:
 
 ## 4. 应用示例：静态博客
 ```yaml
-domain: blog.example.com
+site: blog.example.com
 routes:
   - name: blog-content
     match:
       path_prefix: /
-    action:
-      type: serve
+    compress: true
+    serve:
       root: "/opt/hugo-output"
       index: "index.html"
-      compress: true
 ```
 
 ---
@@ -84,12 +82,12 @@ routes:
 `try_files` 按顺序尝试一组候选文件，命中第一个存在的物理文件；都不存在时，以最后一项作为**回退目标**做内部重定向。常用于 PHP 前端控制器（WordPress/Laravel 伪静态）和需要把未知路径导向入口脚本的场景。
 
 ```yaml
-action:
-  type: serve
+site: example.com
+serve:
   root: "/var/www/html"
   try_files:
-    - "{path}"            # 先找请求路径对应的物理文件
-    - "/index.php"        # 都没有 → 回退到入口（内部重定向）
+    - "{path}" # 先找请求路径对应的物理文件
+    - "/index.php" # 都没有 → 回退到入口（内部重定向）
 ```
 
 - **占位符**：`{path}` / `{uri}` 展开为当前请求路径。

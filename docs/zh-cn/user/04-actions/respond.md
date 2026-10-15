@@ -9,6 +9,7 @@
 创建一个简单的健康检查接口：
 
 ```yaml
+site: example.com
 routes:
   - name: health-check
     match:
@@ -26,9 +27,10 @@ routes:
 ## 2. 返回 JSON 内容
 
 ```yaml
+site: example.com
 routes:
   - name: mock-api
-    match: { path_prefix: "/api/mock" }
+    match: {path_prefix: "/api/mock"}
     action:
       type: respond
       status: 201

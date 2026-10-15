@@ -52,28 +52,23 @@ V2 通过 `site:` 识别格式，`version: 2` 可以省略。文件名用于组�
 ```yaml
 site: app.example.com
 https: false
-
 # 站点范围的响应头
 response_headers:
   X-Frame-Options: DENY
-
 # 命名资源：只定义，不会自动产生路由
 services:
   orders:
     to: localhost:8080
     timeout: 5s
-
 # 路径路由：匹配条件写在键名里
 /api:
   service: orders
   strip_prefix: true
-
 # 显式路由：用于精确路径、方法等条件
 routes:
   - name: health
     match: {path: /health}
     respond: ok
-
 # 站点级动作：作为兜底路由
 spa: ./www
 ```
@@ -144,7 +139,7 @@ site: example.com
 site: example.com
 /api:
   proxy:
-    to: [localhost:8080, localhost:8081]
+    to: ['localhost:8080', 'localhost:8081']
     timeout: 5s
     retry: 2
 ```
@@ -254,10 +249,9 @@ HTTPS 正常工作还需要相应入口和可用证书。证书申请、存储�
 ```yaml
 site: api.example.com
 https: true
-ech: ech.example.com                # 绑定 ECH 公共组，对外加密 SNI（按需开启）
-max_request_body_size: 20971520      # 限制客户端请求体最大 20MB
-upstream_client: fast               # 默认使用高性能上游客户端
-
+ech: ech.example.com # 绑定 ECH 公共组，对外加密 SNI（按需开启）
+max_request_body_size: 20971520 # 限制客户端请求体最大 20MB
+upstream_client: fast # 默认使用高性能上游客户端
 # 站点级 IP 限制（站内所有路由生效）
 ip_restriction:
   allow_ips:
@@ -265,29 +259,25 @@ ip_restriction:
     - 10.0.0.0/8
   deny_ips:
     - 192.168.1.100
-
 # 站点级请求头（继承给所有 proxy 路由）与响应头（继承给所有动作）
 request_headers:
   X-Gateway-Site: api.example.com
 response_headers:
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
-
 # 站点级自定义错误页
 error_pages:
   - status: [404]
     template: /var/www/errors/404.html
   - status: [500, 502, 503, 504]
     template: /var/www/errors/50x.html
-
 # 站点级独立证书覆盖（可选，默认使用 ACME 自动证书或全局证书）
 tls:
   enabled: true
   cert_file: /etc/ssl/certs/api.crt
   key_file: /etc/ssl/certs/api.key
   min_version: "1.2"
-  client_auth: "none"                # mTLS 双向认证时可设为 require_and_verify
-
+  client_auth: "none" # mTLS 双向认证时可设为 require_and_verify
 /api: localhost:8080
 ```
 
@@ -433,7 +423,6 @@ routes:
       path: /healthz
       method: [GET, HEAD]
     respond: "healthy\n"
-
   # 通配路径列表 + 写操作方法过滤
   - name: api_v1_writes
     priority: 10
@@ -441,12 +430,10 @@ routes:
       path: ["/api/v1/*", "/api/v2/*"]
       method: [POST, PUT, DELETE]
     proxy: localhost:8081
-
   # 引用命名匹配器
   - name: admin_console
     match: '@admin_only'
     proxy: localhost:8082
-
 /api: localhost:8080
 spa: ./dist
 ```
@@ -533,7 +520,6 @@ site: example.com
   serve:
     root: /var/www/assets
     cache_control: "public, max-age=604800"
-
 # 站点兜底单页应用
 spa:
   root: /var/www/dist
@@ -605,7 +591,6 @@ site: example.com
     status: 200
     body: '{"status":"UP"}'
     content_type: application/json
-
 # 路径永久重定向
 /old-docs:
   redirect:
@@ -641,7 +626,7 @@ site: example.com
 /api:
   action:
     type: proxy
-    upstream: [localhost:8080]
+    upstream: ['localhost:8080']
     host: backend.internal
 ```
 
@@ -796,7 +781,7 @@ cors:
 | `secret` | sso | 字符串 | 无 | SSO 会话 Cookie 签名与加密密钥。 |
 | `template` | sso | 字符串 | 无 | 自定义 SSO 登录页面的 HTML 模板文件路径。 |
 | `session_ttl` | sso | 整数 (秒) | `86400` | SSO 登录成功后会话 Cookie 的有效期（秒）。 |
-| `cookie_samesite` | sso | 字符串 | `lax` | SSO Cookie 的 SameSite 模式：`lax`、`strict`、`none`。 |
+| `cookie_same_site` | sso | 字符串 | `lax` | SSO Cookie 的 SameSite 模式：`lax`、`strict`、`none`。 |
 | `cookie_secure` | sso | 布尔值 | `true` | 是否限定 Cookie 仅在 HTTPS 传输。 |
 
 ```yaml
@@ -825,7 +810,7 @@ auth:
 |---|---|---|---|
 | `rate_limit` | 浮点数 / 整数 / 对象 | 无 | 允许的最高请求速率 QPS。简写支持单数字（如 `rate_limit: 100`）；对象支持 `{rate: 100, key: '{client_ip}'}`。 |
 | `rate_limit_policy` | 字符串 | `static` | 限流算法。`static` 为固定速率令牌桶；`adaptive` 为根据后端实例健康状况自适应调节。 |
-| `rate_limit_key` | 字符串 | `{client_ip}` | 限流区分维度键。默认按客户端 IP，也支持按请求头（如 `{header.X-API-Key}`）或租户区分。 |
+| `rate_limit_key` | 字符串 | `route` | `route` 按站点和路由共享额度，`ip` 按客户端 IP 分桶；也可写 `rate_limit: {rate: 10, key: ip}`。不支持请求头或租户表达式。 |
 | `limit_conn` | 整数 | 无 | 最大并发连接数限制（如 `limit_conn: 20`）。单 key 超过最大并发直接返回 429。 |
 | `limit_conn_key` | 字符串 | `{client_ip}` | 并发限制的区分维度键。 |
 
@@ -1012,33 +997,28 @@ site: api.example.com
   rewrite:
     query:
       remove: [debug, mock]
-
   # 跨域策略
   cors:
     allowed_origins: ["https://app.example.com"]
     allowed_methods: [GET, POST, OPTIONS]
     allowed_headers: ["*"]
     allow_credentials: true
-
   # 速率与并发防护
   rate_limit:
     rate: 100
     key: "{header.X-User-Id}"
   limit_conn: 15
-
   # 响应缓存
   cache:
     enabled: true
     ttl: 30s
     key: "{path}:{query.page}"
-
   # 头部治理
   request_headers:
     X-Gateway: LiteGate
-    -X-Internal-Token: ""            # 向上游剔除私有 Token
+    -X-Internal-Token: "" # 向上游剔除私有 Token
   response_headers:
     X-Content-Type-Options: nosniff
-
   # 故障降级兜底
   on_error:
     status: 503
@@ -1172,15 +1152,13 @@ middlewares:
   # 响应压缩中间件
   zip:
     type: compress
-
   # 统一安全响应头中间件
   secure-headers:
     type: headers
     config:
       response.X-Content-Type-Options: nosniff
       response.X-Frame-Options: SAMEORIGIN
-
-use: [zip, secure-headers]
+middlewares: [zip, secure-headers]
 /api: localhost:8080
 spa: ./www
 ```
@@ -1208,7 +1186,6 @@ transports:
   backend-tls:
     tls:
       enabled: true
-
 services:
   # 静态集群服务（带健康检查、最少连接与熔断）
   user-backend:
@@ -1225,7 +1202,6 @@ services:
       enabled: true
       timeout: 60
       tripthreshold: 5
-
   # 动态服务发现服务（带实例选择器）
   order-backend:
     discovery:
@@ -1237,12 +1213,10 @@ services:
     loadbalancer:
       strategy: round_robin
       serverstransport: backend-tls
-
 # 路由按名引用
 /api/users:
   service: user-backend
   strip_prefix: true
-
 /api/orders:
   service: order-backend
   strip_prefix: true
@@ -1267,14 +1241,12 @@ transports:
       enabled: true
       insecureskipverify: false
       clientcertificate: litemesh
-
 services:
   secure-orders:
     to: https://internal.order-service.local:8443
     loadbalancer:
       strategy: least_conn
       serverstransport: backend-tls
-
 /orders:
   service: secure-orders
 ```
@@ -1288,9 +1260,9 @@ services:
 `#` 开始 YAML 注释，可独立一行，也可放在值后：
 
 ```yaml
-site: :9090                 # 开发入口
-~/goapi: localhost:8080     # 后端保留 /goapi 前缀
-spa: ./www                 # 前端构建目录
+site: :9090 # 开发入口
+~/goapi: localhost:8080 # 后端保留 /goapi 前缀
+spa: ./www # 前端构建目录
 ```
 
 若文本本身含有 ` #`，用引号包住。注释用于记录部署前提和配置目的，不参与路由选择。

@@ -60,7 +60,7 @@ If incoming L7 requests yield **`503 Service Unavailable`** errors, LiteGate is 
 - **Resolution**: Inspect browser network panels to see if multiple `Access-Control-Allow-Origin` values are returned. Adjust your gateway `cors` configuration or upstream headers to prevent duplicates.
 
 ### Infinite Redirect Loops
-- **Root Cause**: The gateway's `force_https` redirect rules conflict with downstream HTTP redirections implemented inside your application web server.
+- **Root Cause**: The gateway's `https` redirect rules conflict with downstream HTTP redirections implemented inside your application web server.
 - **Resolution**: Confirm that downstream application servers do not redirect secure HTTPS traffic back to plain HTTP.
 
 ---

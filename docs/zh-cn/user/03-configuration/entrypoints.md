@@ -200,14 +200,12 @@ proxy_protocol:
 
 ```yaml
 # sites/internal-api.yaml
-domain: internal-api.example.com
+site: internal-api.example.com
 entrypoints: [internal]
 routes:
   - match:
       path_prefix: /
-    action:
-      type: proxy
-      upstream: ["http://127.0.0.1:9000"]
+    proxy: ["http://127.0.0.1:9000"]
 ```
 
 `interface_name` 使用 Linux `SO_BINDTODEVICE`，绑定的是网卡而不是它当前的 IP，因此适合 DHCP 地址变化的服务器。LiteGate 进程必须具有设置该 socket 选项所需的权限。在非 Linux 平台配置该字段会明确启动失败。

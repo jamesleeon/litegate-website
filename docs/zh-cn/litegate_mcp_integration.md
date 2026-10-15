@@ -4,7 +4,7 @@
 
 > [!IMPORTANT]
 > **架构升级说明**: Litemesh 的 MCP 子系统已于 2026 年完成重构，正式脱离了通用的“服务注册表”。
-> 如果你的 LiteGate 此前是通过 `tag=mcp-bridge` 发现服务的，请务必参考末尾的[迁移指南](#迁移指南)进行代码适配。
+> 如果你的 LiteGate 此前是通过 `tag=mcp-bridge` 发现服务的，请务必参考末尾的[迁移指南](litegate_mcp_integration.md)进行代码适配。
 
 ---
 

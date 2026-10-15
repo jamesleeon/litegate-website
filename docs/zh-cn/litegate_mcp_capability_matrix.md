@@ -29,7 +29,7 @@
 | KV 读写 | `list_kv` | 模糊列出特定前缀下的所有 KV 项 | 是 | 是 | 适合大范围排查动态站点或前端指针的状态 |
 | 服务发现 | `list_services` | 列出 mesh/service registry 中的服务 | 是 | 部分 | 适合给 AI 选 upstream |
 | 服务发现 | `get_service_detail` | 获取服务实例与端点信息 | 是 | 部分 | 可配合绑定域名使用 |
-| 文档/schema | `get_config_guide` | 获取站点配置说明 | 是 | 是 | AI 可不依赖外部文档 |
+| 文档/schema | `get_config_guide` | 获取站点、L4 Stream 或流量治理配置说明 | 是 | 是 | `topic=site` / `stream` / `traffic`；支持 `lang=zh` / `en`，包含负载均衡策略及作用范围 |
 | 文档/schema | `get_gateway_config_schema` | 获取全局配置说明 | 是 | 是 | AI 可直接读取主配置 schema |
 | 文档/schema | `get_stream_config_schema` | 获取 stream 配置说明 | 是 | 是 | 覆盖 L4 配置说明 |
 | 配置校验 | `validate_site_config` | 严格校验站点配置 | 是 | 是 | 已复用 loader 严格校验 |
@@ -38,8 +38,8 @@
 | 生成与规划 | `plan_site_from_intent` | 根据自然语言给出配置建议 | 是 | 部分 | 适合复杂需求前置规划 |
 | 快捷创建 | `create_proxy_site` | 创建反向代理站点 | 是 | 是 | 常见场景可直接落配置 |
 | 快捷创建 | `create_static_site` | 创建静态站点 | 是 | 是 | 适合目录托管和 SPA |
-| 快捷创建 | `bind_domain_to_service` | 将域名绑定到 service | 是 | 是 | 适合 mesh/discovery 场景 |
-| 快捷创建 | `create_stream_proxy` | 创建 TCP/UDP stream | 是 | 是 | 覆盖常见 L4 转发 |
+| 快捷创建 | `bind_domain_to_service` | 将域名绑定到 service | 是 | 是 | 支持 `lb_policy` 指定 HTTP 实例负载均衡策略，默认轮询 |
+| 快捷创建 | `create_stream_proxy` | 创建单静态后端 TCP/UDP Stream | 是 | 是 | 多后端、权重、服务发现及策略配置使用 `get_config_guide(topic=stream)` → `validate_stream_config` → `save_stream_config` |
 | 变更预览 | `preview_config_change` | 预览 diff 和影响 | 是 | 部分 | 能看变更，但影响分析仍偏粗粒度 |
 | 变更执行 | `save_site_config` | 保存站点配置 | 是 | 是 | 当前已包含校验和自动 reload |
 | 变更执行 | `save_stream_config` | 保存 stream 配置 | 是 | 是 | 当前已包含校验和自动 reload |

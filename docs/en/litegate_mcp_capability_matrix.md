@@ -30,7 +30,7 @@ LiteGate's active MCP tools cover common website configurations and administrati
 | **KV Sync** | `list_kv` | Scans KV registries matching specific prefixes. | Yes | Yes | Useful for auditing dynamic cluster states. |
 | **Discovery** | `list_services` | Lists mesh or discovery registry microservices. | Yes | Partial | Helps AI discover backend upstreams. |
 | **Discovery** | `get_service_detail` | Retrieves endpoints and tags for a service. | Yes | Partial | Maps domains to healthy discovery upstreams. |
-| **Schema** | `get_config_guide` | Retrieves structural site config schema guides. | Yes | Yes | Reduces AI's reliance on external markdown files. |
+| **Schema** | `get_config_guide` | Retrieves site, L4 Stream or traffic configuration guides. | Yes | Yes | `topic=site` / `stream` / `traffic`, with `lang=zh` / `en`; includes load-balancing policies and scope. |
 | **Schema** | `get_gateway_config_schema`| Retrieves global configuration manuals. | Yes | Yes | Exposes master parameters. |
 | **Schema** | `get_stream_config_schema` | Retrieves stream DSL parameters. | Yes | Yes | Exposes L4 parameters. |
 | **Validation** | `validate_site_config` | Validates site configs against Go struct checkers. | Yes | Yes | Reuses parser validation libraries. |
@@ -39,8 +39,8 @@ LiteGate's active MCP tools cover common website configurations and administrati
 | **Planning** | `plan_site_from_intent` | Analyzes intent to yield configuration templates. | Yes | Partial | Useful for designing complex multi-routing sites. |
 | **Provision** | `create_proxy_site` | Generates standard reverse proxy site files. | Yes | Yes | Solves common backend proxying needs. |
 | **Provision** | `create_static_site` | Generates static folder or SPA site configurations.| Yes | Yes | Sets up dynamic static hosting. |
-| **Provision** | `bind_domain_to_service` | Maps SNI hostnames to registry service upstreams. | Yes | Yes | Streamlines mesh discovery. |
-| **Provision** | `create_stream_proxy` | Generates L4 TCP/UDP stream rules. | Yes | Yes | Sets up L4 forwarding. |
+| **Provision** | `bind_domain_to_service` | Binds an HTTP domain to a registry service. | Yes | Yes | Accepts `lb_policy` for instance selection; defaults to round robin. |
+| **Provision** | `create_stream_proxy` | Creates a TCP/UDP Stream with one static backend. | Yes | Yes | For multiple backends, weights, discovery or policies, use `get_config_guide(topic=stream)` then `validate_stream_config` and `save_stream_config`. |
 | **Diffing** | `preview_config_change` | Shows unified diffs and operational impact. | Yes | Partial | Outlines mutations, though impact details are basic. |
 | **Execution** | `save_site_config` | Writes site files to disk. | Yes | Yes | Triggers automatic hot-reloads instantly. |
 | **Execution** | `save_stream_config` | Writes stream files to disk. | Yes | Yes | Triggers L4 stream reloads instantly. |

@@ -10,7 +10,7 @@
 ## 1. 最小配置（内联模板）
 
 ```yaml
-domain: status.example.com
+site: status.example.com
 routes:
   - name: hello
     match:
@@ -29,10 +29,10 @@ routes:
 通过指定 `template` 文件路径，可以从本地磁盘或挂载目录中读取页面进行渲染。
 
 ```yaml
-action:
-  type: template
-  template: "./site/pages/index.html"   # 主模板文件路径
-  template_root: "./site"               # 片段扫描根目录，用于扫描其它 HTML 片段
+site: example.com
+template:
+  template: "./site/pages/index.html" # 主模板文件路径
+  template_root: "./site" # 片段扫描根目录，用于扫描其它 HTML 片段
 ```
 
 在主模板 `index.html` 中，可以通过 `{{ template "相对路径" . }}` 引用 `template_root` 下的其它公共组件（例如 Header / Footer）：
@@ -51,13 +51,13 @@ action:
 除了从本地磁盘读取，模板还可以**直接存放在 litemesh / Consul 的 KV 里**，由网关在内存中编译。这样多节点集群无需把模板文件分发到每台机器，改一次 KV 全网生效——对标已有的 [Serve KV 模式](../../serve_kv_mode.md)。
 
 ```yaml
-action:
-  type: template
+site: example.com
+template:
   template_kv_mode: true
-  template_kv_provider: "litemesh"            # litemesh 或 consul
+  template_kv_provider: "litemesh" # litemesh 或 consul
   template_kv_prefix: "litegate/tmpl/site-a/" # 模板片段在 KV 中的前缀
-  template_kv_namespace: "tenant-a"           # 可选，多租户隔离；留空用客户端默认 namespace
-  template: "pages/index.html"                # 主模板：相对 prefix 的 key 后缀
+  template_kv_namespace: "tenant-a" # 可选，多租户隔离；留空用客户端默认 namespace
+  template: "pages/index.html" # 主模板：相对 prefix 的 key 后缀
 ```
 
 工作方式：
@@ -181,7 +181,7 @@ error_pages:
 错误页按“站点级 → 全局级 → LiteGate 内置页面”的顺序选择。请求匹配到 site 且该 site 配置了对应状态码时，优先使用下面的站点级模板；否则继续使用全局模板。
 
 ```yaml
-domain: myapp.example.com
+site: myapp.example.com
 # 站点级全局错误页面映射
 error_pages:
   - status: [404]
@@ -222,6 +222,7 @@ routes:
 
 ### ⚙️ YAML 配置示例
 ```yaml
+site: example.com
 routes:
   - name: secure-admin
     match:
@@ -266,6 +267,7 @@ routes:
 你无须向终端用户暴露敏感的管理后台，只需配置 `status` 类型的 Action，即可直接渲染一个支持暗黑模式、高颜值磨砂玻璃风（Glassmorphism）的公开可用性状态面板。
 
 ```yaml
+site: example.com
 routes:
   - name: site-status
     match:
@@ -284,6 +286,7 @@ routes:
 在传统的静态托管（`serve`）模式下，如果开启了 `render_markdown`，你可以使用自定义的 HTML 模板来定制文档的页面外观。
 
 ```yaml
+site: example.com
 action:
   type: serve
   root: "./docs"
@@ -338,29 +341,24 @@ action:
 ### ⚙️ YAML 配置高级参数
 
 ```yaml
-action:
-  type: template
+site: example.com
+on_error:
+  status: 502 # 降级后的 HTTP 状态码，默认为 500
+  content_type: "text/html; charset=utf-8"
+  body: "<h1>服务正在维护中...</h1>" # 降级展示的静态 HTML 字符串
+  # template: "./site/fallback.html"    # 也可指定本地静态 html 降级文件
+template:
   template: "./site/pages/index.html"
   template_root: "./site"
-  
   # 1. 生产模式（建议线上开启）
   # 开启后，网关在启动时会对模板以及 markdown_template 布局自动进行预编译（Precompile），
   # 并常驻内存。运行时渲染直接读取缓存，完全关闭磁盘 I/O（不发生 os.Stat, os.ReadFile 等系统调用）。
   template_production: true
-
   # 2. 调试模式（建议本地开启）
   # 开启后，若模板编译或语法渲染错误，会在浏览器展示 Vite/Gin 风格的高颜值磨砂玻璃暗黑调试屏。
   # 调试屏会清晰标示出错误发生的文件名、所在行号、并在页面截取输出该行前后 5 行的上下文代码片段。
   # 当 template_debug 为 true 时，会强制旁路并忽略内存缓存以进行实时热重载。
   template_debug: true
-
-  # 3. 错误降级策略
-  # 当模板损坏、语法异常或执行报错导致无法正常向用户交付页面时，自动拦截并输出的安全降级响应。
-  on_error:
-    status: 502                           # 降级后的 HTTP 状态码，默认为 500
-    content_type: "text/html; charset=utf-8"
-    body: "<h1>服务正在维护中...</h1>"     # 降级展示的静态 HTML 字符串
-    # template: "./site/fallback.html"    # 也可指定本地静态 html 降级文件
 ```
 
 ### 🧠 开发模式与生产模式对比
@@ -385,20 +383,17 @@ action:
 
 ### ⚙️ YAML 配置示例 (`sites/demo.yaml`)
 ```yaml
-domain: "cool-dashboard.local"
-force_https: false
-
+site: "cool-dashboard.local"
+https: false
 routes:
   # 1. 扮演后端 JSON API，返回实时系统监控 JSON 数据
   - name: mock-json-api
     match:
       path: "/api/stats"
-    action:
-      type: "respond"
+    respond:
       status: 200
       content_type: "application/json; charset=utf-8"
       body: '{"status":"healthy","qps":342,"cpu":14.8,"time":"{{.Time}}"}'
-
   # 2. 专门供 HTMX 调用，拉取 API 数据后返回用于替换的局部 HTML 片段
   - name: stats-fragment
     match:
@@ -410,13 +405,11 @@ routes:
         - key: "monitor"
           url: "http://127.0.0.1:8080/api/stats"
           allow_private: true
-
   # 3. 前端监控看板的主页面路由
   - name: main-dashboard
     match:
       path: "/"
-    action:
-      type: "template"
+    template:
       template: "./templates/dashboard.html"
       fetch_json:
         - key: "monitor"
@@ -499,13 +492,12 @@ fetch_json:
 推荐让纯 JSON API 不感知网关协议，改由写操作的 `proxy` 路由声明：
 
 ```yaml
-action:
-  type: proxy
-  upstream: ["127.0.0.1:9000"]
-  on_success:
-    invalidate_cache: ["orders:tenant-a"]
-    htmx_trigger: ["orders-changed"]
-    discard_body: true
+site: example.com
+on_success:
+  invalidate_cache: ["orders:tenant-a"]
+  htmx_trigger: ["orders-changed"]
+  discard_body: true
+proxy: ["127.0.0.1:9000"]
 ```
 
 上游返回 `2xx` 后，LiteGate 清理缓存、生成 `HX-Trigger`，并按需丢弃 JSON 响应体。模板无论来自 `template_root` 目录还是 `template_kv_mode` 的 KV，行为都一致。

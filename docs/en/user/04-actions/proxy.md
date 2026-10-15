@@ -9,9 +9,9 @@ The `proxy` action is the most critical component of LiteGate, responsible for f
 Designed for scenarios where backend server IPs are fixed and declared directly inside the site configuration.
 
 ```yaml
+site: example.com
 action:
   type: proxy
-  upstream_type: static
   upstream:
     - "10.0.0.5:8080"
     - "10.0.0.6:8080"
@@ -24,23 +24,19 @@ An ordinary HTTP backend may listen only on a Unix socket. Clients can still
 use HTTPS, HTTP/2, or HTTP/3 to LiteGate; the backend hop uses HTTP/1.1:
 
 ```yaml
-domain: app.localhost
+site: app.localhost
 routes:
-  - match: { path_prefix: / }
-    action:
-      type: proxy
-      upstream: ["unix:///run/apps/app.sock"]
+  - match: {path_prefix: /}
+    proxy: ["unix:///run/apps/app.sock"]
 ```
 
 A wildcard site can safely map the request Host to a socket in one directory:
 
 ```yaml
-domain: "*.localhost"
+site: "*.localhost"
 routes:
-  - match: { path_prefix: / }
-    action:
-      type: proxy
-      upstream: ["unix:///run/apps/{host}.sock"]
+  - match: {path_prefix: /}
+    proxy: ["unix:///run/apps/{host}.sock"]
 ```
 
 For example, `foo.localhost` selects `/run/apps/foo.localhost.sock`. `{host}`
@@ -63,6 +59,7 @@ Automate scaling: LiteGate continuously monitors and synchronizes instances dire
 
 ### Consul Integration
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream_type: consul
@@ -71,6 +68,7 @@ action:
 
 ### Litemesh Service Mesh Integration
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream_type: litemesh
@@ -80,6 +78,7 @@ action:
 
 ### LiteDeploy / Docker / Discovery Integration
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream_type: litedeploy # can also be docker or external
@@ -142,9 +141,10 @@ LiteGate features native out-of-the-box support for WebSocket connections. The g
 Set `proto: grpc` to proxy gRPC backends as a first-class protocol. The gateway forces HTTP/2 and transparently forwards gRPC trailers (`grpc-status`, `grpc-message`, `grpc-status-details-bin`).
 
 ```yaml
+site: example.com
 action:
   type: proxy
-  proto: grpc                 # gRPC over cleartext HTTP/2 (h2c)
+  proto: grpc # gRPC over cleartext HTTP/2 (h2c)
   upstream:
     - "127.0.0.1:50051"
 ```
@@ -153,12 +153,13 @@ action:
 - **TLS / mTLS**: enabling `mtls: true` automatically upgrades the connection to TLS-based HTTP/2 (`grpcs`); no separate flag is needed.
 
 ```yaml
+site: example.com
 action:
   type: proxy
   proto: grpc
   upstream_type: litemesh
   service_name: order-grpc
-  mtls: true                  # gRPC over mTLS (auto-upgraded to grpcs)
+  mtls: true # gRPC over mTLS (auto-upgraded to grpcs)
 ```
 
 > gRPC reflection-based routing is planned for a later phase.
@@ -173,14 +174,15 @@ action:
 `lb_policy: cookie` pins a client to the same backend across requests — useful for stateful sessions and long-lived connections. The gateway issues an encrypted cookie identifying the chosen backend and routes subsequent requests accordingly.
 
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream:
     - "10.0.0.5:8080"
     - "10.0.0.6:8080"
   lb_policy: cookie
-  sticky_cookie_name: "LG_STICKY_BACKEND"   # optional, this is the default
-  sticky_cookie_ttl: 1800                    # optional, seconds (default 1800 = 30m)
+  sticky_cookie_name: "LG_STICKY_BACKEND" # optional, this is the default
+  sticky_cookie_ttl: 1800 # optional, seconds (default 1800 = 30m)
 ```
 
 - The cookie value is **AES-GCM encrypted** (backend address is neither exposed nor forgeable), `HttpOnly`, `SameSite=Lax`, and `Secure` over HTTPS.
@@ -199,15 +201,16 @@ sticky_key: "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
 
 ## 8. URL Rewrite (`rewrite`)
 
+New configurations use `rewrite.path.pattern` and `rewrite.path.target`; the legacy fields below remain compatible but cannot be combined with `path`. Query operations use `query.remove`, `rename`, `set` and `add` in that order. Rewriting does not change the selected Service. For tenant-dependent OAuth callbacks, select a backend from original request conditions or trusted IDS identity before adapting its path. Never treat unverified state/query values as tenant authorization. See [the complete rewrite guide](../03-configuration/rewrite.md) and [single callbacks](../09-advanced/oauth-single-callback.md).
+
 `rewrite` rewrites the request path via a regular expression **before** any WAF, IP policy, auth, or rate-limit middleware runs — so security controls always inspect the final, rewritten path.
 
 ```yaml
-action:
-  type: proxy
-  upstream: ["127.0.0.1:8080"]
-  rewrite:
-    pattern: "^/old/(.*)$"     # Go regular expression
-    target: "/new/$1"          # replacement ($1, $2 … capture groups)
+site: example.com
+rewrite:
+  pattern: "^/old/(.*)$" # Go regular expression
+  target: "/new/$1" # replacement ($1, $2 … capture groups)
+proxy: ["127.0.0.1:8080"]
 ```
 
 | Field | Type | Description |

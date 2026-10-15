@@ -93,22 +93,24 @@ A: 检查:
 
 A: 增加超时时间:
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream:
     - "backend:8080"
-  response_header_timeout: 60s
+  timeout: 60
 ```
 
 ### Q: WebSocket 连接失败?
 
 A: 确保配置正确:
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream:
     - "ws-backend:8080"
-  proto: http  # LiteGate 自动检测 WebSocket
+  proto: http # LiteGate 自动检测 WebSocket
 ```
 
 ## 性能
@@ -201,7 +203,7 @@ A: 支持,参见 [生产环境部署](../10-deployment/production.md)
 
 ### Q: 如何贡献代码?
 
-A: 参见 [贡献指南](https://github.com/jamesleeon/LiteGate/blob/master/CONTRIBUTING.md)
+A: 参见 [贡献指南](../../../../CONTRIBUTING.md)
 
 ## 获取帮助
 

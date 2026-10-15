@@ -29,6 +29,7 @@ litegate [options]
 | `-init` | 生成 `config.example.yaml` 并创建 `sites/`, `streams/`, `certs/` 默认目录。 |
 | `-example` | 在 `./sites` 目录下生成各类示例站点配置文件。 |
 | `-hash <password>` | 为 Dashboard、Basic Auth 或内置 SSO 用户密码生成 bcrypt 哈希值。 |
+| `-hashfile <path>` | 计算文件 SHA256，输出一行 64 字符的小写十六进制校验和后退出，可直接用于 SPA/serve KV 的 `sha256` 字段。 |
 | `-secret` | 输出一行 64 字符的十六进制随机密钥（32 个随机字节），可用于 SSO 的 `auth.secret`。 |
 | `-gen-secret` | 输出随机密钥的 Hex、Base64 和 Base64URL 三种带标签格式。 |
 | `-t` | 测试配置文件语法并退出（不启动服务）。类似 `nginx -t`。 |
@@ -128,3 +129,11 @@ litegate -config config.yaml -sync-litemesh -litemesh-addr 127.0.0.1:8787
 
 > [!TIP]
 > 配置文件中的字段也支持 `${VAR_NAME}` 环境变量语法。
+
+### 计算 SPA/serve KV 发布包校验和
+
+```bash
+litegate -hashfile main-12.zip
+```
+
+将输出整行填入 KV JSON 的 `sha256` 字段。计算的是上传的 ZIP 文件本身的原始字节，不是解压后的目录；无需配置文件，也不启动服务。

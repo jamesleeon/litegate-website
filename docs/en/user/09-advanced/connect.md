@@ -2,7 +2,7 @@
 
 LiteGate Connect publishes Home HTTPS Sites and optional L4 TCP Streams through a TLS tunnel initiated by Home. Home exposes no inbound port; the Connect control hostname and published service hostnames resolve to Cloud.
 
-For protocol and security details, see the [Connect design](https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/litegate-connect-design.md).
+For selection and composition, see [Forward and Connect](forward-and-connect.md).
 
 ## Cloud
 
@@ -147,7 +147,7 @@ One Cloud Forward Site can then route every authenticated tunnel to that Connect
 Stream:
 
 ```yaml
-domain: forward.example.com
+site: forward.example.com
 forward:
   target:
     type: connect
@@ -164,16 +164,14 @@ Native QUIC/UDP publication is not implemented.
 Authorize one exact Cloud Site for one peer:
 
 ```yaml
-domain: camera.example.com
+site: camera.example.com
 connect_override: home
 routes:
   - name: old-cloud-upstream
     match:
       path_prefix: /
-    action:
-      type: proxy
-      upstream:
-        - http://127.0.0.1:8080
+    proxy:
+      - http://127.0.0.1:8080
 ```
 
 The local route remains active until `home` registers the same exact hostname. Connect then owns new connections atomically. If Home goes offline, ownership remains fail-closed and never falls back to the old Cloud upstream. Withdraw the Home publication before removing `connect_override` to roll back.

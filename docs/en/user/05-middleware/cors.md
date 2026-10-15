@@ -10,12 +10,10 @@ Browsers only apply cross-origin checks when the **scheme, host, or port** diffe
 
 ```yaml
 # app.example.com: the frontend is served by the built-in serve action
-domain: app.example.com
+site: app.example.com
 routes:
-  - match: { path_prefix: / }
-    action:
-      type: serve
-      root: /var/www/app
+  - match: {path_prefix: /}
+    serve: /var/www/app
 ```
 
 When backend services registered in service discovery (LiteMesh / Consul) declare an `/api` route on the same domain through tags, the gateway merges them into the same site. The frontend calls `/api/...` with relative URLs, and those requests are same-origin.
@@ -34,8 +32,9 @@ You still need CORS when:
 The simplest form only turns the switch on:
 
 ```yaml
+site: example.com
 routes:
-  - match: { path_prefix: / }
+  - match: {path_prefix: /}
     action:
       type: proxy
       service_name: my-backend
@@ -62,9 +61,9 @@ This is **anonymous CORS**: the response carries `Access-Control-Allow-Origin: *
 ### Method A: Route-Inline Configuration (Recommended)
 
 ```yaml
-domain: api.example.com
+site: api.example.com
 routes:
-  - match: { path_prefix: /api }
+  - match: {path_prefix: /api}
     action:
       type: proxy
       service_name: backend-svc
@@ -86,20 +85,19 @@ routes:
 Define the middleware in the site's `middlewares` map and reference it by name from routes:
 
 ```yaml
-domain: api.example.com
+site: api.example.com
 middlewares:
   web-cors:
     type: cors
     config:
       allowed_origins: "https://web.example.com, https://admin.example.com"
       allow_credentials: "true"
-
 routes:
-  - match: { path_prefix: /api }
+  - match: {path_prefix: /api}
     action:
       type: proxy
       service_name: backend-svc
-    middlewares: ["web-cors"]
+    use: ["web-cors"]
 ```
 
 As service discovery tags:

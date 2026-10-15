@@ -3,7 +3,7 @@
 This document describes how LiteGate integrates with Litemesh's Model Context Protocol (MCP) capabilities.
 
 > [!IMPORTANT]
-> **Architecture Refactoring Note**: The Litemesh MCP subsystem was fully refactored in 2026, officially separating from the generic "Service Discovery Registry". If your LiteGate previously discovered MCP instances using `tag=mcp-bridge`, you must adapt your codes based on the [Migration Guide](#migration-guide) below.
+> **Architecture Refactoring Note**: The Litemesh MCP subsystem was fully refactored in 2026, officially separating from the generic "Service Discovery Registry". If your LiteGate previously discovered MCP instances using `tag=mcp-bridge`, you must adapt your codes based on the [Migration Guide](litegate_mcp_integration.md) below.
 
 ---
 

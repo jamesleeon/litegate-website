@@ -13,16 +13,15 @@ For ordinary PHP websites, prefer the [site-level `php` shorthand](user/03-confi
 Assuming php-fpm listens on `127.0.0.1:9000` and the site code lives at `/var/www/html` on the backend:
 
 ```yaml
-domain: example.com
+site: example.com
 routes:
   - name: php-route
     match:
       path: /index.php
     action:
       type: proxy
-      upstream_type: static
-      proto: fastcgi                 # Required: declare the FastCGI protocol
-      fastcgi_root: /var/www/html    # Required: backend Document Root (base for SCRIPT_FILENAME)
+      proto: fastcgi # Required: declare the FastCGI protocol
+      fastcgi_root: /var/www/html # Required: backend Document Root (base for SCRIPT_FILENAME)
       upstream:
         - "fastcgi://127.0.0.1:9000" # FastCGI backend address
 ```
@@ -36,13 +35,13 @@ Only three fields are required: **`proto: fastcgi`** + **`fastcgi_root`** + **`u
 When php-fpm uses a Unix socket (better performance, no TCP overhead), set `upstream` to `unix://` followed by the absolute socket path:
 
 ```yaml
+site: example.com
 action:
   type: proxy
-  upstream_type: static
   proto: fastcgi
   fastcgi_root: /var/www/html
   upstream:
-    - "unix:///var/run/php/php8.2-fpm.sock"   # Note the three slashes: unix:// + /absolute/path
+    - "unix:///var/run/php/php8.2-fpm.sock" # Note the three slashes: unix:// + /absolute/path
 ```
 
 > Unix sockets require Unix Domain Socket support on both the LiteGate and PHP-FPM hosts. On Windows, prefer `fastcgi://127.0.0.1:9000`. A Windows Named Pipe is not a Unix socket and is not currently accepted as a FastCGI upstream.
@@ -87,17 +86,17 @@ A FastCGI route's `upstream` **only accepts** `fastcgi://` / `unix://` / bare `h
 By default each request opens a fresh connection to the backend and closes it afterward. For high-concurrency PHP workloads, enabling connection reuse cuts connection-setup overhead significantly:
 
 ```yaml
+site: example.com
 action:
   type: proxy
-  upstream_type: static
   proto: fastcgi
   fastcgi_root: /var/www/html
   upstream:
     - "unix:///var/run/php/php8.2-fpm.sock"
-  fastcgi_keep_conn: true          # enable connection pooling
-  fastcgi_max_idle_conns: 16       # keep up to 16 idle connections
-  fastcgi_idle_timeout: 60         # reclaim after 60s idle
-  timeout: 30                      # max 30s per request
+  fastcgi_keep_conn: true # enable connection pooling
+  fastcgi_max_idle_conns: 16 # keep up to 16 idle connections
+  fastcgi_idle_timeout: 60 # reclaim after 60s idle
+  timeout: 30 # max 30s per request
 ```
 
 > A connection is returned to the pool only after the response has been **fully and cleanly read**. Connections from early client disconnects or interrupted uploads are closed outright, so they never corrupt the next request. Before reuse, a lightweight liveness probe discards stale connections that the backend already closed.
@@ -157,7 +156,7 @@ Because `serve` checks LiteGate's local filesystem, LiteGate and a remote PHP-FP
 ## 10. Complete example
 
 ```yaml
-domain: php.example.com
+site: php.example.com
 routes:
   # Execute PHP scripts and PATH_INFO requests with PHP-FPM.
   - name: php-scripts
@@ -166,7 +165,6 @@ routes:
       rule: 'PathRegex("(?i)^/.*\.php(?:/.*)?$")'
     action:
       type: proxy
-      upstream_type: static
       proto: fastcgi
       fastcgi_root: /var/www/html
       index: index.php
@@ -181,13 +179,11 @@ routes:
       fastcgi_max_idle_conns: 16
       fastcgi_idle_timeout: 60
       timeout: 30
-
   # Serve static files and route missing clean URLs to the front controller.
   - name: php-static-and-front-controller
     match:
       path_prefix: /
-    action:
-      type: serve
+    serve:
       root: /var/www/html
       try_files:
         - "{path}"

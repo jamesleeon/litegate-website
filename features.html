@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>功能列表 · LiteGate</title>
+<meta name="description" content="了解 LiteGate 的网站托管、反向代理、HTTPS、认证、服务发现、四层代理、跨网络隧道与运维能力。">
+<link rel="alternate" hreflang="zh-CN" href="features.html">
+<link rel="alternate" hreflang="en" href="en/features.html">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="features.css">
+<script src="main.js" defer></script>
+<script src="features.js" defer>
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">跳到功能列表</a>
+<header class="nav">
+<div class="wrap">
+<a class="brand" href="index.html">
+<span class="brand-mark">L</span>LiteGate</a>
+<button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+<nav class="nav-links" aria-label="主导航">
+<a href="index.html">首页</a>
+<a href="features.html" aria-current="page">功能列表</a>
+<a href="docs/zh-cn/">文档</a>
+<a href="en/features.html" data-lang-switch="en">English</a>
+<a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub ↗</a>
+</nav>
+</div>
+</header>
+<main id="content">
+<div class="wrap">
+<div class="features-hero">
+<p class="kicker">LITEGATE / FEATURES</p>
+<h1>一个网关，<br>
+<em>能做哪些事？</em>
+</h1>
+<p class="features-lead">网站托管、应用代理、服务发现与跨网络连接。<br>从入口到后端，把每一项能力说清楚。</p>
+<div class="feature-stats">
+<span>
+<strong>56</strong> 项功能</span>
+<span>
+<strong>10</strong> 个类别</span>
+
+</div>
+</div>
+<div class="feature-tools" hidden>
+<label for="feature-search">查找功能</label>
+<input id="feature-search" type="search" placeholder="搜索功能、协议或使用条件…" autocomplete="off">
+<label class="filter-label" for="feature-filter">功能类型</label>
+<select id="feature-filter">
+<option value="">全部类型</option>
+<option>内置</option>
+<option>按配置启用</option>
+<option>默认插件</option>
+<option>可选构建</option>
+<option>需外部服务</option>
+<option>需后端</option>
+<option>扩展能力</option>
+</select>
+<button id="reset-filters" type="button">重置</button>
+<p id="feature-count" role="status" aria-live="polite">共 56 项功能</p>
+</div>
+<div class="features-layout">
+<aside class="category-nav">
+<p>功能目录</p>
+<nav aria-label="功能分类">
+<a href="#web">网站与 HTTP</a>
+<a href="#routing">路由与流量处理</a>
+<a href="#proxy">反向代理与服务治理</a>
+<a href="#tls">HTTPS、证书与 DNS</a>
+<a href="#security">认证与访问控制</a>
+<a href="#limits">限流与资源控制</a>
+<a href="#discovery">服务发现与容器平台</a>
+<a href="#network">四层代理与跨网络连接</a>
+<a href="#operations">配置、观测与运维</a>
+<a href="#extensions">事件与插件</a>
+</nav>
+<a class="back-top" href="#content">回到顶部 ↑</a>
+</aside>
+<div class="feature-content">
+<section class="feature-section" id="web">
+<div class="category-head">
+<h2>网站与 HTTP</h2>
+<p>从静态页面到应用入口。</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>静态文件与 SPA</h3>
+<span class="badge">内置</span>
+</div>
+<p>提供本地静态文件、单页应用回退；处理 ETag、条件请求和字节范围请求。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>目录浏览与 WebDAV</h3>
+<span class="badge">内置</span>
+</div>
+<p>目录列表与文件浏览；WebDAV 文件操作可结合认证和权限配置。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Markdown 文档站</h3>
+<span class="badge">内置</span>
+</div>
+<p>将 Markdown 文件展示为带导航的文档页面，适合直接托管项目文档。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>服务端模板</h3>
+<span class="badge">内置</span>
+</div>
+<p>HTML / 文本模板、请求变量与 JSON 数据获取；模板环境变量读取受白名单限制。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>PHP / FastCGI</h3>
+<span class="badge">需后端</span>
+</div>
+<p>支持脚本选择、PATH_INFO 与前端控制器，再交给 FastCGI 后端执行。需要单独运行 PHP-FPM 等后端。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>HTTP/1.1、HTTP/2 与 HTTP/3</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>提供 HTTP 服务及基于 QUIC 的 HTTP/3 入口；HTTP/3 需要 TLS 与可达的 UDP 监听端口。</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="routing">
+<div class="category-head">
+<h2>路由与流量处理</h2>
+<p>用同一套路由承接不同应用。</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>多条件请求匹配</h3>
+<span class="badge">内置</span>
+</div>
+<p>按域名、路径、方法、请求头、查询参数和入口选择路由；支持正则与规则表达式。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>重写与重定向</h3>
+<span class="badge">内置</span>
+</div>
+<p>路径重写、正则路径替换、前缀剥离与 HTTP 重定向。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>请求头与响应头</h3>
+<span class="badge">内置</span>
+</div>
+<p>配置请求和响应头操作，并支持 CORS 跨域策略。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>响应压缩</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>按客户端协商使用 gzip、Brotli 或 Zstandard；静态资源与动态响应均有处理路径。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>反向代理缓存</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>代理响应缓存具有内存与磁盘容量控制、请求合并及重新验证逻辑；缓存行为由策略配置控制。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>请求镜像</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>将请求复制到镜像后端，可用于旁路验证；需要配置镜像目标和相关限制。</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="proxy">
+<div class="category-head">
+<h2>反向代理与服务治理</h2>
+<p>让后端实例变化与入口规则解耦。</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>HTTP / HTTPS 上游</h3>
+<span class="badge">内置</span>
+</div>
+<p>反向代理到 HTTP 或 HTTPS 后端，支持连接池、Unix socket 及上游 TLS 策略。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>WebSocket 与 gRPC</h3>
+<span class="badge">内置</span>
+</div>
+<p>处理 WebSocket 升级；通过 HTTP/2 / h2c 对接 gRPC 上游。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>负载均衡</h3>
+<span class="badge">内置</span>
+</div>
+<p>内置轮询、IP Hash、加权轮询、P2C 与最少连接策略，并可通过 Go 插件注册自定义选路算法。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>加权分流与会话保持</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>按后端权重分流；支持粘性 Cookie 和会话持久化配置。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>重试与熔断</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>配置重试退避及熔断策略；重试还会检查方法和请求体是否适合重放。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>健康状态与实例筛选</h3>
+<span class="badge">内置</span>
+</div>
+<p>根据实例可用状态及路由元数据选择后端，并处理被动健康反馈。</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="tls">
+<div class="category-head">
+<h2>HTTPS、证书与 DNS</h2>
+<p>把证书生命周期纳入网关。</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>ACME 自动证书</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>自动申请与续期证书，包含 DNS-01、HTTP-01 与 TLS-ALPN-01 验证实现。域名、网络和提供商凭据须满足验证要求。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>按需 TLS</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>在握手时为获准域名获取证书；实现包含域名准入及小时 / 天签发限额。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>本地 CA 与自备证书</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>可加载 PEM 证书并监视变更，也可为允许的本地域名签发本地 CA 证书；客户端需要信任根证书。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>OCSP Stapling</h3>
+<span class="badge">内置</span>
+</div>
+<p>为证书获取和附加 OCSP 响应，并通过后台任务刷新；实际可用性取决于证书与签发机构。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>客户端证书校验与上游 mTLS</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>入口可校验客户端提交的证书；Litemesh 上游可使用其证书回调与信任策略建立 mTLS。需要配置对应 CA、身份和信任资源。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>ECH 加密 ClientHello</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>管理 ECH 密钥、轮换与 DNS HTTPS 记录发布。需要支持 ECH 的客户端及具备 HTTPS 记录发布能力的 DNS 提供商。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>动态 DNS</h3>
+<span class="badge">需外部服务</span>
+</div>
+<p>包含阿里云、Cloudflare、腾讯云、华为云提供商实现；记录更新与清理由配置和记录归属控制。</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="security">
+<div class="category-head">
+<h2>认证与访问控制</h2>
+<p>在应用之前处理身份与入口策略。</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>Basic Auth 与 API Key</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>基于用户名密码或 API Key 限制请求访问。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>JWT 与 JWKS</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>验证 JWT，支持通过 JWKS 获取验签密钥。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>OIDC 登录</h3>
+<span class="badge">需外部服务</span>
+</div>
+<p>接入 OIDC 身份提供商并处理登录与会话；需要外部身份服务。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Forward Auth</h3>
+<span class="badge">默认插件</span>
+</div>
+<p>把认证决策委托给外部认证端点。该 Go 插件已在当前默认命令入口注册，使用时仍须配置认证服务。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>IP 限制与 CSRF</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>提供 IP 访问限制与 CSRF 校验中间件；客户端 IP 判断需要正确配置可信代理。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>规则型 WAF 与扫描防护</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>对 URL 查询、路径及部分请求头匹配 SQL 注入、XSS、路径穿越和命令注入规则，并提供扫描防护。此处不宣称 OWASP CRS 兼容或完整请求体检测。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>IDS 请求与响应钩子</h3>
+<span class="badge">扩展能力</span>
+</div>
+<p>支持请求检查、响应检查与治理决策，可接入 Go IDS 提供商；具体检测能力取决于提供商实现。</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="limits">
+<div class="category-head">
+<h2>限流与资源控制</h2>
+<p>为连接、请求和带宽设置边界。</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>请求速率限制</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>提供本地限流实现及窗口限流器；可按配置使用 Redis 协调共享状态。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>并发连接与带宽限制</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>配置连接并发和带宽策略；分布式连接租约需要相应共享存储。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>请求体与超时控制</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>限制请求体大小，并配置后端请求期限与传输超时。</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="discovery">
+<div class="category-head">
+<h2>服务发现与容器平台</h2>
+<p>从已有服务目录生成入口。</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>Consul 与 Litemesh</h3>
+<span class="badge">需外部服务</span>
+</div>
+<p>读取服务目录、实例元数据与标签，跟随服务变化更新路由。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Docker 与 Swarm</h3>
+<span class="badge">需外部服务</span>
+</div>
+<p>发现 Docker 容器与 Swarm 服务，处理标签、网络及实例端点。需要 Docker API 访问权限。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Kubernetes Ingress</h3>
+<span class="badge">需外部服务</span>
+</div>
+<p>监听 Kubernetes 资源并将 Ingress 转换为网关配置；需要集群访问权限和相应 RBAC。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Kubernetes Gateway API</h3>
+<span class="badge">需外部服务</span>
+</div>
+<p>实现 Gateway、HTTPRoute、GRPCRoute、TLSRoute 和 ReferenceGrant 的处理路径；支持范围受资源类型及监听配置约束，不据此宣称完整规范认证。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>标签 DSL 与 Magic Ingress</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>通过服务标签声明路由和策略，将目录中的后端合并到站点；也可配置自定义发现提供商。</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="network">
+<div class="category-head">
+<h2>四层代理与跨网络连接</h2>
+<p>HTTP 以外，也能连接服务。</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>TCP / UDP 转发</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>独立 stream 入口处理 TCP 与 UDP 流量，具有后端选路和空闲超时处理。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>SNI / ALPN 分流</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>检查 TLS ClientHello，按 SNI / ALPN 选择入口；可在共享端口上组合 HTTP 与四层服务。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>PROXY Protocol</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>提供入站 PROXY Protocol 解析，部署时须正确限制可信来源。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Connect 内网发布</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>内网 Home 主动连接 Cloud，建立认证的反向 HTTP/2 会话并发布服务；需要部署并配置两端。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Forward 安全隧道</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>通过带 Bearer 认证的 WSS 连接建立转发通道，用于跨网络访问。需要配置网关端与客户端。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>SOCKS5 与正向代理</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>具有 stream SOCKS5 处理和 HTTP 正向代理插件。正向代理插件已在默认命令入口注册，使用前须配置访问策略。</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="operations">
+<div class="category-head">
+<h2>配置、观测与运维</h2>
+<p>从配置文件到运行中的诊断。</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>YAML 配置与复用</h3>
+<span class="badge">内置</span>
+</div>
+<p>站点 YAML、简化语法、命名中间件与片段复用，可组合配置路由行为。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>配置热加载</h3>
+<span class="badge">内置</span>
+</div>
+<p>监视 YAML 文件变更，并由应用校验和应用配置；监听器变更及长连接具有专门生命周期处理。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>日志与指标</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>访问日志、异步日志分发、Prometheus 指标及状态展示，按配置暴露观测入口。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>分布式追踪</h3>
+<span class="badge">需外部服务</span>
+</div>
+<p>处理追踪上下文，批量向收集器导出 OTLP/HTTP JSON。需配置收集端；并非 OTLP/gRPC 导出。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>MCP 管理与诊断</h3>
+<span class="badge">按配置启用</span>
+</div>
+<p>内置 MCP 服务，连接配置、证书、服务发现和运行时中间件流水线诊断；需要配置访问入口与认证。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>命令行与系统服务</h3>
+<span class="badge">内置</span>
+</div>
+<p>提供运行、构建、插件管理、健康检查、Connect / Forward 及 systemd 服务管理命令。</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="extensions">
+<div class="category-head">
+<h2>事件与插件</h2>
+<p>区分已有实现与可扩展接口。</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>NATS 与 SSE 事件通知</h3>
+<span class="badge">默认插件</span>
+</div>
+<p>提供 NATS action、通知传输和浏览器 SSE 订阅，包含订阅配额与慢客户端处理。默认编入，可通过 nonats 标签移除；需要配置 NATS 服务。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Webhook 事件投递</h3>
+<span class="badge">需外部服务</span>
+</div>
+<p>提供 Webhook 投递实现，可用于事件通知集成。接收端需要自行部署。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Go 编译期插件</h3>
+<span class="badge">扩展能力</span>
+</div>
+<p>公开 action、中间件、负载均衡、DNS、发现与 IDS 等接口。自定义插件须实现并注册后重新构建；接口存在不代表所有第三方服务已接入。</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>WASM IDS</h3>
+<span class="badge">可选构建</span>
+</div>
+<p>基于 wazero 加载 IDS WASM 插件并支持目录监视。必须使用 -tags wasmids 构建，再启用 ids_wasm 配置；默认构建不含运行时。</p>
+</article>
+</div>
+</section>
+<p id="no-results" hidden>没有匹配的功能，请更换关键词或重置筛选。</p>
+</div>
+</div>
+<aside class="closing-note">
+<h2>从一个站点开始</h2>
+<p>选择需要的入口和策略，再逐步接入服务发现、认证与观测。</p>
+<a class="btn btn-primary" href="docs/zh-cn/">阅读使用文档 →</a>
+<a class="card-link" href="index.html#quickstart">查看快速开始</a>
+</aside>
+</div>
+</main>
+<footer class="features-footer wrap">
+<span>LiteGate · MIT 开源</span>
+<nav aria-label="页尾导航"><a href="index.html">首页</a><a href="docs/zh-cn/">文档</a><a href="en/features.html" data-lang-switch="en">English</a></nav>
+</footer>
+</body>
+</html>

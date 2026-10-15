@@ -1,0 +1,16 @@
+# Copy to ./sites/list.yaml. Use together with list-config.yaml.
+# Replace the host, root, session secret, and bcrypt password hash before use.
+site: 192.168.50.24
+entrypoints: [web]
+auth:
+  type: sso
+  secret: REPLACE_WITH_RANDOM_SECRET_AT_LEAST_32_BYTES
+  users:
+    demo: REPLACE_WITH_BCRYPT_HASH
+  session_ttl: 3600
+  cookie_same_site: lax
+  cookie_secure: false # HTTP LAN demo only. Use true with HTTPS.
+list:
+  root: ./www
+  title: LiteGate File Browser
+  show_hidden: false

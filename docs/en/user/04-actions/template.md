@@ -1,5 +1,36 @@
 # Template Action (Server-Side Templates)
 
+## Template extensions, error pages and login layouts
+
+Third-party Go packages can use `pkg/plugin.RegisterTemplateFunc` to register helpers. Registration validates names, signatures, duplicates and reserved built-in names, returning an error on failure. Helpers are trusted code called concurrently: they must be thread-safe and bounded. A changed registry version causes templates to compile against the updated functions. See the [plugin manual](../12-plugins/authoring-guide.md).
+
+Global and site `error_pages` map status codes to HTML templates. Selection is site mapping, then global mapping, then the built-in page. Requests without a matching site can use a global 404 mapping. Once response headers are committed, the body is not replaced. WebSocket upgrades and SSE bypass interception to preserve streaming semantics.
+
+```yaml
+error_pages:
+  - status: [404]
+    template: ./templates/errors/site-not-found.html
+```
+
+```yaml
+site: myapp.example.com
+error_pages:
+  - status: [404]
+    template: ./templates/errors/404.html
+  - status: [500, 502, 503, 504]
+    template: ./templates/errors/5xx.html
+routes:
+  - name: my-service
+    match: {path_prefix: /}
+    action: {type: proxy, service_name: backend-app}
+```
+
+Error templates receive `.Status`, `.StatusText`, `.Error` and `.RequestID`. `.Error` can contain diagnostic details; choose what is appropriate to expose to visitors.
+
+Local SSO uses `auth.template` for a custom login page. Its placeholders are `{{ERROR}}`, `{{NEXT}}` and `{{CLIENT_IP}}`; include a hidden form field named `next` with `{{NEXT}}`, plus username/password inputs. These placeholders belong to the SSO renderer, not ordinary Go template data. Protect the whole login/logout route scope and configure real bcrypt users and a separate signing secret as shown in [authentication](../05-middleware/authentication.md).
+
+A `status` Action exposes an application availability page, separate from the management Dashboard. It can return JSON with `?format=json` or `Accept: application/json`. Configure its access policy deliberately; see [Status](status.md).
+
 
 The `template` action renders dynamic HTML on the server using Go's `html/template`. Output is HTML-escaped by default (XSS-safe), the request context (headers / query / cookies / client IP …) is injected, and multi-file **partial reuse** (header / footer / nav) is supported.
 
@@ -10,7 +41,7 @@ The `template` action renders dynamic HTML on the server using Go's `html/templa
 ## 1. Minimal Configuration (Inline Template)
 
 ```yaml
-domain: status.example.com
+site: status.example.com
 routes:
   - name: hello
     match:
@@ -27,9 +58,9 @@ routes:
 ## 2. File Template
 
 ```yaml
-action:
-  type: template
-  template: "./templates/index.html"   # Path to the main template file
+site: example.com
+template:
+  template: "./templates/index.html" # Path to the main template file
 ```
 
 ```html
@@ -51,10 +82,10 @@ action:
 When `template_root` is set, LiteGate scans the directory for every `.html` / `.tmpl` file and **compiles them together**, so the main template can reference others via `{{ template "relative/path" . }}` and reuse shared layout such as header / footer.
 
 ```yaml
-action:
-  type: template
-  template: "./site/pages/index.html"   # Main template
-  template_root: "./site"               # Root scanned for partials
+site: example.com
+template:
+  template: "./site/pages/index.html" # Main template
+  template_root: "./site" # Root scanned for partials
 ```
 
 ```html
@@ -76,13 +107,13 @@ action:
 Instead of reading from local disk, templates can be **stored directly in litemesh / Consul KV** and compiled in memory by the gateway. A clustered deployment then needs no per-node file distribution — update the KV once and it takes effect fleet-wide. This mirrors the existing [Serve KV mode](../../serve_kv_mode.md).
 
 ```yaml
-action:
-  type: template
+site: example.com
+template:
   template_kv_mode: true
-  template_kv_provider: "litemesh"            # litemesh or consul
+  template_kv_provider: "litemesh" # litemesh or consul
   template_kv_prefix: "litegate/tmpl/site-a/" # KV prefix the partials live under
-  template_kv_namespace: "tenant-a"           # optional, multi-tenant isolation; empty = client default namespace
-  template: "pages/index.html"                # main template: key suffix relative to the prefix
+  template_kv_namespace: "tenant-a" # optional, multi-tenant isolation; empty = client default namespace
+  template: "pages/index.html" # main template: key suffix relative to the prefix
 ```
 
 How it works:
@@ -173,7 +204,7 @@ In addition to Go's standard built-ins, LiteGate registers the following helpers
 
 - **XSS-safe by default**: built on `html/template`, variables are context-escaped automatically.
 - **Traversal protection**: the main template and every partial are symlink-resolved (`EvalSymlinks`) and checked for escaping `template_root`; anything outside is rejected.
-- **TOCTOU protection**: the file handle is opened before stat/read. Ensure the `template_root` tree is **writable only by trusted users** (see [SECURITY.md](https://github.com/jamesleeon/LiteGate/blob/master/SECURITY.md)).
+- **TOCTOU protection**: the file handle is opened before stat/read. Ensure the `template_root` tree is **writable only by trusted users** (see [SECURITY.md](../../../../SECURITY.md)).
 - **fetch_json SSRF protection**: target hosts are resolved and checked **at dial time**; private / loopback / link-local / multicast / CGNAT (`100.64.0.0/10`) / reserved ranges are blocked unless `allow_private: true`. Redirects are re-validated through the same secure transport, only `http`/`https` schemes are allowed, and response size / timeout are enforced. See §10.
 - **forward_headers credential leak** ⚠️: `forward_headers` forwards the named request headers (e.g. `Authorization`, `Cookie`) to the fetch target. The target URL is **not allow-list restricted**, so only forward credential headers to URLs you fully control — a misconfigured or injected URL template could exfiltrate credentials to an external host. Hardcode the host portion of `url`; never build it from user input.
 - **HTMX script & CSP**: `{{ htmx }}` emits the bundled script **with the per-request nonce baked in** — e.g. `<script src="/_litegate/assets/htmx-4.0.0.min.js" nonce="…"></script>` — and always points at the current embedded version, so an htmx upgrade never leaves a hardcoded versioned URL 404ing. Prefer `{{ htmx }}` over hand-writing the tag. For the nonce to actually enforce anything you must also emit a matching CSP header: set **`template_csp`** on the action (see below). Hardcode the versioned URL only if you cannot use the helper, and remember to update it on every htmx bump.
@@ -190,6 +221,7 @@ In addition to Go's standard built-ins, LiteGate registers the following helpers
 In `serve` mode, if `render_markdown` is enabled, you can specify `markdown_template` to wrap the rendered markdown document in a custom HTML layout.
 
 ```yaml
+site: example.com
 action:
   type: serve
   root: "./docs"
@@ -232,29 +264,24 @@ LiteGate provides robust settings for performance pre-compilation, visual diagno
 
 ### ⚙️ YAML Configuration Example
 ```yaml
-action:
-  type: template
+site: example.com
+on_error:
+  status: 502
+  content_type: "text/html; charset=utf-8"
+  body: "<h1>Site Maintenance</h1>" # Inline HTML string
+  # template: "./site/fallback.html"   # Or local HTML file fallback
+template:
   template: "./site/pages/index.html"
   template_root: "./site"
-  
   # 1. Production Mode
   # Precompiles all templates (including markdown layout templates) at gateway startup.
   # Keeps them in memory to eliminate cold starts and bypasses disk syscalls (zero os.Stat / os.ReadFile) during request handling.
   template_production: true
-
   # 2. Debug Mode
   # If compile or execution fails, renders a detailed Glassmorphism-style diagnostics screen in the browser
   # highlighting the exact error location and showing 11 lines of surrounding code.
   # Automatically invalidates and hot-reloads templates on Mtime changes of files inside template_root.
   template_debug: true
-
-  # 3. On-Error Fallback Configuration
-  # Safe degradation configuration when templates fail to build or run.
-  on_error:
-    status: 502
-    content_type: "text/html; charset=utf-8"
-    body: "<h1>Site Maintenance</h1>"    # Inline HTML string
-    # template: "./site/fallback.html"   # Or local HTML file fallback
 ```
 
 ### 🧠 Environment Mode Guide
@@ -274,20 +301,17 @@ The example below: a `respond` action plays the role of a monitoring JSON API, `
 
 ### ⚙️ YAML Example (`sites/demo.yaml`)
 ```yaml
-domain: "cool-dashboard.local"
-force_https: false
-
+site: "cool-dashboard.local"
+https: false
 routes:
   # 1. Mock backend JSON API
   - name: mock-json-api
     match:
       path: "/api/stats"
-    action:
-      type: "respond"
+    respond:
       status: 200
       content_type: "application/json; charset=utf-8"
       body: '{"status":"healthy","qps":342,"cpu":14.8,"time":"{{.Time}}"}'
-
   # 2. Called by HTMX: fetch the API and return an HTML fragment to swap in
   - name: stats-fragment
     match:
@@ -299,13 +323,11 @@ routes:
         - key: "monitor"
           url: "http://127.0.0.1:8080/api/stats"
           allow_private: true
-
   # 3. The dashboard home page
   - name: main-dashboard
     match:
       path: "/"
-    action:
-      type: "template"
+    template:
       template: "./templates/dashboard.html"
       fetch_json:
         - key: "monitor"
@@ -377,13 +399,12 @@ With `template_fragment`, a normal request executes the full main template while
 Prefer keeping a JSON API unaware of gateway protocols by declaring the behavior on its write proxy route:
 
 ```yaml
-action:
-  type: proxy
-  upstream: ["127.0.0.1:9000"]
-  on_success:
-    invalidate_cache: ["orders:tenant-a"]
-    htmx_trigger: ["orders-changed"]
-    discard_body: true
+site: example.com
+on_success:
+  invalidate_cache: ["orders:tenant-a"]
+  htmx_trigger: ["orders-changed"]
+  discard_body: true
+proxy: ["127.0.0.1:9000"]
 ```
 
 After an upstream `2xx`, LiteGate invalidates the cache, emits `HX-Trigger`, and optionally withholds the JSON response body. This works identically whether templates are loaded from `template_root` files or KV through `template_kv_mode`.

@@ -1,5 +1,7 @@
 # Litemesh mTLS Integration Guide
 
+For tested LAN HTTPS, client root trust and service mTLS configurations, see [LAN CAs and service mTLS](../06-certificates/lan-ca-and-mtls.md).
+
 This document explains how a backend service enables Litemesh mTLS, how it registers with Litemesh, and how LiteGate enables mTLS access based on Litemesh tags and metadata.
 
 Applicable scenarios:
@@ -267,8 +269,7 @@ Relevant fields:
 The site config only needs to use Litemesh discovery:
 
 ```yaml
-domain: api.example.com
-
+site: api.example.com
 routes:
   - name: user-service
     match:
@@ -283,8 +284,7 @@ routes:
 If you want to enforce the backend SPIFFE ID at the route level, you can also use:
 
 ```yaml
-domain: api.example.com
-
+site: api.example.com
 routes:
   - name: user-service
     match:

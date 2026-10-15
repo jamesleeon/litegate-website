@@ -27,7 +27,7 @@ shared:
   event_ack_secret: "${EVENT_ACK_SECRET}"
 ```
 
-IDS 等插件的缓存失效不使用本文的持久投递，而是由插件自己声明 subject、通过通知总线接收，见 [插件订阅通知](../09-advanced/event-notification.md#9-插件订阅通知插件自己定义-subject)。
+IDS 等插件的缓存失效不使用本文的持久投递，而是由插件自己声明 subject、通过通知总线接收，见 [插件订阅通知](../09-advanced/event-notification.md)。
 
 ## HTTP 发布、订阅和确认
 
@@ -115,7 +115,7 @@ routes:
 
 永久坏消息（超大、无效 UTF-8、编码后超出缓冲预算）会执行 TERM，只终止该 consumer 的重投，发送 delivery-warning 并继续连接。原始消息仍保留在 LimitsPolicy 流中供排查和其他消费者使用。litegate_nats_terminated_events_total 记录类型与原因；错误日志包含 stream、durable、stream sequence。没有自动死信转发，发布者仍需修复。
 
-Go 客户端可用仓库的 `pkg/eventclient.Client`，提供 `Resync` 和 `Handle` 回调，包内负责重连和成功后的 ACK；认证头同时用于 GET 和 POST。HTTPClient 不应设置覆盖整个 SSE 请求的总超时。浏览器示例见 [browser-client.js](https://github.com/jamesleeon/LiteGate/blob/master/examples/nats-events/browser-client.js)，使用 Cookie、串行处理和显式 HTTP ACK。浏览器原生 EventSource 不支持自定义 Authorization 头；跨域需要正确设置 CORS/凭证。401/403 的页面跳转由应用处理。
+Go 客户端可用仓库的 `pkg/eventclient.Client`，提供 `Resync` 和 `Handle` 回调，包内负责重连和成功后的 ACK；认证头同时用于 GET 和 POST。HTTPClient 不应设置覆盖整个 SSE 请求的总超时。浏览器示例见 [browser-client.js](../../../../examples/nats-events/browser-client.js)，使用 Cookie、串行处理和显式 HTTP ACK。浏览器原生 EventSource 不支持自定义 Authorization 头；跨域需要正确设置 CORS/凭证。401/403 的页面跳转由应用处理。
 
 ## 运维边界
 

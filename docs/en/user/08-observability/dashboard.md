@@ -64,6 +64,6 @@ dashboard:
 ---
 
 ## Further Reading
-- [How to Generate Password Hashes](../../user/01-getting-started/installation.md#命令行参数)
+- [How to Generate Password Hashes](../../user/01-getting-started/installation.md)
 - [Prometheus Ingestion Specifications](./metrics.md)
 - [Publish an HTTP Service with the CLI](../09-advanced/connect-cli-http.md)

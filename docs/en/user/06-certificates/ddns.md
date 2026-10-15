@@ -1,5 +1,36 @@
 # DDNS (Dynamic DNS)
 
+## Multiple nodes and internal DNS
+
+A/AAAA updates preserve the record set: each node ensures its own address is present without replacing other nodes' addresses. Built-in Alibaba, Tencent and Cloudflare providers append records; third-party providers must preserve the same semantics. With Consul/LiteMesh certificate storage, distributed locks coordinate updates by provider, hostname and record type. Identical updates are idempotent and later DNS checks repair manually deleted records.
+
+```yaml
+litemesh:
+  enabled: true
+  roles:
+    cert_storage: true
+```
+
+Multiple A/AAAA addresses provide DNS rotation, not active health checking. Resolver/client caches can retain failed addresses. The current record-set mode does not automatically delete a node's old IP; clean up obsolete values after permanent IP changes or shutdown. Do not describe this as automatic failure removal.
+
+`ddns.domains` wildcards select providers for loaded exact Site/Stream names. They do not create literal wildcard A/AAAA owners; requests containing `*` are skipped and record writers reject wildcard owners. Configure explicit IPv4/IPv6 values when the node should avoid public-IP probes.
+
+Internal DNS uses `auto_cert.dns_update`, publishing the gateway's internal IP into LiteMesh KV for LiteDNS rather than updating a public DNS provider. Enable LiteMesh and align the key prefix with LiteDNS. Omitted ip detects the outbound interface address; omitted node_id uses the hostname. KV TTL is three times heartbeat_interval.
+
+```yaml
+auto_cert:
+  dns_update:
+    enabled: true
+    auto_service_host_sync: true
+    ip: ''
+    key_prefix: litedns/v1/records/
+    node_id: ''
+    record_ttl: 30
+    heartbeat_interval: 30s
+```
+
+See [internal DNS and multiple nodes](../../dynamic-dns-multi-node.md).
+
 For another DNS service, see [Add a DNS provider](dns-providers.md): compatible libdns modules can be compiled in with `litegate build --dns` without writing plugin code.
 
 LiteGate features an integrated Dynamic DNS (DDNS) engine that automatically synchronizes the gateway's public WAN IP address with the A and AAAA records of your DNS cloud provider. Default builds include Alibaba Cloud DNS, Tencent Cloud DNSPod, and Cloudflare. Huawei Cloud DNS and other providers require third-party DNS provider plugins compiled on demand.

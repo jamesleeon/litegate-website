@@ -1,5 +1,7 @@
 # OIDC / OAuth2 Authentication Guide
 
+For a complete integration example, see [authentik OIDC configuration example](authentik.md).
+
 LiteGate features enterprise-grade federated identity integration powered by standard OIDC and OAuth2 authentication handlers, utilizing `remote_auth.provider` definitions backed by a distributed Redis session store.
 
 ---
@@ -99,7 +101,7 @@ oidc_security:
 Bind Identity Providers to specific routing pathways using the `remote_auth` configuration block:
 
 ```yaml
-domain: "app.example.com"
+site: "app.example.com"
 routes:
   - name: "protected-api"
     match:
@@ -110,8 +112,8 @@ routes:
       remote_auth:
         enabled: true
         provider: "google-oidc"
-        enforce: true                 # Redirects unauthenticated traffic immediately to IdP
-        callback_path: "/_auth/cb"    # Route-level callback override
+        enforce: true # Redirects unauthenticated traffic immediately to IdP
+        callback_path: "/_auth/cb" # Route-level callback override
         inject_claims:
           "X-User-Id": "sub"
           "X-User-Email": "email"

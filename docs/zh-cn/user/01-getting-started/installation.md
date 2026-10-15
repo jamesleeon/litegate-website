@@ -6,7 +6,7 @@ LiteGate 是一个轻量级、高性能的云原生网关，支持多种安装�
 
 - **操作系统**: Linux, Windows, macOS
 - **架构**: amd64, arm64
-- **Go 版本**: 1.21+ (仅源码编译需要)
+- **Go 版本**: 以仓库 `go.mod` 为准（仅源码构建需要）；见 [构建环境安装](build-environment.md)
 
 ---
 

@@ -47,20 +47,17 @@ In your LiteGate YAML configurations, a standard `serve` action route enters **K
 Specify this in `sites/yourdomain.yaml`:
 
 ```yaml
-domain: example.com
+site: example.com
 routes:
   - match:
       path_prefix: /
-    action:
-      type: serve
-      root: /var/www/my-app           # Base local directory for storing extracted versions
-      spa: true                        # Enables single-page application routing support
-      
+    spa:
+      root: /var/www/my-app # Base local directory for storing extracted versions
       # --- KV Mode Core Fields ---
-      kv_mode: true                    # Enables KV synchronization mode
-      kv_provider: litemesh            # Supports: litemesh, consul, http
+      kv_mode: true # Enables KV synchronization mode
+      kv_provider: litemesh # Supports: litemesh, consul, http
       kv_key: litegate/config/front/main # Watched KV key path or HTTP URL
-      keep_versions: 3                 # Max historical versions kept locally (default 3)
+      keep_versions: 3 # Max historical versions kept locally (default 3)
 ```
 
 ### 2.2 Field Descriptions
@@ -95,7 +92,7 @@ The payload observed by LiteGate in the KV store must be a valid **JSON object**
 ### 3.2 Deployment Steps
 
 1. **Pack**: Archive your build folder: `zip -r main-12.zip dist/`, upload it, and get the download link: `https://oss.example.com/front/main-12.zip`.
-2. **Calculate SHA256**: Run `sha256sum main-12.zip` to get the checksum, e.g., `2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824`.
+2. **Calculate SHA256**: Run `litegate -hashfile main-12.zip` to get the checksum, e.g., `2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824`.
 3. **Write KV**:
    * **Litemesh KV Users**:
      ```bash

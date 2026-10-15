@@ -85,7 +85,7 @@ socks5:
 ```
 
 SOCKS5 逐连接选择目标，必须配置白名单，不使用固定 `proxy`。
-应用配置前运行 `litegate -t`。MCP 应先读取 `get_stream_config_schema`，再调用
+应用配置前运行 `litegate -t`。MCP 应先读取 `get_config_guide(topic=stream, lang=zh)`（英文使用 `lang=en`）或 `get_stream_config_schema`，再调用
 `validate_stream_config` 和 `save_stream_config`。保存成功不代表重载成功；应用后检查
 运行时 Stream 并验证实际连通性。
 
@@ -126,3 +126,12 @@ tls:
 | `socks5.allowed_destinations` | `protocol: socks5` 必填的目标白名单。 |
 
 高级 TLS 路由、UDP、PROXY 协议、服务发现和运行细节参见 [Stream 字段参考](stream-config.md)。
+
+### 负载均衡策略与作用范围
+
+- `lb_policy` 支持 `round_robin`（默认）、`ip_hash`、`weighted` / `weighted_round_robin`（平滑加权轮询）、`least_conn`、`p2c` 及已注册的插件策略；L4 不支持 HTTP 的 `cookie` 策略。
+- 全部为静态 `upstream` 的 `backends`（包括 `tls_routes[].backends`）按 `lb_policy` 选择。默认轮询；加权轮询使用各 backend 的 `weight`，未设置或非正数按 1 处理。IP Hash 在候选池不变时按客户端 IP 保持后端。
+- `service_name` 发现的实例按 `lb_policy` 选择。含服务发现目标的 backend 列表保留两层选择：先按 backend 的 `weight` 加权随机选择目标服务/后端，再按 `lb_policy` 选择该服务的实例。这种列表的 IP Hash 只保持服务内部实例，不保证跨目标服务粘性。
+- `least_conn` 比较活跃 TCP 连接数或 UDP 虚拟会话数；同负载时随机均匀选择。UDP 在客户端源地址与目标地址建立会话时选择后端，同一会话后续数据报复用该后端；空闲超时或关闭时释放计数。
+- `p2c` 先比较两个候选的活跃数量，相同时比较 EWMA 延迟。TCP 延迟是成功建连耗时；UDP 延迟是首个上行数据报到首次后端响应的耗时，每会话采样一次，单向无响应会话不采样。这些指标不是应用层逐请求延迟。
+- 静态后端的默认行为由原来的加权随机改为轮询；需要按权重分流时显式配置 `lb_policy: weighted`。

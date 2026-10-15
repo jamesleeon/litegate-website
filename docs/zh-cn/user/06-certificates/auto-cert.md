@@ -19,12 +19,12 @@ LiteGate 内置了高性能的 ACME 客户端，支持从 Let's Encrypt 等机�
 适用于网关 80 端口已公网可用的场景。
 
 ```yaml
-domain: example.com
-force_https: true # 开启此项即自动激活 Auto-Cert
+site: example.com
+https: true # 开启此项即自动激活 Auto-Cert
 routes:
   - name: my-app
-    match: { path_prefix: "/" }
-    action: { type: proxy, upstream: ["localhost:8080"] }
+    match: {path_prefix: "/"}
+    proxy: ["localhost:8080"]
 ```
 
 ### TLS-ALPN-01 验证 (无需 80 端口，走 443 端口)
@@ -181,5 +181,5 @@ auto_cert:
 ---
 
 ## 延伸阅读
-- [配置全局 Auto-Cert 参数](../03-configuration/global-config.md#2-自动化证书-auto-cert)
+- [配置全局 Auto-Cert 参数](../03-configuration/global-config.md)
 - [生产环境部署建议](../10-deployment/production.md)

@@ -12,8 +12,8 @@ LiteGate 的核心配置模型遵循“域级隔离，路径分发”的原则�
 - **配置位置**：通常存放在 `sites/*.yaml` 中，文件名即为域名。
 
 ### Site 级全局参数
-- `domain`: 站点域名 (如 `example.com`)。
-- `force_https`: 是否强制启用浏览器 HTTPS 跳转。
+- `site`: 站点域名 (如 `example.com`)。
+- `https`: 是否强制启用浏览器 HTTPS 跳转。
 - `middleware`: 该域名下所有路由共享的安全策略（如认证、限流）。
 
 ---
@@ -100,20 +100,16 @@ LiteGate 在处理请求时遵循 **“最长匹配优先”** 原则：
 ## 5. 配置组织结构示例
 
 ```yaml
-domain: api.demo.com
+site: api.demo.com
 routes:
   - name: auth-engine
     match:
       path_prefix: /auth
-    action:
-      type: proxy
-      upstream: ["10.0.0.1:9000"]
-      
+    proxy: ["10.0.0.1:9000"]
   - name: default-handler
     match:
       path_prefix: /
-    action:
-      type: respond
+    respond:
       status: 200
       body: "Default API Gateway Response"
 ```

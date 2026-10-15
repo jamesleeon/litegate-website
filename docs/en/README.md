@@ -1,59 +1,55 @@
-# LiteGate Documentation Hub
+# LiteGate documentation
 
-LiteGate is a dynamic gateway: it unifies static sites, API reverse proxying, automatic certificates, service discovery, and identity-aware entry under one routing model.
+Public documentation describes current code usage. Historical proposals, audits and repair journals live in a locally ignored archive and are not feature guarantees.
 
-> New here? **Start with the User Guide.** Read "Architecture & Design" and "Development" only when you need internals or want to extend the gateway.
+[中文](../zh-cn/README.md) · [English](../en/README.md)
 
-> Looking for the Chinese docs? See [中文文档中心](../zh-cn/README.md).
+## User guide
 
----
+- [User guide](user/README.md)
+- [Quick start](user/01-getting-started/quick-start.md)
+- [Build environment setup](user/01-getting-started/build-environment.md)
+- [Cookbook](user/cookbook/README.md)
+- [Plugins](user/12-plugins/README.md)
 
-## 📖 User Guide (Start Here)
+## Topics and guides
 
-The full manual is at **[User Guide Index](user/README.md)**, organized by usage stage (01 getting-started → 11 troubleshooting).
+- [Accessing database TCP assets](database-proxy-solution.md)
+- [Discovery Provider development](discovery-provider-plugin-guide.md)
+- [DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)](dns-provider-plugin-guide.md)
+- [Docker Provider Test Guide](docker_provider_testing_guide.md)
+- [Docker catalog identity and transports](docker_catalog_identity_and_transport.md)
+- [Internal DNS Publishing - Multi-Node Gateway Support](dynamic-dns-multi-node.md)
+- [LiteGate FastCGI Configuration Guide](fastcgi_config.md)
+- [Forward tunnels and HTTP forward proxies](forward-vs-forward-proxy.md)
+- [IDS: choosing Go or WASM](ids-go-vs-wasm.md)
+- [IDS overview](ids-overview.md)
+- [IDS plugin constraints and troubleshooting](ids-plugin-caveats.md)
+- [IDS Provider development and deployment](ids-provider-plugin-guide.md)
+- [IDS business decision recipes](ids-recipes.md)
+- [Experimental IDS WASM](ids-wasm-plugin-guide.md)
+- [IDS Provider acceptance guide](ids_testing_guide.md)
+- [Ingress entrypoint plugins](ingress-plugin-guide.md)
+- [LiteGate Docker Provider Deployment & Configuration Guide](litegate_docker_provider_deployment_guide.md)
+- [Kubernetes deployment and usage](litegate_k8s_usage_guide.md)
+- [Current Kubernetes capabilities and limits](litegate_kubernetes_capabilities.md)
+- [Kubernetes capability comparison and improvement plan](litegate_k8s_traefik_capability_matrix.md)
+- [Kubernetes optimization and acceptance record](litegate_k8s_optimization_report.md)
+- [LiteGate and Traefik container capability matrix](litegate_traefik_container_capability_matrix.md)
+- [LiteGate v2 quick start](litegate_lite_quickstart.md)
+- [LiteGate MCP Capability Matrix](litegate_mcp_capability_matrix.md)
+- [LiteGate Litemesh MCP Integration Guide](litegate_mcp_integration.md)
+- [LiteGate + Litemesh Integration Guide](litemesh_integration.md)
+- [NATS capabilities and responsibility boundaries](nats_capability_matrix.md)
+- [NATS integration deployment](nats_deployment_guide.md)
+- [On-Demand TLS (SaaS certificate issuance on demand)](on_demand_tls.md)
+- [OpenAPI MD5 compatibility Provider](openapi-md5-ids-plugin.md)
+- [Configuration release control](release_control_guide.md)
+- [LiteGate Frontend ZIP Hosting & Serve KV Automated Sync Mode](serve_kv_mode.md)
+- [Service Registration and LiteGate Tags](service_registration_guide.md)
+- [Service Registration & Instant Online: End-to-End Automation Verification](service_registration_instant_online.md)
+- [LiteGate Service Tags](tag_system_v6_guide.md)
 
-**Shortest path:**
-- [Installation](user/01-getting-started/installation.md) → [Quick Start](user/01-getting-started/quick-start.md) → [Your First Site](user/01-getting-started/first-site.md)
-- [CLI Reference](user/01-getting-started/cli-reference.md)
+- [Prometheus dashboard](prometheus/LiteGate_Overview.json)
 
-**By goal:**
-- Host a static site + proxy an API: [Site Config](user/03-configuration/site-config.md) · [serve](user/04-actions/serve.md) · [proxy](user/04-actions/proxy.md) · [Serve KV / ZIP sync](serve_kv_mode.md)
-- Serve PHP / PHP-FPM: [FastCGI Config](fastcgi_config.md)
-- Automatic HTTPS: [Auto-Cert](user/06-certificates/auto-cert.md) · [On-Demand TLS](user/06-certificates/on-demand-cert.md) · [DDNS](user/06-certificates/ddns.md) · [Add a DNS provider](user/06-certificates/dns-providers.md)
-- Service discovery: [Litemesh](user/07-discovery/litemesh.md) · [Consul](user/07-discovery/consul.md) · [Tag Architecture](user/02-concepts/tag-architecture.md) · [Service Tags Guide](user/03-configuration/tag-dsl.md) · [Tag Reference](user/03-configuration/tag-reference.md)
-- SaaS entry controls: [Authentication](user/05-middleware/authentication.md) · [Remote Auth](user/05-middleware/remote-auth.md) · [WAF](user/05-middleware/waf.md)
-- Observability: [Dashboard](user/08-observability/dashboard.md) · [Metrics](user/08-observability/metrics.md) · [Access Log](user/08-observability/access-log.md)
-- Production: [Best Practices](user/10-deployment/production.md) · [systemd](user/10-deployment/systemd.md)
-
----
-
-## 🧠 Architecture & Design
-
-Understand LiteGate's tag-driven design and the request lifecycle.
-
-- [Architecture White Paper](ARCHITECTURE_WHITE_PAPER.md)
-- [L7 Execution Flow](l7_execution_flow.md): how a request traverses the gateway
-- [Tag System Guide](tag_system_v6_guide.md)
-- [Magic Ingress Design](magic_ingress_architecture.md): tag and forget
-- [TLS / mTLS Security Architecture](tls_mtls_architecture.md)
-
----
-
-## 🔌 Ecosystem & Integrations
-
-- [Litemesh Integration](litemesh_integration.md)
-- [Service Registration & Instant Online](service_registration_instant_online.md) · [Service Tagging Guide](service_registration_guide.md)
-- [MCP Server Integration](litegate_mcp_integration.md) · [Capability Matrix](litegate_mcp_capability_matrix.md)
-- [On-Demand TLS / mTLS](on_demand_tls.md)
-- [Dynamic DNS & Multi-Node](dynamic-dns-multi-node.md)
-- [Prometheus Dashboards](https://github.com/jamesleeon/LiteGate/blob/master/docs/en/prometheus)
-
----
-
-## 🛠️ Development & Extensions
-
-- [IDS Development Guide](ids_development_guide.md)
-- [IDS Testing Guide](https://github.com/jamesleeon/LiteGate/blob/master/docs/en/ids_testing_guide.md)
-
-
-- [NATS realtime subscriptions](user/04-actions/nats-sse.md): `type: nats` / `mode: subscribe`.
+See [documentation publication notes](../README.md) for maintenance rules.

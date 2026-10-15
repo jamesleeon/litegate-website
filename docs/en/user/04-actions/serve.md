@@ -9,11 +9,11 @@ The `serve` action represents LiteGate's built-in high-performance static resour
 To bind a target domain's root path directly to a physical host directory:
 
 ```yaml
-action:
-  type: serve
-  root: "./www/dist"      # Physical path containing static assets
-  index: "index.html"      # Fallback default entry index file
-  compress: true           # Activates intelligent Gzip/Brotli compression
+site: example.com
+compress: true # Activates intelligent Gzip/Brotli compression
+serve:
+  root: "./www/dist" # Physical path containing static assets
+  index: "index.html" # Fallback default entry index file
 ```
 
 ---
@@ -23,11 +23,10 @@ action:
 In React, Vue, or Angular applications, virtual client-side paths (e.g., `/user/profile`) do not map to physical files on the disk. By declaring the `spa` parameter, LiteGate intercepts 404 queries, falling back execution to the entrypoint `index.html` where client-side routing grids take over.
 
 ```yaml
-action:
-  type: serve
+site: example.com
+spa:
   root: "./my-app/build"
   index: "index.html"
-  spa: true                # Critical: activates SPA router integration and 404 fallback steering
 ```
 
 ---
@@ -48,8 +47,8 @@ With `compress: true`, LiteGate negotiates Zstandard, Brotli, or Gzip using the 
 Directory listings are disabled by default. Enable them explicitly for a download directory:
 
 ```yaml
-action:
-  type: serve
+site: example.com
+serve:
   root: "./downloads"
   browse: true
 ```
@@ -66,16 +65,15 @@ Static serving accepts only `GET`, `HEAD`, and `OPTIONS`; other methods return `
 ## 4. Practical Implementation: Hugo Static Blogs
 
 ```yaml
-domain: blog.example.com
+site: blog.example.com
 routes:
   - name: blog-content
     match:
       path_prefix: /
-    action:
-      type: serve
+    compress: true
+    serve:
       root: "/opt/hugo-output"
       index: "index.html"
-      compress: true
 ```
 
 ---
@@ -85,12 +83,12 @@ routes:
 `try_files` tries a list of candidates in order, serving the first physical file that exists; if none exist, the last entry is used as a **fallback target** via an internal redirect. This is the standard pattern for PHP front controllers (WordPress/Laravel clean URLs) and any case where unknown paths should route to an entry script.
 
 ```yaml
-action:
-  type: serve
+site: example.com
+serve:
   root: "/var/www/html"
   try_files:
-    - "{path}"            # first try the physical file for the request path
-    - "/index.php"        # none exist -> fall back to the entry script (internal redirect)
+    - "{path}" # first try the physical file for the request path
+    - "/index.php" # none exist -> fall back to the entry script (internal redirect)
 ```
 
 - **Placeholders**: `{path}` / `{uri}` expand to the current request path.

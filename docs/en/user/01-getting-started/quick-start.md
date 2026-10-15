@@ -37,7 +37,7 @@ mkdir -p sites
 Write the following to `sites/hello.yaml`:
 
 ```yaml
-domain: localhost
+site: localhost
 routes:
   - name: welcome
     match:
@@ -71,17 +71,15 @@ Assuming you have a frontend project built in a `dist` directory:
 
 ```yaml
 # sites/web.yaml
-domain: web.local
+site: web.local
 routes:
   - name: frontend
     match:
       path_prefix: /
-    action:
-      type: serve
+    compress: true # Enables Gzip/Brotli compression
+    spa:
       root: ./dist
       index: index.html
-      spa: true            # Supports Single Page Application (SPA) routing fallbacks
-      compress: true       # Enables Gzip/Brotli compression
 ```
 
 ---
@@ -92,15 +90,13 @@ Forward incoming requests to a Go or Java backend running on port `8080`:
 
 ```yaml
 # sites/api.yaml
-domain: api.example.com
+site: api.example.com
 routes:
   - name: user-service
     match:
       path_prefix: /api/v1
-    action:
-      type: proxy
-      upstream: ["localhost:8080"]
-      strip_prefix: true # Strips the /api/v1 prefix before forwarding the request
+    strip_prefix: true # Strips the /api/v1 prefix before forwarding the request
+    proxy: ["localhost:8080"]
 ```
 
 ---
@@ -110,15 +106,13 @@ routes:
 As long as your machine has a public IP address and the domain name points to this machine, automatic HTTPS only takes one line of configuration:
 
 ```yaml
-domain: example.com
-force_https: true # Automatically requests SSL certificates and redirects all HTTP traffic to HTTPS
+site: example.com
+https: true # Automatically requests SSL certificates and redirects all HTTP traffic to HTTPS
 routes:
   - name: secure-app
     match:
       path_prefix: /
-    action:
-      type: proxy
-      upstream: ["localhost:3000"]
+    proxy: ["localhost:3000"]
 ```
 
 ---
@@ -126,5 +120,5 @@ routes:
 ## Next Steps
 
 - Understand the [Core Concepts of Sites and Routes](../02-concepts/sites-and-routes.md).
-- Discover the [Multiple Action Types](../README.md#4-action) (e.g., WebDAV, Markdown Rendering).
+- Discover the [Multiple Action Types](../README.md) (e.g., WebDAV, Markdown Rendering).
 - Add [Authentication Protection](../05-middleware/authentication.md) to secure your APIs.

@@ -9,9 +9,9 @@
 适用于后端 IP 固定或在配置文件中指定的场景。
 
 ```yaml
+site: example.com
 action:
   type: proxy
-  upstream_type: static
   upstream:
     - "10.0.0.5:8080"
     - "10.0.0.6:8080"
@@ -24,23 +24,19 @@ action:
 HTTPS、HTTP/2 或 HTTP/3，LiteGate 到后端使用 HTTP/1.1：
 
 ```yaml
-domain: app.localhost
+site: app.localhost
 routes:
-  - match: { path_prefix: / }
-    action:
-      type: proxy
-      upstream: ["unix:///run/apps/app.sock"]
+  - match: {path_prefix: /}
+    proxy: ["unix:///run/apps/app.sock"]
 ```
 
 通配站点可以把请求 Host 安全映射到同一目录中的 socket：
 
 ```yaml
-domain: "*.localhost"
+site: "*.localhost"
 routes:
-  - match: { path_prefix: / }
-    action:
-      type: proxy
-      upstream: ["unix:///run/apps/{host}.sock"]
+  - match: {path_prefix: /}
+    proxy: ["unix:///run/apps/{host}.sock"]
 ```
 
 例如 `foo.localhost` 对应 `/run/apps/foo.localhost.sock`。`{host}` 只能出现一次
@@ -60,6 +56,7 @@ routes:
 
 ### Consul 集成
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream_type: consul
@@ -68,6 +65,7 @@ action:
 
 ### Litemesh 集成
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream_type: litemesh
@@ -77,6 +75,7 @@ action:
 
 ### LiteDeploy / Docker / Discovery 集成
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream_type: litedeploy # 也可以是 docker、external
@@ -138,9 +137,10 @@ LiteGate 默认支持 WebSocket 协议，只需确保后端服务正常开启 WS
 设置 `proto: grpc` 即可把 gRPC 后端作为一等公民反代。网关会强制走 HTTP/2，并透传 gRPC trailer（`grpc-status`、`grpc-message`、`grpc-status-details-bin`）。
 
 ```yaml
+site: example.com
 action:
   type: proxy
-  proto: grpc                 # gRPC over 明文 HTTP/2 (h2c)
+  proto: grpc # gRPC over 明文 HTTP/2 (h2c)
   upstream:
     - "127.0.0.1:50051"
 ```
@@ -149,12 +149,13 @@ action:
 - **TLS / mTLS**：开启 `mtls: true` 会自动升级为基于 TLS 的 HTTP/2（`grpcs`），无需额外开关。
 
 ```yaml
+site: example.com
 action:
   type: proxy
   proto: grpc
   upstream_type: litemesh
   service_name: order-grpc
-  mtls: true                  # gRPC over mTLS（自动升级为 grpcs）
+  mtls: true # gRPC over mTLS（自动升级为 grpcs）
 ```
 
 > gRPC 服务反射自动路由计划在后续阶段支持。
@@ -169,14 +170,15 @@ action:
 `lb_policy: cookie` 让同一客户端在多次请求间固定命中同一后端，适合有状态会话与长连接。网关会下发一个标识后端的加密 Cookie，后续请求据此路由。
 
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream:
     - "10.0.0.5:8080"
     - "10.0.0.6:8080"
   lb_policy: cookie
-  sticky_cookie_name: "LG_STICKY_BACKEND"   # 可选，默认值即此
-  sticky_cookie_ttl: 1800                    # 可选，秒（默认 1800 = 30 分钟）
+  sticky_cookie_name: "LG_STICKY_BACKEND" # 可选，默认值即此
+  sticky_cookie_ttl: 1800 # 可选，秒（默认 1800 = 30 分钟）
 ```
 
 - Cookie 值经 **AES-GCM 加密**（后端地址既不泄露也无法伪造），带 `HttpOnly`、`SameSite=Lax`，HTTPS 下带 `Secure`。
@@ -200,13 +202,12 @@ sticky_key: "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
 ### 路径改写
 
 ```yaml
-action:
-  type: proxy
-  upstream: ["127.0.0.1:8080"]
-  rewrite:
-    path:
-      pattern: "^/old/(.*)$"   # Go 正则
-      target: "/new/$1"        # $1、$2… 为捕获组
+site: example.com
+rewrite:
+  path:
+    pattern: "^/old/(.*)$" # Go 正则
+    target: "/new/$1" # $1、$2… 为捕获组
+proxy: ["127.0.0.1:8080"]
 ```
 
 | 字段 | 类型 | 说明 |
@@ -257,30 +258,26 @@ headers:
 下面的配置可以把第三方平台的一个回调地址分成主账号和子账号两个内部处理路径：
 
 ```yaml
+site: example.com
 routes:
   - name: taobao-sub-account-callback
     priority: 200
     match:
       rule: 'Path("/taobao/callback") && QueryPrefix("state", "sub.")'
-    action:
-      type: proxy
-      upstream: ["127.0.0.1:8080"]
-      rewrite:
-        path:
-          pattern: "^/taobao/callback$"
-          target: "/oauth/taobao/sub-account/callback"
-
+    rewrite:
+      path:
+        pattern: "^/taobao/callback$"
+        target: "/oauth/taobao/sub-account/callback"
+    proxy: ["127.0.0.1:8080"]
   - name: taobao-main-account-callback
     priority: 100
     match:
       rule: 'Path("/taobao/callback") && QueryPrefix("state", "main.")'
-    action:
-      type: proxy
-      upstream: ["127.0.0.1:8080"]
-      rewrite:
-        path:
-          pattern: "^/taobao/callback$"
-          target: "/oauth/taobao/main-account/callback"
+    rewrite:
+      path:
+        pattern: "^/taobao/callback$"
+        target: "/oauth/taobao/main-account/callback"
+    proxy: ["127.0.0.1:8080"]
 ```
 
 参与值匹配的 query 参数必须只有一个值；例如 `state=sub.x&state=main.x` 不会命中上述路由，避免网关与后端采用不同值。`state` 仍必须是随机、一次性、短期有效并与发起授权的会话绑定；前缀只负责分流，不能代替后端的 state 校验。推荐使用带签名的 `sub.<nonce>.<signature>`，或在服务端保存 `state → 授权类型` 映射。

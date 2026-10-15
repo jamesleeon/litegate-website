@@ -33,8 +33,8 @@ spa: /var/www/my-app/dist
 ```yaml
 site: https://api.example.com
 /api/v1:
-  proxy: 10.0.0.5:8080, 10.0.0.6:8080   # 多个地址，默认轮询
-  strip_prefix: true                    # 转发时去掉 /api/v1 前缀
+  proxy: 10.0.0.5:8080, 10.0.0.6:8080 # 多个地址，默认轮询
+  strip_prefix: true # 转发时去掉 /api/v1 前缀
 spa: /var/www/my-app/dist
 ```
 

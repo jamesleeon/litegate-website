@@ -7,14 +7,13 @@ LiteGate 内置了功能强大的 Markdown 渲染引擎，允许您将服务器�
 ## 1. 基础配置 (Markdown Rendering)
 
 ```yaml
-domain: docs.example.com
+site: docs.example.com
 routes:
   - name: internal-docs
     match:
       path_prefix: /
-    action:
-      type: markdown
-      root: "./docs-repo"    # 文档存放路径
+    markdown:
+      root: "./docs-repo" # 文档存放路径
 ```
 
 ---
@@ -53,14 +52,15 @@ routes:
 
 ```yaml
 # sites/wiki.yaml
-domain: wiki.local
+site: wiki.local
 routes:
   - name: view
-    match: { path_prefix: "/view" }
-    action: { type: markdown, root: "./data/wiki" }
+    match: {path_prefix: "/view"}
+    markdown: {root: "./data/wiki"}
   - name: edit
-    match: { path_prefix: "/edit" }
-    action: { type: webdav, root: "./data/wiki", strip_prefix: "/edit" }
+    match: {path_prefix: "/edit"}
+    strip_prefix: "/edit"
+    webdav: "./data/wiki"
 ```
 
 ---

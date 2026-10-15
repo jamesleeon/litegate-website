@@ -392,7 +392,8 @@ service_discovery:
       provider: "docker"
       socket_path: "/var/run/docker.sock"
       network_mode: "internal"     # internal (容器网 IP) 或 external (主端口映射 IP)
-      swarm_mode: false            # 是否开启 Swarm 模式 (默认 false 开启自适应检测)
+      swarm_mode: false            # 显式开启 Swarm 模式
+      swarm_auto_detect: false     # 显式允许检测 Manager
 
   tag_entrypoints:
     allowed_ports: []              # 允许服务标签新开的监听端口(HTTP 入口与 TCP/UDP Stream)，如 [8080, 15432]
@@ -404,14 +405,32 @@ service_discovery:
 > `catalogs` 是数组。当前代码已经不是旧的 `catalog` 单对象模式。
 > 外部 Discovery Provider 使用其注册名作为 `provider`，专用配置放在 `config`，并可用 `name` 区分同类型多实例。
 
+```yaml
+socket_path: "ssh://root@192.168.50.44:22"
+ssh:
+  password_env: "LITEGATE_DOCKER_SSH_PASSWORD"
+  known_hosts_file: "/etc/litegate/known_hosts"
+  connect_timeout: "10s"
+  # private_key_file: "/etc/litegate/docker_ed25519"
+  # agent_socket: "/run/ssh-agent.sock"
+```
+
 ---
 
 ## 7. Cache 与 Redis
 
+
+
 ```yaml
 cache:
   local_ttl: "60s"
-  proxy_cache_max_entries: 10000  # 反代内容缓存最大条目数，超出按 LRU 淘汰防 OOM
+  proxy_cache_max_entries: 10000  # 本地代理缓存 LRU 条目上限
+  proxy_cache:
+    backend: local              # local | redis；选 Redis 时也需启用下方连接
+    namespace: default          # 不同环境使用不同命名空间
+    max_object_bytes: 262144    # 256KB
+    redis_timeout: 200ms
+    # stale_while_revalidate: 0s # Redis 默认关闭；本地未配置时尊重上游窗口
   redis:
     enabled: false
     mode: "standalone"              # standalone 或 cluster
@@ -448,6 +467,8 @@ redis:
 ```
 
 ---
+
+代理缓存多节点共享必须显式选择 `cache.proxy_cache.backend: redis`，仅启用 Redis 不会切换后端。连接优先使用已启用的 cache.redis，其次全局 redis。proxy_cache_max_entries 仅限制本地条目，Redis 容量需单独配置。Redis 故障时绕过缓存，默认关闭旧内容返回。写成功后可用 `on_success.invalidate_proxy_cache` 清理命名读取路由；dashboard `POST /api/proxy-cache/purge` 支持 all/site/route/key 范围，沿用现有鉴权。
 
 ## 9. Dashboard / Metrics / Pprof
 
@@ -636,6 +657,8 @@ real_ip:
 说明：
 
 * **`trusted_proxies`**：代理信任网段，规定网关信任哪些上一跳代理。通常只配置几台前置负载均衡/SLB的特定 IP。默认为空：不信任任何上一跳，忽略 `X-Forwarded-For`，客户端 IP 即直连地址。同机前置 nginx 等代理时需显式加入 `127.0.0.1`。
+按 IP 限流复用入口解析的客户端地址，不直接读取请求头。只有直连地址属于 `real_ip.trusted_proxies`（或受文件权限保护的 Unix 入口）才解析 XFF；多条同名头作为完整链从右向左解析，使用第一个非受信 IP，并统一 IPv4/IPv6 表示。遇到边界上的非法或空地址时回退到直连地址。前置代理必须覆盖客户端提交的 XFF，或在完整链右侧追加它实际观察到的客户端 IP；若代理原样透传客户端自报地址，网关无法鉴别。不要把公网客户端所在网段或 `0.0.0.0/0`、`::/0` 配置为受信代理。
+
 * **`selector_trusted_clients`**：东西向可信物理选路客户端授权网段。仅在此网段内的真实客户端发起的请求，网关才允许提取并提升 `X-Selector-Sid` 用于实例物理隔离选路；外网非受信客户端携带的 `X-Selector-Sid` 将在网关入口处被物理强力抹除，防范外部伪造。若未配置此项，系统将优雅兜底 Fallback 指向 `trusted_proxies`。
 
 
@@ -872,3 +895,15 @@ resolvers:
 站点在 `site:` 同级设置 `ech: ech.example.com` 或 `ech: ech.example.net`，分别选择公共域名绑定的 DNS 提供商，无需 `domains`。只有一个组时可使用 `ech: true`，多个组时必须指定公共域名；`ech: false` 关闭。每组密钥、轮换、DNS 发布和 KV 租约独立，默认 KV 前缀为 `litegate/ech/<public_name>/`。根级 key_prefix 是组前缀的父目录，组级 key_prefix 是精确前缀，不能重复。旧单组配置仍兼容，使用原路径与 `litegate/ech/default/` 前缀。站点选组可热加载；主配置的组列表修改需要重启。
 
 第三方 ECH DNS 插件实现 `plugin.HTTPSDNSProvider` 并注册 `https_records` 能力。密钥、轮换、KV 同步、租约及重试由 LiteGate 内部管理；插件仅提交和撤回公开 HTTPS 记录。仅支持 HTTPS 的插件需要另行安排证书覆盖，其域名选择器在运行时不会参与证书 DNS-01 路由。
+# Docker SSH 与发现约束
+
+自动检测需显式设置 `swarm_auto_detect: true` 或 `LITEGATE_SWARM_AUTO_DETECT=true`；仅将 `swarm_mode` 设置为 false 不会自动检测。`swarm_mode: true` 直接启用 Swarm。检测失败会拒绝启动，不会静默切换到普通容器发现。
+
+Docker catalog 的 `constraints` 使用严格表达式：`Label("key", "value")`、`LabelRegex("key", "regex")`、`!`、`&&`、`||` 和括号。例如 `constraints: 'Label("team", "payments") && !LabelRegex("environment", "^test$")'`。约束读取原始容器或 Service 标签，覆盖完整快照、事件刷新和零 Task 声明。表达式无效会拒绝启动。
+
+SSH 地址示例：`socket_path: "ssh://root@192.168.50.44:22"`。catalog 内设置 `ssh: {password_env: LITEGATE_DOCKER_SSH_PASSWORD, known_hosts_file: /etc/litegate/known_hosts, connect_timeout: 10s}`。密码只从指定环境变量读取，禁止 URL 密码。可选 `private_key_file` 或 `agent_socket` 使用密钥或 SSH agent；没有显式认证配置时读取 `SSH_AUTH_SOCK`。
+
+连接使用纯 Go SSH，远端固定执行 `docker system dial-stdio`，因此远端用户必须有 Docker CLI 和访问权限。主机身份使用指定 known_hosts 文件验证，默认 `~/.ssh/known_hosts`，根据已固定的主机密钥协商算法；未知或变更密钥均拒绝。连接、认证和远程执行共享有界的 `connect_timeout`；已建立 HTTP 连接不受初次 DialContext 结束影响，客户端停止或流截止时间到达时关闭。自动检测和后续发现调用共享同一个客户端。
+# SSH 主机证书
+
+Docker SSH 支持 known_hosts 中匹配的 `@cert-authority` 条目。主机证书严格验证 CA、主机身份和吊销规则；不可信证书不能绕过固定主机密钥验证。

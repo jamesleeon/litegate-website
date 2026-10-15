@@ -52,28 +52,23 @@ V2 identifies the format via `site:`; `version: 2` can be omitted. File names ar
 ```yaml
 site: app.example.com
 https: false
-
 # Site-wide response headers
 response_headers:
   X-Frame-Options: DENY
-
 # Named resources: defined only, do not automatically create routes
 services:
   orders:
     to: localhost:8080
     timeout: 5s
-
 # Path routes: match condition written in the key
 /api:
   service: orders
   strip_prefix: true
-
 # Explicit routes: used for exact paths, methods, and complex conditions
 routes:
   - name: health
     match: {path: /health}
     respond: ok
-
 # Site-level action: serves as the fallback route
 spa: ./www
 ```
@@ -144,7 +139,7 @@ site: example.com
 site: example.com
 /api:
   proxy:
-    to: [localhost:8080, localhost:8081]
+    to: ['localhost:8080', 'localhost:8081']
     timeout: 5s
     retry: 2
 ```
@@ -254,10 +249,9 @@ In addition to `site` and `https`, the root level of a site configuration suppor
 ```yaml
 site: api.example.com
 https: true
-ech: ech.example.com                # Bind to ECH public group to encrypt SNI
-max_request_body_size: 20971520      # Limit request body to 20MB
-upstream_client: fast               # Use high-performance upstream client
-
+ech: ech.example.com # Bind to ECH public group to encrypt SNI
+max_request_body_size: 20971520 # Limit request body to 20MB
+upstream_client: fast # Use high-performance upstream client
 # Site-level IP restrictions (applies to all routes in this site)
 ip_restriction:
   allow_ips:
@@ -265,29 +259,25 @@ ip_restriction:
     - 10.0.0.0/8
   deny_ips:
     - 192.168.1.100
-
 # Site-level headers (inherited by proxy actions and responses)
 request_headers:
   X-Gateway-Site: api.example.com
 response_headers:
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
-
 # Custom error pages
 error_pages:
   - status: [404]
     template: /var/www/errors/404.html
   - status: [500, 502, 503, 504]
     template: /var/www/errors/50x.html
-
 # Site TLS certificate override (optional; defaults to ACME auto-cert or global cert)
 tls:
   enabled: true
   cert_file: /etc/ssl/certs/api.crt
   key_file: /etc/ssl/certs/api.key
   min_version: "1.2"
-  client_auth: "none"                # Set to require_and_verify for mTLS
-
+  client_auth: "none" # Set to require_and_verify for mTLS
 /api: localhost:8080
 ```
 
@@ -428,7 +418,6 @@ routes:
       path: /healthz
       method: [GET, HEAD]
     respond: "healthy\n"
-
   # Wildcard path list + write method filtering
   - name: api_v1_writes
     priority: 10
@@ -436,12 +425,10 @@ routes:
       path: ["/api/v1/*", "/api/v2/*"]
       method: [POST, PUT, DELETE]
     proxy: localhost:8081
-
   # Reference named matcher
   - name: admin_console
     match: '@admin_only'
     proxy: localhost:8082
-
 /api: localhost:8080
 spa: ./dist
 ```
@@ -528,7 +515,6 @@ site: example.com
   serve:
     root: /var/www/assets
     cache_control: "public, max-age=604800"
-
 # Site fallback SPA application
 spa:
   root: /var/www/dist
@@ -590,7 +576,6 @@ site: example.com
     status: 200
     body: '{"status":"UP"}'
     content_type: application/json
-
 # Permanent redirect
 /old-docs:
   redirect:
@@ -626,7 +611,7 @@ site: example.com
 /api:
   action:
     type: proxy
-    upstream: [localhost:8080]
+    upstream: ['localhost:8080']
     host: backend.internal
 ```
 
@@ -696,7 +681,7 @@ Complex matching considers explicit `priority` and route specificity. Do not rel
 
 **Route matching and action execution are separate phases.** Once an API proxy route is selected, an upstream 404 response will not cause the request to fall back to the SPA action. `strip_prefix` alters the path sent upstream; it does not trigger re-routing.
 
-Governance fields execute in pipeline stages by priority, not by their appearance order in YAML. See [Middleware Pipeline](../../../zh-cn/user/05-middleware/pipeline.md) (Chinese).
+Governance fields execute in pipeline stages by priority, not by their appearance order in YAML. See [Middleware Pipeline](../05-middleware/pipeline.md).
 
 ## 8. Configuration Scope and Inheritance
 
@@ -781,7 +766,7 @@ Supports Basic Auth, JWT token validation, and SSO session logins:
 | `secret` | string | sso | none | SSO session cookie signing and encryption key. |
 | `template` | string | sso | none | HTML login template file path for SSO. |
 | `session_ttl` | integer (s) | sso | `86400` | SSO session cookie lifetime in seconds. |
-| `cookie_samesite` | string | sso | `lax` | SSO Cookie SameSite setting: `lax`, `strict`, `none`. |
+| `cookie_same_site` | string | sso | `lax` | SSO Cookie SameSite setting: `lax`, `strict`, `none`. |
 | `cookie_secure` | boolean | sso | `true` | Restricts cookie transmission to HTTPS. |
 
 ```yaml
@@ -944,7 +929,7 @@ https: true
       max_body_size: 1MiB
 ```
 
-`ids` supports `provider`, `fail_policy`, `selector_merge_policy`, `runtime`, `options`, and `header_projection`. Explicit plugin rejections are not overridden by `fail_policy: allow`. See [IDS Provider Plugin Guide](../..//ids_development_guide.md).
+`ids` supports `provider`, `fail_policy`, `selector_merge_policy`, `runtime`, `options`, and `header_projection`. Explicit plugin rejections are not overridden by `fail_policy: allow`. See [IDS Provider Plugin Guide](../../ids-provider-plugin-guide.md).
 
 `remote_auth` supports `enabled`, `provider`, `callback_path`, `enforce`, `inject_claims`, `default_redirect_back`, and `fail_policy`.
 
@@ -993,33 +978,28 @@ site: api.example.com
   rewrite:
     query:
       remove: [debug, mock]
-
   # CORS policy
   cors:
     allowed_origins: ["https://app.example.com"]
     allowed_methods: [GET, POST, OPTIONS]
     allowed_headers: ["*"]
     allow_credentials: true
-
   # Rate and connection limits
   rate_limit:
     rate: 100
     key: "{header.X-User-Id}"
   limit_conn: 15
-
   # Response caching
   cache:
     enabled: true
     ttl: 30s
     key: "{path}:{query.page}"
-
   # Header governance
   request_headers:
     X-Gateway: LiteGate
-    -X-Internal-Token: ""            # Strip private token upstream
+    -X-Internal-Token: "" # Strip private token upstream
   response_headers:
     X-Content-Type-Options: nosniff
-
   # Error fallback
   on_error:
     status: 503
@@ -1151,15 +1131,13 @@ middlewares:
   # Compression middleware
   zip:
     type: compress
-
   # Security response headers middleware
   secure-headers:
     type: headers
     config:
       response.X-Content-Type-Options: nosniff
       response.X-Frame-Options: SAMEORIGIN
-
-use: [zip, secure-headers]
+middlewares: [zip, secure-headers]
 /api: localhost:8080
 spa: ./www
 ```
@@ -1187,7 +1165,6 @@ transports:
   backend-tls:
     tls:
       enabled: true
-
 services:
   # Static cluster service with health check, least_conn, and circuit breaker
   user-backend:
@@ -1204,7 +1181,6 @@ services:
       enabled: true
       timeout: 60
       tripthreshold: 5
-
   # Dynamic discovery service with instance selector
   order-backend:
     discovery:
@@ -1216,12 +1192,10 @@ services:
     loadbalancer:
       strategy: round_robin
       serverstransport: backend-tls
-
 # Routes reference services by name
 /api/users:
   service: user-backend
   strip_prefix: true
-
 /api/orders:
   service: order-backend
   strip_prefix: true
@@ -1246,14 +1220,12 @@ transports:
       enabled: true
       insecureskipverify: false
       clientcertificate: litemesh
-
 services:
   secure-orders:
     to: https://internal.order-service.local:8443
     loadbalancer:
       strategy: least_conn
       serverstransport: backend-tls
-
 /orders:
   service: secure-orders
 ```
@@ -1267,9 +1239,9 @@ The mTLS example above requires a valid LiteMesh identity configured on the gate
 `#` starts a YAML comment on its own line or after a value:
 
 ```yaml
-site: :9090                 # Development listener
-~/goapi: localhost:8080     # Backend preserves /goapi prefix
-spa: ./www                 # Frontend build directory
+site: :9090 # Development listener
+~/goapi: localhost:8080 # Backend preserves /goapi prefix
+spa: ./www # Frontend build directory
 ```
 
 If text contains ` #`, wrap it in quotes. Comments document deployment intent and do not participate in routing.
@@ -1278,7 +1250,7 @@ If text contains ` #`, wrap it in quotes. Comments document deployment intent an
 
 `LITEGATE_CONFIG` specifies the global configuration file. Certain credential fields support secret resolver syntax like `env://NAME` or `${NAME}`; specific OIDC fields support `env:NAME`.
 
-These are capabilities of specific fields, not a generic interpolation system across all V2 fields. When generating site addresses or backend addresses dynamically, generate the full YAML first and run validation. For secret resolution, see [CredKeeper](../../../zh-cn/user/06-certificates/credkeeper.md) (Chinese); for OIDC, see [OIDC](../05-middleware/oidc.md).
+These are capabilities of specific fields, not a generic interpolation system across all V2 fields. When generating site addresses or backend addresses dynamically, generate the full YAML first and run validation. For secret resolution, see [CredKeeper](../06-certificates/credkeeper.md); for OIDC, see [OIDC](../05-middleware/oidc.md).
 
 ### 12.3 Relative Paths
 
@@ -1315,7 +1287,7 @@ Changes in the sites directory support hot reloading. An invalid configuration w
 | `ech` error on wildcard or IP site | ECH is supported on concrete single-domain HTTPS sites only (not wildcard, IP, or L4 passthrough) |
 | `ech` site reports domain uncovered | Site domain is not covered by the associated DNS provider's `domains` pattern |
 
-For more recipes, see [Cookbook](../../../zh-cn/user/cookbook/README.md) (Chinese); for detailed fields, see [Site Configuration Reference](site-config.md); for common errors, see [Pitfalls](../../../zh-cn/user/cookbook/04-pitfalls.md) (Chinese).
+For more recipes, see [Cookbook](../cookbook/README.md); for detailed fields, see [Site Configuration Reference](site-config.md); for common errors, see [Pitfalls](../cookbook/04-pitfalls.md).
 
 ## 14. Integrating Discovery Sources, Tags, and V2
 

@@ -19,10 +19,9 @@ LiteGate 内置了高性能的响应压缩中间件，自动与客户端协商�
 在 `serve` Action 中开启：
 
 ```yaml
-action:
-  type: serve
-  root: "./dist"
-  compress: true     # 开启自动压缩
+site: example.com
+compress: true # 开启自动压缩
+serve: "./dist"
 ```
 
 ---
@@ -42,4 +41,8 @@ LiteGate 优先使用"预压缩"模式，跳过实时压缩的 CPU 开销：
 
 ## 4. 内存热点缓存
 
-对于小于 256KB 的热点文件，LiteGate 会自动缓存到内存 LRU 中（容量 1024 条），完全跳过磁盘 I/O。
+小于 32 KiB 的文件内容和预压缩 sidecar 使用内存 LRU，命中后一次写出正文。内容缓存上限为 1024 条、合计 64 MiB；元数据有效期为 10 秒。较大文件在 Linux 上复用独立文件描述符，保留 sendfile 路径；Windows 按请求打开，以允许部署时替换文件和目录。
+
+启用压缩后，256 B 至 1 MiB 的可压缩静态文件会缓存各编码的压缩结果，与原始内容共享上述缓存预算。文件版本或根目录缓存失效后重新生成；更大的文件继续流式压缩。
+
+动态压缩跳过带 Range 的请求、206 响应、已压缩响应、SSE、不适合压缩的 Content-Type，以及已知 Content-Length 小于 256 B 的响应。未知长度的流式响应不为大小阈值额外缓冲。gzip、br、zstd 的 ETag 加入编码后缀，并保留弱 ETag 的 W/ 前缀；Vary 保留原值并包含 Accept-Encoding。

@@ -26,8 +26,9 @@ disable_trace_id: true
 To turn off Trace ID generation for a specific site, configure the parameter inside `sites/*.yaml`:
 
 ```yaml
-domain: example.com
+site: example.com
 disable_trace_id: true
+respond: Hello, LiteGate!
 ```
 
 ---

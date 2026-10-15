@@ -1,5 +1,36 @@
 # IP Restriction (IP 访问控制)
 
+## 标签和命名中间件
+
+按路由的 IP 白名单可以通过标签中间件配置，例如限制管理后台：
+
+```yaml
+labels:
+  - "litegate.enable=true"
+  - "litegate.http.routers.admin.match.hosts=example.com"
+  - "litegate.http.routers.admin.match.path_prefix=/admin"
+  - "litegate.http.routers.admin.middlewares=internal-only"
+  - "litegate.http.middlewares.internal-only.ip_restriction.allow_ips=10.0.0.0/8,192.168.0.0/16,fd00::/8"
+  - "litegate.http.services.app.loadbalancer.server.port=8080"
+```
+
+只有引用 `internal-only` 的路由受这条规则限制。命名中间件也可以在站点 YAML 的 `middlewares` 中定义：
+
+```yaml
+middlewares:
+  internal-only:
+    type: ip_restriction
+    config:
+      allow_ips: "10.0.0.0/8,192.168.0.0/16,fd00::/8"
+      deny_ips: "10.1.0.0/16"
+```
+
+命名中间件的 `config.allow_ips` 和 `config.deny_ips` 使用逗号分隔的字符串；下文的站点或路由内联配置仍使用 YAML 列表。至少设置一项；空项、无效 IP/CIDR 和未知字段会在加载时被拒绝。IPv4、IPv6 和 CIDR 均支持，deny 优先于 allow。
+
+规则使用网关入口已解析的客户端 IP，不自行信任 `X-Forwarded-For`。它与全局、站点和路由内联规则共同生效，不能放宽已有规则。未通过检查的请求返回 `403 Forbidden`，检查在认证和后端处理之前执行。
+
+---
+
 `ip_restriction` 在边缘按来源 IP 过滤请求,可以建白名单(`allow_ips`)或黑名单(`deny_ips`),支持精确 IP 和 CIDR 网段。
 
 它配置在 **Site 级**(文件顶部,作用于整个域名)或 **Route 级**(作为 `match` / `action` 的同级字段,作用于单条路由)。
@@ -22,6 +53,7 @@
 ### Route 级白名单(限制后台面板)
 
 ```yaml
+site: example.com
 routes:
   - name: admin-panel
     match:
@@ -30,16 +62,14 @@ routes:
       allow_ips:
         - 127.0.0.1
         - 192.168.1.0/24
-    action:
-      type: proxy
-      upstream:
-        - "localhost:8080"
+    proxy:
+      - "localhost:8080"
 ```
 
 ### Site 级黑名单(对整个域名封禁恶意来源)
 
 ```yaml
-domain: service.example.com
+site: service.example.com
 ip_restriction:
   deny_ips:
     - 1.2.3.4
@@ -48,10 +78,8 @@ routes:
   - name: app
     match:
       path_prefix: /
-    action:
-      type: proxy
-      upstream:
-        - "localhost:8080"
+    proxy:
+      - "localhost:8080"
 ```
 
 ---

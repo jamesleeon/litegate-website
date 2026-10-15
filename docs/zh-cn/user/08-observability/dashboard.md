@@ -64,6 +64,6 @@ dashboard:
 ---
 
 ## 延伸阅读
-- [如何生成密码哈希](../../user/01-getting-started/installation.md#命令行参数)
+- [如何生成密码哈希](../../user/01-getting-started/installation.md)
 - [Prometheus 指标集成](./metrics.md)
 - [使用 CLI 发布内网 HTTP 服务](../09-advanced/connect-cli-http.md)

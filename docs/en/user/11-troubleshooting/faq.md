@@ -90,21 +90,23 @@ auto_cert:
 ### Q: The gateway returns "504 Gateway Timeout". How do I increase timeouts?
 **A:** Adjust response timeouts inside your proxy action parameters:
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream:
     - "backend:8080"
-  response_header_timeout: 60s
+  timeout: 60
 ```
 
 ### Q: How do I configure WebSocket connections?
 **A:** LiteGate automatically detects and promotes WebSocket handshakes. Use standard proxy configurations:
 ```yaml
+site: example.com
 action:
   type: proxy
   upstream:
     - "ws-backend:8080"
-  proto: http  # Keep proto as http; LiteGate automatically promotes WS requests
+  proto: http # Keep proto as http; LiteGate automatically promotes WS requests
 ```
 
 ---
@@ -186,7 +188,7 @@ curl -H "X-LiteGate-Debug: true" http://localhost/
 **A:** Yes, it is fully supported.
 
 ### Q: How do I contribute to the project?
-**A:** Check out our [Contribution Guidelines](https://github.com/jamesleeon/LiteGate/blob/master/CONTRIBUTING.md).
+**A:** Check out our [Contribution Guidelines](../../../../CONTRIBUTING.md).
 
 ---
 

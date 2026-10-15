@@ -61,6 +61,5 @@ client.Register(service)
 ---
 
 ## 延伸阅读
-- [Magic Ingress 深度架构解析](../../magic_ingress_architecture_zh.md)
 - [配置 Litemesh 集成](../07-discovery/litemesh.md)
 - [自动化证书全解](../06-certificates/auto-cert.md)

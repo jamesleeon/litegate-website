@@ -28,8 +28,9 @@ auto_cert:
 
 ### 站点配置
 ```yaml
-domain: "*"  # 配合泛解析使用
-force_https: true
+site: "*" # 配合泛解析使用
+https: true
+respond: Hello, LiteGate!
 ```
 
 ---

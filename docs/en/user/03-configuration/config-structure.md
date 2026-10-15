@@ -146,7 +146,7 @@ site: blog.example.com
 spa: /var/www/blog
 ```
 
-The legacy `domain:` format and `.lite.yaml` files still load without migration. v2 compiles to the same internal model as the legacy standard format; the rest of this page explains each layer of that model. For the corresponding v2 field names (such as `site`, `https`, `transports`, and `use`), see [Site Configuration](site-config.md), section 0.
+The site examples below use v2. Complex configurations can still use routes, match and action. See [Site Configuration](site-config.md) for field details.
 
 ### 3.2 Structure
 
@@ -155,15 +155,15 @@ A site file has two parts: **definitions at the top, usage at the bottom.** The 
 ```text
 site.yaml
 │
-├── domain                 site domain (required)
+├── site                 site domain (required)
 ├── entrypoints            entrypoints the site is attached to (all by default)
-├── force_https            redirect HTTP to HTTPS
+├── https            redirect HTTP to HTTPS
 ├── tls                    custom certificate for this site (optional)
 ├── ip_restriction         site-wide IP rules (apply to every route)
 ├── max_request_body_size / error_pages / defaults   site-wide defaults
 │
 │ ── definitions: named, referenced by routes ──
-├── serverstransports      upstream transport (TLS / mTLS)
+├── transports      upstream transport (TLS / mTLS)
 ├── services               backends: how to reach them (discovery, load balancing, timeouts, retries, circuit breaking)
 ├── middlewares            middleware: what happens on the way in and out (CORS, auth, rate limits ...)
 │
@@ -173,7 +173,7 @@ site.yaml
     ├── priority           explicit priority (rarely needed)
     ├── match              where it goes: path / path_prefix / rule / method / header / query
     ├── ip_restriction     IP rules for this route
-    ├── middlewares        names of middleware from the definitions, run by phase
+    ├── use        names of middleware from the definitions, run by phase
     └── action             who responds
         ├── type           proxy / serve / template / respond / redirect / webdav / list / markdown / status
         ├── service        (proxy) a Service from the definitions
@@ -184,8 +184,8 @@ site.yaml
 **References:**
 
 ```text
-routes[].middlewares    ──by name──▶  middlewares
-routes[].action.service ──by name──▶  services ──references──▶ serverstransports
+routes[].use    ──by name──▶  middlewares
+routes[].action.service ──by name──▶  services ──references──▶ transports
 entrypoints             ──by name──▶  entrypoints in config.yaml
 ```
 
@@ -196,41 +196,35 @@ Every reference is checked at load time. A name that does not exist fails loadin
 A common shape: a static frontend, several API backends and a redirect for old URLs.
 
 ```yaml
-domain: shop.example.com
-force_https: true
-
+site: shop.example.com
+https: true
 # ── definitions ─────────────────────────────────────────
-
-serverstransports:
+transports:
   mesh:
     tls:
       enabled: true
-      clientcertificate: litemesh     # mutual TLS with the backends
-
+      clientcertificate: litemesh # mutual TLS with the backends
 services:
-  orders:                             # instances found through service discovery
+  orders: # instances found through service discovery
     discovery:
       name: orders
     timeout: 10s
     loadbalancer:
       strategy: least_conn
       serverstransport: mesh
-    healthcheck: { path: /health, interval: 10s }
-    retry: { attempts: 2 }
-    circuitbreaker: { enabled: true, tripthreshold: 5 }
-
+    healthcheck: {path: /health, interval: 10s}
+    retry: {attempts: 2}
+    circuitbreaker: {enabled: true, tripthreshold: 5}
   payments:
     discovery:
       name: payments
       selector:
-        match: { env: prod }          # production instances only
-    timeout: 30s                      # payment callbacks are slow
-    loadbalancer: { strategy: round_robin }
-
-  legacy-cms:                         # an old system outside service discovery
-    servers: ["http://10.0.3.21:8080", "http://10.0.3.22:8080"]
+        match: {env: prod} # production instances only
+    timeout: 30s # payment callbacks are slow
+    loadbalancer: {strategy: round_robin}
+  legacy-cms: # an old system outside service discovery
+    to: ["http://10.0.3.21:8080", "http://10.0.3.22:8080"]
     timeout: 5s
-
 middlewares:
   api-limit:
     type: ratelimit
@@ -240,60 +234,45 @@ middlewares:
     type: jwt_auth
     config:
       jwks_url: "https://auth.example.com/.well-known/jwks.json"
-  api-common:                         # a common bundle; routes reference one name
+  api-common: # a common bundle; routes reference one name
     type: chain
     config:
       middlewares: "api-limit,api-auth"
-
 # ── usage ───────────────────────────────────────────────
-
 routes:
   - name: orders-api
-    match: { path_prefix: /api/orders }
-    middlewares: [api-common]
-    action:
-      service: orders
-      strip_prefix: /api
-
-  - name: payments-callback           # third-party callback: no JWT, rate limited only
-    match: { path: /api/payments/callback, method: [POST] }
-    middlewares: [api-limit]
-    action:
-      service: payments
-      strip_prefix: /api
-
+    match: {path_prefix: /api/orders}
+    use: [api-common]
+    service: orders
+    strip_prefix: /api
+  - name: payments-callback # third-party callback: no JWT, rate limited only
+    match: {path: /api/payments/callback, method: [POST]}
+    use: [api-limit]
+    service: payments
+    strip_prefix: /api
   - name: payments-api
-    match: { path_prefix: /api/payments }
-    middlewares: [api-common]
-    action:
-      service: payments
-      strip_prefix: /api
-
+    match: {path_prefix: /api/payments}
+    use: [api-common]
+    service: payments
+    strip_prefix: /api
   - name: cms
-    match: { path_prefix: /cms }
-    action:
-      service: legacy-cms
-
-  - name: old-help                    # permanent redirect for old URLs
-    match: { path_prefix: /help }
-    action:
-      type: redirect
+    match: {path_prefix: /cms}
+    service: legacy-cms
+  - name: old-help # permanent redirect for old URLs
+    match: {path_prefix: /help}
+    redirect:
       location: "https://help.example.com/"
       status: 301
-
-  - name: frontend                    # catch-all: single-page app
-    match: { path_prefix: / }
-    action:
-      type: serve
-      root: /var/www/shop
-      spa: true
-      compress: true
+  - name: frontend # catch-all: single-page app
+    match: {path_prefix: /}
+    compress: true
+    spa: /var/www/shop
 ```
 
 Why it is organized this way:
 
 *   **Each backend is defined once.** `payments` serves two routes; its timeout and load balancing live in the Service, and both routes share its health and circuit-breaker state.
-*   **Middleware is named by purpose, and the common set is bundled with `chain`.** A new API route only needs `middlewares: [api-common]`.
+*   **Middleware is named by purpose, and the common set is bundled with `chain`.** A new API route only needs `use: [api-common]`.
 *   **Frontend and API share one domain.** The browser sees a single origin, so calls to `/api/...` need no CORS.
 *   **Special routes are more specific.** The payment callback uses an exact `path`, which naturally wins over the `/api/payments` prefix.
 *   **The catch-all route is `/`.** Longest-prefix matching makes sure it only receives requests no other route matches.
@@ -339,7 +318,7 @@ The same need can often be written several ways. Recommended placement:
 |---|---|---|
 | Backend addresses, load balancing, timeouts | `services` | Repeating `service_name` / `timeout` on several routes |
 | Retries, circuit breaking, health checks | `services` | `retry` / `circuit_breaker` middleware (deprecated) |
-| Upstream TLS / mTLS | `serverstransports` | `mtls` / `insecure_skip_verify` on every route |
+| Upstream TLS / mTLS | `transports` | `mtls` / `insecure_skip_verify` on every route |
 | CORS, auth, rate limits, IP restriction | `middlewares`, referenced by routes | A separate inline copy on every route |
 | A simple setting used by one route only | Inline action field (e.g. `compress: true`) | Defining a middleware just for it |
 | Path rewriting | `strip_prefix` (drop a prefix) or `rewrite` (regex) | Adding path compatibility in the backend |

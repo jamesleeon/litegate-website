@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All features · LiteGate</title>
+<meta name="description" content="Explore LiteGate features for website hosting, reverse proxying, HTTPS, authentication, discovery, layer 4 proxying, tunnels and operations.">
+<link rel="alternate" hreflang="zh-CN" href="../features.html">
+<link rel="alternate" hreflang="en" href="features.html">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../features.css">
+<script src="../main.js" defer></script>
+<script src="../features.js" defer>
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to features</a>
+<header class="nav">
+<div class="wrap">
+<a class="brand" href="index.html">
+<span class="brand-mark">L</span>LiteGate</a>
+<button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+<nav class="nav-links" aria-label="Main navigation">
+<a href="index.html">Home</a>
+<a href="features.html" aria-current="page">Features</a>
+<a href="../docs/en/">Docs</a>
+<a href="../features.html" data-lang-switch="zh">中文</a>
+<a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub ↗</a>
+</nav>
+</div>
+</header>
+<main id="content">
+<div class="wrap">
+<div class="features-hero">
+<p class="kicker">LITEGATE / FEATURES</p>
+<h1>One gateway.<br>
+<em>Explore every capability.</em>
+</h1>
+<p class="features-lead">Website hosting, application proxying, service discovery and connectivity.<br>See what LiteGate can do, from entry point to backend.</p>
+<div class="feature-stats">
+<span>
+<strong>56</strong> features</span>
+<span>
+<strong>10</strong> categories</span>
+
+</div>
+</div>
+<div class="feature-tools" hidden>
+<label for="feature-search">Find a feature</label>
+<input id="feature-search" type="search" placeholder="Search features, protocols or requirements…" autocomplete="off">
+<label class="filter-label" for="feature-filter">Feature type</label>
+<select id="feature-filter">
+<option value="">All types</option>
+<option>Built in</option>
+<option>Configurable</option>
+<option>Default plugin</option>
+<option>Optional build</option>
+<option>External service</option>
+<option>Backend required</option>
+<option>Extension</option>
+</select>
+<button id="reset-filters" type="button">Reset</button>
+<p id="feature-count" role="status" aria-live="polite">56 features</p>
+</div>
+<div class="features-layout">
+<aside class="category-nav">
+<p>On this page</p>
+<nav aria-label="Feature categories">
+<a href="#web">Websites and HTTP</a>
+<a href="#routing">Routing and traffic handling</a>
+<a href="#proxy">Reverse proxy and service policies</a>
+<a href="#tls">HTTPS, certificates and DNS</a>
+<a href="#security">Authentication and access</a>
+<a href="#limits">Rate limits and resources</a>
+<a href="#discovery">Discovery and containers</a>
+<a href="#network">Layer 4 and connectivity</a>
+<a href="#operations">Configuration and operations</a>
+<a href="#extensions">Events and plugins</a>
+</nav>
+<a class="back-top" href="#content">Back to top ↑</a>
+</aside>
+<div class="feature-content">
+<section class="feature-section" id="web">
+<div class="category-head">
+<h2>Websites and HTTP</h2>
+<p>From static pages to application entry points.</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>Static files and SPAs</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Serve local files and single-page application fallbacks, with ETags, conditional requests and byte-range requests.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Directory browsing and WebDAV</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Browse directories and files, and combine WebDAV file operations with authentication and permissions.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Markdown documentation</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Present Markdown files as documentation pages with navigation, making it easy to host project docs directly.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Server-side templates</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Render HTML and text templates using request variables and JSON data. Environment variable access is restricted to an allowlist.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>PHP / FastCGI</h3>
+<span class="badge">Backend required</span>
+</div>
+<p>Select scripts, handle PATH_INFO and front controllers, and send execution to a FastCGI backend. Requires a separate backend such as PHP-FPM.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>HTTP/1.1, HTTP/2 and HTTP/3</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Serve HTTP traffic and QUIC-based HTTP/3. HTTP/3 requires TLS and a reachable UDP listener.</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="routing">
+<div class="category-head">
+<h2>Routing and traffic handling</h2>
+<p>Bring different applications into one routing system.</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>Request matching</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Select routes by hostname, path, method, headers, query parameters and entry point, with regular expressions and rule expressions.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Rewrites and redirects</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Rewrite paths, replace paths with regular expressions, strip prefixes and issue HTTP redirects.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Request and response headers</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Configure request and response header operations and CORS policies.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Response compression</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Negotiate gzip, Brotli or Zstandard with clients for static resources and dynamic responses.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Reverse proxy caching</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Cache proxy responses with memory and disk capacity controls, request coalescing and revalidation. Policies determine caching behavior.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Request mirroring</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Copy requests to a mirror backend for out-of-band validation. Configure the mirror target and resource limits.</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="proxy">
+<div class="category-head">
+<h2>Reverse proxy and service policies</h2>
+<p>Keep entry-point rules independent of backend instance changes.</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>HTTP / HTTPS upstreams</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Proxy requests to HTTP or HTTPS backends with connection pooling, Unix sockets and upstream TLS policies.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>WebSocket and gRPC</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Handle WebSocket upgrades and connect to gRPC upstreams over HTTP/2 or h2c.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Load balancing</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Choose round robin, IP hash, weighted round robin, P2C or least connections, and register custom algorithms with Go plugins.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Weighted traffic and session affinity</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Distribute traffic by backend weight and configure sticky cookies and session persistence.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Retries and circuit breakers</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Configure retry backoff and circuit breakers. Retries check whether the request method and body are suitable for replay.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Health and instance filtering</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Select backends by availability and routing metadata, and process passive health feedback.</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="tls">
+<div class="category-head">
+<h2>HTTPS, certificates and DNS</h2>
+<p>Manage the certificate lifecycle within the gateway.</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>Automatic ACME certificates</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Obtain and renew certificates using DNS-01, HTTP-01 or TLS-ALPN-01 challenges. Domains, network access and provider credentials must meet validation requirements.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>On-demand TLS</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Obtain certificates for authorized domains during the TLS handshake, with domain admission controls and hourly or daily issuance limits.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Local CA and custom certificates</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Load PEM certificates and watch for changes, or issue local CA certificates for allowed local domains. Clients must trust the root certificate.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>OCSP stapling</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Fetch, staple and refresh OCSP responses in the background. Availability depends on the certificate and issuer.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Client certificates and upstream mTLS</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Validate client certificates presented at ingress. Litemesh upstreams can use certificate callbacks and trust policies for mTLS. Requires CA, identity and trust configuration.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Encrypted ClientHello (ECH)</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Manage and rotate ECH keys and publish DNS HTTPS records. Requires ECH-capable clients and a DNS provider that can publish HTTPS records.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Dynamic DNS</h3>
+<span class="badge">External service</span>
+</div>
+<p>Integrate with Alibaba Cloud, Cloudflare, Tencent Cloud and Huawei Cloud. Configuration and record ownership control updates and cleanup.</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="security">
+<div class="category-head">
+<h2>Authentication and access</h2>
+<p>Apply identity and access policies before requests reach applications.</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>Basic Auth and API keys</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Restrict access using usernames and passwords or API keys.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>JWT and JWKS</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Verify JWTs and retrieve verification keys through JWKS.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>OIDC login</h3>
+<span class="badge">External service</span>
+</div>
+<p>Connect to an OIDC identity provider and manage login and sessions. Requires an external identity service.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Forward Auth</h3>
+<span class="badge">Default plugin</span>
+</div>
+<p>Delegate authentication decisions to an external endpoint. This Go plugin is included in the default command build and requires an authentication service.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>IP restrictions and CSRF</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Apply IP access restrictions and CSRF checks. Configure trusted proxies correctly when determining client IP addresses.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Rule-based WAF and scan protection</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Match SQL injection, XSS, path traversal and command injection patterns in URL queries, paths and selected headers, with scan protection. Does not provide full request-body inspection or claim OWASP CRS compatibility.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>IDS request and response hooks</h3>
+<span class="badge">Extension</span>
+</div>
+<p>Inspect requests and responses and apply governance decisions through Go IDS providers. Detection capabilities depend on the provider.</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="limits">
+<div class="category-head">
+<h2>Rate limits and resources</h2>
+<p>Set boundaries for connections, requests and bandwidth.</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>Request rate limits</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Apply local rate limits and window-based limiters, with optional Redis coordination for shared state.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Concurrent connections and bandwidth</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Configure connection concurrency and bandwidth policies. Distributed connection leases require shared storage.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Request size and timeouts</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Limit request body size and configure backend request deadlines and transport timeouts.</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="discovery">
+<div class="category-head">
+<h2>Discovery and containers</h2>
+<p>Create entry points from existing service catalogs.</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>Consul and Litemesh</h3>
+<span class="badge">External service</span>
+</div>
+<p>Read service catalogs, instance metadata and tags, and update routes as services change.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Docker and Swarm</h3>
+<span class="badge">External service</span>
+</div>
+<p>Discover Docker containers and Swarm services, including labels, networks and instance endpoints. Requires Docker API access.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Kubernetes Ingress</h3>
+<span class="badge">External service</span>
+</div>
+<p>Watch Kubernetes resources and translate Ingress resources into gateway configuration. Requires cluster access and appropriate RBAC permissions.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Kubernetes Gateway API</h3>
+<span class="badge">External service</span>
+</div>
+<p>Handle Gateway, HTTPRoute, GRPCRoute, TLSRoute and ReferenceGrant resources. Support depends on resource types and listener settings; this is not a claim of full specification certification.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Tag DSL and Magic Ingress</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Declare routes and policies through service tags and merge catalog backends into sites. Custom discovery providers are also supported.</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="network">
+<div class="category-head">
+<h2>Layer 4 and connectivity</h2>
+<p>Connect services beyond HTTP.</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>TCP / UDP forwarding</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Handle TCP and UDP traffic on dedicated stream entry points, with backend selection and idle timeout handling.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>SNI / ALPN routing</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Inspect TLS ClientHello messages and route by SNI or ALPN. Combine HTTP and layer 4 services on a shared port.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>PROXY protocol</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Parse incoming PROXY protocol headers. Restrict trusted sources appropriately when deploying.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Connect private service publishing</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>An internal Home node initiates an authenticated reverse HTTP/2 session to a Cloud node to publish services. Deploy and configure both ends.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Forward secure tunnels</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Establish forwarding channels over WSS with Bearer authentication for access across networks. Configure both the gateway and client.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>SOCKS5 and forward proxy</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Handle SOCKS5 streams and HTTP forward proxy traffic. The forward proxy plugin is included in the default command build; configure access policies before use.</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="operations">
+<div class="category-head">
+<h2>Configuration and operations</h2>
+<p>From configuration files to runtime diagnostics.</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>YAML configuration and reuse</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Combine site YAML, shorthand syntax, named middleware and reusable snippets to configure routing behavior.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Configuration hot reload</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Watch YAML changes, validate configuration and apply updates, with dedicated lifecycle handling for listener changes and long-lived connections.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Logs and metrics</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Access logs, asynchronous log dispatch, Prometheus metrics and status views, with observability endpoints enabled through configuration.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Distributed tracing</h3>
+<span class="badge">External service</span>
+</div>
+<p>Process trace context and export batches as OTLP/HTTP JSON to a configured collector. OTLP/gRPC export is not provided.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>MCP management and diagnostics</h3>
+<span class="badge">Configurable</span>
+</div>
+<p>Use the built-in MCP service for configuration, certificates, service discovery and runtime middleware pipeline diagnostics. Configure access and authentication.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Command line and system services</h3>
+<span class="badge">Built in</span>
+</div>
+<p>Run the gateway, build binaries, manage plugins, check health, operate Connect and Forward, and manage systemd services from the command line.</p>
+</article>
+</div>
+</section>
+<section class="feature-section" id="extensions">
+<div class="category-head">
+<h2>Events and plugins</h2>
+<p>Connect event systems and extend gateway behavior.</p>
+</div>
+<div class="feature-grid">
+<article class="feature">
+<div class="feature-title">
+<h3>NATS and SSE notifications</h3>
+<span class="badge">Default plugin</span>
+</div>
+<p>Use NATS actions, notification transport and browser SSE subscriptions, with subscription quotas and slow-client handling. Included by default; the nonats build tag removes it. Requires a configured NATS service.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Webhook delivery</h3>
+<span class="badge">External service</span>
+</div>
+<p>Deliver events to Webhook integrations. Requires a separately deployed receiver.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>Go compile-time plugins</h3>
+<span class="badge">Extension</span>
+</div>
+<p>Extend actions, middleware, load balancing, DNS, discovery and IDS through public interfaces. Implement and register custom plugins, then rebuild. An interface alone does not provide every third-party integration.</p>
+</article>
+<article class="feature">
+<div class="feature-title">
+<h3>WASM IDS</h3>
+<span class="badge">Optional build</span>
+</div>
+<p>Load IDS WASM plugins with wazero and watch the plugin directory. Build with -tags wasmids and enable ids_wasm. The default build excludes this runtime.</p>
+</article>
+</div>
+</section>
+<p id="no-results" hidden>No matching features. Try another keyword or reset the filters.</p>
+</div>
+</div>
+<aside class="closing-note">
+<h2>Start with one site</h2>
+<p>Choose your entry points and policies, then add discovery, authentication and observability as you need them.</p>
+<a class="btn btn-primary" href="../docs/en/">Read the docs →</a>
+<a class="card-link" href="index.html#quickstart">View the quickstart</a>
+</aside>
+</div>
+</main>
+<footer class="features-footer wrap">
+<span>LiteGate · Open source · MIT</span>
+<nav aria-label="Footer navigation"><a href="index.html">Home</a><a href="../docs/en/">Docs</a><a href="../features.html" data-lang-switch="zh">中文</a></nav>
+</footer>
+</body>
+</html>

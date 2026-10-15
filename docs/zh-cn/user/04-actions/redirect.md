@@ -9,13 +9,12 @@
 将旧域名 `old.com` 永久跳转到新域名。
 
 ```yaml
-domain: old.example.com
+site: old.example.com
 routes:
   - name: domain-migration
     match:
       path_prefix: /
-    action:
-      type: redirect
+    redirect:
       location: "https://new.example.com{path}" # {path} 会保留原始请求路径
       status: 301 # 永久移动
 ```
@@ -29,12 +28,11 @@ routes:
 手动配置示例：
 
 ```yaml
-domain: web.local
+site: web.local
 routes:
   - name: force-ssl
-    match: { path_prefix: "/" }
-    action:
-      type: redirect
+    match: {path_prefix: "/"}
+    redirect:
       location: "https://web.local{path}"
       status: 307 # 临时重定向
 ```

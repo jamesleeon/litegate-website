@@ -9,14 +9,12 @@ LiteGate provides **native out-of-the-box support** for the WebSocket protocol. 
 Declare a standard `proxy` action matching your routing paths:
 
 ```yaml
-domain: ws.example.com
+site: ws.example.com
 routes:
   - name: websocket-streaming
     match:
       path_prefix: /ws
-    action:
-      type: proxy
-      upstream: ["10.0.0.5:8080"]
+    proxy: ["10.0.0.5:8080"]
 ```
 
 LiteGate automatically intercepts, parses, and promotes the standard hop-by-hop HTTP headers:
@@ -30,10 +28,9 @@ LiteGate automatically intercepts, parses, and promotes the standard hop-by-hop 
 Because WebSocket channels are designed for long-lived, persistent bidirectional communication, standard HTTP connection timeouts may prematurely terminate inactive streams. To prevent unexpected connection drops under low traffic, optimize the proxy flush parameters:
 
 ```yaml
-action:
-  type: proxy
-  upstream: ["10.0.0.5:8080"]
-  flush_interval: -1          # Enables real-time streaming buffers (Recommended)
+site: example.com
+flush_interval: -1 # Enables real-time streaming buffers (Recommended)
+proxy: ["10.0.0.5:8080"]
 ```
 
 Setting `flush_interval: -1` forces LiteGate to bypass local streaming write buffers, immediately flushing frame packets to the network client. This is recommended for real-time messaging, Server-Sent Events (SSE), and terminal sessions.

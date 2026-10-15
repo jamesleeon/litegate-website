@@ -13,16 +13,15 @@
 假设 php-fpm 监听在 `127.0.0.1:9000`,站点代码在后端机器的 `/var/www/html`:
 
 ```yaml
-domain: example.com
+site: example.com
 routes:
   - name: php-route
     match:
       path: /index.php
     action:
       type: proxy
-      upstream_type: static
-      proto: fastcgi                 # 必填:声明走 FastCGI 协议
-      fastcgi_root: /var/www/html    # 必填:后端的 Document Root(SCRIPT_FILENAME 的根)
+      proto: fastcgi # 必填:声明走 FastCGI 协议
+      fastcgi_root: /var/www/html # 必填:后端的 Document Root(SCRIPT_FILENAME 的根)
       upstream:
         - "fastcgi://127.0.0.1:9000" # FastCGI 后端地址
 ```
@@ -36,13 +35,13 @@ routes:
 php-fpm 用 Unix Socket 时(性能更好,免去 TCP 开销),把 `upstream` 换成 `unix://` 加 socket 绝对路径即可:
 
 ```yaml
+site: example.com
 action:
   type: proxy
-  upstream_type: static
   proto: fastcgi
   fastcgi_root: /var/www/html
   upstream:
-    - "unix:///var/run/php/php8.2-fpm.sock"   # 注意是三个斜杠:unix:// + /绝对路径
+    - "unix:///var/run/php/php8.2-fpm.sock" # 注意是三个斜杠:unix:// + /绝对路径
 ```
 
 > Unix Socket 仅适用于 LiteGate 与 PHP-FPM 所在系统都支持 Unix Domain Socket 的场景。Windows 部署建议使用 `fastcgi://127.0.0.1:9000`；Windows Named Pipe 不是 Unix Socket，当前不作为 FastCGI upstream 支持。
@@ -87,17 +86,17 @@ FastCGI 路由的 `upstream` **只接受** `fastcgi://` / `unix://` / 裸 `host:
 默认每个请求都新建一条到后端的连接、用完即关。高并发 PHP 场景下,开启连接复用可显著降低连接建立开销:
 
 ```yaml
+site: example.com
 action:
   type: proxy
-  upstream_type: static
   proto: fastcgi
   fastcgi_root: /var/www/html
   upstream:
     - "unix:///var/run/php/php8.2-fpm.sock"
-  fastcgi_keep_conn: true          # 开启连接池复用
-  fastcgi_max_idle_conns: 16       # 最多保留 16 条空闲连接
-  fastcgi_idle_timeout: 60         # 空闲 60 秒后回收
-  timeout: 30                      # 单请求最长 30 秒
+  fastcgi_keep_conn: true # 开启连接池复用
+  fastcgi_max_idle_conns: 16 # 最多保留 16 条空闲连接
+  fastcgi_idle_timeout: 60 # 空闲 60 秒后回收
+  timeout: 30 # 单请求最长 30 秒
 ```
 
 > 连接只有在**响应被完整、干净地读完**后才会还池;客户端提前断开或上传中断的连接会被直接关闭,不会污染下一个请求。取用前还会做一次轻量探活,自动丢弃被后端关掉的失效连接。
@@ -157,7 +156,7 @@ WordPress、Laravel 等前端控制器应用可以通过 `serve` Action 的 `try
 ## 10. 完整示例
 
 ```yaml
-domain: php.example.com
+site: php.example.com
 routes:
   # PHP 脚本和 PATH_INFO 请求交给 PHP-FPM。
   - name: php-scripts
@@ -166,7 +165,6 @@ routes:
       rule: 'PathRegex("(?i)^/.*\.php(?:/.*)?$")'
     action:
       type: proxy
-      upstream_type: static
       proto: fastcgi
       fastcgi_root: /var/www/html
       index: index.php
@@ -181,13 +179,11 @@ routes:
       fastcgi_max_idle_conns: 16
       fastcgi_idle_timeout: 60
       timeout: 30
-
   # 静态文件直接返回；不存在的干净 URL 内部转到 /index.php。
   - name: php-static-and-front-controller
     match:
       path_prefix: /
-    action:
-      type: serve
+    serve:
       root: /var/www/html
       try_files:
         - "{path}"

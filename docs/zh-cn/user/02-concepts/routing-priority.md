@@ -22,15 +22,17 @@ LiteGate 采用标准的 **最长前缀匹配** 策略。这意味着路径描�
 
 ## 2. 顺序匹配规则 (List Order)
 
-如果两个路由的路径前缀完全相同，LiteGate 将按照配置文件中 **从上到下** 的声明顺序进行尝试。
+v2 拒绝重复的规范化匹配条件。同一路径需要按 method、header 等条件区分；复杂规则重叠时使用 priority 明确优先级。
 
 ```yaml
+site: example.com
 routes:
   - name: first-match
-    match: { path_prefix: "/data" }
-    
+    match: {path_prefix: "/data", method: [GET]}
+    respond: first-match
   - name: second-match
-    match: { path_prefix: "/data" } # 这个路由永远不会被匹配，因为被上方拦截了
+    match: {path_prefix: "/data", method: [POST]}
+    respond: second-match
 ```
 
 ---

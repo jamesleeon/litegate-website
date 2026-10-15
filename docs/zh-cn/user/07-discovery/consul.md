@@ -1,61 +1,61 @@
-# Consul 服务发现集成
+# Consul 服务发现
 
-LiteGate 支持将 Consul 作为服务资产的来源。网关会定期同步 Consul Catalog 里的服务实例，并根据健康检查状态自动维护负载均衡池。
-
----
-
-## 1. 全局开启 Consul 支持
-
-在 `config.yaml` 中配置 Consul 代理地址（通常是内网地址）：
+先在全局 config.yaml 配置服务目录，再在站点 YAML 中通过 discovery.name 引用注册服务。注册服务不等于必须由标签生成路由；可以使用下面的显式 YAML 路由，或使用资源标签生成路由。
 
 ```yaml
 service_discovery:
   catalogs:
     - enabled: true
-      provider: "consul"
-      url: "http://127.0.0.1:8500" # 建议指向本机的 Consul Agent
-      token: "ACL-TOKEN-HERE"      # 如果开启了 ACL
+      provider: consul
+      url: "http://127.0.0.1:8500"
 ```
 
----
-
-## 2. 在站点中使用 Consul
-
-一旦全局配置完成，您就可以在任意 Route 中引用 Consul 服务：
+站点 YAML：
 
 ```yaml
-domain: api.example.com
-routes:
-  - name: user-service-route
-    match: { path_prefix: "/users" }
-    action:
-      type: proxy
-      upstream_type: consul
-      service_name: "user-api" # 对应 Consul 中的 Service Name
-      lb_policy: round_robin
+site: api.example.com
+services:
+  orders:
+    discovery:
+      name: orders
+    timeout: 5s
+    circuitbreaker:
+      enabled: true
+      strategy: failure_rate
+      window: 30
+      minimumrequests: 20
+      failureratio: 0.5
+/orders:
+  service: orders
+  rate_limit:
+    rate: 100
+    key: ip
+    algorithm: sliding_window_log
+    window: 1m
 ```
 
----
+## 注册服务的限流与熔断
 
-## 3. 健康检查与故障摘除
+在 orders 服务的每个实例上注册相同的资源标签。限流按客户端 IP，在一分钟滑动日志窗口内最多放行 100 次请求；熔断按后端地址分别统计最近 30 秒完成的调用，至少 20 个样本且失败率达到 0.5 时打开。限流 window 接受时长（1m）或整数毫秒；熔断 window 使用整数秒（30）。实例注销在发现更新到达网关后才从候选集中移除，传播期间的调用仍可能失败；后端实际失败仍应计入熔断。不要混用命名资源和快捷标签。
 
-LiteGate 仅同步在 Consul 中状态为 `Passing` 的实例。
-- **自动同步**: 网关每隔 5 秒（可配置）增量同步一次实例列表。
-- **故障摘除**: 一旦某个实例在 Consul 中变为 `Critical`，网关会在下一个同步周期将其从负载均衡中移除。
+```properties
+litegate.http.routers.orders.match.hosts=api.example.com
+litegate.http.routers.orders.match.path_prefix=/orders
+litegate.http.routers.orders.service=orders
+litegate.http.routers.orders.middlewares=orders-limit
+litegate.http.middlewares.orders-limit.ratelimit.qps=100
+litegate.http.middlewares.orders-limit.ratelimit.key=ip
+litegate.http.middlewares.orders-limit.ratelimit.algorithm=sliding_window_log
+litegate.http.middlewares.orders-limit.ratelimit.window=1m
+litegate.http.services.orders.circuitbreaker.enabled=true
+litegate.http.services.orders.circuitbreaker.strategy=failure_rate
+litegate.http.services.orders.circuitbreaker.window=30
+litegate.http.services.orders.circuitbreaker.minimumrequests=20
+litegate.http.services.orders.circuitbreaker.failureratio=0.5
+```
 
----
+通过 MCP 生成时，先读取 `get_config_guide(topic="traffic")`，再运行 `preview_service_tags`：修复所有 error，确认 warning 后应用。YAML 配置先运行 `validate_site_config`，再运行 `save_site_config`。
 
-## 4. 与 Litemesh 的区别
+注册服务名应与 discovery.name 一致。不要同时用 YAML 和自动标签定义相同路由。发现更新时间取决于提供者和连接状态，本文不承诺固定传播时延或自动链路加密；认证和传输安全需要另行配置。
 
-| 特性 | Consul | Litemesh |
-| :--- | :--- | :--- |
-| **同步机制** | 定期轮询 (Polling) | 事件推送 (SSE Push) |
-| **同步时效** | 秒级 (1-5s) | 毫秒级 (< 500ms) |
-| **多租户支持** | 通过命名空间隔离 | 通过 SID/Env 隔离 |
-| **适用范围** | 传统微服务架构 | 云原生服务网格 |
-
----
-
-## 延伸阅读
-- [配置 Litemesh 分布式发现](./litemesh.md)
-- [理解负载均衡策略](../02-concepts/actions.md#负载均衡协议)
+[发现概览](./overview.md) · [限流](../05-middleware/rate-limit.md) · [熔断](../09-advanced/circuit-breaker.md)

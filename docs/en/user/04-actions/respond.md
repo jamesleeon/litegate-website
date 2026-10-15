@@ -9,6 +9,7 @@ The `respond` action allows LiteGate to return predefined response payloads dire
 Configure a lightweight status checking endpoint directly at the edge layer:
 
 ```yaml
+site: example.com
 routes:
   - name: health-check
     match:
@@ -26,9 +27,10 @@ routes:
 ## 2. Returning Custom JSON Payloads
 
 ```yaml
+site: example.com
 routes:
   - name: mock-api
-    match: { path_prefix: "/api/mock" }
+    match: {path_prefix: "/api/mock"}
     action:
       type: respond
       status: 201

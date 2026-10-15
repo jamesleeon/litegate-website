@@ -23,14 +23,11 @@ LiteGate 的一个核心特点，是最终对外提供的入口，不一定只�
 最常见的例子是：
 
 ```yaml
-domain: a.example.com
+site: a.example.com
 routes:
   - match:
       path_prefix: /
-    action:
-      type: serve
-      root: "/srv/www/app"
-      spa: true
+    spa: "/srv/www/app"
 ```
 
 这部分通常是“前端入口”或“稳定流量契约”。
