@@ -84,9 +84,10 @@
         <span class="tag need">按需</span>
         <h3>LiteDNS</h3>
         <span class="like">内网解析 · 轻量本地 DNS</span>
-        <p>办公室、门店、机房里的用户访问同一个域名时，也直连网关的内网地址，同一张证书内外通用。还能把已有的 Nacos 等注册中心接给 LiteGate。</p>
+        <p>办公室、门店、机房里的用户访问同一个域名时，直连网关的内网地址，同一张证书内外通用。内网有多台网关时，每次只返回一个节点 IP 并轮询，宕机节点自动摘除。</p>
         <ul>
           <li>只拦截网关和服务域名，其余交给 CamoDNS 或企业现有 DNS</li>
+          <li>也能把已有的 Nacos 等注册中心接给 LiteGate</li>
         </ul>
       </div>
     </div>
@@ -111,7 +112,7 @@
         <g class="node"><rect x="10" y="274" width="110" height="44" rx="8"/><text x="65" y="301" text-anchor="middle">内网用户</text></g>
         <g class="node"><rect x="250" y="12" width="150" height="56" rx="8"/><text x="325" y="36" text-anchor="middle">日志 · 链路平台</text><text class="sub" x="325" y="55" text-anchor="middle">ELK / Loki · Jaeger / Tempo</text></g>
         <g class="node hub"><rect x="250" y="140" width="150" height="70" rx="10"/><text x="325" y="171" text-anchor="middle">LiteGate</text><text class="sub" x="325" y="191" text-anchor="middle">入口 · 证书 · 多源路由</text></g>
-        <g class="node opt"><rect x="250" y="300" width="150" height="56" rx="8"/><text x="325" y="324" text-anchor="middle">LiteDNS</text><text class="sub" x="325" y="343" text-anchor="middle">内网解析（按需）</text></g>
+        <g class="node opt"><rect x="250" y="300" width="150" height="56" rx="8"/><text x="325" y="324" text-anchor="middle">LiteDNS</text><text class="sub" x="325" y="343" text-anchor="middle">内网解析 · 轮询分流</text></g>
         <g class="node"><rect x="520" y="16" width="200" height="56" rx="8"/><text x="620" y="40" text-anchor="middle">litedeploy</text><text class="sub" x="620" y="59" text-anchor="middle">部署 · 服务注册</text></g>
         <g class="node"><rect x="520" y="148" width="200" height="56" rx="8"/><text x="620" y="172" text-anchor="middle">业务服务</text><text class="sub" x="620" y="191" text-anchor="middle">Agent 运行的实例</text></g>
         <g class="node opt"><rect x="520" y="246" width="200" height="56" rx="8"/><text x="620" y="270" text-anchor="middle">litemesh</text><text class="sub" x="620" y="289" text-anchor="middle">服务发现 · mTLS（按需）</text></g>
@@ -194,6 +195,33 @@
   <span class="k">sample_ratio</span>: <span class="s">0.1</span></pre>
       </div>
     </div>
+
+    <div class="split" data-animate>
+      <div>
+        <p class="kicker">内网多节点</p>
+        <h2>内网 5 台网关，流量也要均匀</h2>
+        <p>这个团队在内网部署了 5 个 LiteGate 节点。如果让普通 DNS 一次返回 5 个 IP，大多数客户端只连第一个，代码不改的话流量会全部压到一台上。LiteDNS 在 DNS 这一层就把负载分开：</p>
+        <ul class="checklist">
+          <li>每次只返回<strong>一个</strong>节点 IP，按域名轮询，不同的请求方拿到不同的节点，业务代码不用改。</li>
+          <li>每个 LiteGate 节点把自己的内网 IP 发布到 litemesh，并定时心跳续约；LiteDNS 实时监听这些记录。</li>
+          <li>节点正常停机会立即撤下自己的记录；宕机时租约到期自动摘除，LiteDNS 还会定期全量重扫兜底，坏节点不会一直被分配出去。</li>
+        </ul>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>LiteDNS · rules.yaml</div>
+<pre><span class="k">upstreams</span>:
+  <span class="k">gateway_kv</span>: {<span class="k">type</span>: <span class="s">litemesh</span>,
+               <span class="k">servers</span>: [<span class="s">"http://10.0.0.6:8080"</span>],
+               <span class="k">token</span>: <span class="s">"env://LITEMESH_TOKEN"</span>}
+  <span class="k">corp_dns</span>:   {<span class="k">servers</span>: [<span class="s">"udp://10.0.0.53:53"</span>]}
+<span class="k">rules</span>:
+  <span class="c"># 每次 1 个 IP，轮询</span>
+  - {<span class="k">name</span>: <span class="s">gateway-sites</span>, <span class="k">suffixes</span>: [<span class="s">example.com</span>],
+     <span class="k">upstream</span>: <span class="s">gateway_kv</span>, <span class="k">fallback</span>: <span class="s">corp_dns</span>,
+     <span class="k">answer</span>: {<span class="k">order</span>: <span class="s">round_robin</span>, <span class="k">limit</span>: <span class="s">1</span>, <span class="k">ttl</span>: <span class="s">10</span>}}
+  - {<span class="k">name</span>: <span class="s">default</span>, <span class="k">upstream</span>: <span class="s">corp_dns</span>}</pre>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -223,7 +251,7 @@
       <div class="path-step" data-animate>
         <span class="time">内网也走网关</span>
         <h3>+ LiteDNS</h3>
-        <p>办公室、门店和客户机房里的用户也要直连网关；或者已经有 Nacos，想接给 LiteGate。</p>
+        <p>办公室、门店和客户机房里的用户也要直连网关，内网多台网关需要均匀分流；或者已经有 Nacos，想接给 LiteGate。</p>
       </div>
     </div>
 
@@ -264,7 +292,7 @@
           <tr><td>服务发现</td><td>Nacos / Consul / etcd 集群</td><td>litedeploy 自带；要 mTLS 时加 litemesh</td></tr>
           <tr><td>配置中心与锁</td><td>Nacos / Apollo、Redis 锁</td><td>litemesh KV 与锁（按需）</td></tr>
           <tr><td>内网穿透与私有化</td><td>frp、VPN、给客户开放端口</td><td>LiteGate Connect，客户机房不开入站端口</td></tr>
-          <tr><td>内网解析</td><td>手工维护 hosts、内网 DNS</td><td>LiteDNS（按需）</td></tr>
+          <tr><td>内网解析与分流</td><td>手工维护 hosts；内网 DNS 返回多个 IP，客户端只连第一个</td><td>LiteDNS：每次一个节点 IP 轮询，宕机自动摘除</td></tr>
           <tr><td>实时推送</td><td>MQTT、自建 WebSocket 服务</td><td>LiteGate 事件通知</td></tr>
           <tr><td>日志与链路</td><td>解析 Nginx 日志、各服务自己埋点</td><td>LiteGate JSON 访问日志 + OTLP 链路，直接进现有平台</td></tr>
           <tr><td>监控大屏</td><td>Prometheus + Grafana 全套</td><td>内置控制台和状态页，也能接 Grafana</td></tr>

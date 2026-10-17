@@ -85,9 +85,10 @@
         <span class="tag need">As needed</span>
         <h3>LiteDNS</h3>
         <span class="like">Internal resolution · a small local DNS</span>
-        <p>Users in offices, stores and data centers reach the gateway's internal address for the same domain, with one certificate inside and out. It can also bring an existing registry such as Nacos to LiteGate.</p>
+        <p>Users in offices, stores and data centers reach the gateway's internal address for the same domain, with one certificate inside and out. With several internal gateways, each answer carries one node IP in rotation, and dead nodes drop out automatically.</p>
         <ul>
           <li>Intercepts only gateway and service names; everything else goes to CamoDNS or your existing DNS</li>
+          <li>Can also bring an existing registry such as Nacos to LiteGate</li>
         </ul>
       </div>
     </div>
@@ -112,7 +113,7 @@
         <g class="node"><rect x="10" y="274" width="110" height="44" rx="8"/><text x="65" y="301" text-anchor="middle">Internal users</text></g>
         <g class="node"><rect x="250" y="12" width="150" height="56" rx="8"/><text x="325" y="36" text-anchor="middle">Logs · tracing</text><text class="sub" x="325" y="55" text-anchor="middle">ELK / Loki · Jaeger / Tempo</text></g>
         <g class="node hub"><rect x="250" y="140" width="150" height="70" rx="10"/><text x="325" y="171" text-anchor="middle">LiteGate</text><text class="sub" x="325" y="191" text-anchor="middle">entry · certs · multi-source</text></g>
-        <g class="node opt"><rect x="250" y="300" width="150" height="56" rx="8"/><text x="325" y="324" text-anchor="middle">LiteDNS</text><text class="sub" x="325" y="343" text-anchor="middle">internal DNS (optional)</text></g>
+        <g class="node opt"><rect x="250" y="300" width="150" height="56" rx="8"/><text x="325" y="324" text-anchor="middle">LiteDNS</text><text class="sub" x="325" y="343" text-anchor="middle">internal DNS · round robin</text></g>
         <g class="node"><rect x="520" y="16" width="200" height="56" rx="8"/><text x="620" y="40" text-anchor="middle">litedeploy</text><text class="sub" x="620" y="59" text-anchor="middle">deploy · registration</text></g>
         <g class="node"><rect x="520" y="148" width="200" height="56" rx="8"/><text x="620" y="172" text-anchor="middle">Services</text><text class="sub" x="620" y="191" text-anchor="middle">instances run by agents</text></g>
         <g class="node opt"><rect x="520" y="246" width="200" height="56" rx="8"/><text x="620" y="270" text-anchor="middle">litemesh</text><text class="sub" x="620" y="289" text-anchor="middle">discovery · mTLS (optional)</text></g>
@@ -195,6 +196,33 @@
   <span class="k">sample_ratio</span>: <span class="s">0.1</span></pre>
       </div>
     </div>
+
+    <div class="split" data-animate>
+      <div>
+        <p class="kicker">Many gateways inside</p>
+        <h2>Five internal gateways, evenly loaded</h2>
+        <p>This team runs five LiteGate nodes on the internal network. If an ordinary DNS server returned all five IPs, most clients would connect to the first one and, without code changes, all traffic would land on a single node. LiteDNS spreads the load at the DNS layer:</p>
+        <ul class="checklist">
+          <li>Each answer carries <strong>one</strong> node IP, rotated per name, so different clients get different nodes and application code stays unchanged.</li>
+          <li>Every LiteGate node publishes its internal IP to litemesh and renews it with heartbeats; LiteDNS watches those records live.</li>
+          <li>A node that stops cleanly withdraws its record at once; a crashed node is dropped when its lease expires, with a periodic full resync as a backstop, so a dead node is not handed out for long.</li>
+        </ul>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>LiteDNS · rules.yaml</div>
+<pre><span class="k">upstreams</span>:
+  <span class="k">gateway_kv</span>: {<span class="k">type</span>: <span class="s">litemesh</span>,
+               <span class="k">servers</span>: [<span class="s">"http://10.0.0.6:8080"</span>],
+               <span class="k">token</span>: <span class="s">"env://LITEMESH_TOKEN"</span>}
+  <span class="k">corp_dns</span>:   {<span class="k">servers</span>: [<span class="s">"udp://10.0.0.53:53"</span>]}
+<span class="k">rules</span>:
+  <span class="c"># one IP per answer, rotated</span>
+  - {<span class="k">name</span>: <span class="s">gateway-sites</span>, <span class="k">suffixes</span>: [<span class="s">example.com</span>],
+     <span class="k">upstream</span>: <span class="s">gateway_kv</span>, <span class="k">fallback</span>: <span class="s">corp_dns</span>,
+     <span class="k">answer</span>: {<span class="k">order</span>: <span class="s">round_robin</span>, <span class="k">limit</span>: <span class="s">1</span>, <span class="k">ttl</span>: <span class="s">10</span>}}
+  - {<span class="k">name</span>: <span class="s">default</span>, <span class="k">upstream</span>: <span class="s">corp_dns</span>}</pre>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -224,7 +252,7 @@
       <div class="path-step" data-animate>
         <span class="time">Internal users too</span>
         <h3>+ LiteDNS</h3>
-        <p>Users in offices, stores and customer data centers should reach the gateway directly; or you already run Nacos and want LiteGate to use it.</p>
+        <p>Users in offices, stores and customer data centers should reach the gateway directly, spread evenly across several internal gateways; or you already run Nacos and want LiteGate to use it.</p>
       </div>
     </div>
 
@@ -265,7 +293,7 @@
           <tr><td>Service discovery</td><td>A Nacos / Consul / etcd cluster</td><td>Built into litedeploy; add litemesh for mTLS</td></tr>
           <tr><td>Configuration and locks</td><td>Nacos / Apollo, Redis locks</td><td>litemesh KV and locks (as needed)</td></tr>
           <tr><td>Private access and on-premises</td><td>frp, VPNs, opening ports at customer sites</td><td>LiteGate Connect, with no inbound ports at the customer</td></tr>
-          <tr><td>Internal DNS</td><td>Hand-maintained hosts files, internal DNS</td><td>LiteDNS (as needed)</td></tr>
+          <tr><td>Internal DNS and load spreading</td><td>Hand-maintained hosts files; internal DNS returns several IPs and clients use the first</td><td>LiteDNS: one node IP per answer in rotation, dead nodes dropped</td></tr>
           <tr><td>Real-time push</td><td>MQTT, a home-grown WebSocket service</td><td>LiteGate notifications</td></tr>
           <tr><td>Logs and tracing</td><td>Parsing Nginx logs, instrumenting every service</td><td>LiteGate JSON access logs + OTLP traces into your existing platform</td></tr>
           <tr><td>Monitoring</td><td>A full Prometheus + Grafana stack</td><td>Built-in console and status page, with Grafana if you want it</td></tr>
