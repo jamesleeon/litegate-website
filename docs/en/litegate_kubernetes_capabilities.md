@@ -18,6 +18,8 @@ This is an index of implementation capabilities, not a certification report or a
 
 Only a subset of ingress-nginx annotations is supported, not its full policy surface. GRPCRoute, extension filters, non-Service backends and version support follow the actual types, validation and tests. Code/unit tests are not Gateway API conformance; avoid claiming complete support without a published report.
 
+Status writes keep other controllers' parent entries. BackendTLSPolicy and LiteGateTrafficPolicy report one `status.ancestors` entry (with `controllerName`) per Gateway this controller owns and keep other controllers' entries; a controller that does not own the target writes nothing and removes its own entries when it loses ownership. The top-level LiteGateTrafficPolicy `status.conditions` is deprecated: it holds the conditions of the sole owner (a controller that drops out promotes the remaining owner's) and is cleared while several controllers own the target, so read `status.ancestors` instead.
+
 Watch/namespace scope can be reduced and insufficient permissions may disable capabilities. Validate large-cluster performance, API budgets, watch recovery and listener exposure in the target environment. TLSRoute aggregation fixes the obsolete first-route-only limitation; historical audits are not current behavior.
 
 ## Related documentation and code

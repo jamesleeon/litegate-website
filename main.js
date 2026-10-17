@@ -65,6 +65,24 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Guide page: highlight the TOC entry of the scenario being read.
+    const tocLinks = Array.from(document.querySelectorAll(".guide-toc a"));
+    if (tocLinks.length && "IntersectionObserver" in window) {
+        const byId = new Map(tocLinks.map((link) => [link.hash.slice(1), link]));
+        const tocObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    tocLinks.forEach((link) => link.classList.remove("active"));
+                    const link = byId.get(entry.target.id);
+                    if (link) {
+                        link.classList.add("active");
+                    }
+                }
+            });
+        }, { rootMargin: "-20% 0px -70% 0px" });
+        document.querySelectorAll(".guide-section[id]").forEach((section) => tocObserver.observe(section));
+    }
+
     if ("IntersectionObserver" in window) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {

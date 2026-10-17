@@ -43,6 +43,18 @@ litegate [options]
 | `litegate plugins inspect <kind>/<name>` | 查看指定已编入插件的详细元数据与官方 YAML 配置示例模板。 | [插件 CLI 参考](../12-plugins/build-and-cli.md) |
 | `litegate plugins doctor` | 对当前已编入插件执行健康检查，诊断 Manifest 完整性与 APIVersion 兼容性。 | [插件 CLI 参考](../12-plugins/build-and-cli.md) |
 
+### 运维与连接子命令
+
+| 命令 | 说明 | 详见 |
+| :--- | :--- | :--- |
+| `litegate mcp [-config <path>] [-log-level <level>]` | 以 stdio 方式运行 MCP 服务，供 Claude Code、Cursor 等 AI 客户端拉起。日志写到 stderr。 | [MCP 能力表](../../litegate_mcp_capability_matrix.md) |
+| `litegate forward --remote <url> --local <addr> --token-file <file>` | Forward 客户端：把远端 Stream 映射到本机端口；也可用 `--config` 读取 YAML。`litegate forward token --output <file>` 生成令牌。 | [Forward 与 Connect](../09-advanced/forward-and-connect.md) |
+| `litegate connect [http] --remote <url> --name <name> --domain <host> --upstream <url>` | 用命令行把本机 HTTP 服务通过 Connect 发布出去；`litegate connect token --output <file>` 生成令牌。 | [Connect 命令行](../09-advanced/connect-cli-http.md) |
+| `litegate systemd [options]` | 输出 systemd 单元文件（`-user`、`-workdir`、`-config`、`-name` 等）。 | [systemd 部署](../10-deployment/systemd.md) |
+| `litegate secret keygen\|pubkey\|encrypt` | 生成本机密钥对，把凭据加密为 `enc://` 引用，配置文件中不出现明文。 | [Sealed Secrets](../06-certificates/sealed-secrets.md) |
+| `litegate ech withdraw -config <path>` | 撤回已发布的 ECH DNS 记录（先停止 ECH 实例）。 | [ECH](../06-certificates/ech.md) |
+| `litegate healthcheck [-config <path>] [-addr <addr>]` | 探测本机网关健康端点，适合容器 `HEALTHCHECK`。 | [生产部署](../10-deployment/production.md) |
+
 ### Consul 引导参数
 
 | 参数 | 环境变量 | 说明 |

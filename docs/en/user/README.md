@@ -89,6 +89,7 @@ Start with installation, quick start and your first site, then use the task refe
 ## Discovery
 
 - [Consul Service Discovery](07-discovery/consul.md)
+- [Nomad Service Discovery and Plugin Configuration](07-discovery/nomad.md)
 - [Litemesh mTLS Integration Guide](07-discovery/litemesh-mtls.md)
 - [Litemesh Service Discovery](07-discovery/litemesh.md)
 - [Service Discovery Sources Overview](07-discovery/overview.md)
@@ -121,6 +122,7 @@ Start with installation, quick start and your first site, then use the task refe
 
 - [Benchmarking and performance attribution](10-deployment/benchmarking.md)
 - [Replica state and failure isolation](10-deployment/ha-state.md)
+- [Kubernetes deployment guide](10-deployment/kubernetes.md)
 - [Production Deployment Best Practices](10-deployment/production.md)
 - [Systemd Deployment Guide (Linux)](10-deployment/systemd.md)
 

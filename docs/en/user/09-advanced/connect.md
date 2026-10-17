@@ -31,7 +31,11 @@ connect:
 client's `remote` URL. The endpoint is matched exactly and takes precedence over
 normal Site routes.
 
-The control hostname must be an exact public DNS name. `allowed_domains` is an authorization boundary, not a route declaration. The state file contains the last validated ownership snapshot, but no tokens or live sessions. Unusable state entries are skipped at startup and affected Home peers re-register.
+The control hostname must be an exact public DNS name. `allowed_domains` is an authorization boundary, not a route declaration.
+
+Cloud supports hot reload of `connect.server.peers` through the existing configuration reload and global configuration-source paths. Adding a peer leaves other tenants connected. `peers: {}` supports starting with no tenants and removing the last tenant; all Connect authentication requests are rejected while the set is empty. Removing a peer revokes its sessions and ownership. Changing its publication/session policy revokes only that peer, which must reconnect and register again. Token changes preserve established sessions. Updating `max_connections` affects new streams and preserves existing streams and their shared admission count. Listener, CA, health-manager and Home client settings still require a restart.
+
+`state_file` is an ownership checkpoint; `state_file.wal` holds incremental peer changes. Each accepted change is synced before registration is acknowledged. The journal is compacted before the next change after 256 records or 4 MiB. Neither file contains tokens or live sessions. Back up or move both files together while Cloud is stopped. Version 1 checkpoints are upgraded automatically to version 2; older binaries cannot read version 2. Policy-incompatible entries are skipped and those peers re-register. An incomplete final journal record is discarded on recovery; Cloud still starts if complete records are corrupt or the checkpoint is unreadable, but refuses persistent registrations until the files are restored or repaired and Cloud is restarted.
 
 Cloud token files accept one token per non-empty line, which permits overlapping credentials during rotation. Keep the file outside source control with restrictive permissions. Generate a secure token using LiteGate:
 

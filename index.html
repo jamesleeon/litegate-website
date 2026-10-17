@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LiteGate · 单一二进制的 HTTP / TCP 网关</title>
-<meta name="description" content="LiteGate：三行 YAML 上线站点，自动 HTTPS 与 ECH，443 端口 SNI 分流，Connect 内网发布，Forward 安全访问云上数据库，服务发现与多租户选路，HTTP 发布即可订阅的事件通知，全部在一个 Go 二进制里。">
+<title>LiteGate · 一个程序管好所有服务的入口</title>
+<meta name="description" content="LiteGate 是单一二进制的 HTTP / TCP 网关：几行 YAML 发布网站和 API，自动 HTTPS，服务注册即上线，内网服务安全发布到公网，内置事件推送。开源，MIT 协议。">
 <link rel="alternate" hreflang="en" href="en/index.html">
+<link rel="alternate" hreflang="zh-CN" href="index.html">
 <link rel="stylesheet" href="style.css">
 <script>document.documentElement.classList.add("js")</script>
 <script src="main.js" defer></script>
@@ -14,16 +15,14 @@
 
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="#"><span class="brand-mark">L</span>LiteGate</a>
+    <a class="brand" href="index.html"><span class="brand-mark">L</span>LiteGate</a>
     <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
     <nav class="nav-links" aria-label="主导航">
+      <a href="#scenarios">能做什么</a>
+      <a href="#ai">AI 配置</a>
+      <a href="#quickstart">快速开始</a>
+      <a href="guide.html">场景指南</a>
       <a href="features.html">功能列表</a>
-      <a href="#discovery">服务发现</a>
-      <a href="#syntax">配置语法</a>
-      <a href="#network">跨网络</a>
-      <a href="#notify">事件通知</a>
-      <a href="#security">证书与 ECH</a>
-      <a href="#platform">平台能力</a>
       <a href="docs/zh-cn/">文档</a>
       <a href="en/index.html" data-lang-switch="en">English</a>
       <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
@@ -33,49 +32,281 @@
 
 <main>
 
-<!-- ── Hero ── -->
+<!-- ── Hero：一句话说清是什么 ── -->
 <section class="hero">
   <div class="wrap">
     <div>
-      <span class="eyebrow">开源 · MIT · 单一二进制</span>
-      <h1>三行配置上线，<br><em>一个网关</em>收齐所有入口</h1>
-      <p class="lead">静态站点、API 反代、自动 HTTPS、443 端口 SNI 分流、内网发布与云上资产访问、服务发现与多租户选路、事件通知。原来要拼好几套组件的事，LiteGate 用一个 Go 二进制、一种配置语言完成。</p>
+      <span class="eyebrow">开源 · MIT · 单一二进制网关</span>
+      <h1>一个程序，<br>管好你所有服务的<em>入口</em></h1>
+      <p class="lead">LiteGate 放在你的网站、API 和内网服务前面：接收外部流量，自动配好 HTTPS，再按规则转给后端。以前要 Nginx、Certbot、frp 和一套推送服务拼起来的事，现在一个二进制加几行 YAML 就够了。</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#quickstart">快速开始</a>
-        <a class="btn btn-ghost" href="features.html">完整功能列表 →</a>
-        <a class="btn btn-ghost" href="https://github.com/jamesleeon/LiteGate">在 GitHub 查看</a>
+        <a class="btn btn-primary" href="#quickstart">5 分钟跑起来</a>
+        <a class="btn btn-ghost" href="#scenarios">它能帮我做什么？</a>
       </div>
       <ul class="hero-meta">
         <li>无外部依赖</li>
-        <li>配置热加载</li>
+        <li>改配置不用重启</li>
         <li>Linux / macOS / Windows</li>
       </ul>
     </div>
     <div class="code-stack">
       <div class="code-window">
-        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml</div>
-<pre><span class="k">site</span>: <span class="s">app.example.com</span>
-<span class="p">/api</span>: <span class="s">127.0.0.1:8080</span>   <span class="c"># 反代后端，含 WebSocket</span>
-<span class="k">spa</span>: <span class="s">./dist</span>            <span class="c"># 其余交给单页应用</span></pre>
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml<span class="label">一个完整站点</span></div>
+<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>  <span class="c"># 自动申请证书</span>
+<span class="p">/api</span>: <span class="s">127.0.0.1:8080</span>            <span class="c"># 接口交给后端</span>
+<span class="k">spa</span>: <span class="s">./dist</span>                     <span class="c"># 其余交给前端</span></pre>
       </div>
       <div class="code-window terminal">
         <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>terminal</div>
 <pre><span class="t">$</span> ./litegate
 <span class="t">$</span> curl -I https://app.example.com/
-<span class="c">HTTP/2 200</span>
-<span class="c">content-type: text/html; charset=utf-8</span></pre>
+<span class="c">HTTP/2 200</span></pre>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── Architecture ── -->
+<!-- ── 它替代了什么 ── -->
+<section class="replace-strip" aria-labelledby="replace-title">
+  <div class="wrap">
+    <p class="kicker" id="replace-title">一个 LiteGate，顶替常见的几件套</p>
+    <div class="replace-grid">
+      <div class="replace-item"><s>Nginx / Caddy</s><strong>网站与反向代理</strong><span>静态站、SPA、负载均衡</span></div>
+      <div class="replace-item"><s>Certbot + 定时任务</s><strong>自动证书</strong><span>申请、续期、泛域名</span></div>
+      <div class="replace-item"><s>Traefik 标签</s><strong>服务发现</strong><span>Docker / K8s / Consul</span></div>
+      <div class="replace-item"><s>frp / 跳板机</s><strong>跨网络连接</strong><span>内网发布、远程访问数据库</span></div>
+      <div class="replace-item"><s>MQTT / WebSocket 服务</s><strong>实时推送</strong><span>HTTP 发布，SSE 订阅</span></div>
+    </div>
+    <p class="replace-note">用得到哪块开哪块：只想托管一个网站，也只需要三行配置。</p>
+  </div>
+</section>
+
+<!-- ── 场景：你想做什么 ── -->
+<section id="scenarios" class="alt">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">能做什么</p>
+      <h2>你想做的事，从这里找</h2>
+      <p>每张卡片是一个常见需求和它的最短写法。点进去是这个场景的完整做法：先跑通，再按需加功能，最后给出手册里对应的章节。</p>
+    </div>
+
+    <div class="scenarios">
+      <a class="card scenario" href="guide.html#website" data-animate>
+        <span class="who">个人站长 · 前端</span>
+        <h3>发布网站或前端应用</h3>
+        <p>静态站、Vue / React 单页应用，自动 HTTPS。</p>
+        <div class="code-window"><pre><span class="k">site</span>: <span class="s">https://example.com</span>
+<span class="k">spa</span>: <span class="s">./dist</span></pre></div>
+        <span class="go">怎么做</span>
+      </a>
+
+      <a class="card scenario" href="guide.html#api" data-animate>
+        <span class="who">后端 · 运维</span>
+        <h3>给多个后端做 API 网关</h3>
+        <p>按路径分流、负载均衡、健康检查、跨域和限流。</p>
+        <div class="code-window"><pre><span class="k">site</span>: <span class="s">api.example.com</span>
+<span class="p">/users</span>: <span class="s">localhost:8080</span>
+<span class="p">/orders</span>: <span class="s">localhost:8081</span></pre></div>
+        <span class="go">怎么做</span>
+      </a>
+
+      <a class="card scenario" href="guide.html#discovery" data-animate>
+        <span class="who">容器 · 微服务</span>
+        <h3>服务一上线，路由自动出现</h3>
+        <p>Docker、Kubernetes、Consul 里的服务带上标签即可，网关不用改。</p>
+        <div class="code-window"><pre><span class="k">labels</span>:
+  <span class="k">litegate.http.host</span>: <span class="s">example.com</span>
+  <span class="k">litegate.http.path_prefix</span>: <span class="s">/api</span></pre></div>
+        <span class="go">怎么做</span>
+      </a>
+
+      <a class="card scenario" href="guide.html#expose" data-animate>
+        <span class="who">家庭网络 · 私有化部署</span>
+        <h3>没有公网 IP，也能发布内网服务</h3>
+        <p>内网节点主动连云端，不开入站端口，证书私钥不出内网。</p>
+        <div class="code-window"><pre><span class="k">connect</span>:
+  <span class="k">client</span>:
+    <span class="k">name</span>: <span class="s">home</span>
+    <span class="k">publish_sites</span>: <span class="s">true</span></pre></div>
+        <span class="go">怎么做</span>
+      </a>
+
+      <a class="card scenario" href="guide.html#remote-access" data-animate>
+        <span class="who">开发 · DBA</span>
+        <h3>在本机安全连上云上数据库</h3>
+        <p>把 VPC 里的 MySQL、Redis 映射到本机端口，走 443 加密并鉴权。</p>
+        <div class="code-window"><pre><span class="t">$</span> litegate forward \
+  --remote https://db.example.com \
+  --token-file ./rds.token</pre></div>
+        <span class="go">怎么做</span>
+      </a>
+
+      <a class="card scenario" href="guide.html#certs" data-animate>
+        <span class="who">所有人</span>
+        <h3>证书不用再手动管</h3>
+        <p>自动申请续期；家里 80 端口不通就走 DNS-01，泛域名也行。</p>
+        <div class="code-window"><pre><span class="k">auto_cert</span>:
+  <span class="k">dns_providers</span>:
+    - <span class="k">name</span>: <span class="s">cf</span>
+      <span class="k">type</span>: <span class="s">cloudflare</span></pre></div>
+        <span class="go">怎么做</span>
+      </a>
+
+      <a class="card scenario" href="guide.html#security" data-animate>
+        <span class="who">后台 · 内部工具</span>
+        <h3>给后台加登录和防护</h3>
+        <p>OIDC 单点登录、JWT、IP 白名单、限流、WAF，写在路由下就生效。</p>
+        <div class="code-window"><pre><span class="p">/admin</span>:
+  <span class="k">ip_restriction</span>:
+    <span class="k">allow_ips</span>: [<span class="s">10.0.0.0/8</span>]</pre></div>
+        <span class="go">怎么做</span>
+      </a>
+
+      <a class="card scenario" href="guide.html#notify" data-animate>
+        <span class="who">业务系统</span>
+        <h3>给浏览器推送实时消息</h3>
+        <p>后端 HTTP POST 一条消息，浏览器通过 SSE 收到，不用另搭推送服务。</p>
+        <div class="code-window"><pre><span class="p">/notify</span>:
+  <span class="k">publish</span>: <span class="s">notify.{header.key}</span>
+<span class="p">/events</span>:
+  <span class="k">subscribe</span>: <span class="s">notify.config</span></pre></div>
+        <span class="go">怎么做</span>
+      </a>
+
+      <a class="card scenario" href="guide.html#ops" data-animate>
+        <span class="who">运维 · 对外公告</span>
+        <h3>一键开启状态页和控制台</h3>
+        <p>一段配置得到实时状态页；打开 Dashboard 看流量、路由、日志和插件。</p>
+        <div class="code-window"><pre><span class="p">/status</span>:
+  <span class="k">status</span>: {<span class="k">show_instances</span>: <span class="s">true</span>}</pre></div>
+        <span class="go">怎么做</span>
+      </a>
+    </div>
+
+    <p class="result-line" style="margin-top:24px">还有：<a href="#ai">用 AI 配置和排障</a> · <a href="guide.html#l4">TCP / UDP 与共用 443</a> · <a href="guide.html#saas">多租户 SaaS</a> · <a href="features.html">全部功能列表 →</a></p>
+  </div>
+</section>
+
+<!-- ── AI / MCP ── -->
+<section id="ai">
+  <div class="wrap">
+    <div class="split" data-animate>
+      <div>
+        <p class="kicker">内置 MCP · AI 原生</p>
+        <h2>不想写 YAML？用一句话告诉 AI</h2>
+        <p>LiteGate 内置 MCP 服务，Claude Code、Cursor 等 AI 助手连上后，就能读取现有配置、生成站点、校验、预览差异、保存并实际请求验证，出了问题还能查路由、看错误日志。</p>
+        <ol class="flow-steps">
+          <li><strong>连上 AI 助手</strong><span>本机执行一条命令，或在运行中的网关开启带 Token 的 SSE 端点。</span></li>
+          <li><strong>用自然语言描述需求</strong><span>“把 /api 转给 8080，其余用 ./dist，开启 HTTPS。”</span></li>
+          <li><strong>先校验再生效</strong><span>AI 先校验、给你看差异，再保存和验证；开启发布控制后，改动先进草稿，确认才上线。</span></li>
+        </ol>
+        <a class="card-link" href="guide.html#ai">怎么接入</a>
+      </div>
+      <div class="code-stack">
+        <div class="code-window terminal">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>terminal<span class="label">一次性接入</span></div>
+<pre><span class="t">$</span> claude mcp add litegate -- \
+    litegate mcp -config /etc/litegate/config.yaml</pre>
+        </div>
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>AI 助手<span class="label">调用过程示意</span></div>
+<pre><span class="p">你</span>  把 app.example.com 的 /api 转给 127.0.0.1:8080，
+    其余用 ./dist 做单页应用，开启 HTTPS
+
+<span class="p">AI</span>  <span class="k">test_upstream</span>          <span class="c">127.0.0.1:8080 可达</span>
+    <span class="k">validate_site_config</span>   <span class="c">通过</span>
+    <span class="k">preview_config_change</span>  <span class="c">新增 sites/app.yaml</span>
+    <span class="k">save_site_config</span>       <span class="c">已保存，网关热加载</span>
+    <span class="k">verify_site</span>            <span class="c">HTTP/2 200</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 开箱即用的观测 ── -->
+<section id="observe" class="alt">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">开箱即用</p>
+      <h2>控制台、状态页和 Grafana 面板，各一段配置就有</h2>
+      <p>内置的控制台和状态页不用另装任何组件，数据直接来自网关处理的真实流量：每个站点、每条路由、每个后端实例的延迟和错误一目了然。已经在用 Prometheus + Grafana？导入官方面板即可。</p>
+    </div>
+    <div class="shots" data-animate>
+      <figure class="shot">
+        <img src="assets/dashboard.webp" alt="LiteGate Dashboard：站点数、证书、L4 转发、运行时长，实时吞吐、延迟和状态码分布" width="2000" height="1071" loading="lazy">
+        <figcaption><strong>Dashboard 控制台</strong>：实时吞吐与延迟、路由与服务标签、访问日志、证书、Connect 隧道、已编入的插件，还能在线编辑站点。</figcaption>
+        <div class="code-window"><div class="code-head">config.yaml</div>
+<pre><span class="k">dashboard</span>:
+  <span class="k">enabled</span>: <span class="s">true</span>          <span class="c"># 默认端口 9999</span>
+  <span class="k">username</span>: <span class="s">ops</span>
+  <span class="k">password</span>: <span class="s">"$2a$10$..."</span>  <span class="c"># litegate -hash 生成</span></pre></div>
+      </figure>
+      <figure class="shot">
+        <img src="assets/status-page.png" alt="LiteGate 状态页：代理路由及每个后端实例的在线状态、延迟曲线和错误数" width="1572" height="1181" loading="lazy">
+        <figcaption><strong>状态页</strong>：可以公开给用户看，按站点隔离；打开 <code>show_instances</code> 还能看到每个后端实例的健康状况。</figcaption>
+        <div class="code-window"><div class="code-head">sites/app.yaml</div>
+<pre><span class="p">/status</span>:
+  <span class="k">status</span>: {<span class="k">show_instances</span>: <span class="s">true</span>}</pre></div>
+      </figure>
+      <figure class="shot wide">
+        <img src="assets/grafana.png" alt="LiteGate 官方 Grafana 面板：版本、运行时长、请求速率、5xx 比例、p95 延迟、证书到期、健康检查、拦截与封禁统计，以及按站点和状态码的流量曲线" width="2000" height="850" loading="lazy">
+        <div class="shot-body">
+          <figcaption><strong>Grafana 官方面板</strong>：按 job、instance、site 筛选，一份面板覆盖同一 Prometheus 抓取的所有网关。包含流量与延迟、代理与上游、重试与熔断、证书与 ACME、安全拦截、代理缓存、L4 与 Connect、NATS、运行时与配置重载。<a class="card-link" href="https://github.com/jamesleeon/LiteGate/tree/master/deploy/grafana">下载面板 JSON</a></figcaption>
+          <div class="code-window"><div class="code-head">config.yaml</div>
+<pre><span class="k">metrics</span>:
+  <span class="k">enabled</span>: <span class="s">true</span>
+  <span class="k">address</span>: <span class="s">0.0.0.0</span>   <span class="c"># 默认 127.0.0.1:9090</span>
+<span class="c"># Grafana → Import → litegate-dashboard.json</span></pre></div>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ── 为什么选它 ── -->
+<section id="why">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">为什么选 LiteGate</p>
+      <h2>简单的事写得短，复杂的事也不用换工具</h2>
+    </div>
+    <div class="features" data-animate>
+      <div class="feature">
+        <h3>一个文件就能跑</h3>
+        <p>单一 Go 二进制，没有数据库和运行时依赖。下载、写一个站点文件、启动，三步完成。</p>
+      </div>
+      <div class="feature">
+        <h3>配置短，而且能一直长大</h3>
+        <p>路径就是键、动作就是值。需要负载均衡、跨域、限流时直接写在同一条路由下，简写和完整写法可以混用。</p>
+      </div>
+      <div class="feature">
+        <h3>改了就生效</h3>
+        <p>站点文件保存即热加载，不用重启进程；上线前用 <code>litegate -t</code> 校验配置，和 <code>nginx -t</code> 一样顺手。</p>
+      </div>
+      <div class="feature">
+        <h3>HTTPS 默认就绪</h3>
+        <p>写 <code>site: https://域名</code> 就会自动申请和续期证书，HTTP-01、TLS-ALPN-01、DNS-01 泛域名都支持。</p>
+      </div>
+      <div class="feature">
+        <h3>看得见、查得到</h3>
+        <p>内置 Dashboard、访问日志、Prometheus 指标和链路追踪；路由为什么没命中，可以直接让 AI 通过 MCP 模拟一次请求查给你看。</p>
+      </div>
+      <div class="feature">
+        <h3>不够用时能扩展</h3>
+        <p><code>litegate build --with</code> 把插件编进二进制：中间件、负载均衡、DNS 服务商、服务发现、多租户选路都能扩展。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 架构 ── -->
 <section id="architecture" class="arch-section">
   <div class="wrap">
     <div class="section-head center" data-animate>
       <p class="kicker">架构一览</p>
       <h2>一个入口，连接互联网和你的全部服务</h2>
-      <p>左边是来自互联网的 HTTP、TCP、UDP 流量，右边是你的后端：通过标签自动发现的服务、站点文件里写明的服务器，以及通过 Connect 反向隧道接入的内网服务。中间的路由引擎负责转发，安全、流量治理、证书和观测在同一处完成。</p>
+      <p>左边是来自互联网的 HTTP、TCP、UDP 流量，右边是你的后端：通过标签自动发现的服务、站点文件里写明的服务器，以及通过 Connect 反向隧道接入的内网服务。安全、流量治理、证书和观测都在中间这一处完成。</p>
     </div>
     <div class="arch-figure" data-animate>
       <img src="assets/architecture-zh.svg" alt="LiteGate 架构：互联网流量经路由引擎转发到服务发现的后端、站点文件中的服务器和 Connect 内网服务" width="1200" height="600" loading="lazy">
@@ -83,494 +314,18 @@
   </div>
 </section>
 
-<!-- ── Discovery ── -->
-<section id="discovery" class="alt">
-  <div class="wrap">
-    <div class="section-head" data-animate>
-      <p class="kicker">服务发现 · Magic Ingress</p>
-      <h2>后端注册即上线，网关零配置</h2>
-      <p>做 API 网关时，网关上只为前端写一次站点；之后每个后端服务在注册时带上两个标签，就自动挂到同一个域名下。服务上线、扩容、下线都不用改网关配置，也不用重启。</p>
-    </div>
-
-    <div class="split discovery" data-animate>
-      <div>
-        <ol class="flow-steps">
-          <li><strong>服务注册</strong><span>后端在 Litemesh、Consul、Docker 或 Kubernetes 中注册，标签写在服务元数据或 Docker label 里。</span></li>
-          <li><strong>网关实时感知</strong><span>LiteGate 订阅服务变化，在内存里生成路由，和站点文件里的前端合并到同一个域名，天然同源、没有跨域问题。</span></li>
-          <li><strong>流量自动跟随实例</strong><span>新实例自动加入负载均衡，健康检查失败或下线自动摘除；用到新域名时证书照常自动申请。</span></li>
-        </ol>
-        <a class="card-link" href="docs/zh-cn/user/03-configuration/tag-dsl.md">服务标签使用指南</a>
-      </div>
-
-      <div class="code-stack">
-        <div class="code-window">
-          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml<span class="label">网关上只写这一次</span></div>
-<pre><span class="k">site</span>: <span class="s">app.example.com</span>
-<span class="k">spa</span>: <span class="s">./dist</span></pre>
-        </div>
-
-        <div data-tabs>
-          <div class="tabs" role="tablist" aria-label="服务声明方式">
-            <button class="tab" role="tab" id="t-docker" aria-controls="p-docker" aria-selected="true">Docker</button>
-            <button class="tab" role="tab" id="t-meta" aria-controls="p-meta" aria-selected="false" tabindex="-1">Litemesh / Consul</button>
-            <button class="tab" role="tab" id="t-policy" aria-controls="p-policy" aria-selected="false" tabindex="-1">加上治理策略</button>
-          </div>
-          <div class="tab-panel" id="p-docker" role="tabpanel" aria-labelledby="t-docker">
-            <div class="code-window">
-              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>docker-compose.yml<span class="label">后端自己声明</span></div>
-<pre><span class="k">services</span>:
-  <span class="k">orders</span>:
-    <span class="k">image</span>: <span class="s">acme/orders</span>
-    <span class="k">labels</span>:
-      <span class="k">litegate.http.host</span>: <span class="s">app.example.com</span>
-      <span class="k">litegate.http.path_prefix</span>: <span class="s">/api/orders</span>
-  <span class="k">users</span>:
-    <span class="k">image</span>: <span class="s">acme/users</span>
-    <span class="k">labels</span>:
-      <span class="k">litegate.http.host</span>: <span class="s">app.example.com</span>
-      <span class="k">litegate.http.path_prefix</span>: <span class="s">/api/users</span></pre>
-            </div>
-          </div>
-          <div class="tab-panel" id="p-meta" role="tabpanel" aria-labelledby="t-meta" hidden>
-            <div class="code-window">
-              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>服务元数据<span class="label">注册时附带</span></div>
-<pre><span class="c"># orders 服务注册时携带的标签</span>
-<span class="k">litegate.http.host</span>=<span class="s">app.example.com</span>
-<span class="k">litegate.http.path_prefix</span>=<span class="s">/api/orders</span>
-<span class="k">litegate.http.strip_path</span>=<span class="s">true</span>   <span class="c"># 可选：转发时去掉前缀</span></pre>
-            </div>
-          </div>
-          <div class="tab-panel" id="p-policy" role="tabpanel" aria-labelledby="t-policy" hidden>
-            <div class="code-window">
-              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>服务元数据<span class="label">命名资源写法</span></div>
-<pre><span class="k">litegate.http.routers.orders.match.hosts</span>=<span class="s">app.example.com</span>
-<span class="k">litegate.http.routers.orders.match.path_prefix</span>=<span class="s">/api/orders</span>
-<span class="k">litegate.http.routers.orders.middlewares</span>=<span class="s">orders-limit</span>
-<span class="k">litegate.http.middlewares.orders-limit.ratelimit.qps</span>=<span class="s">100</span>
-<span class="k">litegate.http.services.orders.retry.attempts</span>=<span class="s">2</span>
-<span class="k">litegate.http.services.orders.healthcheck.path</span>=<span class="s">/healthz</span></pre>
-            </div>
-          </div>
-        </div>
-        <p class="result-line"><code>https://app.example.com/</code> 是前端，<code>/api/orders</code>、<code>/api/users</code> 随服务注册自动出现。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Syntax ── -->
-<section id="syntax">
-  <div class="wrap">
-    <div class="section-head" data-animate>
-      <p class="kicker">Site YAML v2</p>
-      <h2>一种配置语言，从三行到完整网关</h2>
-      <p>路径就是键，动作就是值。简单站点几行写完；需要负载均衡、跨域、限流时，直接写在对应路由下面，不用换格式，也不需要额外插件。</p>
-    </div>
-
-    <div class="grid grid-3 examples">
-      <div class="card example" data-animate>
-        <h3>前后端分流</h3>
-        <p><code>/api</code> 交给后端，其余交给单页应用，未知路由回退到 <code>index.html</code>。</p>
-        <div class="code-window">
-<pre><span class="k">site</span>: <span class="s">app.example.com</span>
-<span class="p">/api</span>: <span class="s">127.0.0.1:8080</span>
-<span class="k">spa</span>: <span class="s">./dist</span></pre>
-        </div>
-      </div>
-      <div class="card example" data-animate>
-        <h3>多个后端 + 去前缀</h3>
-        <p>逗号分隔多个地址，默认轮询；<code>strip_prefix</code> 转发前去掉 <code>/v1</code>。</p>
-        <div class="code-window">
-<pre><span class="k">site</span>: <span class="s">api.example.com</span>
-<span class="p">/v1</span>:
-  <span class="k">proxy</span>: <span class="s">10.0.0.5:8080, 10.0.0.6:8080</span>
-  <span class="k">strip_prefix</span>: <span class="s">true</span></pre>
-        </div>
-      </div>
-      <div class="card example" data-animate>
-        <h3>跨域 + 限流</h3>
-        <p>治理规则和转发写在同一个路由下，预检请求由网关直接应答。</p>
-        <div class="code-window">
-<pre><span class="k">site</span>: <span class="s">api.example.com</span>
-<span class="p">/api</span>:
-  <span class="k">proxy</span>: <span class="s">localhost:8080</span>
-  <span class="k">cors</span>:
-    <span class="k">allowed_origins</span>: [<span class="s">https://web.example.com</span>]
-  <span class="k">rate_limit</span>: {<span class="k">rate</span>: <span class="s">10</span>, <span class="k">key</span>: <span class="s">ip</span>}</pre>
-        </div>
-      </div>
-    </div>
-
-    <div class="reasons">
-      <div class="reason" data-animate>
-        <h3>顺序无关</h3>
-        <p>路由按优先级和匹配精确度排序，写在文件里的先后不影响结果；匹配条件完全相同的两条路由直接报错，而不是静默覆盖。</p>
-      </div>
-      <div class="reason" data-animate>
-        <h3>从简写到完整，不换格式</h3>
-        <p>需要精确路径、按方法或请求头匹配、命名服务复用时，在同一个文件里加 <code>routes</code>、<code>services</code>，简写和完整写法可以混用。</p>
-      </div>
-      <div class="reason" data-animate>
-        <h3>工具友好</h3>
-        <p>就是 YAML：编辑器高亮、<code>litegate -t</code> 校验、Git 管理版本；AI 助手可以通过内置 MCP 直接创建和修改站点。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Cross-network ── -->
-<section id="network" class="alt">
-  <div class="wrap">
-    <div class="section-head" data-animate>
-      <p class="kicker">跨网络连接</p>
-      <h2>内网发布、云上资产、统一出网</h2>
-      <p>三种方向，三个能力，都跑在同一个 443 端口上，不需要再部署 frp、跳板机或单独的代理服务。</p>
-    </div>
-
-    <div class="net-list">
-      <article class="card net-row" data-animate>
-        <div class="net-text">
-        <span class="tag">CONNECT</span>
-        <h3>把内网服务发布到公网</h3>
-        <div class="flow" aria-hidden="true">
-          <svg viewBox="0 0 300 120">
-            <defs>
-              <marker id="ah1" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 z"/></marker>
-              <marker id="ah1t" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow tls" d="M0,0 L8,4 L0,8 z"/></marker>
-            </defs>
-            <g class="node"><rect x="4" y="44" width="76" height="34" rx="8"/><text x="42" y="65" text-anchor="middle">访客</text></g>
-            <g class="node hub"><rect x="112" y="40" width="76" height="42" rx="8"/><text x="150" y="59" text-anchor="middle">Cloud</text><text class="sub" x="150" y="73" text-anchor="middle">只看 SNI</text></g>
-            <g class="node"><rect x="220" y="6" width="76" height="34" rx="8"/><text x="258" y="27" text-anchor="middle">Home A</text></g>
-            <g class="node"><rect x="220" y="82" width="76" height="34" rx="8"/><text x="258" y="103" text-anchor="middle">Home B</text></g>
-            <path class="edge" d="M80,61 L110,61" marker-end="url(#ah1)"/>
-            <path class="edge tls" d="M220,23 C200,23 200,52 190,54" marker-end="url(#ah1t)"/>
-            <path class="edge tls" d="M220,99 C200,99 200,70 190,68" marker-end="url(#ah1t)"/>
-          </svg>
-        </div>
-        <p>内网节点主动拨向云端，家里和机房不用开放任何入站端口。一个 Cloud 可以接入多个 Home，每个 Home 只能发布被授权的域名。TLS 在内网终止，证书私钥不离开内网，云端看不到明文。</p>
-        <a class="card-link" href="docs/zh-cn/user/09-advanced/connect.md">Connect 配置指南</a>
-        </div>
-        <div class="net-code">
-          <div class="code-window"><div class="code-head">Home · config.yaml</div>
-<pre><span class="k">connect</span>:
-  <span class="k">client</span>:
-    <span class="k">enabled</span>: <span class="s">true</span>
-    <span class="k">name</span>: <span class="s">home</span>
-    <span class="k">remote</span>: <span class="s">https://connect.example.com</span>
-    <span class="k">token_file</span>: <span class="s">/etc/litegate/secrets/home.token</span>
-    <span class="k">publish_sites</span>: <span class="s">true</span></pre></div>
-        </div>
-      </article>
-
-      <article class="card net-row" data-animate>
-        <div class="net-text">
-        <span class="tag">FORWARD</span>
-        <h3>在本机安全访问云上数据库</h3>
-        <div class="flow" aria-hidden="true">
-          <svg viewBox="0 0 300 120">
-            <defs>
-              <marker id="ah2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 z"/></marker>
-              <marker id="ah2t" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow tls" d="M0,0 L8,4 L0,8 z"/></marker>
-            </defs>
-            <g class="node"><rect x="4" y="40" width="80" height="42" rx="8"/><text x="44" y="59" text-anchor="middle">开发机</text><text class="sub" x="44" y="73" text-anchor="middle">127.0.0.1:3306</text></g>
-            <g class="node hub"><rect x="112" y="40" width="76" height="42" rx="8"/><text x="150" y="59" text-anchor="middle">LiteGate</text><text class="sub" x="150" y="73" text-anchor="middle">Token 鉴权</text></g>
-            <g class="node"><rect x="216" y="40" width="80" height="42" rx="8"/><text x="256" y="59" text-anchor="middle">RDS</text><text class="sub" x="256" y="73" text-anchor="middle">VPC 内网</text></g>
-            <path class="edge tls" d="M84,61 L110,61" marker-end="url(#ah2t)"/>
-            <path class="edge" d="M188,61 L214,61" marker-end="url(#ah2)"/>
-            <text class="lbl" x="97" y="34" text-anchor="middle">TLS 443</text>
-          </svg>
-        </div>
-        <p>把 VPC 里的 MySQL、Redis、SSH 映射到开发者本机端口。服务端把域名锁定到一个 Stream，客户端无法改变目标；Stream 的 IP 限制、会话上限和超时照常生效。</p>
-        <a class="card-link" href="docs/zh-cn/database-proxy-solution.md">数据库安全访问方案</a>
-        </div>
-        <div class="net-code">
-          <div class="code-window"><div class="code-head">开发机</div>
-<pre><span class="t">$</span> litegate forward \
-    --remote https://db-tunnel.example.com \
-    --local 127.0.0.1:3306 \
-    --token-file ./rds.token</pre></div>
-        </div>
-      </article>
-
-      <article class="card net-row" data-animate>
-        <div class="net-text">
-        <span class="tag">FORWARD PROXY</span>
-        <h3>无公网 IP 的机器统一出网</h3>
-        <div class="flow" aria-hidden="true">
-          <svg viewBox="0 0 300 120">
-            <defs>
-              <marker id="ah3" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 z"/></marker>
-              <marker id="ah3t" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow tls" d="M0,0 L8,4 L0,8 z"/></marker>
-            </defs>
-            <g class="node"><rect x="4" y="40" width="80" height="42" rx="8"/><text x="44" y="59" text-anchor="middle">内网服务器</text><text class="sub" x="44" y="73" text-anchor="middle">HTTPS_PROXY</text></g>
-            <g class="node hub"><rect x="112" y="40" width="76" height="42" rx="8"/><text x="150" y="59" text-anchor="middle">LiteGate</text><text class="sub" x="150" y="73" text-anchor="middle">ACL · 审计</text></g>
-            <g class="node"><rect x="216" y="40" width="80" height="42" rx="8"/><text x="256" y="59" text-anchor="middle">公网 API</text><text class="sub" x="256" y="73" text-anchor="middle">支付 · AI · SaaS</text></g>
-            <path class="edge tls" d="M84,61 L110,61" marker-end="url(#ah3t)"/>
-            <path class="edge" d="M188,61 L214,61" marker-end="url(#ah3)"/>
-            <text class="lbl" x="97" y="34" text-anchor="middle">CONNECT</text>
-          </svg>
-        </div>
-        <p>标准 HTTP CONNECT 正向代理，挂在 443 上按域名触发。支持账号认证和目标 ACL；开启防探测后，未认证的访问看起来就是一个普通网站。</p>
-        <a class="card-link" href="docs/zh-cn/forward-vs-forward-proxy.md">Forward 与 Forward Proxy 对比</a>
-        </div>
-        <div class="net-code">
-          <div class="code-window"><div class="code-head">config.yaml</div>
-<pre><span class="k">ingress_plugins</span>:
-  - <span class="k">name</span>: <span class="s">egress</span>
-    <span class="k">type</span>: <span class="s">forward_proxy</span>
-    <span class="k">entrypoints</span>: [<span class="s">websecure</span>]
-    <span class="k">config</span>:
-      <span class="k">hosts</span>: [<span class="s">proxy.example.com</span>]
-      <span class="k">username</span>: <span class="s">ops</span>
-      <span class="k">password_env</span>: <span class="s">LITEGATE_PROXY_PASSWORD</span>
-      <span class="k">probe_resistance</span>: <span class="s">true</span></pre></div>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ── Notify hub ── -->
-<section id="notify">
-  <div class="wrap">
-    <div class="section-head" data-animate>
-      <p class="kicker">Notify Hub · 事件通知</p>
-      <h2>HTTP 发一条消息，所有订阅方都收到</h2>
-      <p>配置变更、任务完成、工单提醒，以前要部署 MQTT 服务，或者自己写 WebSocket 服务、维护连接表。现在网关就是通知中心：发布方只需一个 HTTP POST，浏览器、Go 服务和网关插件都能订阅；需要时还能离线续推。</p>
-    </div>
-
-    <div class="grid grid-2 compare" data-animate>
-      <div class="card">
-        <span class="tag">以前</span>
-        <ul>
-          <li>部署并维护 MQTT 服务，或自建 WebSocket 服务</li>
-          <li>每个客户端集成 MQTT / WebSocket SDK</li>
-          <li>业务后端维护连接表、心跳、多实例广播</li>
-        </ul>
-      </div>
-      <div class="card">
-        <span class="tag ok">现在</span>
-        <ul>
-          <li>网关上多两条路由，不需要额外的服务</li>
-          <li>发布方 HTTP POST，订阅方一个 HTTP 长连接</li>
-          <li>鉴权、限额、监控直接复用网关已有的能力</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="split discovery notify-flow" data-animate>
-      <div>
-        <ol class="flow-steps">
-          <li><strong>发布</strong><span>任何能发 HTTP 的程序把消息 POST 到网关。不用 MQTT 客户端，也不用连接消息服务。</span></li>
-          <li><strong>广播</strong><span>网关通过 NATS 把消息送到每个网关节点，多实例、多机房自动覆盖。</span></li>
-          <li><strong>订阅</strong><span>浏览器和 Go 服务通过 SSE 订阅，网关插件声明主题直接接收。断线自动重连，连上先刷新一次状态，漏掉的消息由这次刷新补齐。</span></li>
-        </ol>
-        <a class="card-link" href="docs/zh-cn/user/09-advanced/event-notification.md">事件通知指南</a>
-      </div>
-
-      <div class="code-stack">
-        <div class="code-window">
-          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml</div>
-<pre><span class="k">site</span>: <span class="s">app.example.com</span>
-<span class="p">/notify</span>:                        <span class="c"># 发布：Header key 选择主题</span>
-  <span class="k">publish</span>: <span class="s">notify.{header.key}</span>
-<span class="p">/events/config</span>:                 <span class="c"># 订阅配置通知</span>
-  <span class="k">subscribe</span>: <span class="s">notify.config</span></pre>
-        </div>
-
-        <p>示例为在线通知；鉴权由用户通过 JWT、forward auth 等配置。需要离线补发时，发布加 offline: true，订阅配置独立身份并使用可靠 ACK 客户端。 <a class="card-link" href="docs/zh-cn/user/09-advanced/notify-jwt-integration.md">配置与限制 →</a></p>
-
-        <div data-tabs>
-          <div class="tabs" role="tablist" aria-label="发布与订阅方式">
-            <button class="tab" role="tab" id="t-pub" aria-controls="p-pub" aria-selected="true">发布</button>
-            <button class="tab" role="tab" id="t-web" aria-controls="p-web" aria-selected="false" tabindex="-1">浏览器</button>
-            <button class="tab" role="tab" id="t-go" aria-controls="p-go" aria-selected="false" tabindex="-1">Go 服务</button>
-            <button class="tab" role="tab" id="t-plugin" aria-controls="p-plugin" aria-selected="false" tabindex="-1">网关插件</button>
-          </div>
-          <div class="tab-panel" id="p-pub" role="tabpanel" aria-labelledby="t-pub">
-            <div class="code-window">
-              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>任何语言<span class="label">状态变化后发一个信号</span></div>
-<pre><span class="t">$</span> curl -X POST http://10.0.0.10/notify \
-    -H "key: config" \
-    -H "Content-Type: application/json" \
-    -d '{"type":"config.changed","key":"store-001","version":42}'</pre>
-            </div>
-          </div>
-          <div class="tab-panel" id="p-web" role="tabpanel" aria-labelledby="t-web" hidden>
-            <div class="code-window">
-              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>app.js<span class="label">浏览器原生 API</span></div>
-<pre><span class="k">const</span> events = <span class="k">new</span> EventSource(<span class="s">'/events/config'</span>)
-events.onopen = () =&gt; reloadAll()        <span class="c">// 连上先刷新</span>
-events.onmessage = e =&gt; reload(JSON.parse(e.data))</pre>
-            </div>
-          </div>
-          <div class="tab-panel" id="p-go" role="tabpanel" aria-labelledby="t-go" hidden>
-            <div class="code-window">
-              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>main.go<span class="label">只依赖标准库</span></div>
-<pre>sub := &amp;notify.Subscriber{
-    URL:     <span class="s">"https://app.example.com/events/config"</span>,
-    OnOpen:  cache.ReloadAll,        <span class="c">// 连上先刷新</span>
-    OnEvent: cache.Apply,            <span class="c">// 按信号增量刷新</span>
-}
-<span class="k">go</span> sub.Run(ctx)                  <span class="c">// 自动重连、随机退避</span></pre>
-            </div>
-          </div>
-          <div class="tab-panel" id="p-plugin" role="tabpanel" aria-labelledby="t-plugin" hidden>
-            <div class="code-window">
-              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>provider.go<span class="label">插件自己定义主题</span></div>
-<pre><span class="k">func</span> (p *Provider) NotifySubjects() []<span class="k">string</span> {
-    <span class="k">return</span> []<span class="k">string</span>{<span class="s">"notify.tenant"</span>}
-}
-<span class="k">func</span> (p *Provider) HandleNotify(
-    ctx context.Context, n plugin.Notification) <span class="k">error</span> {
-    <span class="k">if</span> n.Resync { p.cache.InvalidateAll(); <span class="k">return</span> <span class="k">nil</span> }
-    <span class="c">// 租户关闭：只删这个租户的缓存</span>
-    p.cache.Invalidate(tenantOf(n.Data))
-    <span class="k">return</span> <span class="k">nil</span>
-}</pre>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="reasons">
-      <div class="reason" data-animate>
-        <h3>支持离线消息</h3>
-        <p>需要逐条送达时启用 JetStream 持久化：离线的订阅方重连后从断点继续收，业务处理完再确认；一个订阅方确认，不影响其他订阅方。</p>
-        <a class="card-link" href="docs/zh-cn/user/04-actions/nats-events.md">可靠事件通知</a>
-      </div>
-      <div class="reason" data-animate>
-        <h3>后端不再持有长连接</h3>
-        <p>推送、心跳、断线重连、慢客户端都在网关处理。业务后端还是普通的无状态 HTTP 服务，扩到多少个实例都不用考虑广播。</p>
-      </div>
-      <div class="reason" data-animate>
-        <h3>插件也是订阅方</h3>
-        <p>IDS 插件可以放心缓存租户信息：只要声明 <code>notify.tenant</code>，租户在租户系统里一关闭，所有网关上的缓存秒级失效。</p>
-        <a class="card-link" href="docs/zh-cn/user/09-advanced/event-notification.md">插件订阅通知</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Security ── -->
-<section id="security" class="alt">
-  <div class="wrap">
-    <div class="split" data-animate>
-      <div>
-        <p class="kicker">Encrypted ClientHello</p>
-        <h2>连访问哪个网站都加密</h2>
-        <p>普通 HTTPS 会在握手时明文暴露域名（SNI）。开启 ECH 后，网络上只能看到一个公共名称，真实域名被加密在 ClientHello 里，LiteGate 解密后照常按原域名选证书、走路由。</p>
-        <ul class="checklist">
-          <li>自动生成 ECH 密钥，并通过 DNS Provider 发布 HTTPS（类型 65）记录</li>
-          <li>网站继续使用普通 ACME 证书，不需要特殊证书</li>
-          <li>支持多组公共名称，密钥可存放在文件或集群 KV 中</li>
-          <li>没有启用 ECH 的客户端照常访问，不受影响</li>
-        </ul>
-        <a class="card-link" href="docs/zh-cn/user/06-certificates/ech.md">ECH 配置指南</a>
-      </div>
-      <div class="code-window">
-        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml</div>
-<pre><span class="k">ech</span>:
-  <span class="k">enabled</span>: <span class="s">true</span>
-  <span class="k">public_name</span>: <span class="s">ech.example.com</span>   <span class="c"># 网络上唯一可见的名称</span>
-  <span class="k">dns_provider</span>: <span class="s">cloudflare</span>
-  <span class="k">domains</span>:                       <span class="c"># 需要隐藏的真实站点</span>
-    - <span class="s">app.example.com</span>
-    - <span class="s">admin.example.com</span></pre>
-      </div>
-    </div>
-
-    <div class="split reverse" data-animate>
-      <div>
-        <p class="kicker">自动证书</p>
-        <h2>家庭网络也能自动签证书</h2>
-        <p>站点一配上域名就自动申请证书，到期前自动续期。80 端口连不进来的家庭网络，配好 DNS Provider 后整个区自动改走 DNS-01；失败会退避重试，不会把 CA 的限额打满。</p>
-        <ul class="checklist">
-          <li>HTTP-01、TLS-ALPN-01、DNS-01（泛域名）</li>
-          <li>阿里云、Cloudflare、华为云、腾讯云内置，其他服务商可用插件扩展</li>
-          <li>On-Demand TLS：SaaS 客户自带域名，握手时按需签发</li>
-          <li>本地 CA：<code>*.localhost</code> 开发环境也是受信任的 HTTPS</li>
-        </ul>
-      </div>
-      <div class="code-window">
-        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml · 家庭网络</div>
-<pre><span class="k">auto_cert</span>:
-  <span class="k">dns_providers</span>:
-    - <span class="k">name</span>: <span class="s">cloudflare</span>
-      <span class="k">type</span>: <span class="s">cloudflare</span>
-      <span class="k">enabled</span>: <span class="s">true</span>
-      <span class="k">domains</span>: [<span class="s">"*.home.example.com"</span>]
-      <span class="k">config</span>:
-        <span class="k">api_token</span>: <span class="s">env://CF_API_TOKEN</span>
-<span class="c"># 先签泛域名，之后新加的站点直接复用，</span>
-<span class="c"># 不在泛域名内的同区域名也会自动走 DNS-01</span></pre>
-      </div>
-    </div>
-
-    <div class="split" data-animate>
-      <div>
-        <p class="kicker">L4 + L7</p>
-        <h2>网站和 TLS 服务共用 443</h2>
-        <p>LiteGate 在 TLS 握手前读取 SNI，把匹配的连接整条转给 TCP 上游，其余照常进入 HTTPS。Redis TLS、gRPC 这类一开始就是 TLS 的协议可以直接共用 443；MySQL、PostgreSQL 这类先明文握手的协议，用上面的 Forward。</p>
-      </div>
-      <div class="code-window">
-        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>streams/redis.yaml</div>
-<pre><span class="k">site</span>: <span class="s">tcp://redis.example.com</span>   <span class="c"># 按 SNI 匹配，自动挂到 443</span>
-<span class="k">proxy</span>: <span class="s">10.0.0.30:6380</span></pre>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Platform ── -->
-<section id="platform">
-  <div class="wrap">
-    <div class="section-head" data-animate>
-      <p class="kicker">平台能力</p>
-      <h2>从一台 VPS 到多租户 SaaS</h2>
-      <p>小项目只用前面那几行配置；业务长大以后，下面这些能力按需打开，不用换网关。</p>
-    </div>
-    <div class="features" data-animate>
-      <div class="feature">
-        <h3>配置发布与回滚</h3>
-        <p>开启 Release Control 后，修改先进草稿，校验并确认差异后再发布；每次发布都有历史，可以一键回滚。</p>
-      </div>
-      <div class="feature">
-        <h3>多租户选路（IDS）</h3>
-        <p>路由匹配后、转发前，由你的 Go 插件识别租户、决定放行或拒绝、选择租户专属实例并按租户限流。</p>
-      </div>
-      <div class="feature">
-        <h3>集群配置与证书共享</h3>
-        <p>站点、证书和 ECH 密钥可以统一放在 Litemesh / Consul KV，写一次全集群热加载，证书由一个节点签发、全员共享。</p>
-      </div>
-      <div class="feature">
-        <h3>编译期插件</h3>
-        <p><code>litegate build --with</code> 把第三方插件编进二进制，覆盖 Stream、Action、中间件、负载均衡、DNS Provider 等扩展点。</p>
-      </div>
-      <div class="feature">
-        <h3>内置 MCP</h3>
-        <p>Claude Code、Cursor 等 AI 助手通过 MCP 查看站点、创建配置、热重载和排查错误。</p>
-      </div>
-      <div class="feature">
-        <h3>安全与可观测</h3>
-        <p>OIDC / JWT / API Key 鉴权、IP 限制、扫描防护，内置 Dashboard、访问日志、Prometheus 指标与链路追踪。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Quick start ── -->
+<!-- ── 快速开始 ── -->
 <section id="quickstart" class="alt">
   <div class="wrap">
     <div class="section-head" data-animate>
       <p class="kicker">快速开始</p>
       <h2>一分钟拿到第一个响应</h2>
+      <p>不需要 <code>config.yaml</code>，也不需要域名，在本机就能试。</p>
     </div>
     <div class="steps">
       <div class="step" data-animate>
         <h3>安装</h3>
-        <p>从 Releases 下载对应平台的二进制，或用 Go 安装：</p>
+        <p>从 <a href="https://github.com/jamesleeon/LiteGate/releases">Releases</a> 下载对应平台的二进制，或用 Go 安装：</p>
         <div class="code-window"><pre><span class="t">$</span> go install \
   github.com/jamesleeon/LiteGate/cmd/litegate@latest</pre></div>
       </div>
@@ -582,7 +337,7 @@ events.onmessage = e =&gt; reload(JSON.parse(e.data))</pre>
       </div>
       <div class="step" data-animate>
         <h3>启动</h3>
-        <p>没有 <code>config.yaml</code> 也能直接跑：</p>
+        <p>之后改 <code>sites/</code> 里的文件，保存即生效：</p>
         <div class="code-window"><pre><span class="t">$</span> ./litegate
 <span class="t">$</span> curl http://localhost/
 <span class="c">Hello, LiteGate!</span></pre></div>
@@ -591,13 +346,66 @@ events.onmessage = e =&gt; reload(JSON.parse(e.data))</pre>
   </div>
 </section>
 
-<section class="cta">
+<!-- ── 循序渐进 ── -->
+<section id="learn">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">怎么学</p>
+      <h2>循序渐进：先跑通，再按需深入</h2>
+      <p>不需要把文档从头读到尾。跑通第一个站点后，只看和你场景有关的部分；遇到具体参数再去查手册。</p>
+    </div>
+    <div class="path">
+      <div class="path-step" data-animate>
+        <span class="time">5 分钟</span>
+        <h3>跑起来</h3>
+        <p>安装、写第一个站点、学会热加载和校验。</p>
+        <ul>
+          <li><a href="docs/zh-cn/user/01-getting-started/installation.md">安装</a></li>
+          <li><a href="docs/zh-cn/user/01-getting-started/quick-start.md">快速开始</a></li>
+          <li><a href="docs/zh-cn/user/cookbook/01-basics.md">入门案例：一个站点跑起来</a></li>
+        </ul>
+      </div>
+      <div class="path-step" data-animate>
+        <span class="time">30 分钟</span>
+        <h3>按场景配置</h3>
+        <p>找到自己的场景，照着最小配置改成自己的域名和后端。</p>
+        <ul>
+          <li><a href="guide.html">场景指南</a></li>
+          <li><a href="docs/zh-cn/user/cookbook/README.md">Cookbook 案例集</a></li>
+          <li><a href="docs/zh-cn/user/cookbook/04-pitfalls.md">常见坑</a></li>
+        </ul>
+      </div>
+      <div class="path-step" data-animate>
+        <span class="time">需要时</span>
+        <h3>理解与查参考</h3>
+        <p>弄清站点、路由、动作和中间件的关系，按字段查配置。</p>
+        <ul>
+          <li><a href="docs/zh-cn/user/03-configuration/site-yaml-v2-concepts.md">站点 YAML：结构与概念</a></li>
+          <li><a href="docs/zh-cn/user/02-concepts/routing-priority.md">路由优先级</a></li>
+          <li><a href="docs/zh-cn/user/03-configuration/global-config.md">全局配置参考</a></li>
+        </ul>
+      </div>
+      <div class="path-step" data-animate>
+        <span class="time">上线前</span>
+        <h3>生产与扩展</h3>
+        <p>部署成系统服务或容器，接入监控；不够用时写插件。</p>
+        <ul>
+          <li><a href="docs/zh-cn/user/10-deployment/production.md">生产部署</a></li>
+          <li><a href="docs/zh-cn/user/08-observability/metrics.md">监控指标</a></li>
+          <li><a href="docs/zh-cn/user/12-plugins/README.md">插件</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta alt">
   <div class="wrap" data-animate>
     <h2>开源，MIT 协议</h2>
     <p>欢迎试用、提 Issue 和 Pull Request。1.0 之前配置格式可能还会调整，升级前请看 Changelog。</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
-      <a class="btn btn-ghost" href="docs/zh-cn/">阅读文档</a>
+      <a class="btn btn-primary" href="guide.html">按场景开始</a>
+      <a class="btn btn-ghost" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
     </div>
   </div>
 </section>
@@ -607,33 +415,33 @@ events.onmessage = e =&gt; reload(JSON.parse(e.data))</pre>
 <footer>
   <div class="wrap">
     <div>
-      <a class="brand" href="#"><span class="brand-mark">L</span>LiteGate</a>
+      <a class="brand" href="index.html"><span class="brand-mark">L</span>LiteGate</a>
       <p class="note">单一二进制的 HTTP / TCP 网关。本站由 LiteGate 托管。</p>
     </div>
     <div>
-      <h4>项目</h4>
+      <h4>了解</h4>
       <ul>
-        <li><a href="https://github.com/jamesleeon/LiteGate">GitHub</a></li>
-        <li><a href="https://github.com/jamesleeon/LiteGate/releases">Releases</a></li>
-        <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/CHANGELOG.md">Changelog</a></li>
+        <li><a href="guide.html">场景指南</a></li>
+        <li><a href="features.html">完整功能列表</a></li>
         <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/ROADMAP.md">Roadmap</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/CHANGELOG.md">Changelog</a></li>
       </ul>
     </div>
     <div>
       <h4>文档</h4>
       <ul>
-        <li><a href="features.html">完整功能列表</a></li>
         <li><a href="docs/zh-cn/">文档首页</a></li>
-        <li><a href="docs/zh-cn/user/03-configuration/site-config.md">站点配置（v2）</a></li>
-        <li><a href="docs/zh-cn/user/cookbook/README.md">常用场景案例</a></li>
+        <li><a href="docs/zh-cn/user/01-getting-started/quick-start.md">快速开始</a></li>
+        <li><a href="docs/zh-cn/user/cookbook/README.md">Cookbook 案例集</a></li>
+        <li><a href="docs/zh-cn/user/11-troubleshooting/faq.md">常见问题</a></li>
       </ul>
     </div>
     <div>
       <h4>社区</h4>
       <ul>
+        <li><a href="https://github.com/jamesleeon/LiteGate">GitHub</a></li>
         <li><a href="https://github.com/jamesleeon/LiteGate/issues">Issues</a></li>
         <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/CONTRIBUTING.md">参与贡献</a></li>
-        <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/SECURITY.md">安全报告</a></li>
         <li><a href="en/index.html" data-lang-switch="en">English</a></li>
       </ul>
     </div>

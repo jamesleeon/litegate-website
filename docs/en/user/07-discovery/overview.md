@@ -1,6 +1,6 @@
 # Service Discovery Sources Overview
 
-LiteGate backend discovery has 5 source types: `litemesh`, `litedeploy`, `docker`, `consul`, and `discovery`. After ingestion, all of them are normalized into the same `ServiceEndpoint` model, then the same `litegate.*` tags drive routing, upstream pools, authentication, IDS, mTLS, and observability.
+LiteGate backend discovery includes `litemesh`, `litedeploy`, `docker`, `consul`, and `discovery`, with additional sources such as `nomad` through Discovery Provider plugins. After ingestion, all of them are normalized into the same `ServiceEndpoint` model, then the same `litegate.*` tags drive routing, upstream pools, authentication, IDS, mTLS, and observability.
 
 The tag system is not owned by a single provider. Tags can come from Docker labels, Litemesh/LiteDeploy/Consul tags or metadata, or metadata returned by an external discovery agent. LiteGate only needs the normalized service name, instance address, health state, tags, and metadata.
 
@@ -12,16 +12,17 @@ The tag system is not owned by a single provider. Tags can come from Docker labe
 | LiteDeploy | `provider: litedeploy` / `upstream_type: litedeploy` | LiteDeploy Agent or cluster endpoints | SSE push | Services and metadata managed by LiteDeploy |
 | Docker | `provider: docker` / `upstream_type: docker` | Docker Daemon socket | Docker event stream | Single-host Docker or Swarm using container labels |
 | Consul | `provider: consul` / `upstream_type: consul` | Consul Agent / Catalog | Catalog sync | Existing Consul catalog and health checks |
+| [Nomad](nomad.md) | `provider: nomad` | Nomad HTTP API | Startup scan + 30-second polling | Native Nomad registrations through a direct plugin |
 | Discovery | `provider: discovery` / `upstream_type: external` | `camodns_discovery` or compatible agent | Blocking query | Aggregating heterogeneous registries such as Docker, K8s, Nacos, Etcd, and Litemesh |
 
 > [!NOTE]
-> `provider: discovery` maps to LiteGate's external discovery client at runtime. It is not a sixth business registry. It is the HTTP blocking-query adapter used to consume `camodns_discovery` or a compatible aggregation layer.
+> `provider: discovery` maps to LiteGate's external discovery client at runtime: the HTTP blocking-query adapter for `camodns_discovery` or a compatible aggregation layer. The Nomad plugin connects directly to the Nomad API instead.
 
 ## 2. How Tags Flow
 
 ```mermaid
 flowchart LR
-    L["litemesh / litedeploy / docker / consul / discovery"] --> M["service name + instances + health + tags/metadata"]
+    L["litemesh / litedeploy / docker / consul / discovery / nomad"] --> M["service name + instances + health + tags/metadata"]
     M --> C["CatalogLoader / DiscoveryClient"]
     C --> T["litegate.* tag parser"]
     T --> R["dynamic routes, upstream pools, IDS, mTLS, governance"]

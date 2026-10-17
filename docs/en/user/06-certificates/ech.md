@@ -123,7 +123,7 @@ Set `ech: ech.example.com` or `ech: ech.example.net` alongside site: to select a
 
 Each published site needs existing direct A/AAAA records pointing to this instance and must not use CNAME. Cloudflare records must be DNS only, without proxying. The provider needs permission to query, create, update and delete HTTPS records, and its DNS plan must support that record type. Existing unmanaged HTTPS records cause an error instead of being overwritten. Address records are never modified by ECH.
 
-LiteGate reuses a covering public-name certificate or automatically adds that name to the selected provider's certificate issuance group. DNS-01 does not require an address record for the public name; adding one is useful for diagnosis. Once HTTPS is running and the public-name certificate is valid, it publishes:
+LiteGate reuses a covering public-name certificate or schedules a separate certificate group using the selected provider's credentials. Enabling ECH never adds a SAN to an existing business certificate group; failure of the public-name order does not block its renewal. DNS-01 does not require an address record for the public name; adding one is useful for diagnosis. With DDNS enabled for matching names, the public name and concrete ECH names served by wildcard sites are synchronized too. Exact DNS-only A/AAAA records are required for ECH: creating an HTTPS record prevents wildcard address synthesis for that name. Once HTTPS is running and the public-name certificate is valid, it publishes:
 
 ```text
 app.example.com. 600 IN HTTPS 1 . alpn="h2" ech="<Base64 ECHConfigList>"

@@ -1,6 +1,6 @@
 # 服务发现源总览
 
-LiteGate 的后端发现源可以分成 5 种：`litemesh`、`litedeploy`、`docker`、`consul`、`discovery`。它们进入 LiteGate 以后都会变成同一种 `ServiceEndpoint`，再由同一套 `litegate.*` 标签驱动路由、上游池、鉴权、IDS、mTLS 和观测。
+LiteGate 的后端发现源包括 `litemesh`、`litedeploy`、`docker`、`consul`、`discovery`，也可通过 Discovery Provider 插件扩展，例如 `nomad`。它们进入 LiteGate 以后都会变成同一种 `ServiceEndpoint`，再由同一套 `litegate.*` 标签驱动路由、上游池、鉴权、IDS、mTLS 和观测。
 
 这意味着文档里看到的“标签系统”不是某一个 provider 的专有语法。标签可以来自 Docker Labels、Litemesh/LiteDeploy/Consul 的 Tags 或 Meta，也可以来自外部 discovery agent 返回的元数据。LiteGate 只关心最终得到的服务名、实例地址、健康状态、标签和元数据。
 
@@ -12,16 +12,17 @@ LiteGate 的后端发现源可以分成 5 种：`litemesh`、`litedeploy`、`doc
 | LiteDeploy | `provider: litedeploy` / `upstream_type: litedeploy` | LiteDeploy Agent 或集群地址 | SSE 推送 | 由 LiteDeploy 管理发布、实例和服务元数据 |
 | Docker | `provider: docker` / `upstream_type: docker` | Docker Daemon Socket | Docker event stream | 单机 Docker 或 Swarm，直接用容器 labels 自动接入 |
 | Consul | `provider: consul` / `upstream_type: consul` | Consul Agent / Catalog | Catalog 同步 | 已有 Consul 注册中心和健康检查体系 |
+| [Nomad](nomad.md) | `provider: nomad` | Nomad HTTP API | 启动扫描 + 30 秒轮询 | 使用 Nomad 原生注册，直接通过插件接入 |
 | Discovery | `provider: discovery` / `upstream_type: external` | `camodns_discovery` 或兼容 agent | Blocking query | 异构注册中心聚合，如 Docker、K8s、Nacos、Etcd、Litemesh 并存 |
 
 > [!NOTE]
-> 配置里的 `provider: discovery` 对应后端运行时的 external discovery client。它不是第 6 种业务发现源，而是 LiteGate 通过 HTTP blocking query 接入 `camodns_discovery` 这类外部发现聚合层的名称。
+> 配置里的 `provider: discovery` 对应后端运行时的 external discovery client，是 LiteGate 通过 HTTP blocking query 接入 `camodns_discovery` 这类外部发现聚合层的名称。Nomad 插件则直接访问 Nomad API，不经过该聚合层。
 
 ## 2. 同一套标签怎么流动
 
 ```mermaid
 flowchart LR
-    L["litemesh / litedeploy / docker / consul / discovery"] --> M["服务名 + 实例 + 健康状态 + 标签/元数据"]
+    L["litemesh / litedeploy / docker / consul / discovery / nomad"] --> M["服务名 + 实例 + 健康状态 + 标签/元数据"]
     M --> C["CatalogLoader / DiscoveryClient"]
     C --> T["litegate.* 标签解析"]
     T --> R["动态路由、上游池、IDS、mTLS、治理策略"]

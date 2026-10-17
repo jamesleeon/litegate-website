@@ -9,7 +9,16 @@ site: https://cloud.example.com
 webdav: ./shared
 ```
 
-此示例公开读写，仅适合受信环境。预先创建目录，相对路径以 LiteGate 工作目录为基准。HTTPS 证书需要满足全局配置和域名验证条件。
+此示例公开只读：未配置 auth 时无法识别写入者，上传、删除、PUT、MKCOL 等写操作一律拒绝。确需匿名写入（仅限受信内网）时显式声明 `read_only: false`：
+
+```yaml
+site: https://cloud.example.com
+webdav:
+  root: ./shared
+  read_only: false
+```
+
+预先创建目录，相对路径以 LiteGate 工作目录为基准。以 `.` 开头的文件和目录（如 `.env`、`.git`）不会被列出或访问，需要时设置 `show_hidden: true`。共享文件以 `Content-Security-Policy: sandbox` 返回，上传的 HTML/SVG 无法在本站点执行脚本；`render_markdown` 渲染上传的 Markdown 时，原始 HTML 按文本显示。HTTPS 证书需要满足全局配置和域名验证条件。
 
 ## 路径挂载与认证
 
@@ -35,7 +44,7 @@ site: https://cloud.example.com
 连接地址为 `https://cloud.example.com/dav/`。处理器自动使用匹配的 `/dav` 前缀，无需额外配置 strip_prefix，也不要再次通过 rewrite 剥离。
 
 - auth 与 webdav 平级；文件服务选项写在 webdav 映射内。
-- rw 允许读写，ro 限制账号只读；webdav.read_only: true 设置默认只读，但显式账号 rw 可覆盖；需要所有账号只读时，将权限统一设为 ro。
+- rw 允许读写，ro 限制账号只读；配置 auth 后登录账号默认可写，webdav.read_only: true 设置默认只读，但显式账号 rw 可覆盖；需要所有账号只读时，将权限统一设为 ro。未登录的匿名访问始终只读。
 - web_ui 启用浏览器界面；browse: false 和 direct_download: false 禁止匿名浏览和直接下载。
 - WebDAV 需要 PROPFIND、PUT、MKCOL、DELETE、MOVE、COPY、LOCK 等方法，不要把路由限制为 GET/POST。
 - 文件存储在本地目录，WebDAV 不支持 kv_mode；通过 KV 加载站点配置不等于把文件存入 KV。

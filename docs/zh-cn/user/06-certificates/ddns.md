@@ -60,7 +60,7 @@ auto_cert:
 
 当 `ipv4` 和 `ipv6` 字段留空时，LiteGate 通过以下方式自动检测公网 IP：
 
-1. 调用公共 IP 检测 API（如 `https://api.ipify.org`）。
+1. 先扫描本机网卡的公网地址，排除私网及 CGNAT（`100.64.0.0/10`）地址。Linux 还会根据 `/proc/net/if_inet6` 跳过 temporary、deprecated、tentative 和 DAD 失败的 IPv6 地址，保留 stable-privacy 地址；外部探测也不会把已排除的本机地址重新发布。找不到可用地址时，分别通过 IPv4 请求 `https://api.ipify.org`、通过 IPv6 请求 `https://api6.ipify.org`，不经过 HTTP 代理。每个接口超时为 5 秒，结果按地址族和接口列表缓存 1 分钟；失败会记录日志并显示在 DDNS 状态中。
 2. 获取成功后，与 DNS 记录中的值进行比较。
 3. 如果不同，自动调用 DNS API 更新记录。
 
@@ -68,6 +68,19 @@ auto_cert:
 > 如果你的服务器有已知的固定公网 IP，建议直接填写 `ipv4` 字段以跳过自动检测。
 
 ---
+
+可以通过 `ddns.ipv4_sources` 和 `ddns.ipv6_sources` 替换默认探测接口，每个地址族最多配置 8 个返回纯文本公网 IP 的 HTTP(S) 地址，按顺序尝试，成功后停止。例如可根据网络环境配置：
+
+```yaml
+ddns:
+  enabled: true
+  sync_a: true
+  sync_aaaa: true
+  ipv4_sources: ["https://4.ipw.cn", "https://api.ipify.org"]
+  ipv6_sources: ["https://6.ipw.cn", "https://api6.ipify.org"]
+```
+
+请将 `ddns-identity.key` 与 `ddns-owned.json` 一起持久化。归属指纹使用本节点随机密钥的 HMAC-SHA-256，不再保存凭据的裸哈希；密钥丢失或损坏时停用改名恢复，原 Provider 名称不变时仍可正常清理。Linux 无法读取 IPv6 地址标记时，请显式设置 `ipv6`。
 
 ## 5. 多节点 A/AAAA 记录
 
@@ -98,7 +111,7 @@ litemesh:
 > 多 A/AAAA 是 DNS 轮询，不是健康检查负载均衡。递归 DNS 和客户端可能缓存故障节点的地址。需要秒级摘除、权重或主动健康检查时，应在 DNS 前增加支持健康探测的流量调度，或让多个地址都落到具备健康检查能力的 LiteGate 层。
 
 > [!WARNING]
-> 为避免误删其它节点仍在使用的地址，当前的集合模式不会自动删除一个节点曾经发布的旧 IP。节点公网 IP 发生永久变化或节点下线后，应从 DNS 控制台清理旧值。后续如需自动摘除，应使用带节点租约/所有权的 DNS Provider 插件。
+> LiteGate 通过 `ddns-owned.json` 持久化本节点的记录归属：新地址发布成功后撤回自己的旧地址，完整扫描后撤回不再承载的域名记录。请持久化该文件。已经下线的节点无法主动撤回，仍需手动清理。新记录支持在凭据不变时重命名 Provider；若原 DNS 账号无法确定，需要恢复原配置或手动清理旧值。不会把这些行为当作节点健康探测或故障自动摘除。
 
 ---
 

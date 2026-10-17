@@ -1,18 +1,94 @@
 # LiteGate MCP 能力表
 
-本文用于说明 LiteGate 当前 MCP 暴露给 AI 的管理能力，以及这些能力是否足以支撑“用户只配置好 MCP，不额外提供文档，AI 就能协助完成网站配置和基础管理”。
+LiteGate 内置 MCP（Model Context Protocol）服务端，让 AI 助手直接读取配置、生成并校验站点、保存重载、发布回滚以及排障。本文列出当前暴露的全部工具。
 
-## 结论
+## 接入方式
 
-当前 MCP 已经覆盖了常见网站配置和大部分日常管理动作。对以下场景，AI 可以直接通过 MCP 自行获取信息、生成配置、校验、保存、重载和验证：
+LiteGate 提供两种接入方式，工具列表相同，区别在于 AI 连接的是哪个进程：
 
-- 反向代理网站
-- 静态网站
-- 将域名绑定到服务发现中的 service
-- 常见 TCP/UDP stream
-- 基础排障和运行态检查
+| | stdio | SSE |
+|---|---|---|
+| 启动方式 | AI 客户端执行 `litegate mcp -config <路径>` 拉起一个独立进程 | 运行中的网关在 `mcp.port` 上提供 `/sse` 端点 |
+| 适合 | 本机编写、校验、保存配置 | 管理一台正在运行的网关、远程排障 |
+| 配置读写、校验、建站、发布回滚 | 可用 | 可用 |
+| 运行时诊断（`get_recent_requests`、`get_recent_errors`、`get_gateway_status`、`list_active_tunnels`、`get_connect_status` 等） | 只反映 MCP 进程自身，看不到网关流量 | 反映正在运行的网关 |
+| 保存后生效 | 写入文件，由正在运行的网关热加载 | 写入文件并重载当前网关 |
 
-这意味着：用户只要完成 MCP 接入，并给出业务意图，例如域名、上游地址、站点类型，通常不需要再额外提供 LiteGate 配置文档。
+### stdio：本机 AI 客户端
+
+日志全部写到 stderr，stdout 只承载 JSON-RPC。`config.yaml` 不存在时会生成默认配置和目录。
+
+`sites_dir`、`streams_dir`、`certs_dir` 等相对路径按**进程工作目录**解析，而 AI 客户端拉起进程时的工作目录通常不是 `config.yaml` 所在目录。请在 `config.yaml` 中把这些目录写成绝对路径，或让客户端在配置目录中启动 LiteGate。
+
+Claude Code：
+
+```bash
+claude mcp add litegate -- litegate mcp -config /etc/litegate/config.yaml
+```
+
+Cursor（`.cursor/mcp.json`）、Claude Desktop 等使用 JSON 配置的客户端：
+
+```json
+{
+  "mcpServers": {
+    "litegate": {
+      "command": "litegate",
+      "args": ["mcp", "-config", "/etc/litegate/config.yaml"]
+    }
+  }
+}
+```
+
+### SSE：连接正在运行的网关
+
+在 `config.yaml` 中开启，网关启动或热加载后监听 `mcp.port`，端点为 `/sse`（消息端点 `/message` 由服务端在握手时告知客户端）：
+
+```yaml
+mcp:
+  enabled: true
+  port: 9900                            # 默认 8080，不能与 http.port、Dashboard 和入口端口冲突
+  token: "REPLACE_WITH_STRONG_TOKEN"    # 客户端以 Authorization: Bearer <token> 访问
+  public_url: ""                        # 经反向代理暴露时填写公开地址，例如 https://ops.example.com/mcp
+```
+
+`token` 为空时不做鉴权，请始终设置。生成随机值可用 `litegate -secret`。
+
+Claude Code：
+
+```bash
+claude mcp add --transport sse litegate http://127.0.0.1:9900/sse --header "Authorization: Bearer <token>"
+```
+
+JSON 配置的客户端：
+
+```json
+{
+  "mcpServers": {
+    "litegate": {
+      "url": "http://127.0.0.1:9900/sse",
+      "headers": { "Authorization": "Bearer <token>" }
+    }
+  }
+}
+```
+
+### 安全
+
+MCP 工具可以修改、删除配置和写入令牌文件。SSE 端口只在本机或内网监听，不要直接暴露到公网；需要远程使用时放在带认证的入口之后，并开启[配置发布控制面](release_control_guide.md)，让 AI 的修改先进入草稿、确认后再发布。
+
+### 让 AI 开始工作
+
+连接成功后可以直接用自然语言描述需求，例如：
+
+- 「把 app.example.com 的 /api 转发到 127.0.0.1:8080，其余用 ./dist 做单页应用，开启 HTTPS。」
+- 「列出 30 天内到期的证书。」
+- 「为什么请求 https://api.example.com/v1/orders 返回 404？」
+
+AI 会按下文「典型闭环」调用工具：先读配置说明，生成配置后用 `validate_*` 校验、`preview_config_change` 预览差异，再保存并用 `verify_site` 验证。
+
+### Litemesh MCP 代理
+
+启用 Litemesh 后，LiteGate 会发现 Litemesh 中注册的 MCP 服务，把它们的工具和资源一并代理出来，AI 客户端只需连接 LiteGate 一个入口。
 
 ## 能力矩阵
 
@@ -35,7 +111,6 @@
 | 配置校验 | `validate_site_config` | 严格校验站点配置 | 是 | 是 | 已复用 loader 严格校验 |
 | 配置校验 | `validate_stream_config` | 严格校验 stream 配置 | 是 | 是 | 已复用 stream 校验 |
 | 配置校验 | `validate_gateway_config` | 校验全局配置 | 是 | 部分 | 可拦截大部分格式和语义错误 |
-| 生成与规划 | `plan_site_from_intent` | 根据自然语言给出配置建议 | 是 | 部分 | 适合复杂需求前置规划 |
 | 快捷创建 | `create_proxy_site` | 创建反向代理站点 | 是 | 是 | 常见场景可直接落配置 |
 | 快捷创建 | `create_static_site` | 创建静态站点 | 是 | 是 | 适合目录托管和 SPA |
 | 快捷创建 | `bind_domain_to_service` | 将域名绑定到 service | 是 | 是 | 支持 `lb_policy` 指定 HTTP 实例负载均衡策略，默认轮询 |
@@ -54,6 +129,44 @@
 | 证书诊断 | `list_certificates_status` | 查看证书状态和过期时间 | 是 | 是 | 可辅助 HTTPS 配置 |
 | 证书诊断 | `inspect_certificate` | 查看证书详情 | 是 | 部分 | 更适合诊断，不是建站主路径 |
 | 补齐输入 | `explain_missing_inputs` | 帮 AI 向用户收敛缺失信息 | 是 | 是 | 减少 AI 乱猜 |
+
+## 其他工具
+
+以下工具覆盖认证、发布控制、服务标签、路由诊断、证书与 Connect 等场景。
+
+| 分类 | Tool | 作用 |
+|---|---|---|
+| 建站 | `create_template_site` | 创建服务端模板渲染站点，支持模板 KV 模式 |
+| 建站 | `create_status_site` | 创建状态看板站点 |
+| 建站 | `create_forward_site` | 创建 Forward 站点，把公网 HTTPS 主机名绑定到内部 Stream 或 Connect Peer |
+| 建站 | `export_lite_config` | 把 .lite.yaml 编译为标准 YAML，等同 `litegate -export-lite` |
+| 认证 | `enable_oidc_for_site` | 为站点 proxy 路由启用 OIDC；v2 保留注释与简写 |
+| 认证 | `enable_jwt_for_site` | 为站点 proxy 路由启用 JWT（JWKS 或 HS 密钥引用）；不保护 notify 路由 |
+| 认证 | `enable_apikey_for_site` | 为站点 proxy 路由启用 API Key 校验与配额限流 |
+| 删除 | `delete_site_config` | 删除站点配置文件 |
+| 删除 | `delete_stream_config` | 删除 Stream 配置文件 |
+| 发布控制 | `list_releases` | 列出草稿与已发布版本 |
+| 发布控制 | `get_release_detail` | 查看某个版本的详情与配置内容 |
+| 发布控制 | `get_release_diff` | 比较某个版本与当前生效文件 |
+| 发布控制 | `validate_draft` | 预检当前草稿：结构、端口冲突、保留路径 |
+| 发布控制 | `publish_release` | 发布草稿，发布前自动预检 |
+| 发布控制 | `rollback_release` | 回滚到上一个或指定版本 |
+| 服务标签 | `get_tag_dsl_guide` | 服务标签使用指南（四键快捷模式与命名资源） |
+| 服务标签 | `get_tag_reference` | 服务标签权威参考，可按关键词检索 |
+| 服务标签 | `get_service_tag_templates` | 可直接使用的标签模板 |
+| 服务标签 | `preview_service_tags` | 用运行时解析器校验标签并预览生成的路由 |
+| 服务标签 | `explain_tag` | 判定标签键属于新资源、快捷键还是已废弃键 |
+| 路由诊断 | `lookup_route` | 模拟一次请求的路由匹配，返回命中路由、上游与改写后路径 |
+| 路由诊断 | `get_recent_requests` | 最近处理的 HTTP 请求 |
+| 路由诊断 | `list_active_tunnels` | 当前 WebSocket/Upgrade 隧道 |
+| 运行诊断 | `get_goroutine_profile` | 完整 goroutine 栈，用于排查泄漏 |
+| 运行诊断 | `list_plugins` | 列出编入二进制的插件，等同 `litegate plugins list` |
+| 证书 | `request_certificate` | 立即为域名直接走 ACME 申请证书（手动管理用） |
+| 证书 | `inspect_on_demand_tls` | 查看 On-Demand TLS 配置与已映射域名 |
+| Connect/Forward | `get_connect_status` | Connect 隧道状态：Peer、在线、会话、域名归属与冲突 |
+| Connect/Forward | `generate_connect_token` | 生成 Connect Peer 令牌并以 0600 权限落盘，不覆盖已有文件 |
+| Connect/Forward | `generate_forward_token` | 生成 Forward 站点令牌并以 0600 权限落盘，不覆盖已有文件 |
+| 部署 | `generate_systemd_unit` | 生成 systemd 单元，等同 `litegate systemd --print` |
 
 ## 典型闭环
 
@@ -101,36 +214,24 @@
 4. `verify_site` (发起真实请求验证新版静态前端是否热切部署成功)
 5. `get_recent_errors` (辅助检测可能存在的同步与解压报错)
 
-## 当前覆盖度判断
+### 5. 配置发布控制面
 
-如果不把认证/OIDC 作为前提，当前 MCP 已经足够让 AI 完成“大多数常见网站配置”和“大部分日常管理”。
+开启 `dashboard.release_control` 后，变更先进入草稿：
 
-可以认为当前能力已经达到：
+1. `save_site_config` / `save_stream_config`（写入草稿）
+2. `validate_draft`
+3. `get_release_diff`
+4. `publish_release`
+5. `verify_site`；异常时 `rollback_release`
 
-- 常见网站配置：已覆盖
-- 常见 stream 配置：已覆盖
-- 配置前校验：已覆盖
-- 保存后自动应用：已覆盖
-- 基础结果验证：已覆盖
-- 常规排障：已覆盖
-- 生产级精细变更分析：部分覆盖
-- 生产级稳健回滚：部分覆盖
+### 6. 路由排障
 
-## 仍然建议继续增强的点
+1. `lookup_route`（确认命中的路由、上游和改写结果）
+2. `get_recent_requests`
+3. `get_recent_errors`
 
-虽然当前已经能让 AI 在没有外部文档的情况下协助用户建站，但下面这些点仍然值得继续加强：
+## 相关文档
 
-- `preview_config_change` 的影响分析可以更细，例如明确受影响的站点、端口、监听器
-- `verify_site` 可以进一步返回命中的 route、最终 upstream 等更强断言信息
-- `verify_stream` 可以进一步确认监听者是否为 LiteGate 本进程
-- 回滚链路可以进一步强化备份失败时的错误处理和状态说明
-
-## 对“不给任何文档”的判断
-
-如果用户已经把 MCP 配好，AI 不依赖额外人工提供的 LiteGate 文档，也能完成常见配置。原因是：
-
-- MCP 本身已经暴露了 schema 和配置说明
-- MCP 本身已经暴露了当前运行状态和现有配置
-- MCP 本身已经提供了校验、保存、回滚、验证和排障能力
-
-因此，外部文档不再是常见建站流程的必需输入，而更像是补充材料。
+- [全局配置：MCP](user/03-configuration/global-config.md)
+- [配置发布控制面](release_control_guide.md)
+- [CLI 参考](user/01-getting-started/cli-reference.md)

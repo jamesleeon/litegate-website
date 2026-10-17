@@ -90,6 +90,7 @@
 ## 服务发现
 
 - [Consul 服务发现](07-discovery/consul.md)
+- [Nomad 服务发现与插件配置](07-discovery/nomad.md)
 - [Litemesh mTLS 接入指南](07-discovery/litemesh-mtls.md)
 - [Litemesh 服务发现](07-discovery/litemesh.md)
 - [服务发现源总览](07-discovery/overview.md)
@@ -122,6 +123,7 @@
 
 - [压测与性能归因](10-deployment/benchmarking.md)
 - [多副本状态与故障隔离](10-deployment/ha-state.md)
+- [Kubernetes 部署手册](10-deployment/kubernetes.md)
 - [生产环境部署建议 (Production Best Practices)](10-deployment/production.md)
 - [Systemd 部署指南 (Linux)](10-deployment/systemd.md)
 

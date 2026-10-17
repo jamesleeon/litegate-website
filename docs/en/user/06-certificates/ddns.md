@@ -11,7 +11,7 @@ litemesh:
     cert_storage: true
 ```
 
-Multiple A/AAAA addresses provide DNS rotation, not active health checking. Resolver/client caches can retain failed addresses. The current record-set mode does not automatically delete a node's old IP; clean up obsolete values after permanent IP changes or shutdown. Do not describe this as automatic failure removal.
+Multiple A/AAAA addresses provide DNS rotation, not active health checking. Resolver/client caches can retain failed addresses. LiteGate persists this node's ownership in `ddns-owned.json`: after publishing a new address it withdraws its old values, and a completed sweep removes values for domains no longer served. A stopped node cannot withdraw its own records, so clean those up manually. Keep the ownership file across restarts. Renaming a provider with unchanged credentials is supported for new ownership records; if its original DNS account cannot be identified, restore that configuration or remove stale values manually.
 
 `ddns.domains` wildcards select providers for loaded exact Site/Stream names. They do not create literal wildcard A/AAAA owners; requests containing `*` are skipped and record writers reject wildcard owners. Configure explicit IPv4/IPv6 values when the node should avoid public-IP probes.
 
@@ -90,12 +90,25 @@ auto_cert:
 
 When the `ipv4` or `ipv6` parameters are left blank, LiteGate executes an automated WAN IP probing pipeline:
 
-1. The gateway queries public IP reflection endpoints (such as `https://api.ipify.org`).
+1. The gateway first scans local interfaces for a public address, excluding private and CGNAT (`100.64.0.0/10`) addresses. Linux also excludes temporary, deprecated, tentative and DAD-failed IPv6 addresses using `/proc/net/if_inet6`; stable-privacy addresses remain eligible. An external observation cannot reintroduce an excluded local address. If no usable address exists, it queries `https://api.ipify.org` over IPv4 or `https://api6.ipify.org` over IPv6, bypassing HTTP proxies. Each source has a five-second HTTP timeout; results are shared for one minute by address family and source list. Failures are logged and exposed in DDNS status.
 2. Upon successfully obtaining the IP, it compares the value against active DNS records.
 3. If a change is detected, LiteGate calls the DNS Provider's API to update the DNS records.
 
 > [!NOTE]
 > If your environment is provisioned with a static WAN IP, declare it explicitly inside `ipv4` or `ipv6` parameter fields to completely bypass external HTTP polling overhead.
+
+Set `ddns.ipv4_sources` and `ddns.ipv6_sources` to replace the default reflection endpoints. Each accepts up to eight HTTP(S) URLs returning a plain-text public address; sources are tried in order until one succeeds. Use services reachable from your network, for example:
+
+```yaml
+ddns:
+  enabled: true
+  sync_a: true
+  sync_aaaa: true
+  ipv4_sources: ["https://4.ipw.cn", "https://api.ipify.org"]
+  ipv6_sources: ["https://6.ipw.cn", "https://api6.ipify.org"]
+```
+
+Persist `ddns-identity.key` alongside `ddns-owned.json`. Ownership fingerprints use HMAC-SHA-256 with this random per-node key, so the JSON does not contain an unkeyed hash of credentials. Losing or corrupting the key disables rename recovery; normal cleanup through an unchanged provider name remains available. On Linux without readable IPv6 address metadata, configure `ipv6` explicitly instead of relying on automatic selection.
 
 Wildcard entries such as `*.example.com` select the DNS provider for discovered hosts. LiteGate
 still writes only exact Site/Stream owners such as `refund.example.com`. A synchronization request

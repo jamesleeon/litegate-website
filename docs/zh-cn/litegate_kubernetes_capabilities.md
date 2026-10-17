@@ -26,9 +26,9 @@ Gateway API 的验证版本固定为 `v1.4.1 experimental`。实现按字段声�
 
 不支持的匹配不生成替代路由，并撤销其对应的旧 Gateway 转发；同域名的其他有效路由继续生效。只有不支持匹配且没有其他站点时返回 `404 / site-not-found`；合法 HTTPS listener 可保留证书与显式 404 占位。已知匹配上的不支持过滤器使用失败动作，不能转发到旧后端。这与原生配置的 last-good 保留语义分别处理。
 
-多副本认证需共享 Redis 和一致 session 加密密钥；各副本内存限流/熔断计数不会由 Lease 自动同步。状态写入由 leader 管理，数据面仍由每个副本独立发现并发布。状态更新保留其他控制器 parent 状态，并通过 UID/resourceVersion 防止同名重建资源被旧写入覆盖。
+多副本认证需共享 Redis 和一致 session 加密密钥；各副本内存限流/熔断计数不会由 Lease 自动同步。状态写入由 leader 管理，数据面仍由每个副本独立发现并发布。状态更新保留其他控制器 parent 状态，并通过 UID/resourceVersion 防止同名重建资源被旧写入覆盖。BackendTLSPolicy 与 LiteGateTrafficPolicy 只为本控制器拥有的 Gateway 写 `status.ancestors` 条目（带 `controllerName`），其他控制器的条目原样保留；目标不归本控制器时不写入，失去归属时清除自己的条目。LiteGateTrafficPolicy 顶层 `status.conditions` 已弃用：只剩一个所有者时取其条件（其他控制器退出时会提升剩余所有者的条件），多个控制器共存时清空，请改读 `status.ancestors`。
 
-版本兼容、官方逐项结果、规模/持续运行数据和构建身份以[优化验收记录](litegate_k8s_optimization_report.md)为准。统一运行入口及原始数据口径见[验收说明](../../examples/k8s-acceptance/README.md)。
+验收计划、官方逐项结果及原始数据口径见[验收说明](../../examples/k8s-acceptance/README.md)。
 
 ## 相关文档与代码
 

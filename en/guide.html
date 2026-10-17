@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide · LiteGate</title>
+<meta name="description" content="Learn LiteGate by use case: websites, API gateways, service discovery, publishing private services, reaching databases, certificates, authentication, real-time push, L4 proxying, status pages and production, multi-tenant SaaS and AI configuration over MCP. Each starts from a minimal configuration and points into the manual.">
+<link rel="alternate" hreflang="zh-CN" href="../guide.html">
+<link rel="alternate" hreflang="en" href="guide.html">
+<link rel="stylesheet" href="../style.css">
+<script>document.documentElement.classList.add("js")</script>
+<script src="../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="guide.html" aria-current="page">Guide</a>
+      <a href="features.html">Features</a>
+      <a href="../docs/en/">Docs</a>
+      <a href="../guide.html" data-lang-switch="zh">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="kicker">Guide</p>
+    <h1>Find your use case, <em>adapt it and run</em></h1>
+    <p class="lead">Every use case follows the same order: whether it fits you, a minimal working configuration, common next steps, and the manual chapters to read. Not installed yet? Start with the <a href="index.html#quickstart">quick start</a>.</p>
+    <ul class="legend">
+      <li><span class="lvl l1">Start</span> read this first</li>
+      <li><span class="lvl l2">More</span> when you need it</li>
+      <li><span class="lvl l3">Reference</span> fields and defaults</li>
+    </ul>
+  </div>
+</section>
+
+<div class="wrap guide-layout">
+
+<nav class="guide-toc" aria-label="Use cases">
+  <p>Use cases</p>
+  <ol>
+    <li><a href="#website">Websites and frontends</a></li>
+    <li><a href="#api">API gateway</a></li>
+    <li><a href="#discovery">Service discovery</a></li>
+    <li><a href="#expose">Publish private services</a></li>
+    <li><a href="#remote-access">Reach remote databases</a></li>
+    <li><a href="#certs">Certificates and HTTPS</a></li>
+    <li><a href="#security">Login and protection</a></li>
+    <li><a href="#notify">Real-time push</a></li>
+    <li><a href="#l4">TCP / UDP and port 443</a></li>
+    <li><a href="#ops">Status page and production</a></li>
+    <li><a href="#saas">Multi-tenant SaaS</a></li>
+    <li><a href="#ai">Configure with AI</a></li>
+  </ol>
+</nav>
+
+<div class="guide-body">
+
+<!-- ═══ 1. Websites ═══ -->
+<section class="guide-section" id="website">
+  <p class="kicker">Use case 1</p>
+  <h2>Publish a website or frontend app</h2>
+  <ul class="fit">
+    <li>You have a static site, a blog, or the <code>dist</code> directory of a Vue / React build</li>
+    <li>You want HTTPS without requesting and renewing certificates yourself</li>
+    <li>Refreshing any frontend route must work, and <code>/api</code> must go to the backend</li>
+  </ul>
+
+  <h3>Minimal configuration</h3>
+  <div class="split">
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/www.yaml<span class="label">static site</span></div>
+<pre><span class="k">site</span>: <span class="s">https://www.example.com</span>
+<span class="k">file_server</span>: <span class="s">./public</span></pre>
+    </div>
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml<span class="label">SPA + API</span></div>
+<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<span class="p">/api</span>:
+  <span class="k">proxy</span>: <span class="s">localhost:8080</span>
+  <span class="k">strip_prefix</span>: <span class="s">true</span>   <span class="c"># when the backend has no /api prefix</span>
+<span class="k">spa</span>: <span class="s">./dist</span>              <span class="c"># unknown routes fall back to index.html</span></pre>
+    </div>
+  </div>
+  <p>The <code>https://</code> prefix turns on HTTPS: HTTP requests redirect to HTTPS and the certificate is issued automatically. A bare domain stays plain HTTP by default.</p>
+
+  <h3>Next steps</h3>
+  <div class="split">
+    <ul class="checklist">
+      <li><code>compress: true</code> enables gzip / brotli / zstd (inside the <code>/</code> route when the site has child routes)</li>
+      <li><code>response_headers</code> adds security headers everywhere</li>
+      <li><code>redirect</code> moves old domains and paths while keeping the original path</li>
+      <li><code>markdown</code> renders a docs directory as web pages; <code>list</code> gives a browsable download area</li>
+      <li>Frontend bundles in KV sync to every gateway and keep earlier versions</li>
+    </ul>
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/www.yaml</div>
+<pre><span class="k">site</span>: <span class="s">https://www.example.com</span>
+<span class="k">response_headers</span>:
+  <span class="k">X-Frame-Options</span>: <span class="s">DENY</span>
+<span class="p">/docs</span>:                      <span class="c"># Markdown rendered as pages</span>
+  <span class="k">markdown</span>: {<span class="k">root</span>: <span class="s">./docs</span>}
+<span class="p">/</span>:                          <span class="c"># with child routes, root handling goes in /</span>
+  <span class="k">file_server</span>: <span class="s">./public</span>
+  <span class="k">compress</span>: <span class="s">true</span></pre>
+    </div>
+  </div>
+
+  <h3>Read more</h3>
+  <ul class="more">
+    <li><a href="../docs/en/user/cookbook/01-basics.md"><span class="lvl l1">Start</span>Get a site running</a></li>
+    <li><a href="../docs/en/user/cookbook/02-paths.md"><span class="lvl l1">Start</span>Split by path, rewrite, redirect</a></li>
+    <li><a href="../docs/en/user/04-actions/serve.md"><span class="lvl l2">More</span>Serve: static files and SPA</a></li>
+    <li><a href="../docs/en/user/04-actions/markdown.md"><span class="lvl l2">More</span>Markdown documentation sites</a></li>
+    <li><a href="../docs/en/serve_kv_mode.md"><span class="lvl l2">More</span>Frontend bundles via KV</a></li>
+    <li><a href="../docs/en/fastcgi_config.md"><span class="lvl l2">More</span>PHP / FastCGI</a></li>
+    <li><a href="../docs/en/user/03-configuration/site-yaml-v2-concepts.md"><span class="lvl l3">Reference</span>Site YAML structure and fields</a></li>
+  </ul>
+</section>
+
+<!-- ═══ 2. API ═══ -->
+<section class="guide-section" id="api">
+  <p class="kicker">Use case 2</p>
+  <h2>An API gateway for several backends</h2>
+  <ul class="fit">
+    <li>One domain serves several services that must be split by path</li>
+    <li>A service runs several instances and needs load balancing, health checks and retries</li>
+    <li>CORS, rate limits and headers should be handled once, not in every service</li>
+  </ul>
+
+  <h3>Minimal configuration</h3>
+  <div class="split">
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/api.yaml<span class="label">split by path</span></div>
+<pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
+<span class="p">/users</span>: <span class="s">localhost:8080</span>
+<span class="p">/orders</span>: <span class="s">localhost:8081</span>
+<span class="p">/orders/export</span>: <span class="s">localhost:8082</span>  <span class="c"># the more specific path wins</span></pre>
+    </div>
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/api.yaml<span class="label">several instances</span></div>
+<pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
+<span class="k">proxy</span>:
+  <span class="k">to</span>: [<span class="s">10.0.0.5:8080</span>, <span class="s">10.0.0.6:8080</span>]
+  <span class="k">lb</span>: <span class="s">least_conn</span>     <span class="c"># round_robin by default</span>
+  <span class="k">health</span>: <span class="s">/health</span>     <span class="c"># failing instances are removed</span>
+  <span class="k">retry</span>: <span class="s">2</span></pre>
+    </div>
+  </div>
+  <p>Route order in the file does not matter: routes are ranked by path specificity and priority, and two routes with identical match conditions are an error. WebSocket and gRPC need no extra configuration.</p>
+
+  <h3>Next steps: policies live under the route</h3>
+  <div class="split">
+    <ul class="checklist">
+      <li><code>cors</code>: the gateway answers preflight requests itself</li>
+      <li><code>rate_limit</code>: per route or per client IP</li>
+      <li><code>request_headers</code> / <code>response_headers</code>: add or remove headers; a leading <code>-</code> removes</li>
+      <li><code>cache</code>: reverse-proxy caching; circuit breaking, weighted routing and session affinity live in named services</li>
+      <li>Settings shared by several routes go into <code>snippets</code> and are pulled in with <code>import</code></li>
+    </ul>
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/api.yaml</div>
+<pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
+<span class="p">/api</span>:
+  <span class="k">proxy</span>: <span class="s">localhost:8080</span>
+  <span class="k">cors</span>:
+    <span class="k">allowed_origins</span>: [<span class="s">https://web.example.com</span>]
+  <span class="k">rate_limit</span>: {<span class="k">rate</span>: <span class="s">10</span>, <span class="k">key</span>: <span class="s">ip</span>}
+  <span class="k">request_headers</span>:
+    <span class="k">-X-User-Id</span>: <span class="s">""</span>   <span class="c"># drop identity headers forged by clients</span></pre>
+    </div>
+  </div>
+
+  <h3>Read more</h3>
+  <ul class="more">
+    <li><a href="../docs/en/user/cookbook/03-governance.md"><span class="lvl l1">Start</span>CORS, headers and rate limit recipes</a></li>
+    <li><a href="../docs/en/user/04-actions/proxy.md"><span class="lvl l1">Start</span>Proxy action</a></li>
+    <li><a href="../docs/en/user/03-configuration/services.md"><span class="lvl l2">More</span>Named services and layers</a></li>
+    <li><a href="../docs/en/user/05-middleware/traffic-and-upstream.md"><span class="lvl l2">More</span>Traffic and upstream governance</a></li>
+    <li><a href="../docs/en/user/09-advanced/circuit-breaker.md"><span class="lvl l2">More</span>Circuit breaker</a></li>
+    <li><a href="../docs/en/user/05-middleware/proxy-cache.md"><span class="lvl l2">More</span>Proxy cache</a></li>
+    <li><a href="../docs/en/user/cookbook/06-matchers.md"><span class="lvl l2">More</span>Match by method and header</a></li>
+    <li><a href="../docs/en/user/02-concepts/routing-priority.md"><span class="lvl l3">Reference</span>Routing priority</a></li>
+  </ul>
+</section>
+
+<!-- ═══ 3. Discovery ═══ -->
+<section class="guide-section" id="discovery">
+  <p class="kicker">Use case 3 · Magic Ingress</p>
+  <h2>Routes appear when services start</h2>
+  <ul class="fit">
+    <li>Backends run on Docker, Swarm or Kubernetes, or register in Consul / Litemesh</li>
+    <li>Services come and go and scale often, and you do not want to edit the gateway each time</li>
+    <li>The frontend and several backend services must share one domain to avoid CORS</li>
+  </ul>
+
+  <h3>Minimal configuration: the gateway describes the frontend, backends declare themselves</h3>
+  <div class="split">
+    <div class="code-stack">
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml<span class="label">written once on the gateway</span></div>
+<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<span class="k">spa</span>: <span class="s">./dist</span></pre>
+      </div>
+      <p class="result-line"><code>https://app.example.com/</code> is the frontend; <code>/api/orders</code> and <code>/api/users</code> appear as services register and disappear when instances go offline.</p>
+    </div>
+    <div data-tabs>
+      <div class="tabs" role="tablist" aria-label="How services declare routes">
+        <button class="tab" role="tab" id="t-docker" aria-controls="p-docker" aria-selected="true">Docker</button>
+        <button class="tab" role="tab" id="t-meta" aria-controls="p-meta" aria-selected="false" tabindex="-1">Consul / Litemesh</button>
+        <button class="tab" role="tab" id="t-policy" aria-controls="p-policy" aria-selected="false" tabindex="-1">With policies</button>
+      </div>
+      <div class="tab-panel" id="p-docker" role="tabpanel" aria-labelledby="t-docker">
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>docker-compose.yml</div>
+<pre><span class="k">services</span>:
+  <span class="k">orders</span>:
+    <span class="k">image</span>: <span class="s">acme/orders</span>
+    <span class="k">labels</span>:
+      <span class="k">litegate.http.host</span>: <span class="s">app.example.com</span>
+      <span class="k">litegate.http.path_prefix</span>: <span class="s">/api/orders</span>
+  <span class="k">users</span>:
+    <span class="k">image</span>: <span class="s">acme/users</span>
+    <span class="k">labels</span>:
+      <span class="k">litegate.http.host</span>: <span class="s">app.example.com</span>
+      <span class="k">litegate.http.path_prefix</span>: <span class="s">/api/users</span></pre>
+        </div>
+      </div>
+      <div class="tab-panel" id="p-meta" role="tabpanel" aria-labelledby="t-meta" hidden>
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>service metadata</div>
+<pre><span class="k">litegate.http.host</span>=<span class="s">app.example.com</span>
+<span class="k">litegate.http.path_prefix</span>=<span class="s">/api/orders</span>
+<span class="k">litegate.http.strip_path</span>=<span class="s">true</span>   <span class="c"># optional: strip the prefix</span></pre>
+        </div>
+      </div>
+      <div class="tab-panel" id="p-policy" role="tabpanel" aria-labelledby="t-policy" hidden>
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>service metadata<span class="label">named resources</span></div>
+<pre><span class="k">litegate.http.routers.orders.match.hosts</span>=<span class="s">app.example.com</span>
+<span class="k">litegate.http.routers.orders.match.path_prefix</span>=<span class="s">/api/orders</span>
+<span class="k">litegate.http.routers.orders.middlewares</span>=<span class="s">orders-limit</span>
+<span class="k">litegate.http.middlewares.orders-limit.ratelimit.qps</span>=<span class="s">100</span>
+<span class="k">litegate.http.services.orders.retry.attempts</span>=<span class="s">2</span>
+<span class="k">litegate.http.services.orders.healthcheck.path</span>=<span class="s">/healthz</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>Kubernetes users can use standard Ingress and Gateway API resources directly. LiteGate has a built-in controller, so nothing else needs to be installed.</p>
+
+  <h3>Read more</h3>
+  <ul class="more">
+    <li><a href="../docs/en/user/07-discovery/overview.md"><span class="lvl l1">Start</span>Service discovery overview</a></li>
+    <li><a href="../docs/en/user/03-configuration/tag-dsl.md"><span class="lvl l1">Start</span>Service tag guide</a></li>
+    <li><a href="../docs/en/user/cookbook/05-discovery.md"><span class="lvl l1">Start</span>Frontend plus discovered backends</a></li>
+    <li><a href="../docs/en/litegate_docker_provider_deployment_guide.md"><span class="lvl l2">More</span>Docker / Swarm deployment</a></li>
+    <li><a href="../docs/en/user/10-deployment/kubernetes.md"><span class="lvl l2">More</span>Kubernetes Ingress / Gateway API</a></li>
+    <li><a href="../docs/en/user/07-discovery/consul.md"><span class="lvl l2">More</span>Consul</a></li>
+    <li><a href="../docs/en/user/07-discovery/litemesh.md"><span class="lvl l2">More</span>Litemesh</a></li>
+    <li><a href="../docs/en/user/09-advanced/magic-ingress.md"><span class="lvl l2">More</span>Magic Ingress in depth</a></li>
+    <li><a href="../docs/en/user/03-configuration/tag-reference.md"><span class="lvl l3">Reference</span>All service tags</a></li>
+  </ul>
+</section>
+
+<!-- ═══ 4. Connect ═══ -->
+<section class="guide-section" id="expose">
+  <p class="kicker">Use case 4 · Connect</p>
+  <h2>Publish private services without a public IP</h2>
+  <ul class="fit">
+    <li>Services run at home, in an office or in a customer's data center, without a public IP or open inbound ports</li>
+    <li>An on-premises system must be reachable from the cloud, which used to take frp or an open MQ port</li>
+    <li>TLS should terminate inside the private network so the cloud only relays ciphertext</li>
+  </ul>
+
+  <h3>How it works</h3>
+  <div class="split">
+    <div>
+      <div class="flow" aria-hidden="true">
+        <svg viewBox="0 0 300 120">
+          <defs>
+            <marker id="ah1" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 z"/></marker>
+            <marker id="ah1t" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow tls" d="M0,0 L8,4 L0,8 z"/></marker>
+          </defs>
+          <g class="node"><rect x="4" y="44" width="76" height="34" rx="8"/><text x="42" y="65" text-anchor="middle">Visitor</text></g>
+          <g class="node hub"><rect x="112" y="40" width="76" height="42" rx="8"/><text x="150" y="59" text-anchor="middle">Cloud</text><text class="sub" x="150" y="73" text-anchor="middle">reads SNI only</text></g>
+          <g class="node"><rect x="220" y="6" width="76" height="34" rx="8"/><text x="258" y="27" text-anchor="middle">Home A</text></g>
+          <g class="node"><rect x="220" y="82" width="76" height="34" rx="8"/><text x="258" y="103" text-anchor="middle">Home B</text></g>
+          <path class="edge" d="M80,61 L110,61" marker-end="url(#ah1)"/>
+          <path class="edge tls" d="M220,23 C200,23 200,52 190,54" marker-end="url(#ah1t)"/>
+          <path class="edge tls" d="M220,99 C200,99 200,70 190,68" marker-end="url(#ah1t)"/>
+        </svg>
+      </div>
+      <p>Private nodes (Home) dial out to the cloud (Cloud). One Cloud accepts many Homes, and each Home can only publish the domains it is authorized for. Homes keep writing ordinary site files; with <code>publish_sites</code> on, those sites are served through the tunnel.</p>
+    </div>
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>Home · config.yaml</div>
+<pre><span class="k">connect</span>:
+  <span class="k">client</span>:
+    <span class="k">enabled</span>: <span class="s">true</span>
+    <span class="k">name</span>: <span class="s">home</span>
+    <span class="k">remote</span>: <span class="s">https://connect.example.com</span>
+    <span class="k">token_file</span>: <span class="s">/etc/litegate/secrets/home.token</span>
+    <span class="k">publish_sites</span>: <span class="s">true</span></pre>
+    </div>
+  </div>
+
+  <h3>Read more</h3>
+  <ul class="more">
+    <li><a href="../docs/en/user/09-advanced/connect.md"><span class="lvl l1">Start</span>Connect configuration</a></li>
+    <li><a href="../docs/en/user/09-advanced/connect-scenarios.md"><span class="lvl l1">Start</span>Connect scenarios</a></li>
+    <li><a href="../docs/en/user/09-advanced/forward-and-connect.md"><span class="lvl l2">More</span>Forward or Connect</a></li>
+    <li><a href="../docs/en/user/09-advanced/connect-cli-http.md"><span class="lvl l2">More</span>Publish over HTTP with the CLI</a></li>
+    <li><a href="../docs/en/user/06-certificates/connect-csr-delegation.md"><span class="lvl l2">More</span>Certificate CSR delegation</a></li>
+  </ul>
+</section>
+
+<!-- ═══ 5. Forward ═══ -->
+<section class="guide-section" id="remote-access">
+  <p class="kicker">Use case 5 · Forward</p>
+  <h2>Reach a cloud database from your laptop</h2>
+  <ul class="fit">
+    <li>MySQL, Redis or SSH sit in a cloud VPC and developers need to connect from their machines</li>
+    <li>You do not want a public database port, a jump host or a VPN</li>
+    <li>Private servers should reach public APIs through one controlled exit (forward proxy)</li>
+  </ul>
+
+  <h3>Minimal configuration</h3>
+  <div class="split">
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>gateway · streams + sites<span class="label">server</span></div>
+<pre><span class="c"># streams/rds.yaml: no listener of its own, used only by Forward</span>
+<span class="k">name</span>: <span class="s">rds</span>
+<span class="k">protocol</span>: <span class="s">tcp</span>
+<span class="k">listen</span>: <span class="s">false</span>
+<span class="k">proxy</span>: <span class="s">10.0.0.20:3306</span>
+<span class="c">---</span>
+<span class="c"># sites/db-tunnel.yaml: the hostname is locked to this Stream</span>
+<span class="k">site</span>: <span class="s">https://db-tunnel.example.com</span>
+<span class="k">forward</span>:
+  <span class="k">target</span>: {<span class="k">type</span>: <span class="s">stream</span>, <span class="k">name</span>: <span class="s">rds</span>}
+  <span class="k">token_file</span>: <span class="s">./secrets/forward.token</span></pre>
+    </div>
+    <div class="code-stack">
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>developer machine<span class="label">client</span></div>
+<pre><span class="t">$</span> litegate forward \
+    --remote https://db-tunnel.example.com \
+    --local 127.0.0.1:3306 \
+    --token-file ./rds.token
+<span class="t">$</span> mysql -h 127.0.0.1 -P 3306 -u app -p</pre>
+      </div>
+      <p class="result-line">Traffic is encrypted over 443 and the client cannot change the target; the Stream's IP restrictions, session limits and timeouts still apply.</p>
+    </div>
+  </div>
+
+  <h3>Read more</h3>
+  <ul class="more">
+    <li><a href="../docs/en/database-proxy-solution.md"><span class="lvl l1">Start</span>Accessing database TCP assets</a></li>
+    <li><a href="../docs/en/forward-vs-forward-proxy.md"><span class="lvl l1">Start</span>Forward tunnels and forward proxies</a></li>
+    <li><a href="../docs/en/user/03-configuration/l4-guide.md"><span class="lvl l2">More</span>L4 guide (including SOCKS5)</a></li>
+    <li><a href="../docs/en/ingress-plugin-guide.md"><span class="lvl l2">More</span>Ingress entrypoint plugins</a></li>
+  </ul>
+</section>
+
+<!-- ═══ 6. Certificates ═══ -->
+<section class="guide-section" id="certs">
+  <p class="kicker">Use case 6</p>
+  <h2>Stop managing certificates by hand</h2>
+  <ul class="fit">
+    <li>You want HTTPS without running Certbot and cron jobs</li>
+    <li>Port 80 is blocked on your home network, or you need a <code>*.example.com</code> wildcard</li>
+    <li>You want trusted HTTPS in local development, or SaaS customers bring their own domains</li>
+  </ul>
+
+  <h3>Minimal configuration</h3>
+  <div class="split">
+    <div>
+      <p>Write <code>site: https://your-domain</code> (or <code>https: true</code>) and the certificate is issued automatically and renewed before it expires, over HTTP-01 by default. When port 80 is unreachable, configure a DNS provider in <code>config.yaml</code>; matching domains switch to DNS-01, and failures back off before retrying.</p>
+      <ul class="checklist">
+        <li>Alibaba Cloud, Cloudflare, Huawei Cloud and Tencent Cloud are built in; other providers come as plugins</li>
+        <li>If only port 80 is blocked, <code>default_challenge: tls-alpn</code> validates over 443</li>
+        <li>In cluster mode certificates live in KV: one node issues, every node shares</li>
+      </ul>
+    </div>
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml · home network</div>
+<pre><span class="k">auto_cert</span>:
+  <span class="k">enabled</span>: <span class="s">true</span>
+  <span class="k">email</span>: <span class="s">admin@example.com</span>
+  <span class="k">dns_providers</span>:
+    - <span class="k">name</span>: <span class="s">cloudflare</span>
+      <span class="k">type</span>: <span class="s">cloudflare</span>
+      <span class="k">enabled</span>: <span class="s">true</span>
+      <span class="k">domains</span>: [<span class="s">"*.home.example.com"</span>]
+      <span class="k">config</span>:
+        <span class="k">api_token</span>: <span class="s">env://CF_API_TOKEN</span></pre>
+    </div>
+  </div>
+
+  <h3>Next step: encrypt even which site is visited (ECH)</h3>
+  <div class="split">
+    <p>Plain HTTPS exposes the domain in cleartext during the handshake. With ECH, the network only sees a public name; the real domain is encrypted inside the ClientHello. Sites keep ordinary ACME certificates, and clients without ECH connect as usual.</p>
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml</div>
+<pre><span class="k">ech</span>:
+  <span class="k">enabled</span>: <span class="s">true</span>
+  <span class="k">public_name</span>: <span class="s">ech.home.example.com</span>  <span class="c"># the only name visible</span>
+  <span class="k">dns_provider</span>: <span class="s">cloudflare</span>
+  <span class="k">domains</span>: [<span class="s">app.home.example.com</span>]   <span class="c"># sites to hide</span></pre>
+    </div>
+  </div>
+
+  <h3>Read more</h3>
+  <ul class="more">
+    <li><a href="../docs/en/user/06-certificates/auto-cert.md"><span class="lvl l1">Start</span>Auto-Cert</a></li>
+    <li><a href="../docs/en/user/06-certificates/certificate-application-guide.md"><span class="lvl l1">Start</span>Certificate issuance guide</a></li>
+    <li><a href="../docs/en/user/06-certificates/dns-providers.md"><span class="lvl l2">More</span>DNS providers</a></li>
+    <li><a href="../docs/en/user/06-certificates/local-ca.md"><span class="lvl l2">More</span>Local CA (HTTPS for development)</a></li>
+    <li><a href="../docs/en/user/06-certificates/on-demand-cert.md"><span class="lvl l2">More</span>On-demand certificates (customer domains)</a></li>
+    <li><a href="../docs/en/user/06-certificates/ddns.md"><span class="lvl l2">More</span>Dynamic DNS</a></li>
+    <li><a href="../docs/en/user/06-certificates/ech.md"><span class="lvl l2">More</span>ECH</a></li>
+    <li><a href="../docs/en/user/06-certificates/lan-ca-and-mtls.md"><span class="lvl l2">More</span>LAN CA and mTLS</a></li>
+    <li><a href="../docs/en/dns-provider-plugin-guide.md"><span class="lvl l3">Reference</span>DNS plugin authoring</a></li>
+  </ul>
+</section>
+
+<!-- ═══ 7. Security ═══ -->
+<section class="guide-section" id="security">
+  <p class="kicker">Use case 7</p>
+  <h2>Add login and protection</h2>
+  <ul class="fit">
+    <li>Internal tools and admin panels must block anonymous access, or plug into your company SSO</li>
+    <li>APIs must validate JWTs, and backends only want verified user information</li>
+    <li>You need to stop scanners and abuse, or allow certain paths only from the private network</li>
+  </ul>
+
+  <h3>Minimal configuration</h3>
+  <div class="split">
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml<span class="label">per-path protection</span></div>
+<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<span class="p">/admin</span>:
+  <span class="k">proxy</span>: <span class="s">localhost:8081</span>
+  <span class="k">ip_restriction</span>:
+    <span class="k">allow_ips</span>: [<span class="s">10.0.0.0/8</span>, <span class="s">192.168.0.0/16</span>]
+<span class="p">/api/login</span>:
+  <span class="k">proxy</span>: <span class="s">localhost:8080</span>
+  <span class="k">rate_limit</span>: {<span class="k">rate</span>: <span class="s">1</span>, <span class="k">key</span>: <span class="s">ip</span>}
+<span class="k">proxy</span>: <span class="s">localhost:8080</span></pre>
+    </div>
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/api.yaml<span class="label">JWT validation</span></div>
+<pre><span class="k">site</span>: <span class="s">https://api.example.com</span>
+<span class="p">/api</span>:
+  <span class="k">proxy</span>: <span class="s">localhost:8080</span>
+  <span class="k">auth</span>:
+    <span class="k">type</span>: <span class="s">jwt</span>
+    <span class="k">jwks_url</span>: <span class="s">https://auth.example.com/.well-known/jwks.json</span>
+    <span class="k">issuer</span>: <span class="s">https://auth.example.com</span></pre>
+    </div>
+  </div>
+
+  <h3>Next steps</h3>
+  <ul class="checklist">
+    <li>OIDC / OAuth2 single sign-on: define <code>auth_providers</code> in <code>config.yaml</code> and reference them with <code>remote_auth</code> on the route; after login, claims are injected as headers for the backend (sessions are kept in Redis)</li>
+    <li>Already have an auth service? Delegate to it with Forward Auth</li>
+    <li>Rule-based WAF, scan protection and CSRF; policies shared by several routes become named middleware referenced with <code>use</code></li>
+  </ul>
+
+  <h3>Read more</h3>
+  <ul class="more">
+    <li><a href="../docs/en/user/05-middleware/authentication.md"><span class="lvl l1">Start</span>Authentication overview</a></li>
+    <li><a href="../docs/en/user/05-middleware/basic-auth.md"><span class="lvl l1">Start</span>Basic Auth</a></li>
+    <li><a href="../docs/en/user/05-middleware/oidc.md"><span class="lvl l2">More</span>OIDC / OAuth2 login</a></li>
+    <li><a href="../docs/en/user/05-middleware/authentik.md"><span class="lvl l2">More</span>authentik example</a></li>
+    <li><a href="../docs/en/user/05-middleware/forward-auth.md"><span class="lvl l2">More</span>Forward Auth</a></li>
+    <li><a href="../docs/en/user/05-middleware/waf.md"><span class="lvl l2">More</span>WAF</a></li>
+    <li><a href="../docs/en/user/05-middleware/scan-protection.md"><span class="lvl l2">More</span>Scan protection</a></li>
+    <li><a href="../docs/en/user/05-middleware/rate-limit.md"><span class="lvl l3">Reference</span>Rate limit</a></li>
+    <li><a href="../docs/en/user/05-middleware/pipeline.md"><span class="lvl l3">Reference</span>Middleware order</a></li>
+  </ul>
+</section>
+
+<!-- ═══ 8. Notify ═══ -->
+<section class="guide-section" id="notify">
+  <p class="kicker">Use case 8 · Notify Hub</p>
+  <h2>Push real-time messages to browsers</h2>
+  <ul class="fit">
+    <li>Configuration changes, finished jobs or ticket alerts must reach the frontend or other services right away</li>
+    <li>You do not want to run MQTT, or write a WebSocket service and maintain a connection table</li>
+    <li>Several gateways and backend instances all need the same message</li>
+  </ul>
+
+  <h3>Minimal configuration: two routes</h3>
+  <div class="split">
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/app.yaml</div>
+<pre><span class="k">site</span>: <span class="s">https://app.example.com</span>
+<span class="p">/notify</span>:                 <span class="c"># publish: the key header picks the subject</span>
+  <span class="k">publish</span>: <span class="s">notify.{header.key}</span>
+<span class="p">/events/config</span>:          <span class="c"># subscribe to configuration notices</span>
+  <span class="k">subscribe</span>: <span class="s">notify.config</span></pre>
+    </div>
+    <div data-tabs>
+      <div class="tabs" role="tablist" aria-label="Publishing and subscribing">
+        <button class="tab" role="tab" id="t-pub" aria-controls="p-pub" aria-selected="true">Publish</button>
+        <button class="tab" role="tab" id="t-web" aria-controls="p-web" aria-selected="false" tabindex="-1">Browser</button>
+        <button class="tab" role="tab" id="t-go" aria-controls="p-go" aria-selected="false" tabindex="-1">Go service</button>
+      </div>
+      <div class="tab-panel" id="p-pub" role="tabpanel" aria-labelledby="t-pub">
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>any language</div>
+<pre><span class="t">$</span> curl -X POST http://10.0.0.10/notify \
+    -H "key: config" \
+    -H "Content-Type: application/json" \
+    -d '{"type":"config.changed","version":42}'</pre>
+        </div>
+      </div>
+      <div class="tab-panel" id="p-web" role="tabpanel" aria-labelledby="t-web" hidden>
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>app.js<span class="label">native browser API</span></div>
+<pre><span class="k">const</span> events = <span class="k">new</span> EventSource(<span class="s">'/events/config'</span>)
+events.onopen = () =&gt; reloadAll()        <span class="c">// refresh on connect</span>
+events.onmessage = e =&gt; reload(JSON.parse(e.data))</pre>
+        </div>
+      </div>
+      <div class="tab-panel" id="p-go" role="tabpanel" aria-labelledby="t-go" hidden>
+        <div class="code-window">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>main.go<span class="label">standard library only</span></div>
+<pre>sub := &amp;notify.Subscriber{
+    URL:     <span class="s">"https://app.example.com/events/config"</span>,
+    OnOpen:  cache.ReloadAll,
+    OnEvent: cache.Apply,
+}
+<span class="k">go</span> sub.Run(ctx)   <span class="c">// reconnects with random backoff</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>The gateway fans messages out to every node through NATS. Push, heartbeats and reconnects are handled by the gateway, so backends stay stateless HTTP services. The example shows live notifications; protect publishing and subscribing with JWT, Forward Auth and similar. For per-message delivery, turn on JetStream offline messages.</p>
+
+  <h3>Read more</h3>
+  <ul class="more">
+    <li><a href="../docs/en/user/09-advanced/event-notification.md"><span class="lvl l1">Start</span>Event notifications</a></li>
+    <li><a href="../docs/en/nats_deployment_guide.md"><span class="lvl l1">Start</span>NATS integration deployment</a></li>
+    <li><a href="../docs/en/user/09-advanced/notify-jwt-integration.md"><span class="lvl l2">More</span>JWT integration and limits</a></li>
+    <li><a href="../docs/en/user/04-actions/nats-events.md"><span class="lvl l2">More</span>Durable events (offline delivery)</a></li>
+    <li><a href="../docs/en/user/04-actions/nats-sse.md"><span class="lvl l3">Reference</span>NATS SSE action</a></li>
+    <li><a href="../docs/en/nats_capability_matrix.md"><span class="lvl l3">Reference</span>NATS capabilities and boundaries</a></li>
+  </ul>
+</section>
+
+<!-- ═══ 9. L4 ═══ -->
+<section class="guide-section" id="l4">
+  <p class="kicker">Use case 9 · L4</p>
+  <h2>TCP / UDP forwarding, with sites and TLS services sharing 443</h2>
+  <ul class="fit">
+    <li>You need to forward non-HTTP traffic such as databases, DNS or game servers</li>
+    <li>Only port 443 is open, and Redis TLS or gRPC should use it too</li>
+  </ul>
+
+  <h3>Minimal configuration</h3>
+  <div class="split">
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>streams/<span class="label">dedicated ports</span></div>
+<pre><span class="c"># streams/mysql.yaml</span>
+<span class="k">site</span>: <span class="s">tcp://:3307</span>
+<span class="k">proxy</span>: <span class="s">192.168.1.100:3306</span>
+<span class="c">---</span>
+<span class="c"># streams/dns.yaml</span>
+<span class="k">site</span>: <span class="s">udp://:5353</span>
+<span class="k">proxy</span>: <span class="s">192.168.1.100:53</span></pre>
+    </div>
+    <div class="code-stack">
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>streams/redis.yaml<span class="label">shared 443</span></div>
+<pre><span class="k">site</span>: <span class="s">tcp://redis.example.com</span>   <span class="c"># matched by SNI</span>
+<span class="k">proxy</span>: <span class="s">10.0.0.30:6380</span></pre>
+      </div>
+      <p class="result-line">The gateway reads SNI before the TLS handshake and hands matching connections to the upstream whole; everything else continues into HTTPS. For protocols that start in plaintext, such as MySQL and PostgreSQL, use <a href="#remote-access">Forward from use case 5</a>.</p>
+    </div>
+  </div>
+
+  <h3>Read more</h3>
+  <ul class="more">
+    <li><a href="../docs/en/user/03-configuration/l4-guide.md"><span class="lvl l1">Start</span>L4 guide</a></li>
+    <li><a href="../docs/en/user/09-advanced/shared-443-l4-stream.md"><span class="lvl l2">More</span>HTTPS and L4 TCP on one port 443</a></li>
+    <li><a href="../docs/en/user/09-advanced/sni-routing-recipes.md"><span class="lvl l2">More</span>SNI routing recipes</a></li>
+    <li><a href="../docs/en/user/03-configuration/stream-config.md"><span class="lvl l3">Reference</span>Stream configuration</a></li>
+  </ul>
+</section>
+
+<!-- ═══ 10. Ops ═══ -->
+<section class="guide-section" id="ops">
+  <p class="kicker">Use case 10</p>
+  <h2>Status page, console and production</h2>
+  <ul class="fit">
+    <li>You want a public status page for users, or a live console for operators</li>
+    <li>LiteGate must run as a system service or container and plug into existing monitoring</li>
+    <li>When something fails, you want to know which route a request took and why it was rejected</li>
+  </ul>
+
+  <h3>One block of configuration each</h3>
+  <div class="split">
+    <div class="code-stack">
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sites/status.yaml<span class="label">public status page</span></div>
+<pre><span class="k">site</span>: <span class="s">https://status.example.com</span>
+<span class="k">status</span>:
+  <span class="k">title</span>: <span class="s">Service status</span>
+  <span class="k">host</span>: <span class="s">"*"</span>              <span class="c"># default: only the current site</span>
+  <span class="k">show_instances</span>: <span class="s">true</span>   <span class="c"># show each backend instance</span></pre>
+      </div>
+      <p class="result-line">It can also hang off an existing site: <code>/status: {status: {}}</code>. The data comes from real gateway traffic, with no probes to install.</p>
+    </div>
+    <div class="code-stack">
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml<span class="label">dashboard</span></div>
+<pre><span class="k">dashboard</span>:
+  <span class="k">enabled</span>: <span class="s">true</span>
+  <span class="k">port</span>: <span class="s">9999</span>
+  <span class="k">username</span>: <span class="s">ops</span>
+  <span class="k">password</span>: <span class="s">"$2a$10$..."</span>   <span class="c"># from litegate -hash</span></pre>
+      </div>
+      <p class="result-line">Live throughput and latency, routes and service tags, access logs, certificates, Connect tunnels and compiled plugins, plus in-browser site editing. Keep this port on the private network.</p>
+    </div>
+  </div>
+
+  <h3>Common commands</h3>
+  <div class="split">
+    <ul class="checklist">
+      <li><code>litegate -init</code> creates directories and an example configuration; <code>litegate -t</code> validates before launch</li>
+      <li><code>litegate systemd</code> prints a systemd unit; <code>litegate healthcheck</code> serves container health checks</li>
+      <li>Prometheus metrics, access logs and trace IDs follow each request; import the <a href="https://github.com/jamesleeon/LiteGate/tree/master/deploy/grafana">official Grafana dashboard</a></li>
+      <li>When a route does not match, ask the AI to simulate the request over MCP; see <a href="#ai">use case 12</a></li>
+    </ul>
+    <div class="code-window">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>terminal</div>
+<pre><span class="t">$</span> litegate -init         <span class="c"># directories and example config</span>
+<span class="t">$</span> litegate -t            <span class="c"># validate configuration</span>
+<span class="t">$</span> litegate -hash 'pwd'   <span class="c"># bcrypt password hash</span>
+<span class="t">$</span> litegate systemd       <span class="c"># print a systemd unit</span></pre>
+    </div>
+  </div>
+
+  <h3>Read more</h3>
+  <ul class="more">
+    <li><a href="../docs/en/user/10-deployment/production.md"><span class="lvl l1">Start</span>Production deployment</a></li>
+    <li><a href="../docs/en/user/10-deployment/systemd.md"><span class="lvl l1">Start</span>systemd service</a></li>
+    <li><a href="../docs/en/user/08-observability/dashboard.md"><span class="lvl l1">Start</span>Dashboard</a></li>
+    <li><a href="../docs/en/user/04-actions/status.md"><span class="lvl l1">Start</span>Status page (status)</a></li>
+    <li><a href="../docs/en/user/11-troubleshooting/debugging.md"><span class="lvl l1">Start</span>Debugging</a></li>
+    <li><a href="../docs/en/user/08-observability/metrics.md"><span class="lvl l2">More</span>Prometheus metrics and Grafana</a></li>
+    <li><a href="../docs/en/user/08-observability/access-log.md"><span class="lvl l2">More</span>Access log</a></li>
+    <li><a href="../docs/en/user/10-deployment/ha-state.md"><span class="lvl l2">More</span>Replica state</a></li>
+    <li><a href="#ai"><span class="lvl l2">More</span>Configure with AI (MCP)</a></li>
+    <li><a href="../docs/en/user/01-getting-started/cli-reference.md"><span class="lvl l3">Reference</span>CLI reference</a></li>
+    <li><a href="../docs/en/user/11-troubleshooting/faq.md"><span class="lvl l3">Reference</span>FAQ</a></li>
+  </ul>
+</section>
+
+<!-- ═══ 11. SaaS ═══ -->
+<section class="guide-section" id="saas">
+  <p class="kicker">Use case 11</p>
+  <h2>Grow from one VPS to a multi-tenant SaaS</h2>
+  <ul class="fit">
+    <li>Several gateways form a cluster and sites and certificates need central management</li>
+    <li>Requests must be identified by tenant, admitted, routed to tenant-specific instances and rate limited</li>
+    <li>Configuration changes need review, publishing and rollback</li>
+  </ul>
+
+  <h3>Capabilities you turn on as needed</h3>
+  <ul class="checklist">
+    <li><strong>Cluster configuration and shared certificates</strong>: sites, certificates and ECH keys live in Litemesh / Consul KV; write once and the whole cluster hot-reloads</li>
+    <li><strong>Multi-tenant routing (IDS)</strong>: after route matching and before forwarding, your Go plugin identifies the tenant and decides</li>
+    <li><strong>On-demand certificates</strong>: customers bind their own domains and certificates are issued at handshake time</li>
+    <li><strong>Release control</strong>: changes go to a draft, are published after you confirm the diff, and roll back in one step</li>
+    <li><strong>Compiled plugins</strong>: <code>litegate build --with</code> compiles middleware, load balancers, service discovery and other plugins into the binary</li>
+  </ul>
+
+  <h3>Read more</h3>
+  <ul class="more">
+    <li><a href="../docs/en/ids-overview.md"><span class="lvl l1">Start</span>IDS overview</a></li>
+    <li><a href="../docs/en/ids-recipes.md"><span class="lvl l2">More</span>IDS decision recipes</a></li>
+    <li><a href="../docs/en/ids-provider-plugin-guide.md"><span class="lvl l2">More</span>IDS Provider development</a></li>
+    <li><a href="../docs/en/on_demand_tls.md"><span class="lvl l2">More</span>On-Demand TLS</a></li>
+    <li><a href="../docs/en/release_control_guide.md"><span class="lvl l2">More</span>Release control</a></li>
+    <li><a href="../docs/en/user/12-plugins/README.md"><span class="lvl l2">More</span>Plugins</a></li>
+    <li><a href="../docs/en/user/12-plugins/authoring-guide.md"><span class="lvl l3">Reference</span>Plugin authoring</a></li>
+  </ul>
+</section>
+
+<!-- ═══ 12. AI / MCP ═══ -->
+<section class="guide-section" id="ai">
+  <p class="kicker">Use case 12 · MCP</p>
+  <h2>Configure and troubleshoot with AI</h2>
+  <ul class="fit">
+    <li>You would rather describe what you need in plain language than memorize configuration fields</li>
+    <li>Production requests return 404 / 502 and you want the AI to check route matching, upstream reachability and error logs</li>
+    <li>You use Claude Code, Cursor, Claude Desktop or another MCP-capable assistant</li>
+  </ul>
+
+  <h3>Two ways to connect</h3>
+  <div class="split">
+    <div class="code-stack">
+      <div class="code-window terminal">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>stdio<span class="label">write config locally</span></div>
+<pre><span class="t">$</span> claude mcp add litegate -- \
+    litegate mcp -config /etc/litegate/config.yaml</pre>
+      </div>
+      <p class="result-line">The AI starts a separate LiteGate process that reads and writes configuration files, and the running gateway hot-reloads them. Use absolute paths for <code>sites_dir</code> and similar directories in <code>config.yaml</code>, because relative paths resolve against the AI client's working directory.</p>
+    </div>
+    <div class="code-stack">
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml<span class="label">SSE: connect to the running gateway</span></div>
+<pre><span class="k">mcp</span>:
+  <span class="k">enabled</span>: <span class="s">true</span>
+  <span class="k">port</span>: <span class="s">9900</span>
+  <span class="k">token</span>: <span class="s">"generate with litegate -secret"</span></pre>
+      </div>
+      <div class="code-window terminal">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>terminal</div>
+<pre><span class="t">$</span> claude mcp add --transport sse litegate \
+    http://127.0.0.1:9900/sse \
+    --header "Authorization: Bearer &lt;token&gt;"</pre>
+      </div>
+    </div>
+  </div>
+  <p>Both expose the same tools. <strong>Runtime diagnostics</strong> such as recent requests, error logs, runtime status and tunnels need the SSE connection to the running gateway; a stdio process cannot see gateway traffic.</p>
+
+  <h3>What the AI can do</h3>
+  <ul class="checklist">
+    <li><strong>Create sites</strong>: reverse proxies, static sites, service bindings, TCP/UDP streams, Forward sites; enable OIDC / JWT / API keys</li>
+    <li><strong>Validate before applying</strong>: <code>validate_site_config</code> checks strictly, <code>preview_config_change</code> shows the diff, and after saving <code>verify_site</code> sends a real request; rollback is one call</li>
+    <li><strong>Troubleshoot</strong>: <code>lookup_route</code> simulates a request to show which route matches, <code>test_upstream</code> checks backend reachability, plus recent requests, error logs and certificate expiry</li>
+    <li><strong>Service tags</strong>: generate tag templates and preview the routes they produce with the runtime parser</li>
+  </ul>
+  <p>MCP tools can change and delete configuration: keep the SSE port on localhost or the private network and always set <code>token</code>. In production, turn on release control so the AI's changes land in a draft and are published only after you confirm.</p>
+
+  <h3>Read more</h3>
+  <ul class="more">
+    <li><a href="../docs/en/litegate_mcp_capability_matrix.md"><span class="lvl l1">Start</span>MCP setup and capabilities</a></li>
+    <li><a href="../docs/en/release_control_guide.md"><span class="lvl l2">More</span>Release control</a></li>
+    <li><a href="../docs/en/user/01-getting-started/cli-reference.md"><span class="lvl l3">Reference</span>CLI reference</a></li>
+  </ul>
+</section>
+
+</div>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="index.html"><span class="brand-mark">L</span>LiteGate</a>
+      <p class="note">An HTTP / TCP gateway in a single binary. This site is served by LiteGate.</p>
+    </div>
+    <div>
+      <h4>Learn</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="features.html">All features</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/blob/master/CHANGELOG.md">Changelog</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Docs</h4>
+      <ul>
+        <li><a href="../docs/en/">Docs home</a></li>
+        <li><a href="../docs/en/user/cookbook/README.md">Cookbook</a></li>
+        <li><a href="../docs/en/user/11-troubleshooting/faq.md">FAQ</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Community</h4>
+      <ul>
+        <li><a href="https://github.com/jamesleeon/LiteGate">GitHub</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/issues">Issues</a></li>
+        <li><a href="../guide.html" data-lang-switch="zh">中文</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

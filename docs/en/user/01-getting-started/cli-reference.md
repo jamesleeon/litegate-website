@@ -32,6 +32,20 @@ litegate [options]
 | `-hashfile <path>` | Prints the file SHA256 as a single 64-character lowercase hexadecimal line and exits, for the SPA/serve KV `sha256` field. |
 | `-t` | Tests the configuration file syntax and exits (does not launch the gateway). Similar to `nginx -t`. |
 
+### Subcommands
+
+| Command | Description | See |
+| :--- | :--- | :--- |
+| `litegate build [flags]` | Builds a LiteGate binary with custom plugins (like `xcaddy`). Supports `--with`, `--replace` and `-o`. | [Plugin builds](../12-plugins/build-and-cli.md) |
+| `litegate plugins list\|inspect\|doctor` | Lists, inspects and health-checks the plugins compiled into this binary. | [Plugin CLI](../12-plugins/build-and-cli.md) |
+| `litegate mcp [-config <path>] [-log-level <level>]` | Runs the MCP server over stdio so AI clients such as Claude Code or Cursor can launch it. Logs go to stderr. | [MCP capability matrix](../../litegate_mcp_capability_matrix.md) |
+| `litegate forward --remote <url> --local <addr> --token-file <file>` | Forward client: maps a remote Stream to a local port; `--config` reads a YAML file instead. `litegate forward token --output <file>` generates a token. | [Forward and Connect](../09-advanced/forward-and-connect.md) |
+| `litegate connect [http] --remote <url> --name <name> --domain <host> --upstream <url>` | Publishes a local HTTP service through Connect from the command line; `litegate connect token --output <file>` generates a token. | [Connect CLI](../09-advanced/connect-cli-http.md) |
+| `litegate systemd [options]` | Prints a systemd unit file (`-user`, `-workdir`, `-config`, `-name`, ...). | [systemd deployment](../10-deployment/systemd.md) |
+| `litegate secret keygen\|pubkey\|encrypt` | Generates this host's key pair and seals credentials into `enc://` references so configuration files hold no plaintext. | [Sealed Secrets](../06-certificates/sealed-secrets.md) |
+| `litegate ech withdraw -config <path>` | Withdraws published ECH DNS records (stop the ECH instance first). | [ECH](../06-certificates/ech.md) |
+| `litegate healthcheck [-config <path>] [-addr <addr>]` | Probes the local gateway health endpoint, suitable for a container `HEALTHCHECK`. | [Production deployment](../10-deployment/production.md) |
+
 ### Consul Bootstrapping Parameters
 
 | Options | Environment Variable | Description |

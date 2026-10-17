@@ -29,6 +29,21 @@ litemesh:
 
 Once a discovery source is connected, any service registered with the magic tags below becomes reachable through the gateway with no per-service route configuration.
 
+### Path routing (`http://gateway/<service>/...`)
+
+A discovered service that declares **no Router** of its own is also reachable by path: `/<service>/...`, or `/<app>/<comp>/...` for a service named `<app>-<comp>`. Path routing is deliberately narrow:
+
+- It only answers requests whose host matches **no site**, or a catch-all site (`*`, `0.0.0.0`). A named host such as `app.example.com` owns its whole path space, so a path its routes do not cover returns 404 instead of reaching a discovered service.
+- A service that declares a Router (`litegate.http.host`, `path_prefix`, `routers.<name>.*`, ...) is published **only** through that Router, so its middlewares, entrypoints and host binding cannot be bypassed by path.
+- Upstream HTTPS certificates are verified; a self-signed backend needs its own Router whose serversTransport sets `tls.insecureskipverify=true`.
+
+Turn it off entirely with:
+
+```yaml
+service_discovery:
+  path_ingress: false
+```
+
 ---
 
 ## 3. Registering with Magic Tags

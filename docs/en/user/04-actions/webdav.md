@@ -9,7 +9,16 @@ site: https://cloud.example.com
 webdav: ./shared
 ```
 
-This example exposes read/write access and is suitable only for trusted environments. Create the directory first; relative paths resolve from LiteGate's working directory. HTTPS issuance requires suitable global configuration and domain validation.
+This example is public and read-only: without auth no writer can be identified, so uploads, deletes, PUT, MKCOL and other writes are refused. When anonymous writes are really wanted (trusted networks only), declare `read_only: false` explicitly:
+
+```yaml
+site: https://cloud.example.com
+webdav:
+  root: ./shared
+  read_only: false
+```
+
+Create the directory first; relative paths resolve from LiteGate's working directory. Files and directories starting with `.` (such as `.env` and `.git`) are neither listed nor reachable unless `show_hidden: true` is set. Shared files are returned with `Content-Security-Policy: sandbox`, so an uploaded HTML or SVG file cannot run script on this site, and `render_markdown` shows raw HTML in uploaded Markdown as text. HTTPS issuance requires suitable global configuration and domain validation.
 
 ## Path mounting and authentication
 
@@ -35,7 +44,7 @@ site: https://cloud.example.com
 Connect to `https://cloud.example.com/dav/`. The handler automatically uses the matched /dav prefix; no additional strip_prefix is required. Do not rewrite the prefix away a second time.
 
 - auth sits alongside webdav; file-service options belong inside webdav.
-- rw permits reading and writing; ro makes an account read-only. webdav.read_only: true defaults to read-only, but explicit rw accounts can override it; set every account to ro when all users must be read-only.
+- rw permits reading and writing; ro makes an account read-only. With auth configured, signed-in accounts may write by default; webdav.read_only: true defaults to read-only, but explicit rw accounts can override it; set every account to ro when all users must be read-only. Anonymous access is always read-only.
 - web_ui enables the browser interface; browse: false and direct_download: false prevent anonymous browsing and direct downloads.
 - WebDAV needs methods including PROPFIND, PUT, MKCOL, DELETE, MOVE, COPY, and LOCK. Do not restrict the route to GET/POST.
 - Files reside in a local directory; WebDAV does not support kv_mode. Loading site configuration from KV does not store files in KV.

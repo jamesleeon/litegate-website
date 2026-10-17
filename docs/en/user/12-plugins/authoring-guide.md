@@ -13,3 +13,4 @@ Start from examples/plugin-template and examples/plugins. Validate registration,
 - [Public SDK](../../../../pkg/plugin)
 - [Plugin template](../../../../examples/plugin-template/README.md)
 - [Plugin examples](../../../../examples/plugins/README.md)
+- [Discovery implementation and build walkthrough: Nomad](../../discovery-provider-plugin-guide.md)

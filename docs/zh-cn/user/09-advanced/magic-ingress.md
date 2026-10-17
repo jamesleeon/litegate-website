@@ -25,6 +25,21 @@ litemesh:
 
 发现源接通后,任何用下面的魔术标签注册的服务,无需为它单独配路由就能通过网关访问。
 
+### 路径路由(`http://网关/<服务名>/...`)
+
+**没有声明 Router** 的已发现服务，还可以按路径访问：`/<服务名>/...`，或对名为 `<app>-<comp>` 的服务用 `/<app>/<comp>/...`。路径路由的范围是刻意收窄的：
+
+- 只响应 Host **未匹配任何站点**、或匹配通配兜底站点(`*`、`0.0.0.0`)的请求。`app.example.com` 这类具名站点拥有自己的全部路径，其路由没覆盖的路径返回 404，不会落到已发现服务上。
+- 声明了 Router(`litegate.http.host`、`path_prefix`、`routers.<name>.*` 等)的服务**只**通过该 Router 发布，其中间件、入口和域名绑定不会被路径方式绕过。
+- 上游 HTTPS 证书会被校验；自签名后端需要声明自己的 Router，并在其 serversTransport 上设置 `tls.insecureskipverify=true`。
+
+完全关闭：
+
+```yaml
+service_discovery:
+  path_ingress: false
+```
+
 ---
 
 ## 3. 使用魔术标签 (Magic Tags)

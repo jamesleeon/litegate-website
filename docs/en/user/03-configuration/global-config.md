@@ -20,7 +20,7 @@
 mode: "performance"
 ```
 
-`performance` (the default) only skips per-request accounting that nothing consumes: enabling `metrics`, `dashboard`, `log.access_log` or `tracing` keeps that feature fully working, and the dashboard live request stream keeps flowing while the dashboard is on. Use `mode: observability` to always record routing details.
+`performance` (the default) only skips per-request accounting that nothing consumes: enabling `metrics`, `dashboard`, `log.access_log` or `tracing` keeps that feature fully working, and the live request stream (read by the dashboard and the MCP `get_recent_requests` tool) keeps flowing while the dashboard or MCP SSE is on. Use `mode: observability` to always record routing details.
 
 ---
 
@@ -411,6 +411,7 @@ service_discovery:
 
   tag_entrypoints:
     allowed_ports: []              # ports service tags may open (HTTP entrypoints and TCP/UDP streams), e.g. [8080, 15432]
+  path_ingress: true             # Magic Ingress path routing (http://gateway/<service>/...): only for services without their own Router, and only on unmatched or catch-all hosts
 ```
 
 Service tags (`litegate.entrypoints.<name>.address`, `litegate.tcp.port`, `litegate.udp.port`) may open a listener only on a port listed in `tag_entrypoints.allowed_ports`, and never with the name or port of an entrypoint in this file. When the list is empty, tags cannot open ports and may only reference existing entrypoints (`web` and `websecure` by default). See the Service Tags Guide.

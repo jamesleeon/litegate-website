@@ -20,7 +20,7 @@
 mode: "performance"
 ```
 
-`performance` 只跳过"没有开启任何消费者时"的逐请求统计，开启 `metrics`、`dashboard`、`log.access_log` 或 `tracing` 后对应功能不受影响；开启 Dashboard 时实时请求流也照常推送。需要始终记录路由明细时写 `mode: observability`。
+`performance` 只跳过"没有开启任何消费者时"的逐请求统计，开启 `metrics`、`dashboard`、`log.access_log` 或 `tracing` 后对应功能不受影响；开启 Dashboard 或 MCP SSE 时，实时请求流（MCP 的 `get_recent_requests` 读取它）也照常推送。需要始终记录路由明细时写 `mode: observability`。
 
 ---
 
@@ -397,6 +397,7 @@ service_discovery:
 
   tag_entrypoints:
     allowed_ports: []              # 允许服务标签新开的监听端口(HTTP 入口与 TCP/UDP Stream)，如 [8080, 15432]
+  path_ingress: true             # Magic Ingress 路径路由(http://网关/<服务名>/...)，仅对未声明 Router 的服务、且只在未匹配站点或通配兜底站点上生效
 ```
 
 服务标签(`litegate.entrypoints.<name>.address`、`litegate.tcp.port`、`litegate.udp.port`)只能在 `tag_entrypoints.allowed_ports` 列出的端口上新开监听，且不能与本文件中的入口同名或同端口；为空时标签不能新开端口，只能引用已有入口(默认 `web`、`websecure`)。详见[服务标签使用指南](tag-dsl.md)。

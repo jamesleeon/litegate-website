@@ -1,19 +1,94 @@
 # LiteGate MCP Capability Matrix
 
-This document outlines the Model Context Protocol (MCP) capabilities exposed by LiteGate to LLM/AI agents. It evaluates whether these tools provide sufficient coverage to enable autonomous website provisioning and infrastructure management *without* requiring external configuration documents.
+LiteGate ships a built-in MCP (Model Context Protocol) server so AI assistants can read configuration, generate and validate sites, save and reload, publish and roll back releases, and troubleshoot. This page lists every tool currently exposed.
 
-## Executive Summary
+## Connecting
 
-LiteGate's active MCP tools cover common website configurations and administrative routines. AI agents can autonomously retrieve system states, generate configurations, validate schemas, apply hot-swaps, and verify endpoints for these primary use cases:
-- Inbound Reverse Proxy configurations.
-- Static Website hosting (including Single Page Applications).
-- Binding domain SNI records to logical discovery services.
-- Layer 4 TCP/UDP stream forwarding.
-- Diagnostic troubleshooting and telemetry audits.
+LiteGate offers two transports with the same tool list. They differ in which process the AI talks to:
 
-**Conclusion**: Once an operator integrates LiteGate's MCP and expresses intent (e.g., domain names, upstream endpoints, site profiles), the AI agent requires no external manuals or documents to manage the gateway successfully.
+| | stdio | SSE |
+|---|---|---|
+| How it starts | The AI client runs `litegate mcp -config <path>`, a separate process | The running gateway serves `/sse` on `mcp.port` |
+| Best for | Writing, validating and saving configuration locally | Managing a running gateway, remote troubleshooting |
+| Read/write, validation, site creation, release and rollback | Yes | Yes |
+| Runtime diagnostics (`get_recent_requests`, `get_recent_errors`, `get_gateway_status`, `list_active_tunnels`, `get_connect_status`, ...) | Reflect only the MCP process itself, not gateway traffic | Reflect the running gateway |
+| After saving | Files are written; the running gateway hot-reloads them | Files are written and the current gateway reloads |
 
----
+### stdio: local AI clients
+
+All logs go to stderr and stdout carries only JSON-RPC. If `config.yaml` does not exist, a default configuration and directories are generated.
+
+Relative paths such as `sites_dir`, `streams_dir` and `certs_dir` resolve against the **process working directory**, and AI clients usually do not start the process in the directory that holds `config.yaml`. Use absolute paths for these directories in `config.yaml`, or have the client start LiteGate in the configuration directory.
+
+Claude Code:
+
+```bash
+claude mcp add litegate -- litegate mcp -config /etc/litegate/config.yaml
+```
+
+Cursor (`.cursor/mcp.json`), Claude Desktop and other clients configured with JSON:
+
+```json
+{
+  "mcpServers": {
+    "litegate": {
+      "command": "litegate",
+      "args": ["mcp", "-config", "/etc/litegate/config.yaml"]
+    }
+  }
+}
+```
+
+### SSE: connect to a running gateway
+
+Enable it in `config.yaml`. After the gateway starts or reloads it listens on `mcp.port`; the endpoint is `/sse`, and the server tells the client its `/message` endpoint during the handshake:
+
+```yaml
+mcp:
+  enabled: true
+  port: 9900                            # default 8080; must not clash with http.port, the dashboard or entrypoints
+  token: "REPLACE_WITH_STRONG_TOKEN"    # clients send Authorization: Bearer <token>
+  public_url: ""                        # public URL when exposed through a reverse proxy, e.g. https://ops.example.com/mcp
+```
+
+An empty `token` disables authentication, so always set one. `litegate -secret` prints a random value.
+
+Claude Code:
+
+```bash
+claude mcp add --transport sse litegate http://127.0.0.1:9900/sse --header "Authorization: Bearer <token>"
+```
+
+Clients configured with JSON:
+
+```json
+{
+  "mcpServers": {
+    "litegate": {
+      "url": "http://127.0.0.1:9900/sse",
+      "headers": { "Authorization": "Bearer <token>" }
+    }
+  }
+}
+```
+
+### Security
+
+MCP tools can change and delete configuration and write token files. Keep the SSE port on localhost or a private network and never expose it directly to the Internet. For remote use, put it behind an authenticated entrypoint and enable [release control](release_control_guide.md) so the AI's changes land in a draft that you confirm before publishing.
+
+### Putting the AI to work
+
+Once connected, describe what you need in plain language, for example:
+
+- "Forward /api on app.example.com to 127.0.0.1:8080, serve ./dist as an SPA for everything else, and enable HTTPS."
+- "List certificates that expire within 30 days."
+- "Why does https://api.example.com/v1/orders return 404?"
+
+The AI follows the closed loops below: read the configuration guide, generate the configuration, check it with `validate_*`, review the diff with `preview_config_change`, then save and confirm with `verify_site`.
+
+### Litemesh MCP proxy
+
+With Litemesh enabled, LiteGate discovers MCP services registered in Litemesh and proxies their tools and resources, so AI clients only need to connect to LiteGate.
 
 ## Tool Capability Matrix
 
@@ -36,7 +111,6 @@ LiteGate's active MCP tools cover common website configurations and administrati
 | **Validation** | `validate_site_config` | Validates site configs against Go struct checkers. | Yes | Yes | Reuses parser validation libraries. |
 | **Validation** | `validate_stream_config` | Validates stream configs. | Yes | Yes | Reuses L4 parser validation libraries. |
 | **Validation** | `validate_gateway_config` | Validates global system configurations. | Yes | Partial | Captures semantic errors before hot-swapping. |
-| **Planning** | `plan_site_from_intent` | Analyzes intent to yield configuration templates. | Yes | Partial | Useful for designing complex multi-routing sites. |
 | **Provision** | `create_proxy_site` | Generates standard reverse proxy site files. | Yes | Yes | Solves common backend proxying needs. |
 | **Provision** | `create_static_site` | Generates static folder or SPA site configurations.| Yes | Yes | Sets up dynamic static hosting. |
 | **Provision** | `bind_domain_to_service` | Binds an HTTP domain to a registry service. | Yes | Yes | Accepts `lb_policy` for instance selection; defaults to round robin. |
@@ -57,6 +131,44 @@ LiteGate's active MCP tools cover common website configurations and administrati
 | **Interactive**| `explain_missing_inputs` | Asks the operator for missing details. | Yes | Yes | Reduces guessing by the AI. |
 
 ---
+
+## Other tools
+
+These tools cover authentication, release control, service tags, routing diagnostics, certificates and Connect.
+
+| Category | Tool | Purpose |
+|---|---|---|
+| Provisioning | `create_template_site` | Create a server-side template site; supports template KV mode |
+| Provisioning | `create_status_site` | Create a status dashboard site |
+| Provisioning | `create_forward_site` | Create a Forward site binding a public HTTPS hostname to an internal stream or Connect peer |
+| Provisioning | `export_lite_config` | Compile .lite.yaml into standard YAML; same as `litegate -export-lite` |
+| Authentication | `enable_oidc_for_site` | Enable OIDC on a site's proxy routes; v2 keeps comments and shorthand |
+| Authentication | `enable_jwt_for_site` | Enable JWT (JWKS or HS secret reference) on proxy routes; notify routes are not covered |
+| Authentication | `enable_apikey_for_site` | Enable API key checks and quota rate limiting on proxy routes |
+| Deletion | `delete_site_config` | Delete a site configuration file |
+| Deletion | `delete_stream_config` | Delete a stream configuration file |
+| Release control | `list_releases` | List drafts and published releases |
+| Release control | `get_release_detail` | Show a release's details and configuration artifacts |
+| Release control | `get_release_diff` | Diff a release against the active files |
+| Release control | `validate_draft` | Dry-run the current draft: schema, port conflicts, reserved paths |
+| Release control | `publish_release` | Publish a draft after an automatic dry run |
+| Release control | `rollback_release` | Roll back to the previous or a given release |
+| Service tags | `get_tag_dsl_guide` | Service-tag guide (four-key shortcut and named resources) |
+| Service tags | `get_tag_reference` | Authoritative service-tag reference, searchable by query |
+| Service tags | `get_service_tag_templates` | Ready-to-use tag templates |
+| Service tags | `preview_service_tags` | Validate tags with the runtime parser and preview generated routes |
+| Service tags | `explain_tag` | Classify tag keys as resource, shortcut or retired |
+| Routing diagnostics | `lookup_route` | Simulate routing for a request; returns route, upstream and rewritten path |
+| Routing diagnostics | `get_recent_requests` | Recently processed HTTP requests |
+| Routing diagnostics | `list_active_tunnels` | Active WebSocket/Upgrade tunnels |
+| Runtime diagnostics | `get_goroutine_profile` | Full goroutine dump for leak hunting |
+| Runtime diagnostics | `list_plugins` | List compiled-in plugins; same as `litegate plugins list` |
+| Certificates | `request_certificate` | Request a certificate via ACME immediately (manual management) |
+| Certificates | `inspect_on_demand_tls` | Inspect On-Demand TLS settings and mapped domains |
+| Connect/Forward | `get_connect_status` | Connect tunnel status: peers, sessions, domain ownership and conflicts |
+| Connect/Forward | `generate_connect_token` | Generate a Connect peer token, saved with mode 0600; never overwrites |
+| Connect/Forward | `generate_forward_token` | Generate a Forward site token, saved with mode 0600; never overwrites |
+| Deployment | `generate_systemd_unit` | Generate a systemd unit; same as `litegate systemd --print` |
 
 ## Typical Closed-Loop Operations
 
@@ -98,34 +210,24 @@ LiteGate's active MCP tools cover common website configurations and administrati
 
 ---
 
-## Core Coverage Review
+### 5. Release control
 
-Excluding specialized OIDC setups, LiteGate's MCP provides total autonomy to AI agents for standard operations:
-- Common reverse proxy and static site provisioning: **Fully Covered**
-- Stream forwarder configurations: **Fully Covered**
-- Pre-execution config validation: **Fully Covered**
-- Automated hot-reloads: **Fully Covered**
-- Verification testing: **Fully Covered**
-- Active telemetry audits: **Fully Covered**
-- High-fidelity change diffing: **Partially Covered**
-- Backup restoration: **Partially Covered**
+With `dashboard.release_control` enabled, changes land in a draft first:
 
----
+1. `save_site_config` / `save_stream_config` (writes the draft)
+2. `validate_draft`
+3. `get_release_diff`
+4. `publish_release`
+5. `verify_site`; on problems, `rollback_release`
 
-## Future Enhancements
-To improve autonomous operations, we recommend refining the following tools:
-- `preview_config_change`: Enhance impact analysis to report affected ports and SNIs.
-- `verify_site`: Include matched route and upstream node IP properties in verification payloads.
-- `verify_stream`: Verify if the active socket listener maps to LiteGate's process.
-- Rollback routines: Improve error handling for failed backup writes.
+### 6. Routing troubleshooting
 
----
+1. `lookup_route` (matched route, upstream and rewrite result)
+2. `get_recent_requests`
+3. `get_recent_errors`
 
-## Autonomous Operations Without Documents
+## Related
 
-When an operator integrates LiteGate's MCP, the AI agent does not require manual documentation because:
-- The MCP tools expose structural configuration schemas directly.
-- The MCP tools expose active runtime states and configurations.
-- The MCP tools provide validation, execution, verification, and diagnostics natively.
-
-External manuals serve as supplementary material rather than a requirement for autonomous site provisioning.
+- [Global configuration: MCP](user/03-configuration/global-config.md)
+- [Configuration release control](release_control_guide.md)
+- [CLI reference](user/01-getting-started/cli-reference.md)
