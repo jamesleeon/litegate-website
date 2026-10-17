@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connect Delegated Certificate Issuance and End-to-End Private Key Security · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/06-certificates/connect-csr-delegation.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details open><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html" class="current" aria-current="page">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="connect-delegated-certificate-issuance-and-end-to-end-private-key-security">Connect Delegated Certificate Issuance and End-to-End Private Key Security</h1>
+<p>LiteGate Connect supports <strong>zero-trust delegated certificate issuance</strong>: a Private node inside an intranet or private cloud generates and keeps its own private key, sends only a certificate signing request (CSR) through the secure Connect tunnel to a Cloud node that holds public DNS permissions, the Cloud completes ACME DNS-01 and obtains a publicly trusted certificate, and returns only the certificate to the Private node.</p>
+<p>This provides:</p>
+<ol>
+<li><strong>End-to-end TLS termination</strong>: when public clients reach the Cloud, it only forwards ciphertext by SNI (no TLS termination); decryption happens on the Private node.</li>
+<li><strong>The private key never leaves</strong>: the Private node's TLS private key is generated locally and is never sent to the Cloud or anywhere else.</li>
+<li><strong>No DNS credential exposure</strong>: DNS credentials (Alibaba Cloud, Cloudflare keys, ...) stay on the Cloud; tenant nodes never touch them.</li>
+<li><strong>Strict multi-tenant isolation</strong>: wildcard certificates are refused, and ownership is verified before issuance, so tenants can't forge or decrypt each other's traffic.</li>
+</ol>
+<hr>
+<h2 id="1-scenario-and-topology">1. Scenario and topology</h2>
+<p>In a typical hybrid cloud that pushes sensitive data (e-commerce orders, customer data) down into private data centers:</p>
+<pre><code>[Public cloud]
+  Cloud applications / MQ consumers
+         │
+         │ HTTPS request (Host: tenant-a.example.com)
+         ▼
+  LiteGate Cloud cluster (public entry 443)
+  ├── Holds DNS permissions for *.example.com (DNS provider)
+  ├── Runs the Connect Server control plane
+  └── L4 SNI router (doesn't decrypt TLS; forwards by SNI)
+         │
+         │ Connect TLS data tunnel (ciphertext)
+         ▼
+[Private cloud / customer data center]
+  LiteGate Private (Connect client)
+  ├── Exclusively holds tenant-a's private key (generated and stored locally)
+  ├── Terminates TLS
+  └── Forwards plaintext to internal systems (JetStream / local API / database)
+</code></pre>
+<h3 id="control-plane-and-issuance-sequence">Control plane and issuance sequence</h3>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant P as Private node (tenant A)
+    participant C as Cloud node (LiteGate Server)
+    participant D as DNS platform (e.g. Aliyun DNS)
+    participant CA as Public CA (e.g. Let's Encrypt)
+
+    Note over P: 1. Generate private key locally (ECDSA/RSA)&lt;br/&gt;Generate CSR locally (CN: tenant-a.example.com)
+    P-&gt;&gt;C: 2. Send CSR through the Connect tunnel (no private key!)
+    Note over C: 3. Security and ownership checks&lt;br/&gt;(no wildcards / declaration consistency / exclusive ownership)
+    C-&gt;&gt;D: 4. Create _acme-challenge TXT record (DNS-01)
+    C-&gt;&gt;CA: 5. Submit CSR for issuance
+    CA-&gt;&gt;D: 6. Verify DNS TXT record
+    CA--&gt;&gt;C: 7. Issue certificate chain (public CertPEM only)
+    C-&gt;&gt;D: 8. Clean up DNS TXT record
+    C--&gt;&gt;P: 9. Return CertPEM (no private key in the protocol!)
+    Note over P: 10. Pair CertPEM with the local private key&lt;br/&gt;store encrypted, hot-load
+</pre>
+<hr>
+<h2 id="2-private-key-lifecycle">2. Private key lifecycle</h2>
+<h3 id="21-generated-locally-never-leaves">2.1 Generated locally, never leaves</h3>
+<ul>
+<li><strong>Where</strong>: the private key is generated on the Private node by <code>internal/certmanager</code> with Go's standard cryptography (ECDSA P-256 by default, or RSA-2048/4096).</li>
+<li><strong>Protocol constraint</strong>: the Connect control-plane <code>CSRAckPayload</code> has <strong>no private key field</strong>. The Cloud can't send private keys, and the Private node never uploads one.</li>
+<li><strong>In memory</strong>: the private key is used only by the Private process's TLS layer.</li>
+</ul>
+<h3 id="22-encryption-at-rest">2.2 Encryption at rest</h3>
+<p>After receiving the certificate, the Private node stores the certificate and local private key in <code>certs_dir</code>. To protect against unauthorized copies, LiteGate supports <strong>AES-256-GCM encryption at rest</strong> for certificates and keys.</p>
+<p>Configure <code>storage_secret</code> in the Private node's <code>config.yaml</code>:</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  storage_secret: &quot;env://AUTOCERT_STORAGE_SECRET&quot;   # random key of at least 32 bytes, injected by reference, never plaintext
+  certs_dir: ./certs
+</code></pre>
+<p>With this set, every private key (<code>.key</code>) and certificate (<code>.crt</code>) written to disk is encrypted with authentication, so a stolen disk image doesn't reveal the private key. It protects against disks or backups being copied; a fully compromised host can read process memory and the key source, which this cannot prevent.</p>
+<h3 id="23-injecting-secrets-dynamically">2.3 Injecting secrets dynamically</h3>
+<p><code>storage_secret</code> and the Connect <code>token</code> can be resolved through LiteGate's unified secret resolver, leaving no plaintext in configuration:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Mode</th>
+<th style="text-align:left">Example</th>
+<th style="text-align:left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Environment variable</strong></td>
+<td style="text-align:left"><code>env://AUTOCERT_STORAGE_SECRET</code></td>
+<td style="text-align:left">Standard container injection</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>File mount</strong></td>
+<td style="text-align:left"><code>file:///run/secrets/storage_key</code></td>
+<td style="text-align:left">K8s Secret or Docker Swarm volume</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Remote HTTPS</strong></td>
+<td style="text-align:left"><code>https://kms.example.com/v1/keys#secret</code></td>
+<td style="text-align:left">Central KMS service</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>HashiCorp Vault</strong></td>
+<td style="text-align:left"><code>vault://secret/data/litegate#storage_secret</code></td>
+<td style="text-align:left">Enterprise Vault KV engine</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="3-cloud-side-protections">3. Cloud-side protections</h2>
+<p>To stop malicious or compromised internal nodes from abusing CSR delegation, the Cloud enforces these checks before issuing:</p>
+<h3 id="①-parse-the-csr-and-check-declaration-consistency">① Parse the CSR and check declaration consistency</h3>
+<p>An attacker might declare <code>tenant-a.example.com</code> in the request (to pass a coarse domain check) but embed <code>*.example.com</code> or <code>admin.example.com</code> in the CSR itself.</p>
+<ul>
+<li><strong>Defense</strong>: the Cloud parses <code>CSRPEM</code> and extracts <code>Subject.CommonName</code> and <code>DNSNames</code> (SAN) from the ASN.1 structure.</li>
+<li><strong>Rule</strong>: the set of domains in the CSR must <strong>exactly equal</strong> the declared <code>req.Domains</code>; anything extra, missing or different is rejected (<code>csr_reject</code>).</li>
+</ul>
+<h3 id="②-no-wildcards">② No wildcards</h3>
+<ul>
+<li><strong>Risk</strong>: if tenant A could obtain <code>*.example.com</code>, it could decrypt tenant B's traffic or impersonate the whole platform.</li>
+<li><strong>Defense</strong>: any domain containing <code>*</code> is <strong>rejected</strong>, whatever the Peer's allow list says. Delegation <strong>issues only exact-subdomain certificates</strong>.</li>
+</ul>
+<h3 id="③-reserved-domains-and-cloud-local-sites">③ Reserved domains and Cloud-local sites</h3>
+<ul>
+<li><strong>Defense</strong>:
+<ol>
+<li><strong>Reserved domains</strong>: the Cloud's own Connect endpoint (such as <code>connect.example.com</code>) and <code>reserved_domains</code> are platform infrastructure; no Peer may get certificates for them.</li>
+<li><strong>Local sites and overrides</strong>: decided by the Registry's authoritative routing. Cloud-local sites without <code>connect_override</code> are never issued to a Peer; sites with <code>connect_override</code> that the current Peer has taken over are allowed; Cloud-local wildcard sites don't block subdomains a tenant has registered exactly.</li>
+</ol>
+</li>
+</ul>
+<h3 id="④-peer-authorization-boundary-allowed_cert_domains">④ Peer authorization boundary (<code>allowed_cert_domains</code>)</h3>
+<ul>
+<li><strong>Defense</strong>: each Peer has its own <code>allowed_cert_domains</code>.</li>
+<li><strong>Isolation</strong>: routing authorization (<code>allowed_domains</code>) and certificate authorization (<code>allowed_cert_domains</code>) are separate, so a broad routing wildcard can't be misused as issuance scope.</li>
+</ul>
+<h3 id="⑤-exact-dynamic-ownership-check-no-wildcard-grabs-no-toctou">⑤ Exact, dynamic ownership check (no wildcard grabs, no TOCTOU)</h3>
+<ul>
+<li><strong>Risk</strong>: if tenant A registered a <code>*.example.com</code> wildcard Site, coarse matching might treat A as the owner of every unassigned subdomain; and ACME issuance takes 1–2 minutes, during which ownership may change.</li>
+<li><strong>Defense</strong>:
+<ol>
+<li><strong>Exact registration required</strong>: the Cloud looks up the domain in the Registry and requires an exact, not wildcard, registration. <strong>A wildcard registration never proves ownership of a subdomain.</strong></li>
+<li><strong>Re-check before returning</strong>: after the CA issues and before the certificate is sent, the Cloud <strong>checks exact ownership again</strong>. If the domain was deregistered or transferred meanwhile, the certificate is discarded and never sent.</li>
+</ol>
+</li>
+</ul>
+<h3 id="⑥-abuse-and-ca-quota-protection-cooldown--weekly-budget">⑥ Abuse and CA quota protection (cooldown + weekly budget)</h3>
+<p>To stop faulty or malicious clients from rotating keys and exhausting Let's Encrypt quotas (50 new certificates per registered domain per week), the Cloud enforces quotas:</p>
+<ol>
+<li><strong>Shared and persistent state</strong>: quota state can be shared across Cloud A/B through <strong>Litemesh KV</strong> (<code>litegate/connect/csr-quota</code>), or persisted to a local file without Litemesh; history survives Cloud restarts, so renewals are never mistaken for new issuance.</li>
+<li><strong>Per-domain weekly duplicate limit and cooldown</strong>:
+<ul>
+<li>follows Let's Encrypt's Duplicate Certificate rule (5 per week) with a softer gate;</li>
+<li><strong>at most 2 issuances per exact domain within 7 days</strong>, covering reinstalls/lost keys and active/standby with separate keys;</li>
+<li><strong>minimum 5-minute interval</strong> between issuances of the same domain. There is currently no exposed quota reset endpoint; wait for the window to expire.</li>
+</ul>
+</li>
+<li><strong>Global weekly budget per registered domain</strong>:
+<ul>
+<li>new certificates per <code>eTLD+1</code> (such as <code>example.com</code>) over 7 days; default limit <strong>40 per week</strong> (keeping 10 as platform buffer);</li>
+<li><strong>atomic pre-allocation and rollback</strong>: quota is reserved at admission, closing race windows; a failed ACME issuance releases it; once the budget is exhausted, new domains are refused and only renewals pass.</li>
+</ul>
+</li>
+</ol>
+<h3 id="⑦-cryptographic-checks-on-the-private-node">⑦ Cryptographic checks on the Private node</h3>
+<p>Before storing and hot-loading the returned chain, the Private node checks:</p>
+<ol>
+<li><strong>Key pair match</strong>: <code>tls.X509KeyPair</code> confirms the certificate's public key matches the local private key;</li>
+<li><strong>SAN/CN coverage</strong>: <code>leaf.VerifyHostname</code> confirms every requested domain is covered;</li>
+<li><strong>Validity window</strong>: the current time is between <code>NotBefore</code> and <code>NotAfter</code>; damaged, mismatched or expired certificates are discarded with an alert.</li>
+</ol>
+<hr>
+<h2 id="4-production-configuration">4. Production configuration</h2>
+<h3 id="41-cloud-configyaml">4.1 Cloud (<code>config.yaml</code>)</h3>
+<p>The Cloud opens the public ports, configures a DNS provider (for DNS-01) and runs the Connect Server:</p>
+<pre><code class="language-yaml"># ==============================================================================
+# LiteGate Cloud node
+# ==============================================================================
+
+# 1. Entrypoints
+entrypoints:
+  web:
+    address: &quot;:80&quot;
+  websecure:
+    address: &quot;:443&quot;
+
+# 2. Auto cert and DNS provider
+auto_cert:
+  enabled: true
+  email: &quot;ops@example.com&quot;
+  ca_provider: &quot;letsencrypt&quot;     # or custom / zerossl
+  use_staging: false            # true for first-time debugging
+  certs_dir: ./certs
+
+  # DNS provider controlling the main domain (for DNS-01 done on behalf of Peers)
+  dns_providers:
+    - name: &quot;aliyun-main&quot;
+      type: &quot;aliyun&quot;
+      enabled: true
+      domains:
+        - &quot;*.example.com&quot;
+        - &quot;example.com&quot;
+      config:
+        access_key_id: &quot;env://ALIYUN_DNS_AK&quot;
+        access_key_secret: &quot;env://ALIYUN_DNS_SK&quot;
+        propagation_wait: &quot;60s&quot;
+        skip_propagation_check: &quot;true&quot;
+
+# 3. Connect Server
+connect:
+  server:
+    enabled: true
+    hostname: connect.example.com  # Connect control-plane domain (reserved automatically)
+    path: /_litegate/connect/v1
+    state_file: ./data/connect-registry.json
+
+    # Globally reserved domains (no Peer may register them or get certificates)
+    reserved_domains:
+      - admin.example.com
+      - gitea.example.com
+
+    peers:
+      # Tenant A
+      tenant-a:
+        token_file: ./secrets/tenant-a.token
+        # Domains this Peer may publish through Connect
+        allowed_domains:
+          - &quot;tenant-a.example.com&quot;
+        # Domains this Peer may request certificates for (exact, least privilege)
+        allowed_cert_domains:
+          - &quot;tenant-a.example.com&quot;
+        max_sites: 50
+        max_connections: 2048
+        sessions: 2
+
+      # Tenant B
+      tenant-b:
+        token_file: ./secrets/tenant-b.token
+        allowed_domains:
+          - &quot;tenant-b.example.com&quot;
+        allowed_cert_domains:
+          - &quot;tenant-b.example.com&quot;
+        max_sites: 50
+        max_connections: 2048
+        sessions: 2
+</code></pre>
+<hr>
+<h3 id="42-private--internal-node-configyaml">4.2 Private / internal node (<code>config.yaml</code>)</h3>
+<p>The Private node needs no public DNS credentials; it uses the <code>connect</code> DNS provider and its local business Site:</p>
+<pre><code class="language-yaml"># ==============================================================================
+# LiteGate Private node for tenant A
+# ==============================================================================
+
+# 1. Local entry (TLS is decrypted locally)
+entrypoints:
+  websecure:
+    address: &quot;:8443&quot;  # local HTTPS port
+
+# 2. Auto cert (key point: connect delegation)
+auto_cert:
+  enabled: true
+  storage_secret: &quot;env://PRIVATE_STORAGE_SECRET&quot;  # key for encrypting local private keys at rest
+  certs_dir: ./certs
+  renew_days: 10                                 # renew automatically 10 days before expiry
+
+  dns_providers:
+    # Delegate certificate issuance for this domain to the Cloud
+    - name: &quot;cloud-csr-delegate&quot;
+      type: &quot;connect&quot;
+      enabled: true
+      domains:
+        - &quot;tenant-a.example.com&quot;
+
+# 3. Connect client
+connect:
+  client:
+    enabled: true
+    name: tenant-a
+    remote: https://connect.example.com/_litegate/connect/v1
+    token_file: ./secrets/connect.token
+    publish_sites: true     # publish local Sites to the Cloud automatically
+    publish_streams: false
+    sessions: 2
+    max_connections: 2048
+    exclude_domains:
+      - connect.example.com
+
+</code></pre>
+<p>The business Site lives in its own site file (<code>sites/tenant-a.yaml</code>) on the local <code>websecure</code>; its certificate comes from the connect delegation above:</p>
+<pre><code class="language-yaml"># sites/tenant-a.yaml
+site: tenant-a.example.com
+entrypoints: [websecure]
+proxy: http://127.0.0.1:8080   # local internal plaintext service
+</code></pre>
+<hr>
+<h2 id="5-certificate-lifecycle">5. Certificate lifecycle</h2>
+<h3 id="51-first-start-and-certificate-readiness">5.1 First start and certificate readiness</h3>
+<ol>
+<li>The Private node starts and finds no certificate for <code>tenant-a.example.com</code> in <code>certs/</code>;</li>
+<li>It registers the Site with the Cloud with status <code>pending_certificate</code>;</li>
+<li>The Cloud marks the domain not ready in the Registry; requests reaching the Cloud get a fail-closed error, and no unencrypted data leaks;</li>
+<li>Meanwhile the Private node starts delegated issuance:
+<ul>
+<li>generates a private key and CSR locally;</li>
+<li>sends the CSR to the Cloud, which verifies ownership (the current Peer now owns the domain) and completes DNS-01;</li>
+<li>returns the certificate when issued;</li>
+</ul>
+</li>
+<li>The Private node pairs the certificate with its local key and hot-loads it into the TLS engine;</li>
+<li>It reports the status change, and the domain becomes <code>ready</code> on the Cloud;</li>
+<li>The whole process is automatic; its duration depends on DNS propagation and the CA, usually a minute or two. Until the certificate is ready the domain stays <code>pending_certificate</code> and requests reaching the Cloud are rejected, so allow for this window on first rollout; it is not unconditionally zero-downtime.</li>
+</ol>
+<h3 id="52-automatic-renewal-hot-renewal">5.2 Automatic renewal (hot renewal)</h3>
+<ul>
+<li>The Private node runs a daily check.</li>
+<li>When the remaining validity drops below <code>renew_days</code>, it generates a new CSR and requests renewal through the tunnel.</li>
+<li>The Cloud issues again and returns the new certificate.</li>
+<li>The Private node swaps it in atomically in memory without dropping established long connections.</li>
+</ul>
+<hr>
+<h2 id="6-capacity-planning-and-ca-rate-limits">6. Capacity planning and CA rate limits</h2>
+<h3 id="61-lets-encrypt-quotas">6.1 Let's Encrypt quotas</h3>
+<p>If the platform uses Let's Encrypt, mind these limits:</p>
+<ul>
+<li><strong>Per registered domain</strong>: at most <strong>50 new certificates per week</strong> per registered domain (such as <code>example.com</code>);</li>
+<li><strong>Renewals don't use the new-certificate quota</strong>: a certificate with exactly the same domain set renewed within validity is a renewal, limited separately (300 per week per registered domain).</li>
+</ul>
+<h3 id="62-estimating-scale">6.2 Estimating scale</h3>
+<p>With 90-day Let's Encrypt certificates renewed about every 60 days, 50 new certificates per week per registered domain covers on the order of several hundred separate subdomains per renewal cycle. The tenants you can actually support also depend on how fast new tenants arrive, duplicate issuance from reinstalls or active/standby, and the CA's current published limits. Calculate against your own growth before going live, and don't treat this estimate as a capacity promise. The Cloud's default global weekly budget of 40 leaves the platform a buffer.</p>
+<h3 id="63-when-the-quota-isnt-enough">6.3 When the quota isn't enough</h3>
+<h4 id="option-a-request-a-rate-limit-increase-from-lets-encrypt">Option A: request a rate limit increase from Let's Encrypt</h4>
+<p>Let's Encrypt offers a rate limit increase request for large SaaS platforms; once approved, the architecture needs no change. How much it rises is up to the CA.</p>
+<h4 id="option-b-a-private-ca-for-internal-callers">Option B: a private CA for internal callers</h4>
+<p>When all callers are your own services, switch the Cloud's <code>ca_provider</code> to an internal private CA (LiteMesh CA, HashiCorp Vault CA, Step-CA):</p>
+<pre><code class="language-yaml">auto_cert:
+  ca_provider: &quot;custom&quot;
+  acme_url: &quot;https://ca.internal.example.com/acme/directory&quot;
+  acme_ca_cert: &quot;/etc/litegate/certs/internal-root-ca.pem&quot;
+</code></pre>
+<ul>
+<li><strong>Benefit</strong>: no public CA quotas; validity periods set by the private CA;</li>
+<li><strong>Callers</strong>: only need to trust the internal root CA in their containers/systems.</li>
+</ul>
+<hr>
+<h2 id="7-faq-and-troubleshooting">7. FAQ and troubleshooting</h2>
+<h3 id="q1-wildcard-domain--in-csr-is-forbidden-for-multi-tenant-isolation">Q1: <code>wildcard domain &quot;...&quot; in CSR is forbidden for multi-tenant isolation</code>?</h3>
+<ul>
+<li><strong>Cause</strong>: the Private node's <code>domains</code> or the CSR contains a wildcard such as <code>*.example.com</code>.</li>
+<li><strong>Fix</strong>: delegation disables wildcard issuance for multi-tenant safety. Configure exact subdomains (such as <code>tenanta.example.com</code>) on the Private node.</li>
+</ul>
+<h3 id="q2-domain--in-csr-is-not-currently-ownedregistered-by-peer--with-an-exact-match">Q2: <code>domain &quot;...&quot; in CSR is not currently owned/registered by peer ... with an exact match</code>?</h3>
+<ul>
+<li><strong>Cause</strong>: the domain in the CSR hasn't been registered by this Peer in the Cloud's Connect Registry, or another Peer owns it.</li>
+<li><strong>Fix</strong>: check the Private node's sites: the domain must be on <code>entrypoints: [websecure]</code> with <code>publish_sites: true</code>. Ownership must be registered in the control plane before issuance is allowed.</li>
+</ul>
+<h3 id="q3-peer--exceeded-csr-rate-limit-or-reached-maximum-concurrent-csr-requests">Q3: <code>peer &quot;...&quot; exceeded CSR rate limit</code> or <code>reached maximum concurrent CSR requests</code>?</h3>
+<ul>
+<li><strong>Cause</strong>: the Peer sent too many CSR requests in a short time and hit abuse protection (1 concurrent request and at most 2 per minute per Peer). Reissuing the same domain within 5 minutes, more than twice in 7 days, or exhausting the registered domain's weekly budget returns <code>minimum cooldown</code>, <code>weekly duplicate certificate limit</code> or <code>global weekly certificate quota</code> respectively.</li>
+<li><strong>Fix</strong>: check the Private node's logs for frequent restarts or certificate files that can't be written, causing repeated retries. Normally it clears after a minute.</li>
+</ul>
+<h3 id="q4-where-are-certificates-stored-and-in-what-format">Q4: Where are certificates stored, and in what format?</h3>
+<ul>
+<li><strong>Location</strong>: the Private node's <code>auto_cert.certs_dir</code>.</li>
+<li><strong>Files</strong>:
+<ul>
+<li><code>tenant-a.example.com.crt</code>: the certificate chain issued by the CA;</li>
+<li><code>tenant-a.example.com.key</code>: the locally generated private key (AES-GCM ciphertext when <code>storage_secret</code> is set).</li>
+</ul>
+</li>
+</ul>
+<h2 id="related-docs-and-code">Related docs and code</h2>
+<ul>
+<li><a href="../09-advanced/connect.html">Connect configuration</a></li>
+<li><a href="certificate-application-guide.html">Certificate issuance methods</a></li>
+<li><a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/connect">Connect implementation</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/06-certificates/connect-csr-delegation.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs";
+mermaid.initialize({ startOnLoad: true, theme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default" });
+</script>
+</body>
+</html>

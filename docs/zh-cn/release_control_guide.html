@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>配置发布控制面（Release Control） · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html">首页</a>
+      <a href="../../guide.html">场景指南</a>
+      <a href="../../features.html">功能列表</a>
+      <a href="../../ecosystem.html">生态</a>
+      <a href="README.html" aria-current="page">文档</a>
+      <a href="../en/release_control_guide.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="README.html">文档首页</a></li><li><details><summary>用户手册</summary><ul><li><a href="user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="user/01-getting-started/build.html">源码构建指南</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="user/01-getting-started/installation.html">安装指南</a></li><li><a href="user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="user/03-configuration/api.html">管理接口概览</a></li><li><a href="user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>使用专题</summary><ul><li><a href="database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="ids-recipes.html">IDS 配方</a></li><li><a href="ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="release_control_guide.html" class="current" aria-current="page">配置发布控制面（Release Control）</a></li><li><a href="serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="配置发布控制面release-control">配置发布控制面（Release Control）</h1>
+<p>LiteGate 内置的<strong>配置发布控制</strong>能力：把对站点/流配置的修改先暂存为「草稿」，经过校验、确认 diff、显式「发布」后才真正生效；并保留每一次发布的历史，支持一键回滚。</p>
+<p>它管理的是配置版本，不是按百分比把请求灰度分流到新版本；也只约束经由 Dashboard / API / MCP 的修改，直接改磁盘文件或 KV 不经过草稿。</p>
+<blockquote>
+<p>一句话区别：默认模式下，改动配置文件即被 watcher 热加载、立刻生效；开启发布控制面后，Dashboard 的保存/删除会先进<strong>草稿</strong>，需要你<strong>显式发布</strong>才会落盘生效。这是一个「白盒、内生」的配置变更管控层，而不是外挂的 CI/CD。</p>
+</blockquote>
+<hr>
+<h2 id="1-适用场景与前提">1. 适用场景与前提</h2>
+<p>适合需要「改配置前先校验、确认、可回滚」的生产场景：</p>
+<ul>
+<li>改完配置希望先 dry-run 校验（schema、端口冲突、保留路径、安全告警），确认无误再生效；</li>
+<li>一次改多个文件，希望<strong>原子地</strong>一起生效，而不是边改边热加载产生中间态；</li>
+<li>需要变更历史与<strong>一键回滚</strong>到上一个已知良好版本；</li>
+<li>需要导出/导入整套配置快照做备份或迁移。</li>
+</ul>
+<h3 id="启用前提重要">启用前提（重要）</h3>
+<p>发布控制面支持本地文件、Consul 和 LiteMesh。配置后端由 <code>roles.config_watch</code> 决定；仅开启服务发现不会切换配置后端。KV 模式将站点和流配置保存到站点前缀下的 <code>_release.json</code>，以一次 CAS 写入提交完整快照。</p>
+<p>启动日志会明确告诉你当前状态：</p>
+<ul>
+<li>已启用：<code>Configuration release control plane successfully initialized</code></li>
+<li>未启用：<code>Configuration release control disabled.</code></li>
+</ul>
+<hr>
+<h2 id="2-如何启用">2. 如何启用</h2>
+<p>在主配置文件的 <code>dashboard</code> 段下打开 <code>release_control</code>：</p>
+<pre><code class="language-yaml">dashboard:
+  enabled: true
+  port: 9999
+  username: admin
+  password: &quot;your-strong-password&quot;
+  # 开启配置发布控制面
+  release_control:
+    enabled: true
+</code></pre>
+<p>同时满足以下条件才会真正启用：</p>
+<ol>
+<li><code>dashboard.enabled: true</code>（控制面通过 Dashboard 暴露）；</li>
+<li><code>dashboard.release_control.enabled: true</code>；</li>
+<li>当前配置后端可读写，发布历史目录可写。</li>
+</ol>
+<p>草稿与发布历史保存在本地：默认是站点目录同级的 <code>.litegate/releases/</code>，未配置站点目录时使用 <code>./.litegate/releases/</code>；可以通过 <code>dashboard.release_control.store_dir</code> 指定（详见第 8 节）。</p>
+<hr>
+<h2 id="3-核心概念">3. 核心概念</h2>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Release（发布版本）</strong></td>
+<td>一次配置快照，包含若干 ConfigArtifact、校验报告、diff 摘要、状态、创建/发布信息。</td>
+</tr>
+<tr>
+<td><strong>ConfigArtifact（配置制品）</strong></td>
+<td>一个配置文件单元。字段：<code>kind</code>（<code>site</code>/<code>stream</code>）、<code>name</code>（文件名，如 <code>example.com.yaml</code>）、<code>content</code>（YAML 原文）、<code>checksum</code>（SHA256）、<code>source</code>、<code>path</code>。</td>
+</tr>
+<tr>
+<td><strong>Draft（草稿）</strong></td>
+<td>尚未发布的工作版本。同一时刻只保留一个「当前草稿」。</td>
+</tr>
+<tr>
+<td><strong>Active（当前生效）</strong></td>
+<td>已写入配置后端并经当前网关同步重载确认的版本，由 <code>active.txt</code> 指针记录。</td>
+</tr>
+<tr>
+<td><strong>Previous（上一个生效）</strong></td>
+<td>上一个生效版本，由 <code>previous.txt</code> 指针记录，用于「回滚到上一版」。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="状态流转">状态流转</h3>
+<pre><code>draft ──validate──&gt; validated ──publish──&gt; active
+  │                     │                    │
+  │                     └──publish──&gt; active_with_warnings（发布成功但有非阻塞告警）
+  │
+  └──publish 校验失败──&gt; 保持 draft（报告写入 validation，不降级）
+                                            │
+                       rollback ──&gt; 旧 active 标记为 rolled_back，新建一条 active
+</code></pre>
+<p>状态常量：<code>draft</code>、<code>validated</code>、<code>publishing</code>、<code>active</code>、<code>active_with_warnings</code>、<code>failed</code>、<code>rolled_back</code>。</p>
+<blockquote>
+<p>说明：保存或删除时，若已存在 <code>draft</code>/<code>validated</code>/<code>failed</code> 的工作版本，会复用同一条草稿并把状态重置回 <code>draft</code>，<strong>不会</strong>丢失你之前暂存的改动。</p>
+</blockquote>
+<hr>
+<h2 id="4-在-dashboard-中使用">4. 在 Dashboard 中使用</h2>
+<p>开启发布控制面后，Dashboard 现有的「保存配置 / 删除配置」行为发生变化（MCP 的 <code>save_site_config</code> / <code>save_stream_config</code> 等写操作同样只写入草稿）：</p>
+<ol>
+<li><strong>保存/删除</strong> → 改动进入<strong>当前草稿</strong>，接口返回 <code>requires_publish: true</code> 与 <code>draft_id</code>，配置<strong>尚未生效</strong>；</li>
+<li>前端会弹出提示「已保存为草稿（ID: …），是否立即发布？」：
+<ul>
+<li>选「是」→ 调用发布接口，配置落盘、watcher 热加载、立即生效；</li>
+<li>选「否」→ 改动留在草稿中，可稍后通过 API 校验/发布。</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>常见疑问：<strong>「我点了保存，为什么站点没生效？」</strong>
+因为开启了发布控制面,保存只入草稿。请在弹窗里确认发布,或调用 <code>POST /api/releases/{id}/publish</code>。</p>
+</blockquote>
+<hr>
+<h2 id="5-工作流推荐顺序">5. 工作流（推荐顺序）</h2>
+<pre><code>保存改动（入草稿）
+   └─&gt; （可选）校验草稿  POST /api/releases/{id}/validate
+        └─&gt; 查看 diff    GET  /api/releases/{id}/diff
+             └─&gt; 发布     POST /api/releases/{id}/publish   ← 发布内部会再次 dry-run 校验
+                  └─&gt; 如有问题 一键回滚  POST /api/releases/previous/rollback
+</code></pre>
+<p>要点：</p>
+<ul>
+<li><strong>发布会自带 dry-run 校验</strong>：即使你跳过 <code>validate</code> 直接 <code>publish</code>，发布前也会强制校验；校验不通过则中止、配置不落盘。</li>
+<li><strong>发布是原子的</strong>：本地实现采用「临时文件 → 备份原文件 → 原子 rename → 清理」的方式，跨 <code>sites/</code> 与 <code>streams/</code> 两个目录统一提交；任一步失败会回滚全部改动,生产目录不会留下半成品或残留的 <code>.tmp-*/.bak-*</code> 文件。</li>
+<li><strong>回滚也是一次发布</strong>：回滚会新建一条发布记录（保留审计轨迹），并把被替换的旧 active 标记为 <code>rolled_back</code>。</li>
+</ul>
+<hr>
+<h2 id="6-api-参考">6. API 参考</h2>
+<p>所有接口都需要通过 Dashboard 鉴权（见 <a href="#%E9%89%B4%E6%9D%83">鉴权</a>），路径前缀随 Dashboard 的反代前缀而定，下文以根路径为例。</p>
+<h3 id="61-release-管理apireleases">6.1 Release 管理：<code>/api/releases</code></h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>路径</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/releases</code></td>
+<td>列出全部发布版本（按创建时间倒序）。</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/releases</code></td>
+<td>用请求体的 artifact 列表创建/更新草稿。<strong>见下方全量替换警告</strong>。</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/releases/{id}</code></td>
+<td>获取单个发布版本详情。</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/releases/{id}/validate</code></td>
+<td>对草稿执行 dry-run 校验，返回校验报告。</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/releases/{id}/publish</code></td>
+<td>发布指定版本（发布前自动校验）。</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/releases/{id}/rollback</code></td>
+<td>回滚。<code>{id}</code> 传 <code>previous</code> 表示回滚到上一个生效版本，传具体 release ID 表示回滚到该版本。</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/releases/{id}/diff</code></td>
+<td>返回该版本相对<strong>当前物理生效配置</strong>的差异（add/modify/delete）。</td>
+</tr>
+</tbody>
+</table>
+<p>返回统一为 <code>{ &quot;success&quot;: &lt;bool&gt;, &quot;data&quot;: &lt;对象&gt; }</code>。</p>
+<blockquote>
+<p>⚠️ <strong><code>POST /api/releases</code> 是「声明式全量替换」语义。</strong>
+草稿 = 请求体里给出的 artifact <strong>全集</strong>。发布该草稿时，发布逻辑会删除生产目录里<strong>不在该列表中的</strong>所有 <code>.yaml/.yml</code> 配置。
+这意味着：如果你只 POST 了一个文件就发布，其余站点/流配置会被清空。
+在 Dashboard 里走「保存→发布」流程是安全的（它会从当前草稿/生效配置累积全集）；但如果你用脚本直接对接这个裸接口，<strong>务必传完整集合</strong>，否则会误删配置。</p>
+</blockquote>
+<p><strong>创建草稿请求体示例：</strong></p>
+<pre><code class="language-json">[
+  {
+    &quot;kind&quot;: &quot;site&quot;,
+    &quot;name&quot;: &quot;example.com.yaml&quot;,
+    &quot;content&quot;: &quot;site: example.com\nrespond: OK\n&quot;
+  }
+]
+</code></pre>
+<p><strong>发布示例（curl，使用 API Token）：</strong></p>
+<pre><code class="language-bash"># 1. 校验
+curl -X POST -H &quot;X-API-Key: $TOKEN&quot; \
+  http://127.0.0.1:9999/api/releases/20260627-153411-a1b2c3d4/validate
+
+# 2. 查看 diff
+curl -H &quot;X-API-Key: $TOKEN&quot; \
+  http://127.0.0.1:9999/api/releases/20260627-153411-a1b2c3d4/diff
+
+# 3. 发布
+curl -X POST -H &quot;X-API-Key: $TOKEN&quot; \
+  http://127.0.0.1:9999/api/releases/20260627-153411-a1b2c3d4/publish
+
+# 4. 出问题，回滚到上一版
+curl -X POST -H &quot;X-API-Key: $TOKEN&quot; \
+  http://127.0.0.1:9999/api/releases/previous/rollback
+</code></pre>
+<h3 id="62-快照导入导出apisnapshot">6.2 快照导入导出：<code>/api/snapshot/*</code></h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>路径</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/snapshot/export</code></td>
+<td>导出当前<strong>物理生效</strong>的全部配置为快照 JSON（附 <code>Content-Disposition</code>，含 <code>exported_at</code> 与 artifacts；导出时会清除平台相关绝对路径以便迁移）。</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/snapshot/import</code></td>
+<td>导入快照 JSON，<strong>作为草稿</strong>落地（不直接生效）。请求体上限 10MB；会校验 artifact 文件名安全性。</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/snapshot/resolved-sites</code></td>
+<td>导出运行时<strong>已解析</strong>的站点视图（含动态发现解析后的路由），用于排查与留档。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="鉴权">鉴权</h3>
+<p>复用 Dashboard 的鉴权（<code>checkAuth</code>）：</p>
+<ul>
+<li><strong>API Token</strong>（自动化优先）：请求头 <code>X-API-Key: &lt;dashboard.token&gt;</code>，命中即放行，且<strong>不触发 CSRF 校验</strong>；</li>
+<li><strong>Cookie 会话</strong>（浏览器）：登录后携带签名 Cookie，写操作（POST/DELETE/PUT）会额外校验 <code>Origin</code>/<code>Referer</code>（CSRF 防护）。</li>
+</ul>
+<hr>
+<h2 id="7-校验都查什么">7. 校验都查什么</h2>
+<p>发布/校验时，会在一个<strong>临时目录</strong>里用独立的 loader 实例 dry-run 加载（不污染线上 loader、不读写生产路径），并执行以下检查：</p>
+<ul>
+<li><strong>Schema 解析</strong>：站点与流配置能否正确解析、加载；</li>
+<li><strong>端口冲突</strong>：同 <code>域名:端口</code> 重复定义、同 <code>端口/协议</code> 的 L4 流重复监听（报错，阻塞发布）；</li>
+<li><strong>保留路径冲突</strong>：路由是否直接命中 <code>/_litegate</code>、<code>/healthz</code>、<code>/readyz</code>、<code>/metrics</code>、<code>/pprof</code> 等内部端点（精确/前缀匹配报错，DSL 规则中包含关键字给告警）；</li>
+<li><strong>安全最佳实践</strong>：proxy 路由开启 <code>insecure_skip_verify: true</code> 会产生<strong>告警</strong>（不阻塞，发布后状态变为 <code>active_with_warnings</code>）。</li>
+</ul>
+<blockquote>
+<p>错误（errors）会阻塞发布；告警（warnings）不阻塞，但会记录在校验报告并使发布状态标记为「带告警生效」。</p>
+</blockquote>
+<hr>
+<h2 id="8-存储与限制">8. 存储与限制</h2>
+<ul>
+<li><strong>存储位置</strong>：<code>dashboard.release_control.store_dir</code>，默认位置见第 2 节。
+<ul>
+<li><code>revisions/{id}/manifest.json</code>：每个版本的完整记录；</li>
+<li><code>active.txt</code> / <code>previous.txt</code>：当前 / 上一个生效版本指针。</li>
+</ul>
+</li>
+<li><strong>Release ID</strong>：<code>YYYYMMDD-HHMMSS-&lt;随机十六进制&gt;</code>，按时间可排序。</li>
+<li><strong>暂无自动保留/清理策略</strong>：历史版本会持续累积，长期运行需自行清理 <code>revisions/</code> 目录（可保留最近 N 个）。</li>
+<li><strong>提交与回滚</strong>：先读取完整备份，再提交配置，同步检查当前网关重载结果，最后更新历史指针。配置重载或历史提交失败会恢复配置并再次重载；恢复失败会随原错误一起返回。进程中途退出和不可恢复的磁盘故障仍需要人工核对。</li>
+<li><strong>KV 快照</strong>：首次发布后 <code>_release.json</code> 成为站点和流配置的权威来源；旧的逐文件 KV 键保留用于迁移恢复，不再参与加载。Dashboard/MCP 直接编辑会更新快照。请通过发布接口或快照修改配置，避免继续编辑旧键。CAS 冲突会拒绝发布或补偿回滚，防止覆盖另一网关较新的配置。</li>
+<li><strong>集群确认范围</strong>：发布响应确认当前网关的重载结果；其他实例通过 watcher 加载完整快照，不提供所有节点确认屏障。发布历史仍保存在当前实例本地，请持久化该目录。</li>
+</ul>
+<hr>
+<h2 id="9-faq">9. FAQ</h2>
+<p><strong>Q：开了发布控制面，Dashboard 保存后站点不生效？</strong>
+A：这是预期行为。保存只入草稿，需在弹窗确认发布，或调用 <code>POST /api/releases/{id}/publish</code>。</p>
+<p><strong>Q：Consul/LiteMesh 如何使用发布控制面？</strong>
+A：打开 <code>dashboard.release_control.enabled</code> 即可，<code>roles.config_watch</code> 决定写入的 KV 后端。首次发布会将现有站点和流配置迁移为单个完整快照；所有消费该快照的网关应升级到支持快照的版本。</p>
+<p><strong>Q：我用脚本 POST <code>/api/releases</code> 后发布，别的站点不见了？</strong>
+A：该接口是声明式全量替换，草稿即你给的全集，发布会清理不在集合内的配置。请传完整集合，或改走 Dashboard 的「保存→发布」累积流程。</p>
+<p><strong>Q：发布失败了，草稿还在吗？</strong>
+A：在。发布前校验不通过时，草稿不会被降级删除，校验报告会写入该版本，修正后可重新发布。</p>
+<p><strong>Q：怎么回滚？</strong>
+A：<code>POST /api/releases/previous/rollback</code> 回滚到上一个生效版本；也可对具体 release ID 回滚。回滚会新建一条审计记录并将旧版本标记为 <code>rolled_back</code>。</p>
+<hr>
+<h2 id="相关文档">相关文档</h2>
+<ul>
+<li><a href="user/08-observability/dashboard.html">Dashboard 管理控制台</a></li>
+<li><a href="user/03-configuration/site-config.html">站点配置</a></li>
+<li><a href="user/03-configuration/stream-config.html">L4 Stream 配置</a></li>
+<li><a href="user/08-observability/dashboard-api.html">Dashboard API 参考</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/release_control_guide.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

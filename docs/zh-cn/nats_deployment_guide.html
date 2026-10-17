@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate &#43; NATS 联动部署指南(Linux) · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html">首页</a>
+      <a href="../../guide.html">场景指南</a>
+      <a href="../../features.html">功能列表</a>
+      <a href="../../ecosystem.html">生态</a>
+      <a href="README.html" aria-current="page">文档</a>
+      <a href="../en/nats_deployment_guide.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="README.html">文档首页</a></li><li><details><summary>用户手册</summary><ul><li><a href="user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="user/01-getting-started/build.html">源码构建指南</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="user/01-getting-started/installation.html">安装指南</a></li><li><a href="user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="user/03-configuration/api.html">管理接口概览</a></li><li><a href="user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>使用专题</summary><ul><li><a href="database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="ids-recipes.html">IDS 配方</a></li><li><a href="ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="nats_deployment_guide.html" class="current" aria-current="page">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="litegate--nats-联动部署指南linux">LiteGate + NATS 联动部署指南(Linux)</h1>
+<blockquote>
+<p>从零把 <strong>浏览器 → LiteGate → NATS → Go 消费者 → 浏览器</strong> 这条链路跑通。</p>
+<p>本文档的每一步配置都来自实际跑通的环境,不是示意。</p>
+<p>相关文档:<a href="./nats_capability_matrix.html">能力矩阵与消费者契约</a> · <a href="user/04-actions/nats-sse.html">NATS SSE 实时推送</a> · <a href="user/04-actions/nats-events.html">可靠事件通知</a></p>
+</blockquote>
+<hr>
+<h2 id="0-拓扑与部署顺序">0. 拓扑与部署顺序</h2>
+<pre><code>        浏览器 / 业务方
+              │ HTTP
+              ▼
+  ┌───────────────────────┐
+  │  LiteGate             │  :80 / :443   业务流量
+  │  内置 NATS Action     │  :9100        指标(仅本机)
+  └───────────┬───────────┘
+              │ TCP 4222
+              ▼
+  ┌───────────────────────┐
+  │  NATS Server          │  :4222        客户端
+  │                       │  :8222        监控(仅本机)
+  └───────────┬───────────┘
+              │ TCP 4222
+              ▼
+  ┌───────────────────────┐
+  │  natsconsume          │  :9101        指标(仅本机)
+  │  (Go 消费者)          │
+  └───────────────────────┘
+</code></pre>
+<p><strong>按这个顺序部署,每步都能独立验证:</strong></p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>部署</th>
+<th>验证方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>NATS Server</td>
+<td><code>nats-server --version</code>、监控端口有响应</td>
+</tr>
+<tr>
+<td>2</td>
+<td>LiteGate</td>
+<td>访问 <code>/hello</code> 返回 <strong>503 + <code>no_responders</code></strong> ← <strong>这是正确的中间状态</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>消费者</td>
+<td>访问 <code>/hello</code> 返回 200</td>
+</tr>
+</tbody>
+</table>
+<p>第 2 步那个 503 很关键:它证明<strong>网关到 NATS 这半条链路已经通了</strong>,只是还没有消费者。如果这时报的不是 <code>no_responders</code> 而是 <code>unavailable</code>,说明问题在网关连不上 NATS,而不是缺消费者 —— 两者的排查方向完全不同。</p>
+<hr>
+<h2 id="1-部署-nats-server">1. 部署 NATS Server</h2>
+<h3 id="11-安装">1.1 安装</h3>
+<p>官方一键脚本会把二进制下载到当前目录,再自行移到 <code>PATH</code>:</p>
+<pre><code class="language-bash"># NATS Server
+curl -sf https://binaries.nats.dev/nats-io/nats-server/v2@latest | sh
+sudo mv nats-server /usr/local/bin/
+nats-server --version          # nats-server: v2.14.6
+
+# nats CLI —— 排障时最有用的工具,强烈建议一起装
+curl -sf https://binaries.nats.dev/nats-io/natscli/nats@latest | sh
+sudo mv nats /usr/local/bin/
+nats --version
+</code></pre>
+<blockquote>
+<p>⚠️ <strong><code>@latest</code> 解析到的是 commit 而不是 tag</strong>(安装输出里的 <code>Resolved version latest to 1aa10f9</code> 就是)。同一条命令在不同时间跑会装出不同的构建。生产环境请把版本固定下来,或把二进制纳入你自己的制品库,否则重装机器时拿到的不是同一个版本。</p>
+</blockquote>
+<h3 id="12-用户与目录">1.2 用户与目录</h3>
+<pre><code class="language-bash">sudo useradd --system --no-create-home --shell /usr/sbin/nologin nats
+sudo mkdir -p /etc/nats /var/lib/nats
+sudo chown -R nats:nats /var/lib/nats
+</code></pre>
+<h3 id="13-配置内网最小配置">1.3 配置(内网最小配置)</h3>
+<p><code>/etc/nats/nats-server.conf</code>:</p>
+<pre><code class="language-hocon">server_name: nats-1
+listen: 0.0.0.0:4222
+
+# 监控端口只绑本机:它没有鉴权,暴露出去等于泄漏内部拓扑
+http: 127.0.0.1:8222
+
+# 单条消息上限。必须 ≥ 路由的 max_request_body,
+# 否则超限的请求会在发布时被服务端拒绝
+max_payload: 2MB
+
+# JetStream。同步 hello world 用不到,但提前打开可以省一次重启;
+# mode: jetstream_publish 的可靠异步必须要它
+jetstream {
+  store_dir: /var/lib/nats/jetstream
+}
+</code></pre>
+<p>就这些。<strong>没有配置鉴权</strong> —— 内网跑通阶段配置越少越好,变量越少越容易定位问题。</p>
+<blockquote>
+<p>🔒 <strong>代价要清楚:4222 现在对任何能连上它的人完全开放</strong> —— 可以订阅任意 subject、可以发布任意消息。<strong>此时防火墙是唯一的防护</strong>,所以 1.5 节那步不能省。</p>
+<p>正式上线前再加账号权限,配置见第 6 节的加固清单。</p>
+</blockquote>
+<h3 id="14-systemd">1.4 systemd</h3>
+<p><code>/etc/systemd/system/nats.service</code>:</p>
+<pre><code class="language-ini">[Unit]
+Description=NATS Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=nats
+Group=nats
+ExecStart=/usr/local/bin/nats-server -c /etc/nats/nats-server.conf
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=5
+LimitNOFILE=65536
+
+# 加固:除数据目录外全部只读
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/lib/nats
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<pre><code class="language-bash">sudo systemctl daemon-reload
+sudo systemctl enable --now nats
+sudo systemctl status nats --no-pager
+</code></pre>
+<h3 id="15-防火墙--没有鉴权时这一步不能省">1.5 防火墙 —— 没有鉴权时这一步不能省</h3>
+<p><strong>4222 只对网关和消费者所在主机开放</strong>,绝不能对公网开:</p>
+<pre><code class="language-bash">sudo ufw allow from &lt;litegate_ip&gt; to any port 4222 proto tcp
+sudo ufw allow from &lt;consumer_ip&gt; to any port 4222 proto tcp
+sudo ufw reload
+</code></pre>
+<p>单机全在一台服务器上跑的话,把 <code>listen</code> 改成 <code>127.0.0.1:4222</code> 更省事,连防火墙都不用配。</p>
+<h3 id="16-验证">1.6 验证</h3>
+<pre><code class="language-bash"># 服务端自身状态
+curl -s http://127.0.0.1:8222/varz | head -20
+
+# 连通性
+nats --server nats://127.0.0.1:4222 server check connection
+
+# 收发自测:开两个终端
+nats --server nats://127.0.0.1:4222 sub 'demo.&gt;'          # 终端 1
+nats --server nats://127.0.0.1:4222 pub demo.test 'hi'     # 终端 2
+</code></pre>
+<p>终端 1 能收到 <code>hi</code>,说明 NATS 这一层就绪了。</p>
+<hr>
+<h2 id="2-部署-litegate">2. 部署 LiteGate</h2>
+<h3 id="21-编译">2.1 编译</h3>
+<p><strong>NATS Action 已默认编译进标准二进制，无需额外 build tag。</strong> 未配置 NATS 路由时采用懒连接，不会主动连接 NATS Server。</p>
+<pre><code class="language-bash">cd /path/to/LiteGate
+CGO_ENABLED=0 GOOS=linux go build -ldflags=&quot;-s -w&quot; -o bin/litegate ./cmd/litegate
+</code></pre>
+<blockquote>
+<p>⚠️ 编译目标必须是 <strong>package</strong>（<code>./cmd/litegate</code>），不能是单个文件（<code>./cmd/litegate/main.go</code>）。后者会把同 package 下的 <code>plugins.go</code> 排除掉，插件的 <code>init()</code> 不会执行。</p>
+</blockquote>
+<p><strong>立刻自检</strong>,别等站点加载失败才发现:</p>
+<pre><code class="language-bash">./bin/litegate plugins list
+</code></pre>
+<p>输出里必须有:</p>
+<pre><code>KIND             NAME                             VERSION        API
+action           nats                             -              -
+</code></pre>
+<p>Docker 构建:</p>
+<pre><code class="language-bash">docker build -t litegate:nats .
+</code></pre>
+<h3 id="22-目录结构">2.2 目录结构</h3>
+<pre><code class="language-bash">sudo mkdir -p /opt/litegate/{bin,sites,certs}
+sudo install -m 0755 bin/litegate /opt/litegate/bin/litegate
+sudo useradd --system --no-create-home --shell /usr/sbin/nologin litegate
+sudo chown -R litegate:litegate /opt/litegate
+</code></pre>
+<pre><code>/opt/litegate/
+├── bin/litegate
+├── config.yaml            # 主配置
+├── plugin-config.yaml     # 插件配置:NATS 连接与凭据
+├── sites/
+│   └── demo.yaml          # 站点与路由
+└── certs/
+</code></pre>
+<h3 id="23-configyaml">2.3 <code>config.yaml</code></h3>
+<pre><code class="language-yaml">mode: observability
+sites_dir: &quot;/opt/litegate/sites&quot;
+
+entrypoints:
+    web:
+        address: &quot;:80&quot;
+
+http:
+    port: 80
+    https_port: 443
+
+# 插件配置文件。watch: true 支持热更新连接参数,
+# 网关会 make-before-break 切换连接,在途请求不受影响。
+plugin_config:
+    path: /opt/litegate/plugin-config.yaml
+    watch: true
+
+# 指标只绑本机,由 Prometheus 通过内网抓取或经反代暴露
+metrics:
+    enabled: true
+    address: &quot;127.0.0.1&quot;
+    port: 9100
+</code></pre>
+<h3 id="24-plugin-configyaml">2.4 <code>plugin-config.yaml</code></h3>
+<pre><code class="language-yaml">plugins:
+  nats:
+    connections:
+      demo:
+        servers: &quot;nats://127.0.0.1:4222&quot;   # NATS 在别的机器就换成它的地址
+        connect_timeout: &quot;3s&quot;
+        reconnect_wait: &quot;1s&quot;
+        max_reconnects: &quot;-1&quot;               # -1 = 无限重连
+</code></pre>
+<p>NATS 尚未开鉴权,所以这里不需要 <code>user</code>/<code>password</code>。加了鉴权之后补上即可,格式见第 6 节。</p>
+<ul>
+<li>
+<p>多个地址用<strong>逗号分隔</strong>写在一个字符串里:<code>&quot;nats://a:4222,nats://b:4222&quot;</code></p>
+</li>
+<li>
+<p><code>servers</code> 缺失时<strong>直接报错</strong>,不会静默回退到 localhost</p>
+</li>
+<li>
+<p>NATS 启用 TLS 时,<code>servers</code> 写 <code>tls://host:4222</code>,并可配下列键(文件在拨号时读取,证书轮换需重启或改动连接配置触发重连):</p>
+<table>
+<thead>
+<tr>
+<th>键</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tls_ca</code></td>
+<td>校验服务端证书的 CA(PEM)。私有 CA 必填,否则走系统根证书</td>
+</tr>
+<tr>
+<td><code>tls_cert</code> / <code>tls_key</code></td>
+<td>客户端证书与私钥(mTLS),必须成对配置,否则加载期报错</td>
+</tr>
+<tr>
+<td><code>tls_server_name</code></td>
+<td>覆盖证书校验用的主机名(按 IP 连接、证书只签了域名时用)</td>
+</tr>
+<tr>
+<td><code>tls_first</code></td>
+<td><code>true</code> 时先握手再收 INFO,对应服务端 <code>handshake_first</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>所有值都经 <code>os.ExpandEnv</code> 展开。<strong>含 <code>$</code> 字面量的密码会被误展开成空串</strong> —— 将来配密码时如果撞上这点,改用 <code>credentials</code> 指向 <code>.creds</code> 文件</p>
+</li>
+</ul>
+<h3 id="25-sitesdemoyaml">2.5 <code>sites/demo.yaml</code></h3>
+<pre><code class="language-yaml">site: &quot;:80&quot;                       # 或换成你的域名
+routes:
+  - name: hello-nats
+    match: {path: /hello}
+    action:
+      type: nats
+      mode: request
+      connection: demo            # 对应 plugin-config.yaml 里的连接名
+      subject: demo.hello.v1
+      max_in_flight: 100          # 在途上限,超了立即 429,不让洪峰压垮消费者
+      timeout: 5                  # 等待 Reply 的秒数;亚秒精度用 request_timeout: 500ms
+</code></pre>
+<blockquote>
+<p>路由级 <code>timeout</code> 是整数秒,写成 <code>timeout: 5s</code> 会让站点加载失败。需要 <code>500ms</code> 这类时长时改用 <code>request_timeout</code>,两者都写时 <code>request_timeout</code> 优先。</p>
+</blockquote>
+<h3 id="26-systemd">2.6 systemd</h3>
+<p><code>/etc/systemd/system/litegate.service</code>:</p>
+<pre><code class="language-ini">[Unit]
+Description=LiteGate
+After=network-online.target nats.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=litegate
+Group=litegate
+WorkingDirectory=/opt/litegate
+ExecStart=/opt/litegate/bin/litegate -config /opt/litegate/config.yaml
+Restart=always
+RestartSec=5
+LimitNOFILE=65536
+
+# 绑定 80/443 但不以 root 运行
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/opt/litegate
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<pre><code class="language-bash">sudo systemctl daemon-reload
+sudo systemctl enable --now litegate
+sudo journalctl -u litegate -f
+</code></pre>
+<p>启动日志里应该看到:</p>
+<pre><code>Shared plugin configuration loaded  path:/opt/litegate/plugin-config.yaml version:1
+Loaded generic site                 domain:0.0.0.0 mode:yaml
+LiteGate HTTP starting on :80
+</code></pre>
+<h3 id="27--阶段验证--此时应该是-503">2.7 ✅ 阶段验证 —— 此时应该是 503</h3>
+<p><strong>消费者还没部署,所以现在访问必须返回 503。这是成功的标志,不是失败。</strong></p>
+<pre><code class="language-bash">curl -i http://127.0.0.1/hello
+# HTTP/1.1 503 Service Unavailable
+</code></pre>
+<p>关键是确认<strong>原因</strong>:</p>
+<pre><code class="language-bash">curl -s http://127.0.0.1:9100/metrics | grep litegate_nats_requests_total
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>看到什么</th>
+<th>含义</th>
+<th>下一步</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>result=&quot;no_responders&quot;</code></td>
+<td>✅ <strong>网关↔NATS 已通,只是没有消费者</strong></td>
+<td>继续第 3 步</td>
+</tr>
+<tr>
+<td><code>result=&quot;unavailable&quot;</code></td>
+<td>❌ 网关连不上 NATS</td>
+<td>查 4222 连通性、账号密码、防火墙</td>
+</tr>
+<tr>
+<td>没有任何 <code>litegate_nats_*</code></td>
+<td>❌ 请求根本没进插件</td>
+<td>查路由是否匹配、<code>plugins list</code> 是否有 nats</td>
+</tr>
+</tbody>
+</table>
+<p>再看连接状态:</p>
+<pre><code class="language-bash">curl -s http://127.0.0.1:9100/metrics | grep litegate_nats_connection_status
+# litegate_nats_connection_status{connection=&quot;demo&quot;} 1     ← 1 = 连接正常
+</code></pre>
+<hr>
+<h2 id="3-部署消费者">3. 部署消费者</h2>
+<p>下面用的消费者模板是一个<strong>独立项目</strong>(<code>ecp.natsconsume.template.v1</code>),完整说明见该仓库的 <code>docs/extend_consumer.md</code>。没有这个项目时,用任意语言的 NATS 客户端按 <a href="./nats_capability_matrix.html#7-%E6%B6%88%E8%B4%B9%E8%80%85%E5%AE%9E%E7%8E%B0%E5%A5%91%E7%BA%A6">消费者契约</a> 实现即可。这里只给跑通 hello world 的最小配置。</p>
+<pre><code class="language-bash">cd /path/to/ecp.natsconsume.template.v1
+make linux                    # 产物在 cmd/bin/,版本号由 git describe 注入
+
+sudo mkdir -p /opt/natsconsume
+sudo install -m 0755 cmd/bin/natsconsume_linux_amd64 /opt/natsconsume/natsconsume
+/opt/natsconsume/natsconsume -version
+</code></pre>
+<p>在 Windows 上交叉编译 Linux 产物也是同一条命令 —— <code>make all</code> 会一次编出 Windows / Linux(x64、ARM)/ macOS 五个平台,结束后自动复位 <code>GOOS/GOARCH</code>。</p>
+<p><code>natsconsume.json</code>:</p>
+<pre><code class="language-jsonc">{
+  &quot;app&quot;: {
+    &quot;instance_lock&quot;: &quot;/var/run/natsconsume.lock&quot;,
+    &quot;shutdown_timeout&quot;: &quot;30s&quot;,
+    &quot;log_level&quot;: &quot;info&quot;,
+    &quot;metrics_addr&quot;: &quot;127.0.0.1:9101&quot;
+  },
+  &quot;nats&quot;: {
+    &quot;servers&quot;: &quot;nats://127.0.0.1:4222&quot;,
+    &quot;connect_timeout&quot;: &quot;3s&quot;,
+    &quot;reconnect_wait&quot;: &quot;1s&quot;,
+    &quot;max_reconnects&quot;: -1
+  },
+  &quot;subscriptions&quot;: [
+    {
+      &quot;enabled&quot;: true,
+      &quot;subject&quot;: &quot;demo.hello.v1&quot;,       // 必须与路由里的 subject 完全一致
+      &quot;queue_group&quot;: &quot;hello_workers&quot;,   // 同组实例自动负载分担
+      &quot;classname&quot;: &quot;hello&quot;,
+      &quot;command&quot;: &quot;demo.hello&quot;,
+      &quot;mode&quot;: &quot;request&quot;,                // 必须与路由的 mode 对应
+      &quot;concurrency&quot;: 4,
+      &quot;queue_size&quot;: 32,
+      &quot;timeout&quot;: &quot;5s&quot;
+    }
+  ],
+  &quot;handlers&quot;: {}
+}
+</code></pre>
+<blockquote>
+<p>配置文件支持 <code>//</code> 注释(上面示例里的就是),解析时会自动剥掉,且不影响 <code>nats://</code> 这类 URL。</p>
+</blockquote>
+<p><strong>三处必须与网关对齐</strong>,不一致的表现各不相同:</p>
+<table>
+<thead>
+<tr>
+<th>配置项</th>
+<th>不一致的后果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>subject</code></td>
+<td>消息发出去没人收 → 网关 <code>no_responders</code> → 503</td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td><code>request</code> ↔ <code>jetstream</code> 对不上,消费者启动期报错或永远收不到消息</td>
+</tr>
+<tr>
+<td><code>envelope</code></td>
+<td>消费者只支持 <code>nats_headers</code>(默认)。网关若配 <code>envelope_mode: envelope_json</code>,消费者<strong>启动期直接报错</strong></td>
+</tr>
+</tbody>
+</table>
+<p>启动:</p>
+<pre><code class="language-bash">/opt/natsconsume/natsconsume -config natsconsume.json
+</code></pre>
+<p>日志应出现:</p>
+<pre><code>natsconsume starting      version=v1.0.0-3-g2ee1738
+connected to NATS         connection=default url=nats://127.0.0.1:4222
+request consumer started  capacity=36 classname=hello subject=demo.hello.v1
+application started       handlers=[&quot;echo&quot;,&quot;hello&quot;]
+</code></pre>
+<hr>
+<h2 id="4-端到端验证">4. 端到端验证</h2>
+<pre><code class="language-bash">curl -s &quot;http://127.0.0.1/hello?name=LiteGate&quot; | head -5
+</code></pre>
+<p>浏览器打开 <code>http://&lt;网关IP&gt;/hello?name=LiteGate</code>,会看到一个由<strong>消费者</strong>生成的页面,上面列出:</p>
+<ul>
+<li><strong>Request ID</strong> —— 网关生成的 UUID,客户端伪造不了,同时是全链路追踪和业务幂等的键</li>
+<li><strong>Query</strong> —— <code>name=LiteGate</code>,证明 query string 完整穿过了整条链路</li>
+<li><strong>剩余 deadline</strong> —— 网关传下来的绝对截止时间</li>
+</ul>
+<p>两侧指标确认:</p>
+<pre><code class="language-bash"># 网关
+curl -s http://127.0.0.1:9100/metrics | grep 'litegate_nats_requests_total'
+# litegate_nats_requests_total{...,result=&quot;ok&quot;,status=&quot;200&quot;,...} 1
+
+# 消费者
+curl -s http://127.0.0.1:9101/metrics | grep 'consumer_messages_total'
+# consumer_messages_total{...,result=&quot;ok&quot;,...} 1
+</code></pre>
+<p><strong>两边计数应当一致。</strong> 不一致说明有消息在中间被丢了 —— 通常是 NATS 权限或 subject 拼写问题。</p>
+<hr>
+<h2 id="5-排障对照表">5. 排障对照表</h2>
+<p>诊断的第一步永远是看 <code>result</code> 标签,而不是 HTTP 状态码 —— 同样是 503,原因可能完全不同。</p>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th><code>result</code></th>
+<th>原因</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>503</td>
+<td><code>no_responders</code></td>
+<td>没有消费者订阅该 subject</td>
+<td>查消费者是否在跑、subject 是否拼错</td>
+</tr>
+<tr>
+<td>503</td>
+<td><code>unavailable</code></td>
+<td>网关连不上 NATS</td>
+<td>查 4222 连通、账号密码、防火墙</td>
+</tr>
+<tr>
+<td>503</td>
+<td><code>rejected</code></td>
+<td>在途超过 <code>max_in_flight</code></td>
+<td>加消费者实例或调大上限</td>
+</tr>
+<tr>
+<td>504</td>
+<td><code>timeout</code></td>
+<td>消费者 5s 内没回复</td>
+<td>看消费者的 <code>queue_wait</code> 与 <code>handler_duration</code></td>
+</tr>
+<tr>
+<td>502</td>
+<td><code>bad_reply</code></td>
+<td>回复格式非法</td>
+<td>状态码必须 200–599;<code>request_id</code> 必须一致</td>
+</tr>
+<tr>
+<td>413</td>
+<td><code>too_large</code></td>
+<td>请求体超 <code>max_request_body</code></td>
+<td>调大该值,并确认 ≤ NATS <code>max_payload</code></td>
+</tr>
+<tr>
+<td>启动失败</td>
+<td>—</td>
+<td><code>unknown action type: nats</code></td>
+<td>编译了单文件而非 <code>./cmd/litegate</code> package，或使用了不含 NATS 的旧版本二进制</td>
+</tr>
+<tr>
+<td>启动失败</td>
+<td>—</td>
+<td><code>cannot unmarshal !!str '5s' into int</code></td>
+<td>路由级 <code>timeout</code> 只接受整数秒,改成 <code>timeout: 5</code> 或 <code>request_timeout: 5s</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="慢先分清是排队还是业务慢">慢:先分清是&quot;排队&quot;还是&quot;业务慢&quot;</h3>
+<p>这两个数的<strong>比值</strong>决定处方,而处方是相反的:</p>
+<pre><code class="language-bash">curl -s http://127.0.0.1:9101/metrics | grep -E 'consumer_(queue_wait|handler_duration)_seconds_sum'
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>结论</th>
+<th>处方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>queue_wait 大、handler_duration 小</td>
+<td>并发不够</td>
+<td>加 <code>concurrency</code> 或加实例</td>
+</tr>
+<tr>
+<td>queue_wait 小、handler_duration 大</td>
+<td>业务或数据库慢</td>
+<td>优化 SQL</td>
+</tr>
+<tr>
+<td>两者都大</td>
+<td>先治业务</td>
+<td><strong>加并发只会让数据库更糟</strong></td>
+</tr>
+</tbody>
+</table>
+<p>只看总延迟区分不了,而猜错方向会让情况更坏。</p>
+<h3 id="常用命令">常用命令</h3>
+<pre><code class="language-bash"># 谁在订阅这个 subject?
+nats --server nats://127.0.0.1:4222 sub 'demo.&gt;' --count=1
+
+# 直接向 subject 发请求,绕开网关 —— 用来判断问题在网关还是消费者
+nats --server nats://127.0.0.1:4222 request demo.hello.v1 '' --timeout=5s
+
+# 服务端连接数与慢消费者统计
+curl -s http://127.0.0.1:8222/connz | head -30
+</code></pre>
+<p>第二条命令是<strong>最有效的二分手段</strong>:它能直接回答&quot;是网关的问题还是消费者的问题&quot;。</p>
+<hr>
+<h2 id="6-生产加固清单">6. 生产加固清单</h2>
+<p><strong>安全 —— 内网跑通后、正式上线前必须补齐</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>给 NATS 加上账号权限</strong>(跑通阶段跳过了,配置见下)</li>
+<li><input disabled="" type="checkbox"> 4222 不对公网开放,只放行网关与消费者主机</li>
+<li><input disabled="" type="checkbox"> 8222 监控端口只绑 <code>127.0.0.1</code>(它没有鉴权)</li>
+<li><input disabled="" type="checkbox"> 凭据走环境变量或 <code>.creds</code> 文件,配置文件权限 <code>0600</code></li>
+<li><input disabled="" type="checkbox"> 指标端口只绑本机</li>
+</ul>
+<details>
+<summary><b>NATS 账号权限配置(点开)</b></summary>
+<p>追加到 <code>/etc/nats/nats-server.conf</code>。<strong>这是不可绕过的底线防护</strong> —— 网关侧的 subject 白名单配置写错时会失效,但服务端权限不会。</p>
+<pre><code class="language-hocon">authorization {
+  users = [
+    {
+      # 网关:只能往 demo.* 发布,以及使用应答 inbox
+      user: litegate
+      password: &quot;$LITEGATE_NATS_PASSWORD&quot;
+      permissions: {
+        publish:   { allow: [&quot;demo.&gt;&quot;, &quot;_INBOX.&gt;&quot;] }
+        # 请求-应答需要网关能收到自己 inbox 的回复
+        subscribe: { allow: [&quot;_INBOX.&gt;&quot;] }
+      }
+    },
+    {
+      # 消费者:只能订阅 demo.*,并回复到 inbox
+      user: consumer
+      password: &quot;$CONSUMER_NATS_PASSWORD&quot;
+      permissions: {
+        subscribe: { allow: [&quot;demo.&gt;&quot;, &quot;_INBOX.&gt;&quot;] }
+        publish:   { allow: [&quot;_INBOX.&gt;&quot;, &quot;$JS.ACK.&gt;&quot;] }
+      }
+    }
+  ]
+}
+</code></pre>
+<blockquote>
+<p>⚠️ <strong><code>$JS.ACK.&gt;</code> 是 JetStream 消费者确认消息的必备 publish 权限。</strong> 漏了会让 Ack/Nak 全部失败,表现为<strong>消息无限重投</strong> —— 这个症状很难往权限上联想。只用同步模式时可以省略。</p>
+</blockquote>
+<p>改完之后三处要同步:</p>
+<ol>
+<li><code>plugin-config.yaml</code> 加 <code>user</code> / <code>password</code></li>
+<li>消费者 <code>natsconsume.json</code> 的 <code>nats</code> 段加 <code>user</code> / <code>password</code></li>
+<li><code>nats</code> CLI 命令改成 <code>nats://user:PASS@host:4222</code></li>
+</ol>
+<p>生产环境把明文密码换成 <a href="https://docs.nats.io/running-a-nats-service/configuration/securing_nats/auth_intro">NKey 或 JWT 凭据</a>。</p>
+</details>
+<p><strong>可靠性</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> <code>max_payload</code> ≥ 路由的 <code>max_request_body</code></li>
+<li><input disabled="" type="checkbox"> 每条路由都设了 <code>max_in_flight</code> —— <strong>Core NATS 推送没有流控,积压是丢消息而不是排队</strong></li>
+<li><input disabled="" type="checkbox"> 消费者用了 <code>queue_group</code>,多实例部署</li>
+<li><input disabled="" type="checkbox"> <code>litegate plugins list</code> 确认 <code>nats</code> 在列</li>
+</ul>
+<p><strong>用到 JetStream 时额外确认</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Stream 推荐由<strong>运维预先创建</strong>；若由网关兜底建流，路由中必须显式配置 <code>create_if_absent</code> 全量参数（<code>subjects</code>、<code>retention</code>、<code>storage</code>、<code>max_age</code>、<code>duplicates</code>、<code>replicas</code>，绝不使用隐式默认值）</li>
+<li><input disabled="" type="checkbox"> Durable consumer 预先创建，消费者配 <code>stream</code> 走 Bind</li>
+<li><input disabled="" type="checkbox"> <strong><code>MaxAckPending</code> 按整个消费者池规模设置，不是单实例并发</strong> —— 它是 durable 级别的全局限制，所有实例共享</li>
+<li><input disabled="" type="checkbox"> 消费者账号有 <code>$JS.ACK.&gt;</code> 的 publish 权限</li>
+<li><input disabled="" type="checkbox"> <strong>发布去重与消费端最终幂等</strong>：客户端跨 HTTP 超时重试应优先携带稳定的 <code>Idempotency-Key</code>（1–64 字符，仅 <code>[A-Za-z0-9_:-]</code>）；未提供时才兼容使用 <code>X-Request-Id</code>。网关按租户、路由、连接、Stream 和最终 Subject 隔离并推导 <code>Nats-Msg-Id</code>；业务消费侧仍须以业务主键/请求 ID 在数据库事务内部做最终去重防重</li>
+</ul>
+<p><strong>可观测</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> 两侧指标都被 Prometheus 抓取</li>
+<li><input disabled="" type="checkbox"> 告警:<code>result=&quot;no_responders&quot;</code> 持续出现 = 消费者全挂</li>
+<li><input disabled="" type="checkbox"> 告警:<code>litegate_nats_connection_status == 0</code> = NATS 不可达</li>
+<li><input disabled="" type="checkbox"> 日志脱敏:<strong><code>LiteGate-Query</code> 和请求体禁止整体入日志</strong>(常含 token、密钥、个人信息)</li>
+</ul>
+<hr>
+<h2 id="7-生产级端点配置示例-mqsync-与-mqasync">7. 生产级端点配置示例 (/mq/sync 与 /mq/async)</h2>
+<p>针对遗留 mqserver 资产迁移到 LiteGate 的场景,以下是推荐的站点配置(保存为 <code>/opt/litegate/sites/mq.yaml</code>):</p>
+<pre><code class="language-yaml">site: mq.example.com
+routes:
+  # 1. 同步端点 /mq/sync:持久化投递至 JetStream 并等待 PubAck 确认
+  - name: mq-sync
+    match: {path: /mq/sync, method: [POST]}
+    action:
+      type: nats
+      mode: jetstream_publish
+      connection: default
+      # 动态提取主题:严格要求 JSON 字符串类型;支持前缀规范化与白名单防护
+      subject_from: body.topic
+      subject_prefix: &quot;legacy.&quot;
+      subject_allowlist: [&quot;*&quot;]
+      # 载荷解包:将嵌套在 JSON content 字段中的实际载荷提取并直接投递为 NATS 消息体
+      payload_from: body.content
+      # 网关自身的发送与确认超时(与业务处理 deadline 解耦)
+      publish_timeout: 3s
+      max_in_flight: 2000
+      max_request_body: 1048576 # 1 MiB
+      # 兼容老 mqserver 的统一应答契约
+      response_status: 200
+      response_body: '{&quot;success&quot;:true,&quot;message&quot;:&quot;success&quot;,&quot;code&quot;:1,&quot;data&quot;:null}'
+      # Stream 拓扑校验与兜底建流(所有建流参数显式声明,避免配置漂移)
+      stream:
+        name: LEGACY_MQ
+        create_if_absent:
+          subjects: [&quot;legacy.&gt;&quot;]
+          retention: workqueue
+          storage: file
+          max_age: 168h        # 7 天
+          duplicates: 2m       # 配合客户端 Idempotency-Key / X-Request-Id 的发布去重窗口
+          replicas: 1
+
+  # 2. 异步端点 /mq/async:同样使用 jetstream_publish,只是在途上限更高
+  - name: mq-async
+    match: {path: /mq/async, method: [POST]}
+    action:
+      type: nats
+      mode: jetstream_publish
+      connection: default
+      subject_from: body.topic
+      subject_prefix: &quot;legacy.&quot;
+      subject_allowlist: [&quot;*&quot;]
+      payload_from: body.content
+      publish_timeout: 3s
+      max_in_flight: 5000
+      max_request_body: 1048576
+      response_status: 200
+      response_body: '{&quot;success&quot;:true,&quot;message&quot;:&quot;success&quot;,&quot;code&quot;:1,&quot;data&quot;:null}'
+      stream:
+        name: LEGACY_MQ
+        create_if_absent:
+          subjects: [&quot;legacy.&gt;&quot;]
+          retention: workqueue
+          storage: file
+          max_age: 168h
+          duplicates: 2m
+          replicas: 1
+</code></pre>
+<p><code>subject_allowlist: [&quot;*&quot;]</code> 放行任意合法 topic,只适合调用方可信的内网;对外暴露时列出具体 topic,并给网关使用的 NATS 账号只授予 <code>legacy.&gt;</code> 的发布权限。</p>
+<hr>
+<h2 id="8-下一步">8. 下一步</h2>
+<p>hello world 跑通后:</p>
+<ol>
+<li><strong>保留 <code>echo</code>/<code>hello</code> handler 在生产环境。</strong> 出问题时把 subject 临时切到它，立刻能分辨是链路问题还是业务 handler 问题 —— 这是唯一能快速二分整条链路的工具。</li>
+<li>按 <code>ecp.natsconsume.template.v1/docs/extend_consumer.md</code> 添加真实业务 handler。</li>
+<li>需要可靠异步时，先建好 Stream 和 Durable Consumer，或在网关路由中显式声明 <code>stream.create_if_absent</code> 全量参数。</li>
+</ol>
+<pre><code></code></pre>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/nats_deployment_guide.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

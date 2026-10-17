@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add a DNS provider · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/06-certificates/dns-providers.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details open><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html" class="current" aria-current="page">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="add-a-dns-provider">Add a DNS provider</h1>
+<p>Default LiteGate builds support Alibaba Cloud (<code>aliyun</code>), Tencent Cloud (<code>tencent</code> / <code>tencentcloud</code>), and Cloudflare (<code>cloudflare</code>). For another service, find its implementation in the <a href="https://github.com/libdns">libdns provider directory</a> and compile it into your own LiteGate with <code>litegate build --dns</code>. Compatible providers require no plugin code.</p>
+<p>Providers are downloaded and linked at build time. Editing YAML does not download a runtime plugin. Each provider is a separate module, so your choice does not grow the official binary. Some implementations depend on cloud SDKs; your binary size depends on the selected modules and their dependencies.</p>
+<h2 id="1-choose-a-provider">1. Choose a provider</h2>
+<p>Read the selected release's README, <code>Provider</code> fields and <code>go.mod</code>. Automatic integration requires a root package exporting a <code>Provider</code> struct targeting the <strong>libdns v1 API</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Purpose</th>
+<th>Required interfaces and record support</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Certificate DNS-01</td>
+<td><code>RecordAppender</code>, <code>RecordDeleter</code>, and TXT support</td>
+</tr>
+<tr>
+<td>DDNS</td>
+<td>Also <code>RecordGetter</code>, and the required A / AAAA support</td>
+</tr>
+<tr>
+<td>ECH publication</td>
+<td>Also <code>RecordGetter</code>, and HTTPS record support</td>
+</tr>
+</tbody>
+</table>
+<p>An interface does not guarantee support for every record type. Check the implementation and account permissions. The <a href="https://github.com/libdns/libdns">libdns core</a> defines interfaces; you need a specific provider module. Module names can differ from LiteGate's built-in types: Alibaba Cloud's module is <code>alidns</code>, while its built-in LiteGate type is <code>aliyun</code>.</p>
+<h3 id="check-requirements-for-your-use-case">Check requirements for your use case</h3>
+<p><strong>Certificate issuance and renewal alone have the fewest requirements.</strong> With DDNS and ECH disabled, the provider only writes and cleans up DNS-01 TXT records; LiteGate's ACME client handles issuance. A, AAAA and HTTPS records are not required, and application IP addresses remain separately managed. Credentials, the authoritative zone and TXT propagation must still work. For simultaneous apex and wildcard challenges, confirm that multiple TXT values at one name are preserved. A certificate validation service is not necessarily a general DNS hosting service.</p>
+<p><strong>DDNS adds A/AAAA management requirements.</strong> The implementation must query records, append this node's IP and delete its old value precisely, while preserving other nodes' addresses. An API that only replaces a domain's single IP does not meet LiteGate's multi-node RRset contract. Repeated synchronization must be idempotent. Enable <code>sync_a</code> for IPv4 and keep <code>sync_aaaa: false</code> unless AAAA support is also confirmed.</p>
+<p><strong>ECH adds HTTPS DNS record requirements.</strong> The API, account permissions and selected libdns implementation must support HTTPS (type 65), read and write ECH parameters, and preserve unmanaged records during rotation and withdrawal. Ordinary HTTPS certificate issuance does not require these DNS records. Publication is only one part of ECH; see the <a href="ech.html">ECH guide</a> for gateway, client and resolver requirements. ECH does not require DDNS: A/AAAA can be maintained manually.</p>
+<p>A successful build, advertised plugin capabilities and a passing <code>-t</code> check do not establish that these operations work with a real account. Verify the functions you enable; TXT challenge support alone does not imply multi-node DDNS or ECH support.</p>
+<h2 id="2-build-the-providers-you-need">2. Build the providers you need</h2>
+<p>The build machine needs Git, Go, and network access to the selected Go modules. Go must satisfy the requirements in LiteGate's and the providers' <code>go.mod</code> files. The deployment machine does not need Go.</p>
+<pre><code class="language-bash"># Short name resolves to github.com/libdns/huaweicloud
+litegate build --dns huaweicloud -o litegate-custom
+
+# Add multiple providers, including optional implementations using cloud SDKs
+litegate build --dns huaweicloud --dns route53 -o litegate-custom
+
+# Give the provider a custom YAML type
+litegate build --dns hw=github.com/libdns/huaweicloud -o litegate-custom
+</code></pre>
+<p>On Windows, invoke <code>litegate.exe</code> and name the output <code>litegate-custom.exe</code>. Deploy and run the new binary.</p>
+<p>Without a version, Go resolves the provider version. Once verified, inspect <code>litegate-custom plugins list</code> and append <code>@</code> followed by that module version to future <code>--dns</code> arguments. Rebuild selected providers when upgrading LiteGate. For local development, use <code>--replace &lt;LiteGate-source-directory&gt;</code>. Run <code>litegate build --help</code> for core version, replacement and other build options.</p>
+<p>Built-in names are reserved. To include the libdns Cloudflare implementation, use <code>--dns libdns_cloudflare=cloudflare</code>; <code>type: cloudflare</code> continues to select the built-in implementation.</p>
+<h2 id="3-configure-certificates-first-and-enable-ddns-as-needed">3. Configure certificates first and enable DDNS as needed</h2>
+<p>Here is a Huawei Cloud example. <code>type</code> identifies the compiled provider; <code>name</code> identifies this configuration entry for references such as ECH. If you built with <code>hw=...</code>, change <code>type</code> to <code>hw</code>.</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: admin@example.com
+  dns_providers:
+    - name: huawei-main
+      type: huaweicloud
+      enabled: true
+      domains: [&quot;example.com&quot;, &quot;*.example.com&quot;]
+      config:
+        access_key_id: &quot;env://HW_AK&quot;
+        secret_access_key: &quot;env://HW_SK&quot;
+        region_id: &quot;cn-south-1&quot;
+        zone: &quot;example.com&quot;
+        timeout: &quot;2m&quot;
+        polling_interval: &quot;10s&quot;
+</code></pre>
+<p>Provide <code>HW_AK</code> and <code>HW_SK</code> in the running process's environment. These fields come from the <a href="https://github.com/libdns/huaweicloud/blob/master/provider.go">Huawei Cloud Provider</a>. Other providers require their own <code>Provider</code> JSON field names. Values are converted to the field types; complex fields accept inline JSON. Unknown fields are rejected.</p>
+<p>The example enables certificate DNS-01 only and includes neither DDNS nor ECH. In an existing configuration, explicitly disable unwanted <code>ddns.enabled</code> and <code>ech.enabled</code> settings; removing one provider's DDNS block does not disable DDNS on other providers.</p>
+<p>After confirming append and precise deletion support, add this block under the same provider entry, alongside <code>config</code>:</p>
+<pre><code class="language-yaml">ddns:
+  enabled: true
+  sync_a: true
+  sync_aaaa: false
+</code></pre>
+<p>With DDNS enabled, <code>domains</code> matches loaded Site / Stream hosts; wildcard selectors do not create wildcard DNS records. See <a href="ddns.html">DDNS</a> for synchronization behavior.</p>
+<p>The adapter consumes <code>zone</code>, <code>ttl</code>, <code>timeout</code> and <code>polling_interval</code>. Host settings <code>secret_token</code>, <code>propagation_wait</code>, <code>skip_propagation_check</code>, <code>disable_complete_propagation</code> and <code>recursive_nameservers</code> are also kept out of provider decoding. When <code>zone</code> is omitted, SOA lookup discovers the authoritative zone. See <a href="ech.html">ECH</a> for HTTPS publication, and check actual HTTPS support in your provider.</p>
+<h2 id="4-verify-and-troubleshoot">4. Verify and troubleshoot</h2>
+<pre><code class="language-bash">./litegate-custom plugins list
+./litegate-custom -config config.yaml -t
+</code></pre>
+<p>The provider should appear in <code>plugins list</code>. <code>-t</code> checks configuration, fields and advertised capabilities; it does not establish that remote credentials, permissions or DNS propagation work. After deployment, check certificate logs and verify TXT cleanup, A / AAAA synchronization or HTTPS publication in your DNS console.</p>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Provider not found</td>
+<td>Run the custom binary; match <code>type</code> to the build alias</td>
+</tr>
+<tr>
+<td>libdns v0 API error</td>
+<td>Select a provider targeting v1; upgrading core alone is insufficient</td>
+</tr>
+<tr>
+<td>Unknown field</td>
+<td>Check JSON names in the selected release; lego field names may differ</td>
+</tr>
+<tr>
+<td>API authorization failure</td>
+<td>Check credentials, region and record read/write permissions</td>
+</tr>
+<tr>
+<td>Zone not found</td>
+<td>Check the authoritative zone and set <code>zone</code> explicitly if needed</td>
+</tr>
+<tr>
+<td>HTTPS operation failure</td>
+<td>Check HTTPS support in the API and implementation</td>
+</tr>
+</tbody>
+</table>
+<p>If libdns has no implementation, write a custom DNS plugin. If only DNS-01 is needed and lego has an implementation, use the lego bridge example. See the <a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide</a>.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/06-certificates/dns-providers.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

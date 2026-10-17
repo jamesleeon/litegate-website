@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate MCP Capability Matrix · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../en/index.html">Home</a>
+      <a href="../../en/guide.html">Guide</a>
+      <a href="../../en/features.html">Features</a>
+      <a href="../../en/ecosystem.html">Ecosystem</a>
+      <a href="README.html" aria-current="page">Docs</a>
+      <a href="../zh-cn/litegate_mcp_capability_matrix.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="README.html">Docs home</a></li><li><details><summary>User guide</summary><ul><li><a href="user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="user/01-getting-started/build.html">Build from source</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="user/08-observability/access-log.html">Access Log</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>Topics</summary><ul><li><a href="database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="ids-recipes.html">IDS Recipes</a></li><li><a href="ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="litegate_mcp_capability_matrix.html" class="current" aria-current="page">LiteGate MCP Capability Matrix</a></li><li><a href="nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="release_control_guide.html">Configuration Release Control</a></li><li><a href="serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="litegate-mcp-capability-matrix">LiteGate MCP Capability Matrix</h1>
+<p>LiteGate ships a built-in MCP (Model Context Protocol) server so AI assistants can read configuration, generate and validate sites, save and reload, publish and roll back releases, and troubleshoot. This page lists every tool currently exposed.</p>
+<h2 id="connecting">Connecting</h2>
+<p>LiteGate offers two transports with the same tool list. They differ in which process the AI talks to:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>stdio</th>
+<th>SSE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>How it starts</td>
+<td>The AI client runs <code>litegate mcp -config &lt;path&gt;</code>, a separate process</td>
+<td>The running gateway serves <code>/sse</code> on <code>mcp.port</code></td>
+</tr>
+<tr>
+<td>Best for</td>
+<td>Writing, validating and saving configuration locally</td>
+<td>Managing a running gateway, remote troubleshooting</td>
+</tr>
+<tr>
+<td>Read/write, validation, site creation, release and rollback</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Runtime diagnostics (<code>get_recent_requests</code>, <code>get_recent_errors</code>, <code>get_gateway_status</code>, <code>list_active_tunnels</code>, <code>get_connect_status</code>, ...)</td>
+<td>Reflect only the MCP process itself, not gateway traffic</td>
+<td>Reflect the running gateway</td>
+</tr>
+<tr>
+<td>After saving</td>
+<td>Files are written; the running gateway hot-reloads them</td>
+<td>Files are written and the current gateway reloads</td>
+</tr>
+</tbody>
+</table>
+<h3 id="stdio-local-ai-clients">stdio: local AI clients</h3>
+<p>All logs go to stderr and stdout carries only JSON-RPC. If <code>config.yaml</code> does not exist, a default configuration and directories are generated.</p>
+<p>Relative paths such as <code>sites_dir</code>, <code>streams_dir</code> and <code>certs_dir</code> resolve against the <strong>process working directory</strong>, and AI clients usually do not start the process in the directory that holds <code>config.yaml</code>. Use absolute paths for these directories in <code>config.yaml</code>, or have the client start LiteGate in the configuration directory.</p>
+<p>Claude Code:</p>
+<pre><code class="language-bash">claude mcp add litegate -- litegate mcp -config /etc/litegate/config.yaml
+</code></pre>
+<p>Cursor (<code>.cursor/mcp.json</code>), Claude Desktop and other clients configured with JSON:</p>
+<pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;litegate&quot;: {
+      &quot;command&quot;: &quot;litegate&quot;,
+      &quot;args&quot;: [&quot;mcp&quot;, &quot;-config&quot;, &quot;/etc/litegate/config.yaml&quot;]
+    }
+  }
+}
+</code></pre>
+<h3 id="sse-connect-to-a-running-gateway">SSE: connect to a running gateway</h3>
+<p>Enable it in <code>config.yaml</code>. After the gateway starts or reloads it listens on <code>mcp.port</code>; the endpoint is <code>/sse</code>, and the server tells the client its <code>/message</code> endpoint during the handshake:</p>
+<pre><code class="language-yaml">mcp:
+  enabled: true
+  port: 9900                            # default 8080; must not clash with http.port, the dashboard or entrypoints
+  token: &quot;REPLACE_WITH_STRONG_TOKEN&quot;    # clients send Authorization: Bearer &lt;token&gt;
+  public_url: &quot;&quot;                        # public URL when exposed through a reverse proxy, e.g. https://ops.example.com/mcp
+</code></pre>
+<p>An empty <code>token</code> disables authentication, so always set one. <code>litegate -secret</code> prints a random value.</p>
+<p>Claude Code:</p>
+<pre><code class="language-bash">claude mcp add --transport sse litegate http://127.0.0.1:9900/sse --header &quot;Authorization: Bearer &lt;token&gt;&quot;
+</code></pre>
+<p>Clients configured with JSON:</p>
+<pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;litegate&quot;: {
+      &quot;url&quot;: &quot;http://127.0.0.1:9900/sse&quot;,
+      &quot;headers&quot;: { &quot;Authorization&quot;: &quot;Bearer &lt;token&gt;&quot; }
+    }
+  }
+}
+</code></pre>
+<h3 id="security">Security</h3>
+<p>MCP tools can change and delete configuration and write token files. Keep the SSE port on localhost or a private network and never expose it directly to the Internet. For remote use, put it behind an authenticated entrypoint and enable <a href="release_control_guide.html">release control</a> so the AI's changes land in a draft that you confirm before publishing.</p>
+<h3 id="putting-the-ai-to-work">Putting the AI to work</h3>
+<p>Once connected, describe what you need in plain language, for example:</p>
+<ul>
+<li>&quot;Forward /api on app.example.com to 127.0.0.1:8080, serve ./dist as an SPA for everything else, and enable HTTPS.&quot;</li>
+<li>&quot;List certificates that expire within 30 days.&quot;</li>
+<li>&quot;Why does <a href="https://api.example.com/v1/orders">https://api.example.com/v1/orders</a> return 404?&quot;</li>
+</ul>
+<p>The AI follows the closed loops below: read the configuration guide, generate the configuration, check it with <code>validate_*</code>, review the diff with <code>preview_config_change</code>, then save and confirm with <code>verify_site</code>.</p>
+<h3 id="litemesh-mcp-proxy">Litemesh MCP proxy</h3>
+<p>With Litemesh enabled, LiteGate discovers MCP services registered in Litemesh and proxies their tools and resources, so AI clients only need to connect to LiteGate.</p>
+<h2 id="tool-capability-matrix">Tool Capability Matrix</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Category</th>
+<th style="text-align:left">MCP Tool Name</th>
+<th style="text-align:left">Purpose / Action</th>
+<th style="text-align:left">Direct AI Use</th>
+<th style="text-align:left">Closed Loop</th>
+<th style="text-align:left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Discovery</strong></td>
+<td style="text-align:left"><code>detect_environment</code></td>
+<td style="text-align:left">Resolves node hostnames, egress IPs, active ports.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Partial</td>
+<td style="text-align:left">Essential for verifying routing entrypoints.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Audit</strong></td>
+<td style="text-align:left"><code>list_sites</code></td>
+<td style="text-align:left">Lists active logical websites.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Establishes the baseline before applying mutations.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Audit</strong></td>
+<td style="text-align:left"><code>get_site_config</code></td>
+<td style="text-align:left">Reads site YAML configuration block payloads.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Enables precise audit-to-edit cycles.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Audit</strong></td>
+<td style="text-align:left"><code>list_streams</code></td>
+<td style="text-align:left">Lists active Layer 4 stream configs.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Covers stream configurations.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Audit</strong></td>
+<td style="text-align:left"><code>get_stream_config</code></td>
+<td style="text-align:left">Reads stream YAML configuration blocks.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Enables stream audits.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Audit</strong></td>
+<td style="text-align:left"><code>get_gateway_config</code></td>
+<td style="text-align:left">Reads master <code>config.yaml</code> values.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Exposes global system settings.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>KV Sync</strong></td>
+<td style="text-align:left"><code>get_kv</code></td>
+<td style="text-align:left">Reads key values from Litemesh/Consul KV.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Reads dynamic frontend versions or site pointers.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>KV Sync</strong></td>
+<td style="text-align:left"><code>set_kv</code></td>
+<td style="text-align:left">Writes key values to Litemesh/Consul KV.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Injects zip URLs and SHA256 checksums for hot-swaps.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>KV Sync</strong></td>
+<td style="text-align:left"><code>list_kv</code></td>
+<td style="text-align:left">Scans KV registries matching specific prefixes.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Useful for auditing dynamic cluster states.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Discovery</strong></td>
+<td style="text-align:left"><code>list_services</code></td>
+<td style="text-align:left">Lists mesh or discovery registry microservices.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Partial</td>
+<td style="text-align:left">Helps AI discover backend upstreams.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Discovery</strong></td>
+<td style="text-align:left"><code>get_service_detail</code></td>
+<td style="text-align:left">Retrieves endpoints and tags for a service.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Partial</td>
+<td style="text-align:left">Maps domains to healthy discovery upstreams.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Schema</strong></td>
+<td style="text-align:left"><code>get_config_guide</code></td>
+<td style="text-align:left">Retrieves site, L4 Stream or traffic configuration guides.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left"><code>topic=site</code> / <code>stream</code> / <code>traffic</code>, with <code>lang=zh</code> / <code>en</code>; includes load-balancing policies and scope.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Schema</strong></td>
+<td style="text-align:left"><code>get_gateway_config_schema</code></td>
+<td style="text-align:left">Retrieves global configuration manuals.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Exposes master parameters.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Schema</strong></td>
+<td style="text-align:left"><code>get_stream_config_schema</code></td>
+<td style="text-align:left">Retrieves stream DSL parameters.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Exposes L4 parameters.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Validation</strong></td>
+<td style="text-align:left"><code>validate_site_config</code></td>
+<td style="text-align:left">Validates site configs against Go struct checkers.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Reuses parser validation libraries.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Validation</strong></td>
+<td style="text-align:left"><code>validate_stream_config</code></td>
+<td style="text-align:left">Validates stream configs.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Reuses L4 parser validation libraries.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Validation</strong></td>
+<td style="text-align:left"><code>validate_gateway_config</code></td>
+<td style="text-align:left">Validates global system configurations.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Partial</td>
+<td style="text-align:left">Captures semantic errors before hot-swapping.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Provision</strong></td>
+<td style="text-align:left"><code>create_proxy_site</code></td>
+<td style="text-align:left">Generates standard reverse proxy site files.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Solves common backend proxying needs.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Provision</strong></td>
+<td style="text-align:left"><code>create_static_site</code></td>
+<td style="text-align:left">Generates static folder or SPA site configurations.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Sets up dynamic static hosting.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Provision</strong></td>
+<td style="text-align:left"><code>bind_domain_to_service</code></td>
+<td style="text-align:left">Binds an HTTP domain to a registry service.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Accepts <code>lb_policy</code> for instance selection; defaults to round robin.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Provision</strong></td>
+<td style="text-align:left"><code>create_stream_proxy</code></td>
+<td style="text-align:left">Creates a TCP/UDP Stream with one static backend.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">For multiple backends, weights, discovery or policies, use <code>get_config_guide(topic=stream)</code> then <code>validate_stream_config</code> and <code>save_stream_config</code>.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Diffing</strong></td>
+<td style="text-align:left"><code>preview_config_change</code></td>
+<td style="text-align:left">Shows unified diffs and operational impact.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Partial</td>
+<td style="text-align:left">Outlines mutations, though impact details are basic.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Execution</strong></td>
+<td style="text-align:left"><code>save_site_config</code></td>
+<td style="text-align:left">Writes site files to disk.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Triggers automatic hot-reloads instantly.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Execution</strong></td>
+<td style="text-align:left"><code>save_stream_config</code></td>
+<td style="text-align:left">Writes stream files to disk.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Triggers L4 stream reloads instantly.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Execution</strong></td>
+<td style="text-align:left"><code>save_gateway_config</code></td>
+<td style="text-align:left">Writes master config files.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Triggers global system reloads instantly.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Manual</strong></td>
+<td style="text-align:left"><code>reload_gateway</code></td>
+<td style="text-align:left">Triggers explicit gateway configuration reloads.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Useful for forced sync checks.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Rollback</strong></td>
+<td style="text-align:left"><code>rollback_last_change</code></td>
+<td style="text-align:left">Rollbacks configurations to backup states.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Partial</td>
+<td style="text-align:left">Restores backups using local <code>.bak</code> files.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Verify</strong></td>
+<td style="text-align:left"><code>test_upstream</code></td>
+<td style="text-align:left">Assesses TCP reachability of raw upstreams.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Partial</td>
+<td style="text-align:left">Basic network reachability checks.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Verify</strong></td>
+<td style="text-align:left"><code>verify_site</code></td>
+<td style="text-align:left">Triggers HTTP/HTTPS checks to active SNIs.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Most</td>
+<td style="text-align:left">Assures SSL and HTTP code correctness.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Verify</strong></td>
+<td style="text-align:left"><code>verify_stream</code></td>
+<td style="text-align:left">Triggers active connection checks to L4 ports.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Most</td>
+<td style="text-align:left">Assures L4 port binding correctness.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Telemetry</strong></td>
+<td style="text-align:left"><code>get_recent_errors</code></td>
+<td style="text-align:left">Retrieves recent error log traces.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Essential for debugging failed reloads.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Telemetry</strong></td>
+<td style="text-align:left"><code>get_gateway_status</code></td>
+<td style="text-align:left">Audits memory consumption and Goroutine counts.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Evaluates node health.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Telemetry</strong></td>
+<td style="text-align:left"><code>list_certificates_status</code></td>
+<td style="text-align:left">Audits expiration timelines for certificates.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Aids SSL diagnostics.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Telemetry</strong></td>
+<td style="text-align:left"><code>inspect_certificate</code></td>
+<td style="text-align:left">Pulls detailed SAN and issuer metrics.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Partial</td>
+<td style="text-align:left">Mapped for debugging cert handshakes.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Interactive</strong></td>
+<td style="text-align:left"><code>explain_missing_inputs</code></td>
+<td style="text-align:left">Asks the operator for missing details.</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">Reduces guessing by the AI.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="other-tools">Other tools</h2>
+<p>These tools cover authentication, release control, service tags, routing diagnostics, certificates and Connect.</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Tool</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Provisioning</td>
+<td><code>create_template_site</code></td>
+<td>Create a server-side template site; supports template KV mode</td>
+</tr>
+<tr>
+<td>Provisioning</td>
+<td><code>create_status_site</code></td>
+<td>Create a status dashboard site</td>
+</tr>
+<tr>
+<td>Provisioning</td>
+<td><code>create_forward_site</code></td>
+<td>Create a Forward site binding a public HTTPS hostname to an internal stream or Connect peer</td>
+</tr>
+<tr>
+<td>Provisioning</td>
+<td><code>export_lite_config</code></td>
+<td>Compile .lite.yaml into standard YAML; same as <code>litegate -export-lite</code></td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td><code>enable_oidc_for_site</code></td>
+<td>Enable OIDC on a site's proxy routes; v2 keeps comments and shorthand</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td><code>enable_jwt_for_site</code></td>
+<td>Enable JWT (JWKS or HS secret reference) on proxy routes; notify routes are not covered</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td><code>enable_apikey_for_site</code></td>
+<td>Enable API key checks and quota rate limiting on proxy routes</td>
+</tr>
+<tr>
+<td>Deletion</td>
+<td><code>delete_site_config</code></td>
+<td>Delete a site configuration file</td>
+</tr>
+<tr>
+<td>Deletion</td>
+<td><code>delete_stream_config</code></td>
+<td>Delete a stream configuration file</td>
+</tr>
+<tr>
+<td>Release control</td>
+<td><code>list_releases</code></td>
+<td>List drafts and published releases</td>
+</tr>
+<tr>
+<td>Release control</td>
+<td><code>get_release_detail</code></td>
+<td>Show a release's details and configuration artifacts</td>
+</tr>
+<tr>
+<td>Release control</td>
+<td><code>get_release_diff</code></td>
+<td>Diff a release against the active files</td>
+</tr>
+<tr>
+<td>Release control</td>
+<td><code>validate_draft</code></td>
+<td>Dry-run the current draft: schema, port conflicts, reserved paths</td>
+</tr>
+<tr>
+<td>Release control</td>
+<td><code>publish_release</code></td>
+<td>Publish a draft after an automatic dry run</td>
+</tr>
+<tr>
+<td>Release control</td>
+<td><code>rollback_release</code></td>
+<td>Roll back to the previous or a given release</td>
+</tr>
+<tr>
+<td>Service tags</td>
+<td><code>get_tag_dsl_guide</code></td>
+<td>Service-tag guide (four-key shortcut and named resources)</td>
+</tr>
+<tr>
+<td>Service tags</td>
+<td><code>get_tag_reference</code></td>
+<td>Authoritative service-tag reference, searchable by query</td>
+</tr>
+<tr>
+<td>Service tags</td>
+<td><code>get_service_tag_templates</code></td>
+<td>Ready-to-use tag templates</td>
+</tr>
+<tr>
+<td>Service tags</td>
+<td><code>preview_service_tags</code></td>
+<td>Validate tags with the runtime parser and preview generated routes</td>
+</tr>
+<tr>
+<td>Service tags</td>
+<td><code>explain_tag</code></td>
+<td>Classify tag keys as resource, shortcut or retired</td>
+</tr>
+<tr>
+<td>Routing diagnostics</td>
+<td><code>lookup_route</code></td>
+<td>Simulate routing for a request; returns route, upstream and rewritten path</td>
+</tr>
+<tr>
+<td>Routing diagnostics</td>
+<td><code>get_recent_requests</code></td>
+<td>Recently processed HTTP requests</td>
+</tr>
+<tr>
+<td>Routing diagnostics</td>
+<td><code>list_active_tunnels</code></td>
+<td>Active WebSocket/Upgrade tunnels</td>
+</tr>
+<tr>
+<td>Runtime diagnostics</td>
+<td><code>get_goroutine_profile</code></td>
+<td>Full goroutine dump for leak hunting</td>
+</tr>
+<tr>
+<td>Runtime diagnostics</td>
+<td><code>list_plugins</code></td>
+<td>List compiled-in plugins; same as <code>litegate plugins list</code></td>
+</tr>
+<tr>
+<td>Certificates</td>
+<td><code>request_certificate</code></td>
+<td>Request a certificate via ACME immediately (manual management)</td>
+</tr>
+<tr>
+<td>Certificates</td>
+<td><code>inspect_on_demand_tls</code></td>
+<td>Inspect On-Demand TLS settings and mapped domains</td>
+</tr>
+<tr>
+<td>Connect/Forward</td>
+<td><code>get_connect_status</code></td>
+<td>Connect tunnel status: peers, sessions, domain ownership and conflicts</td>
+</tr>
+<tr>
+<td>Connect/Forward</td>
+<td><code>generate_connect_token</code></td>
+<td>Generate a Connect peer token, saved with mode 0600; never overwrites</td>
+</tr>
+<tr>
+<td>Connect/Forward</td>
+<td><code>generate_forward_token</code></td>
+<td>Generate a Forward site token, saved with mode 0600; never overwrites</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td><code>generate_systemd_unit</code></td>
+<td>Generate a systemd unit; same as <code>litegate systemd --print</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="typical-closed-loop-operations">Typical Closed-Loop Operations</h2>
+<h3 id="1-provisioning-a-reverse-proxy-site">1. Provisioning a Reverse Proxy Site</h3>
+<p><strong>Sequence</strong>:</p>
+<ol>
+<li><code>detect_environment</code></li>
+<li><code>test_upstream</code></li>
+<li><code>create_proxy_site</code></li>
+<li><code>preview_config_change</code></li>
+<li><code>save_site_config</code></li>
+<li><code>verify_site</code></li>
+<li><code>get_recent_errors</code></li>
+</ol>
+<h3 id="2-binding-a-domain-to-a-discovery-service">2. Binding a Domain to a Discovery Service</h3>
+<p><strong>Sequence</strong>:</p>
+<ol>
+<li><code>list_services</code></li>
+<li><code>get_service_detail</code></li>
+<li><code>bind_domain_to_service</code></li>
+<li><code>preview_config_change</code></li>
+<li><code>save_site_config</code></li>
+<li><code>verify_site</code></li>
+</ol>
+<h3 id="3-deploying-a-tcpudp-stream-forwarder">3. Deploying a TCP/UDP Stream Forwarder</h3>
+<p><strong>Sequence</strong>:</p>
+<ol>
+<li><code>test_upstream</code></li>
+<li><code>create_stream_proxy</code></li>
+<li><code>preview_config_change</code></li>
+<li><code>save_stream_config</code></li>
+<li><code>verify_stream</code></li>
+<li><code>get_recent_errors</code></li>
+</ol>
+<h3 id="4-dynamic-frontend-hot-swapping-serve-kv">4. Dynamic Frontend Hot-Swapping (Serve KV)</h3>
+<p><strong>Sequence</strong>:</p>
+<ol>
+<li><code>detect_environment</code></li>
+<li><code>get_gateway_config</code> (validates Consul or Litemesh driver settings)</li>
+<li><code>set_kv</code> (writes the zip URL, SHA256 checksum, and version details to <code>litegate/config/front/main</code>)</li>
+<li><code>verify_site</code> (validates HTTP codes of the hot-swapped front-end)</li>
+<li><code>get_recent_errors</code> (captures extraction or connection errors)</li>
+</ol>
+<hr>
+<h3 id="5-release-control">5. Release control</h3>
+<p>With <code>dashboard.release_control</code> enabled, changes land in a draft first:</p>
+<ol>
+<li><code>save_site_config</code> / <code>save_stream_config</code> (writes the draft)</li>
+<li><code>validate_draft</code></li>
+<li><code>get_release_diff</code></li>
+<li><code>publish_release</code></li>
+<li><code>verify_site</code>; on problems, <code>rollback_release</code></li>
+</ol>
+<h3 id="6-routing-troubleshooting">6. Routing troubleshooting</h3>
+<ol>
+<li><code>lookup_route</code> (matched route, upstream and rewrite result)</li>
+<li><code>get_recent_requests</code></li>
+<li><code>get_recent_errors</code></li>
+</ol>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="user/03-configuration/global-config.html">Global configuration: MCP</a></li>
+<li><a href="release_control_guide.html">Configuration release control</a></li>
+<li><a href="user/01-getting-started/cli-reference.html">CLI reference</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/litegate_mcp_capability_matrix.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

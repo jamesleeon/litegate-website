@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Template Action (服务端模板与站点渲染) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/04-actions/template.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details open><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html" class="current" aria-current="page">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="template-action-服务端模板与站点渲染">Template Action (服务端模板与站点渲染)</h1>
+<p><code>template</code> Action 支持使用 Go 的 <code>html/template</code> 在网关层（服务端）直接渲染高颜值、动态的 HTML 页面。它默认启用 HTML 转义以防止跨站脚本攻击（XSS），支持请求上下文数据的动态注入，并支持多文件<strong>片段复用</strong>。</p>
+<p>同时，LiteGate 提供了针对<strong>自定义错误页（Error Pages）</strong>、<strong>SSO 自定义登录页</strong>、**免登录公开系统状态页（Status Page）**以及 <strong>Markdown 模板化渲染</strong> 的完整高级集成方案。</p>
+<hr>
+<h2 id="1-最小配置内联模板">1. 最小配置（内联模板）</h2>
+<pre><code class="language-yaml">site: status.example.com
+routes:
+  - name: hello
+    match:
+      path_prefix: /
+    action:
+      type: template
+      body: &quot;&lt;h1&gt;Hello {{ .Host }}&lt;/h1&gt;&lt;p&gt;你的 IP：{{ .ClientIP }}&lt;/p&gt;&quot;
+</code></pre>
+<p>访问后将返回网关渲染好的 HTML。<code>body</code> 属性适合短小的内联模板。</p>
+<hr>
+<h2 id="2-文件模板与片段复用">2. 文件模板与片段复用</h2>
+<p>通过指定 <code>template</code> 文件路径，可以从本地磁盘或挂载目录中读取页面进行渲染。</p>
+<pre><code class="language-yaml">site: example.com
+template:
+  template: &quot;./site/pages/index.html&quot; # 主模板文件路径
+  template_root: &quot;./site&quot; # 片段扫描根目录，用于扫描其它 HTML 片段
+</code></pre>
+<p>在主模板 <code>index.html</code> 中，可以通过 <code>{{ template &quot;相对路径&quot; . }}</code> 引用 <code>template_root</code> 下的其它公共组件（例如 Header / Footer）：</p>
+<pre><code class="language-html">&lt;!-- ./site/pages/index.html --&gt;
+{{ template &quot;partials/header.html&quot; . }}
+&lt;main&gt;欢迎访问 {{ .Host }}，当前系统时间：{{ .Time }}&lt;/main&gt;
+{{ template &quot;partials/footer.html&quot; . }}
+</code></pre>
+<hr>
+<h3 id="-分布式加载从-litemesh--consul-kv-拉取模板template_kv_mode">📦 分布式加载：从 litemesh / Consul KV 拉取模板（<code>template_kv_mode</code>）</h3>
+<p>除了从本地磁盘读取，模板还可以<strong>直接存放在 litemesh / Consul 的 KV 里</strong>，由网关在内存中编译。这样多节点集群无需把模板文件分发到每台机器，改一次 KV 全网生效——对标已有的 <a href="../../serve_kv_mode.html">Serve KV 模式</a>。</p>
+<pre><code class="language-yaml">site: example.com
+template:
+  template_kv_mode: true
+  template_kv_provider: &quot;litemesh&quot; # litemesh 或 consul
+  template_kv_prefix: &quot;litegate/tmpl/site-a/&quot; # 模板片段在 KV 中的前缀
+  template_kv_namespace: &quot;tenant-a&quot; # 可选，多租户隔离；留空用客户端默认 namespace
+  template: &quot;pages/index.html&quot; # 主模板：相对 prefix 的 key 后缀
+</code></pre>
+<p>工作方式：</p>
+<ul>
+<li>网关用 <code>ListKV(prefix)</code> 拉取该前缀下的所有片段（每个 KV key 去掉 prefix 后即模板名，可被 <code>{{ template &quot;...&quot; }}</code> 引用），主模板由 <code>template</code> 字段指定。</li>
+<li><strong>纯内存编译，零本地文件</strong>；不涉及文件系统，因此没有符号链接 / 目录穿越风险。</li>
+<li><strong>热更新</strong>：网关后台监听该前缀的变更（litemesh SSE / KV <code>ModifyIndex</code>），KV 一变即在后台重新编译并原子切换，已连请求无感。</li>
+<li><strong>失效降级</strong>：若某次拉取 KV 失败，自动回退到上一份已编译好的模板继续服务，不会把页面打挂。</li>
+</ul>
+<h4 id="-资源与安全边界">⚖️ 资源与安全边界</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">边界</th>
+<th style="text-align:left">限制</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">片段数量</td>
+<td style="text-align:left">≤ 100</td>
+<td style="text-align:left">超出报错，防内存滥用</td>
+</tr>
+<tr>
+<td style="text-align:left">单个片段大小</td>
+<td style="text-align:left">≤ 1 MB</td>
+<td style="text-align:left">超出报错</td>
+</tr>
+<tr>
+<td style="text-align:left">全部片段总大小</td>
+<td style="text-align:left">≤ 10 MB</td>
+<td style="text-align:left">超出报错</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ <strong>安全提示</strong>：能写入该 KV 前缀 = 能向网关注入任意模板代码（模板可调用 <code>safeHTML</code> 等绕过转义）。请把 KV 模板写入权限视同<strong>代码部署权限</strong>，锁好对应的 namespace 与访问 token。</p>
+</blockquote>
+<blockquote>
+<p>ℹ️ <strong>限制</strong>：KV 模式下没有本地根目录，<code>{{ markdown &quot;x.md&quot; }}</code> 的<strong>文件加载形式不可用</strong>（只支持内联字符串 <code>{{ markdown &quot;# 标题&quot; }}</code>）。其余上下文变量与内置函数（见下一节）均正常可用。</p>
+</blockquote>
+<hr>
+<h2 id="3-模板可用上下文变量与函数">3. 模板可用上下文变量与函数</h2>
+<p>在 <code>template</code> 渲染上下文中，你可以直接使用以下变量与内置方法：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">字段 / 方法</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>{{ .Host }}</code></td>
+<td style="text-align:left">请求的 Host 头部</td>
+<td style="text-align:left"><code>example.com</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ .Path }}</code></td>
+<td style="text-align:left">请求的 URL 路径</td>
+<td style="text-align:left"><code>/docs/intro</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ .Method }}</code></td>
+<td style="text-align:left">请求的 HTTP 方法</td>
+<td style="text-align:left"><code>GET</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ .ClientIP }}</code></td>
+<td style="text-align:left">客户端的真实物理 IP</td>
+<td style="text-align:left"><code>192.168.1.100</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ .Time }}</code></td>
+<td style="text-align:left">当前网关时间 (RFC3339 格式)</td>
+<td style="text-align:left"><code>2026-06-17T09:00:00Z</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ header &quot;Key&quot; }}</code></td>
+<td style="text-align:left">获取指定的 HTTP 请求头值</td>
+<td style="text-align:left"><code>{{ header &quot;User-Agent&quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ query &quot;key&quot; }}</code></td>
+<td style="text-align:left">获取指定的 URL Query 参数值</td>
+<td style="text-align:left"><code>{{ query &quot;page&quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ cookie &quot;name&quot; }}</code></td>
+<td style="text-align:left">获取指定的 Cookie 值</td>
+<td style="text-align:left"><code>{{ cookie &quot;session_id&quot; }}</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>模板只能调用注册函数，不能调用对象方法（如 <code>{{ .Req.FormValue &quot;x&quot; }}</code>）：按名字反射调用方法会让二进制把所有依赖库的方法都编译进来（约 4MB）。<code>header</code> / <code>query</code> / <code>cookie</code> 也是函数；旧写法 <code>{{ .Header &quot;X&quot; }}</code> 会在加载模板时报错，并给出替换写法。</p>
+</blockquote>
+<h3 id="-内置模板辅助函数">🛠️ 内置模板辅助函数</h3>
+<p>除了标准的 Go 内置函数外，LiteGate 在渲染上下文中注册了以下增强辅助函数以简化模板开发：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">函数名</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>formatTime</code> / <code>formatDateTime</code></td>
+<td style="text-align:left">格式化时间对象（<code>time.Time</code>）或符合常见格式的时间字符串（如 RFC3339、<code>2006-01-02 15:04:05</code>）</td>
+<td style="text-align:left"><code>{{ formatTime .Time &quot;2006-01-02&quot; }}</code> <br> <code>{{ formatDateTime &quot;2026-06-18T10:00:00Z&quot; &quot;2006/01/02&quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>markdown</code></td>
+<td style="text-align:left">将 Markdown 格式的字符串动态渲染为安全的 HTML 网页结构 (网关自动防二次转义)</td>
+<td style="text-align:left"><code>{{ markdown &quot;# 这是一个标题\n- 列表项 1&quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>htmx</code></td>
+<td style="text-align:left">自动注入内建的 HTMX 4.0.0 脚本标签，避免手动部署 CDN</td>
+<td style="text-align:left"><code>{{ htmx }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>safeHTML</code></td>
+<td style="text-align:left">声明信任的 HTML 字符串片段，免受 HTML 转义防御的拦截</td>
+<td style="text-align:left"><code>{{ safeHTML &quot;&lt;div&gt;&quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>lower</code> / <code>upper</code></td>
+<td style="text-align:left">将输入字符串快速转换为全部小写或全部大写</td>
+<td style="text-align:left"><code>{{ lower &quot;ABC&quot; }}</code> / <code>{{ upper &quot;xyz&quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>contains</code> / <code>replace</code> / <code>substr</code></td>
+<td style="text-align:left">提供字符串匹配包含、全部替换、以及 Rune 字符安全的切片截取操作</td>
+<td style="text-align:left"><code>{{ replace &quot;hello&quot; &quot;l&quot; &quot;x&quot; }}</code> <br> <code>{{ substr &quot;abcdef&quot; 1 4 }}</code> (输出 <code>bcd</code>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>env</code></td>
+<td style="text-align:left">安全地读取系统指定的环境变量（仅限配置允许的环境变量白名单）</td>
+<td style="text-align:left"><code>{{ env &quot;APP_ENV&quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>default</code></td>
+<td style="text-align:left">提供空值兜底默认值（支持空串、零值、nil、空数组切片兜底）</td>
+<td style="text-align:left"><code>{{ default &quot;游客&quot; .Data.user.name }}</code> <br> <code>{{ query &quot;role&quot; | default &quot;user&quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>toJson</code></td>
+<td style="text-align:left">将变量或数据结构序列化为经过 HTML 字符转义的 JSON，并作为 JavaScript 表达式输出</td>
+<td style="text-align:left"><code>&lt;script&gt;const cfg = {{ toJson .Data.stats }};&lt;/script&gt;</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fromJson</code></td>
+<td style="text-align:left">将 JSON 格式字符串动态反序列化为可遍历的数据结构</td>
+<td style="text-align:left"><code>{{ $obj := fromJson .Data.rawString }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>split</code> / <code>join</code></td>
+<td style="text-align:left">字符串切片拆分与元素合并拼接</td>
+<td style="text-align:left"><code>{{ $tags := split &quot;a,b,c&quot; &quot;,&quot; }}</code> <br> <code>{{ join $tags &quot; · &quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>dict</code> / <code>slice</code></td>
+<td style="text-align:left">在模板内部动态创建复合字典（KV对）或切片列表（子模板传参神器）</td>
+<td style="text-align:left"><code>{{ $ctx := dict &quot;title&quot; &quot;详情&quot; &quot;id&quot; 42 }}</code> <br> <code>{{ template &quot;card&quot; $ctx }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>b64enc</code> / <code>b64dec</code></td>
+<td style="text-align:left">标准 Base64 编码与解码操作</td>
+<td style="text-align:left"><code>{{ b64enc &quot;token-123&quot; }}</code> <br> <code>{{ b64dec .Token }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>urlquery</code></td>
+<td style="text-align:left">对 URL 查询参数进行安全转义</td>
+<td style="text-align:left"><code>{{ urlquery &quot;a b&amp;c&quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>httpInclude</code></td>
+<td style="text-align:left">发起同站点内存级虚拟 GET 子请求并内嵌可信 HTML 片段（最大递归 5 层、响应上限 1 MiB）</td>
+<td style="text-align:left"><code>{{ httpInclude &quot;/components/header?theme=dark&quot; }}</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>httpInclude</code> 只接受以单个 <code>/</code> 开头的站内路径，不接受完整 URL、协议相对 URL 或片段标识。它会继承父请求的身份请求头（包括 Cookie 和 Authorization），并把响应作为可信 HTML 插入当前页面。因此目标路由必须与当前站点处于同一信任域，且不得直接返回未经转义的用户输入；流式、SSE、协议升级及非 2xx 响应不受支持。外部或 API 数据请求应使用 <code>fetch_json</code>。</p>
+<h3 id="-模板函数插件扩展体系-plugin-spi">🔌 模板函数插件扩展体系 (Plugin SPI)</h3>
+<p>LiteGate 提供了类似 Caddy 的全局模板函数插件扩展机制。任何第三方 Go 模块或企业内部私有包，只需调用 <code>pkg/plugin.RegisterTemplateFunc</code>，即可向所有模板注入专有函数：</p>
+<pre><code class="language-go">package myplugin
+
+import (
+    &quot;log&quot;
+
+    &quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+)
+
+func init() {
+    // 注册自定义脱敏函数
+    if err := plugin.RegisterTemplateFunc(&quot;maskPhone&quot;, func(phone string) string {
+        if len(phone) == 11 {
+            return phone[:3] + &quot;****&quot; + phone[7:]
+        }
+        return phone
+    }); err != nil {
+        log.Printf(&quot;register template function failed: %v&quot;, err)
+    }
+}
+</code></pre>
+<p>编译时导入该插件包后，即可在任意模板中直接调用：</p>
+<pre><code class="language-gotemplate">&lt;p&gt;联系电话：{{ .Data.user.phone | maskPhone }}&lt;/p&gt;
+</code></pre>
+<p>注册会校验函数名、函数签名、重复名称以及 LiteGate 内置保留名称，并在失败时返回 <code>error</code>。模板函数可能被多个请求并发调用，插件函数自身必须是线程安全、执行时间有界的可信代码。注册表发生变化后，LiteGate 会使用新的缓存版本重新编译模板。</p>
+<hr>
+<h2 id="4-挂钩状态码渲染自定义错误页-nginxcaddy-对标">4. 挂钩状态码渲染自定义错误页 (Nginx/Caddy 对标)</h2>
+<p>当代理的后端服务不可用（如发生 502 Bad Gateway、504 Gateway Timeout）或发生 404 Site Not Found 时，你可以通过配置 <code>error_pages</code> 拦截状态码，并渲染高颜值的 HTML 错误页。</p>
+<h3 id="-流式响应与协议升级安全绕过说明">🛡️ 流式响应与协议升级安全绕过说明</h3>
+<p>为了保证长连接与特殊传输协议的可用性，错误页拦截器自动遵循以下钢铁法则：</p>
+<ol>
+<li><strong>Header 已发送直接透传</strong>：如果在错误发生前，Header 已经写入并发送给客户端（如开始推送流数据），网关将直接透传，不再强行替换 Body，以防止破坏客户端已有状态。</li>
+<li><strong>WebSocket &amp; SSE 自动绕过</strong>：网关检测到 WebSocket 协议升级（<code>Upgrade: websocket</code>）或 <code>Accept/Content-Type</code> 为 <code>text/event-stream</code> (SSE) 时，将强制关闭拦截器，确保双向通信与推送通道的语义完整。</li>
+</ol>
+<h3 id="-yaml-配置示例">⚙️ YAML 配置示例</h3>
+<p>主配置可以设置全局兜底错误页，用于 Host 没有匹配任何 site 的情况：</p>
+<pre><code class="language-yaml"># config.yaml
+error_pages:
+  - status: [404]
+    template: &quot;./templates/errors/site-not-found.html&quot;
+</code></pre>
+<p>错误页按“站点级 → 全局级 → LiteGate 内置页面”的顺序选择。请求匹配到 site 且该 site 配置了对应状态码时，优先使用下面的站点级模板；否则继续使用全局模板。</p>
+<pre><code class="language-yaml">site: myapp.example.com
+# 站点级全局错误页面映射
+error_pages:
+  - status: [404]
+    template: &quot;./templates/errors/404.html&quot;
+  - status: [500, 502, 503, 504]
+    template: &quot;./templates/errors/5xx.html&quot;
+routes:
+  - name: my-service
+    match:
+      path_prefix: /
+    action:
+      type: proxy
+      service_name: backend-app
+</code></pre>
+<h3 id="-错误页模板编写规范">📝 错误页模板编写规范</h3>
+<p>在错误页模板中，网关会额外注入以下上下文变量：</p>
+<ul>
+<li><code>{{ .Status }}</code>：HTTP 状态码（如 502）</li>
+<li><code>{{ .StatusText }}</code>：状态码描述（如 Bad Gateway）</li>
+<li><code>{{ .Error }}</code>：后端服务或网关抛出的原始错误信息明文</li>
+<li><code>{{ .RequestID }}</code>：当前请求的追踪链 ID (<code>X-Request-Id</code>)</li>
+</ul>
+<pre><code class="language-html">&lt;!-- ./templates/errors/5xx.html --&gt;
+&lt;div class=&quot;error-container&quot;&gt;
+    &lt;h1&gt;Error {{ .Status }} : {{ .StatusText }}&lt;/h1&gt;
+    &lt;p&gt;抱歉，服务器暂时无法处理您的请求。请稍后再试。&lt;/p&gt;
+    &lt;pre&gt;Trace Error: {{ .Error }}&lt;/pre&gt;
+    &lt;small&gt;RequestId: {{ .RequestID }}&lt;/small&gt;
+&lt;/div&gt;
+</code></pre>
+<hr>
+<h2 id="5-sso-自定义登录页面渲染">5. SSO 自定义登录页面渲染</h2>
+<p>如果你在路由上启用了 SSO 认证，可以挂载一个自定义的登录 HTML 页面，替代系统默认的登录框。</p>
+<h3 id="-yaml-配置示例-1">⚙️ YAML 配置示例</h3>
+<pre><code class="language-yaml">site: example.com
+routes:
+  - name: secure-admin
+    match:
+      path_prefix: /admin
+    action:
+      type: proxy
+      service_name: admin-service
+      auth:
+        type: sso
+        secret: &quot;your-super-long-sso-cookie-signing-secret&quot;
+        template: &quot;./templates/auth/login.html&quot; # 指定自定义登录模板路径
+</code></pre>
+<h3 id="-sso-登录模板编写规范">📝 SSO 登录模板编写规范</h3>
+<p>在自定义的登录 HTML 模板中，你可以通过以下占位符获取认证上下文，且必须在 <code>&lt;form&gt;</code> 中放置重定向隐藏域：</p>
+<ul>
+<li><code>{{ERROR}}</code>：如果登录失败（如密码错误），网关会在此处替换为 <code>&lt;div class=&quot;error-msg&quot;&gt;错误信息&lt;/div&gt;</code>，没有错误时则为空。</li>
+<li><code>{{NEXT}}</code>：登录成功后需重定向的原始目标 URL。</li>
+<li><code>{{CLIENT_IP}}</code>：当前发起登录的客户端 IP 地址。</li>
+</ul>
+<pre><code class="language-html">&lt;!-- ./templates/auth/login.html --&gt;
+&lt;div class=&quot;login-card&quot;&gt;
+    &lt;h2&gt;系统登录授权&lt;/h2&gt;
+    {{ERROR}}
+    &lt;form action=&quot;&quot; method=&quot;POST&quot;&gt;
+        &lt;!-- 核心：必须带上此隐藏域，以便网关登录成功后正确回跳 --&gt;
+        &lt;input type=&quot;hidden&quot; name=&quot;next&quot; value=&quot;{{NEXT}}&quot;&gt;
+        
+        &lt;input type=&quot;text&quot; name=&quot;username&quot; placeholder=&quot;用户名&quot; required&gt;
+        &lt;input type=&quot;password&quot; name=&quot;password&quot; placeholder=&quot;密码&quot; required&gt;
+        &lt;button type=&quot;submit&quot;&gt;立即登录&lt;/button&gt;
+    &lt;/form&gt;
+    &lt;small&gt;您的登录 IP: {{CLIENT_IP}}&lt;/small&gt;
+&lt;/div&gt;
+</code></pre>
+<hr>
+<h2 id="6-免登录公开系统状态页-ai-风格-status-dashboard">6. 免登录公开系统状态页 (AI 风格 Status Dashboard)</h2>
+<p>你无须向终端用户暴露敏感的管理后台，只需配置 <code>status</code> 类型的 Action，即可直接渲染一个支持暗黑模式、高颜值磨砂玻璃风（Glassmorphism）的公开可用性状态面板。</p>
+<pre><code class="language-yaml">site: example.com
+routes:
+  - name: site-status
+    match:
+      path: /status
+    action:
+      type: status
+      title: &quot;LiteGate Platform Availability&quot; # 可自定义看板大标题
+</code></pre>
+<p>访问 <code>/status</code> 后，网关会自动获取当前所有站点的健康状态、QPS、平均响应时间及最近 30 天的可用性历史状态图，并提供每隔 5 秒自动更新指标数据的实时动态效果。同时它也支持 API 调用（请求中携带 <code>?format=json</code> 或 <code>Accept: application/json</code> 头可直接获取状态的 JSON 数据）。</p>
+<hr>
+<h2 id="7-markdown-文档的模板化布局渲染">7. Markdown 文档的模板化布局渲染</h2>
+<p>在传统的静态托管（<code>serve</code>）模式下，如果开启了 <code>render_markdown</code>，你可以使用自定义的 HTML 模板来定制文档的页面外观。</p>
+<pre><code class="language-yaml">site: example.com
+action:
+  type: serve
+  root: &quot;./docs&quot;
+  render_markdown: true
+  markdown_template: &quot;./templates/layouts/doc.html&quot; # 自定义 Markdown 页面框架
+</code></pre>
+<p>在自定义布局 <code>doc.html</code> 中，可以使用以下 Go HTML 模板变量来接收文档信息与渲染内容：</p>
+<ul>
+<li><code>{{ .Title }}</code>：当前 Markdown 文档的文件名或解析出的一级标题。</li>
+<li><code>{{ .Content }}</code>：Markdown 服务端渲染好的 HTML 内容（类型为 <code>template.HTML</code>，直接输出不会被转义）。</li>
+<li><code>{{ .Sidebar }}</code>：侧边栏的树形结构数据列表，可在模板中通过 <code>{{ range .Sidebar }}</code> 直接循环渲染侧边栏。</li>
+<li><code>{{ .Host }}</code>、<code>{{ .Path }}</code> 等：标准的请求上下文变量，支持获取请求头和 Cookie。</li>
+<li><code>{{ .Nonce }}</code>：生成当前页面唯一的随机安全 nonce，供 CSP 策略使用。</li>
+</ul>
+<h3 id="-go-layout-模板编写示例">📝 Go Layout 模板编写示例</h3>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh-CN&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;{{ .Title }} | 文档中心&lt;/title&gt;
+    &lt;style&gt;
+        body { display: flex; font-family: sans-serif; }
+        .sidebar { width: 250px; background: #f8fafc; padding: 20px; border-right: 1px solid #e2e8f0; }
+        .content { flex: 1; padding: 40px; }
+        .nav-item { margin-bottom: 8px; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;aside class=&quot;sidebar&quot;&gt;
+        &lt;h3&gt;目录&lt;/h3&gt;
+        {{ range .Sidebar }}
+            &lt;div class=&quot;nav-item&quot;&gt;
+                &lt;a href=&quot;{{ .Href }}&quot;&gt;{{ if .IsDir }}📁{{ else }}📄{{ end }} {{ .Name }}&lt;/a&gt;
+            &lt;/div&gt;
+        {{ end }}
+    &lt;/aside&gt;
+    &lt;main class=&quot;content&quot;&gt;
+        {{ .Content }}
+    &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<hr>
+<h2 id="8-高级配置性能调试与错误降级-production-debug--onerror">8. 高级配置：性能、调试与错误降级 (Production, Debug &amp; OnError)</h2>
+<p>在生产和开发环境部署中，LiteGate 支持对模板和 Layout 进行高性能内存缓存、实时热重载以及弹性降级配置。</p>
+<h3 id="-yaml-配置高级参数">⚙️ YAML 配置高级参数</h3>
+<pre><code class="language-yaml">site: example.com
+on_error:
+  status: 502 # 降级后的 HTTP 状态码，默认为 500
+  content_type: &quot;text/html; charset=utf-8&quot;
+  body: &quot;&lt;h1&gt;服务正在维护中...&lt;/h1&gt;&quot; # 降级展示的静态 HTML 字符串
+  # template: &quot;./site/fallback.html&quot;    # 也可指定本地静态 html 降级文件
+template:
+  template: &quot;./site/pages/index.html&quot;
+  template_root: &quot;./site&quot;
+  # 1. 生产模式（建议线上开启）
+  # 开启后，网关在启动时会对模板以及 markdown_template 布局自动进行预编译（Precompile），
+  # 并常驻内存。运行时渲染直接读取缓存，完全关闭磁盘 I/O（不发生 os.Stat, os.ReadFile 等系统调用）。
+  template_production: true
+  # 2. 调试模式（建议本地开启）
+  # 开启后，若模板编译或语法渲染错误，会在浏览器展示 Vite/Gin 风格的高颜值磨砂玻璃暗黑调试屏。
+  # 调试屏会清晰标示出错误发生的文件名、所在行号、并在页面截取输出该行前后 5 行的上下文代码片段。
+  # 当 template_debug 为 true 时，会强制旁路并忽略内存缓存以进行实时热重载。
+  template_debug: true
+</code></pre>
+<h3 id="-开发模式与生产模式对比">🧠 开发模式与生产模式对比</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">模式</th>
+<th style="text-align:left">推荐配置</th>
+<th style="text-align:left">特性与表现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>开发环境 (Development)</strong></td>
+<td style="text-align:left"><code>template_debug: true</code><br><code>template_production: false</code></td>
+<td style="text-align:left">1. 自动追踪依赖树的 Mtime 变动：修改主模板或任意 <code>template_root</code> 下的 HTML 依赖片段，刷新即可即时热重载生效。<br>2. 编译或渲染语法错误在浏览器输出精美的报错代码上下文可视化屏。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>生产环境 (Production)</strong></td>
+<td style="text-align:left"><code>template_debug: false</code><br><code>template_production: true</code></td>
+<td style="text-align:left">1. <strong>零文件系统调用 (Zero-RTT I/O)</strong> 内存缓存：消除运行时 os.Stat 等内核调用，并发 QPS 翻倍。<br>2. 预编译载入（Precompile）：网关冷启动时即完成解析缓存，消灭首个请求时的 cold start 响应延迟。<br>3. 弹性容灾：错误时静默执行 <code>on_error</code> 降级，防泄漏内部文件物理路径等敏感资产。</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ul>
+<li><a href="./markdown.html">Markdown 渲染服务</a></li>
+<li><a href="./serve.html">Serve 托管静态资源</a></li>
+<li><a href="./respond.html">Respond 直接响应</a></li>
+</ul>
+<h2 id="9-结合-htmx-与-fetch-json-的局部动态刷新实战场景酷炫玩法">9. 结合 HTMX 与 Fetch JSON 的局部动态刷新（实战场景）🌟酷炫玩法🌟</h2>
+<p>通过联合使用 <code>fetch_json</code> 后端数据拉取和内置的 <code>{{ htmx }}</code> 渲染函数，你可以在网关层构建极具现代感、无刷新局部更新的动态交互页面。</p>
+<p>下面的示例将演示：通过 <code>respond</code> Action 快速响应一个监控 JSON 数据（扮演我们的 API），通过 <code>/stats-partial</code> 提取 HTML 片段，最后在主页通过内建的 HTMX 实现按钮点击时的局部无刷新替换。</p>
+<h3 id="-yaml-配置示例-sitesdemoyaml">⚙️ YAML 配置示例 (<code>sites/demo.yaml</code>)</h3>
+<pre><code class="language-yaml">site: &quot;cool-dashboard.local&quot;
+https: false
+routes:
+  # 1. 扮演后端 JSON API，返回实时系统监控 JSON 数据
+  - name: mock-json-api
+    match:
+      path: &quot;/api/stats&quot;
+    respond:
+      status: 200
+      content_type: &quot;application/json; charset=utf-8&quot;
+      body: '{&quot;status&quot;:&quot;healthy&quot;,&quot;qps&quot;:342,&quot;cpu&quot;:14.8,&quot;time&quot;:&quot;{{.Time}}&quot;}'
+  # 2. 专门供 HTMX 调用，拉取 API 数据后返回用于替换的局部 HTML 片段
+  - name: stats-fragment
+    match:
+      path: &quot;/stats-partial&quot;
+    action:
+      type: &quot;template&quot;
+      body: '&lt;div id=&quot;stats-data&quot;&gt;&lt;p&gt;系统状态: &lt;strong style=&quot;color: #22c55e;&quot;&gt;{{.Data.monitor.status}}&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;实时 QPS: &lt;strong&gt;{{.Data.monitor.qps}}&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;CPU 占用: &lt;strong&gt;{{.Data.monitor.cpu}}%&lt;/strong&gt;&lt;/p&gt;&lt;p style=&quot;color: #94a3b8;&quot;&gt;更新时间: {{formatTime .Data.monitor.time &quot;15:04:05&quot;}}&lt;/p&gt;&lt;/div&gt;'
+      fetch_json:
+        - key: &quot;monitor&quot;
+          url: &quot;http://127.0.0.1:8080/api/stats&quot;
+          allow_private: true
+  # 3. 前端监控看板的主页面路由
+  - name: main-dashboard
+    match:
+      path: &quot;/&quot;
+    template:
+      template: &quot;./templates/dashboard.html&quot;
+      fetch_json:
+        - key: &quot;monitor&quot;
+          url: &quot;http://127.0.0.1:8080/api/stats&quot;
+          allow_private: true
+</code></pre>
+<h3 id="-templatesdashboardhtml-服务端主模板">📝 ./templates/dashboard.html 服务端主模板</h3>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;系统健康度 Dashboard&lt;/title&gt;
+    &lt;!-- 自动加载内嵌的 HTMX 脚本，防止特殊字符转义 --&gt;
+    {{ htmx }}
+    &lt;style&gt;
+        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; }
+        .card { background: #1e293b; border-radius: 8px; padding: 20px; border: 1px solid #334155; max-width: 400px; }
+        .btn { background: #3b82f6; border: none; padding: 10px 20px; color: white; border-radius: 4px; cursor: pointer; }
+        .btn:hover { background: #2563eb; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;监控看板 - {{ .Host }}&lt;/h1&gt;
+    
+    &lt;div class=&quot;card&quot;&gt;
+        &lt;h3&gt;实时系统指标&lt;/h3&gt;
+        
+        &lt;!-- 首屏通过 template 结合 fetch_json 直接渲染出状态数据，实现超快速首屏 --&gt;
+        &lt;div id=&quot;stats-data&quot;&gt;
+            &lt;p&gt;系统状态: &lt;strong style=&quot;color: #22c55e;&quot;&gt;{{.Data.monitor.status}}&lt;/strong&gt;&lt;/p&gt;
+            &lt;p&gt;实时 QPS: &lt;strong&gt;{{.Data.monitor.qps}}&lt;/strong&gt;&lt;/p&gt;
+            &lt;p&gt;CPU 占用: &lt;strong&gt;{{.Data.monitor.cpu}}%&lt;/strong&gt;&lt;/p&gt;
+            &lt;p style=&quot;color: #94a3b8;&quot;&gt;更新时间: {{formatTime .Data.monitor.time &quot;15:04:05&quot;}}&lt;/p&gt;
+        &lt;/div&gt;
+        
+        &lt;div style=&quot;margin-top: 20px;&quot;&gt;
+            &lt;!-- 点击按钮时，HTMX 请求 /stats-partial 并无刷新替换掉 #stats-data 的内容 --&gt;
+            &lt;button class=&quot;btn&quot; hx-get=&quot;/stats-partial&quot; hx-target=&quot;#stats-data&quot; hx-swap=&quot;outerHTML&quot;&gt;
+                局部无刷新更新
+            &lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h3 id="-fetch_json-字段参考">📋 <code>fetch_json</code> 字段参考</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">字段</th>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">默认值</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>key</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">模板变量名,渲染上下文中通过 <code>{{ .Data.&lt;key&gt; }}</code> 访问解析后的 JSON</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">拉取地址,支持 <code>{{ }}</code> 模板语法(基于请求上下文渲染,如 <code>.Query</code>/<code>.Header</code>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ttl</code></td>
+<td style="text-align:left">int(秒)</td>
+<td style="text-align:left"><code>0</code></td>
+<td style="text-align:left">结果缓存时长,<code>0</code> 表示不缓存;非 2xx 与网络错误会做短时负缓存以防雪崩</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>timeout</code></td>
+<td style="text-align:left">int(秒)</td>
+<td style="text-align:left"><code>5</code></td>
+<td style="text-align:left">单次请求超时</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>allow_private</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left">是否允许目标解析到私网/环回地址(拉取内网服务时需开启)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>max_body_size</code></td>
+<td style="text-align:left">int(字节)</td>
+<td style="text-align:left"><code>2MB</code></td>
+<td style="text-align:left">响应体大小上限,超出即中止</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fail_policy</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left"><code>ignore</code></td>
+<td style="text-align:left"><code>ignore</code>:失败仅写入 <code>{{ .Errors.&lt;key&gt; }}</code> 并继续渲染;<code>error</code>:中止渲染并触发 <code>on_error</code> 降级</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>forward_headers</code></td>
+<td style="text-align:left">[]string</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">透传到目标的请求头名;同时参与缓存键隔离,避免不同身份命中同一缓存</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cache_tags</code></td>
+<td style="text-align:left">[]string</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">给缓存结果附加标签；代理后端返回 <code>LiteGate-Invalidate: tag-a,tag-b</code> 时精确失效</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>lb_policy</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left"><code>round_robin</code></td>
+<td style="text-align:left"><code>service://</code> 数据源使用的负载均衡策略</td>
+</tr>
+</tbody>
+</table>
+<p><code>url</code> 除了 <code>http://</code> 和 <code>https://</code>，还支持网关原生服务地址：</p>
+<pre><code class="language-yaml">template_fragment: &quot;stats-cards&quot; # HX-Request:true 时只执行该命名模板
+fetch_json:
+  - key: stats
+    url: &quot;service://orders/api/stats&quot;
+    ttl: 10
+    cache_tags: [&quot;orders:{{ header \&quot;X-Tenant-Id\&quot; }}&quot;]
+    forward_headers: [&quot;X-Tenant-Id&quot;]
+</code></pre>
+<p><code>service://</code> 不直接解析 DNS 地址，而是复用 LiteGate 的服务发现、IDS Selector/Meta、健康实例过滤、负载均衡和 mTLS transport。缓存键自动包含服务发现查询维度；若数据依赖身份 Header，仍须将对应 Header 写入 <code>forward_headers</code>，用于传递身份并进一步隔离缓存。</p>
+<p>设置 <code>template_fragment</code> 后，普通请求执行完整主模板，<code>HX-Request: true</code> 请求只执行指定的 <code>{{ define &quot;...&quot; }}</code> 命名模板，并自动返回 <code>Vary: HX-Request</code>。因此一个 URL 可以同时承担完整页面和 HTMX 局部刷新，无需额外建立 fragment 路由。</p>
+<p>推荐让纯 JSON API 不感知网关协议，改由写操作的 <code>proxy</code> 路由声明：</p>
+<pre><code class="language-yaml">site: example.com
+on_success:
+  invalidate_cache: [&quot;orders:tenant-a&quot;]
+  htmx_trigger: [&quot;orders-changed&quot;]
+  discard_body: true
+proxy: [&quot;127.0.0.1:9000&quot;]
+</code></pre>
+<p>上游返回 <code>2xx</code> 后，LiteGate 清理缓存、生成 <code>HX-Trigger</code>，并按需丢弃 JSON 响应体。模板无论来自 <code>template_root</code> 目录还是 <code>template_kv_mode</code> 的 KV，行为都一致。</p>
+<p>为兼容已有系统，业务写接口也可以直接返回：</p>
+<pre><code class="language-http">LiteGate-Invalidate: orders:tenant-a
+HX-Trigger: orders-changed
+</code></pre>
+<p>前一个 Header 只在网关内部消费并清理匹配的 <code>fetch_json</code> 缓存，后一个 Header 原样交给 HTMX 触发页面刷新；新系统优先使用 <code>on_success</code>，避免业务 API 耦合这些 Header。</p>
+<ul>
+<li><code>{{ .Data.&lt;key&gt; }}</code>:该 key 拉取并解析后的 JSON 数据。</li>
+<li><code>{{ .Errors.&lt;key&gt; }}</code>:该 key 拉取失败时的错误信息(<code>ignore</code> 策略下用于在页面上优雅展示)。</li>
+</ul>
+<h3 id="-安全注意事项">🔒 安全注意事项</h3>
+<ul>
+<li><strong>SSRF 防护(默认开启)</strong>:目标主机在<strong>实际拨号时</strong>解析并逐个校验 IP,私网 / 环回 / 链路本地 / 组播 / CGNAT(<code>100.64.0.0/10</code>)/ 保留段默认被拦截,除非显式 <code>allow_private: true</code>;重定向目标会经同一安全传输层二次校验;仅允许 <code>http</code> / <code>https</code> 协议;响应体大小与超时强制受限。</li>
+<li><strong><code>forward_headers</code> 凭证外泄风险</strong> ⚠️:<code>forward_headers</code> 会把指定请求头(如 <code>Authorization</code>、<code>Cookie</code>)原样转发给目标。当前目标 URL <strong>不受白名单限制</strong>,因此<strong>只应向你完全可控的地址转发凭证类请求头</strong>。被误配或被注入的 URL 模板可能把凭证泄露给外部主机——建议 <code>url</code> 的 host 部分写死为内网地址,不要用用户输入拼接 host。</li>
+<li><strong>HTMX 脚本与 CSP</strong>:<code>{{ htmx }}</code> 输出的脚本标签<strong>已自动带上本次请求的 nonce</strong>(形如 <code>&lt;script src=&quot;/_litegate/assets/htmx-4.0.0.min.js&quot; nonce=&quot;…&quot;&gt;&lt;/script&gt;</code>),且始终指向当前内嵌版本——升级 htmx 时不会出现硬编码版本 URL 变 404 的问题。<strong>优先用 <code>{{ htmx }}</code>,不要手写脚本标签。</strong> 但 nonce 只有在响应同时带上匹配的 CSP 头时才真正生效:请在 action 上配置 <strong><code>template_csp</code></strong>(见下)。只有在无法使用该 helper 时才硬编码带版本的 URL,并记得每次升级 htmx 都同步修改。</li>
+<li><strong>内容安全策略(<code>template_csp</code>)</strong>:<code>{{ .Nonce }}</code> / <code>{{ htmx }}</code> 产生的 nonce 只落在 HTML 正文里,除非 <code>Content-Security-Policy</code> 响应头携带<strong>相同</strong>的值,否则不产生任何强制力。<code>template_csp</code> 就是用来闭合这条链的:
+<ul>
+<li><code>template_csp: &quot;auto&quot;</code> 会输出一条严格基线策略:<code>default-src 'self'; script-src 'self' 'nonce-&lt;本次请求 nonce&gt;'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'</code>。只有 <code>{{ htmx }}</code> 和带 <code>{{ .Nonce }}</code> 的内联脚本能执行,其余脚本一律被拦截。(内联 <code>&lt;style&gt;</code> 仍通过 <code>'unsafe-inline'</code> 放行,如需更严可自行收紧。)</li>
+<li>其他任意值被当作<strong>字面策略</strong>,其中的 <code>{nonce}</code> 占位符会被替换为本次请求的 nonce,例如 <code>template_csp: &quot;default-src 'self'; script-src 'nonce-{nonce}'&quot;</code>。</li>
+<li>若 <code>action.headers</code> 里已显式设置了 <code>Content-Security-Policy</code>,以该显式值为准,<code>template_csp</code> 会被跳过。</li>
+</ul>
+</li>
+<li><strong>HTMX 4 迁移提醒</strong>:LiteGate 内嵌版本已升级为 4.0.0。父元素上的 HTMX 属性默认不再隐式继承，依赖子元素继承时要为属性添加 <code>:inherited</code>；事件名改用新的阶段式命名，例如 <code>htmx:after:request</code> 取代 <code>htmx:afterRequest</code>，请求/响应事件数据改从 <code>event.detail.ctx</code> 读取；v4 默认会替换 4xx/5xx 响应体。旧的无版本资源 URL <code>/_litegate/assets/htmx.min.js</code> 返回 410 Gone，并在日志中提示迁移；新模板应使用 <code>{{ htmx }}</code> 或带版本 URL。</li>
+</ul>
+<h3 id="-网关对-htmx-请求的原生感知代理后端场景">🔌 网关对 HTMX 请求的原生感知(代理后端场景)</h3>
+<p>当你用 <strong>HTMX + 后端(<code>type: proxy</code>)</strong> 的架构时(网关做边缘,后端用 <code>html/template</code> 渲染片段),LiteGate 会识别 <code>HX-Request: true</code> 请求头并自动做两件事,避免破坏 HTMX 的局部替换语义:</p>
+<ul>
+<li><strong>错误页不拦截 HTMX 请求</strong>:<code>error_pages</code> 在普通整页请求上会把 404/5xx 替换为完整错误页;但对 HTMX 请求(含发送 <code>Accept: text/html</code> 的 <code>hx-boost</code> 请求)会<strong>自动放行</strong>,让后端返回的 HTML 片段与状态码原样透传——否则整页错误页会被 swap 进某个 <code>&lt;div&gt;</code>。</li>
+<li><strong>SSO 未登录改用 <code>HX-Redirect</code></strong>:受 <code>auth.type: sso</code> 保护的路由,未登录时普通请求返回 <code>302</code> 跳登录页;而对 HTMX 请求会返回 <code>401 + HX-Redirect: /_auth/login?next=...</code>,使 htmx 执行<strong>整页跳转</strong>到登录页,而不是把登录页 swap 进片段容器。</li>
+</ul>
+<blockquote>
+<p>此外,所有 <code>HX-*</code> 请求/响应头(<code>HX-Trigger</code>、<code>HX-Redirect</code>、<code>HX-Push-Url</code>、<code>HX-Retarget</code>、<code>HX-Reswap</code> 等)在反向代理时均原样透传(仅按 RFC 7230 剥离 hop-by-hop 头),并支持 HTMX 的 SSE / WebSocket 扩展。OIDC 中间件的鉴权重定向暂未做 HTMX 感知。</p>
+</blockquote>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/04-actions/template.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

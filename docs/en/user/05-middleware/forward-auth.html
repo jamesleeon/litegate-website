@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unified Login for LiteGate Sites with Authelia · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/05-middleware/forward-auth.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details open><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html" class="current" aria-current="page">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="unified-login-for-litegate-sites-with-authelia">Unified Login for LiteGate Sites with Authelia</h1>
+<p>If an application has no login system of its own, or you want to check users, groups and two-factor authentication centrally before requests reach the application, use <code>forward_auth</code>. The browser reaches LiteGate first, the gateway asks Authelia about identity and access, and only then hands the request to the business service.</p>
+<p>To add username/password login to a single website, LiteGate's built-in <code>auth.type: sso</code> works without deploying Authelia. It provides a login page, return to the original page after login, a session cookie and logout, and checks the cookie's signature and expiry locally on every request. Users and bcrypt password hashes are kept in the site configuration, and a custom login page template can be used. See <a href="./authentication.html#11-local-authentication-auth">local authentication</a>.</p>
+<p>The built-in SSO focuses on protecting the entry: it offers no group policies, no two-factor authentication and doesn't pass user identity to the backend, and its cookie has no cross-domain Domain. When you need those, use the Authelia setup below.</p>
+<p>The default build includes a pure-Go Forward Auth middleware plugin, no CGO required. It runs in the Authentication phase, before business actions and the proxy cache. Every protected HTTP request is checked once; after login the user carries a session cookie and normally doesn't enter a password again. LiteGate needs no OIDC or Redis for this path; Authelia's own sessions and storage are configured separately.</p>
+<h2 id="1-configure-the-login-portal-and-protected-site">1. Configure the login portal and protected site</h2>
+<p>The login portal and the application are two sites, which can share a file separated by <code>---</code>:</p>
+<pre><code class="language-yaml">site: auth.example.com
+https: true
+proxy: authelia:9091
+---
+site: app1.example.com
+https: true
+forward_auth:
+  address: authelia:9091
+  uri: /api/authz/forward-auth
+  copy_headers: [Remote-User, Remote-Groups, Remote-Name, Remote-Email]
+proxy: app1:8080
+</code></pre>
+<p>The four Authelia identity headers above are copied by default, so usually this is enough:</p>
+<pre><code class="language-yaml">site: app1.example.com
+https: true
+forward_auth: http://authelia:9091/api/authz/forward-auth
+proxy: app1:8080
+</code></pre>
+<p>The full-URL shorthand also works for other authorization services that speak the same protocol. The plugin never guesses Authelia's path. Container names such as <code>authelia</code> and <code>app1</code> only work when LiteGate's network can resolve them; when LiteGate runs on the host, use real addresses such as <code>127.0.0.1:9091</code>.</p>
+<p>LiteGate sends a GET without the business request body to the authorization endpoint; a 2xx lets the business request continue, 401/403 and common login redirects are returned to the client, and authorization service failures return 503. Multiple authorization upstreams and renaming identity headers are not supported.</p>
+<h2 id="2-prepare-domains-https-and-authelia">2. Prepare domains, HTTPS and Authelia</h2>
+<p>The example uses the login portal <code>https://auth.example.com</code> and the application <code>https://app1.example.com</code>, with Authelia and the application listening on local ports <code>9091</code> and <code>8080</code>.</p>
+<p>Both domains must resolve to LiteGate, and the HTTPS certificate must cover them. <code>https: true</code> enables the site's HTTPS behavior; certificates come from <a href="../06-certificates/auto-cert.html">auto cert</a> or existing certificate configuration. Authelia uses Secure cookies, so plain HTTP or bare IPs cannot complete this browser login flow. Internal networks can use domains with test certificates.</p>
+<p>With an existing Authelia, just check the cookie and access rules below. A new test instance can use the file user database, SQLite and the default in-memory sessions.</p>
+<p>Create the directory and generate a user password hash:</p>
+<pre><code class="language-bash">mkdir -p authelia
+docker run --rm authelia/authelia:4.39.28 \
+  authelia crypto hash generate argon2 \
+  --password 'replace-with-your-test-password' --no-confirm
+</code></pre>
+<p>Put the printed <code>Digest</code> into <code>authelia/users_database.yml</code>:</p>
+<pre><code class="language-yaml">users:
+  demo:
+    displayname: Demo User
+    password: 'PASTE_ARGON2_DIGEST_HERE'
+    email: demo@example.com
+    groups: [admins]
+</code></pre>
+<p>A single-instance <code>authelia/configuration.yml</code>. Use different random values for the three secrets, for example from three runs of <code>openssl rand -hex 32</code>; don't keep the placeholders.</p>
+<pre><code class="language-yaml">server:
+  address: tcp://0.0.0.0:9091
+log:
+  level: info
+identity_validation:
+  reset_password:
+    jwt_secret: REPLACE_WITH_RANDOM_SECRET_1
+authentication_backend:
+  file:
+    path: /config/users_database.yml
+access_control:
+  default_policy: deny
+  rules:
+    - domain: app1.example.com
+      policy: one_factor
+session:
+  secret: REPLACE_WITH_RANDOM_SECRET_2
+  same_site: lax
+  cookies:
+    - domain: example.com
+      authelia_url: https://auth.example.com
+      default_redirection_url: https://app1.example.com
+storage:
+  encryption_key: REPLACE_WITH_RANDOM_SECRET_3
+  local:
+    path: /config/db.sqlite3
+notifier:
+  filesystem:
+    filename: /config/notification.txt
+</code></pre>
+<p>This example uses <code>one_factor</code> to verify the username, password and redirect flow first. The file notifier is for testing; configure SMTP for production notifications, and use shared session storage for multiple instances. See <a href="https://www.authelia.com/configuration/session/introduction/">Authelia session configuration</a>.</p>
+<p>Validate, then start the container, mapping the authorization port only to the host loopback:</p>
+<pre><code class="language-bash">docker run --rm -v &quot;$PWD/authelia:/config&quot; authelia/authelia:4.39.28 \
+  authelia validate-config --config /config/configuration.yml
+
+docker run -d --name authelia --restart unless-stopped \
+  -p 127.0.0.1:9091:9091 \
+  -v &quot;$PWD/authelia:/config&quot; authelia/authelia:4.39.28
+</code></pre>
+<h2 id="3-configure-the-two-litegate-sites">3. Configure the two LiteGate sites</h2>
+<p>Login portal <code>sites/auth.yaml</code>:</p>
+<pre><code class="language-yaml">site: auth.example.com
+https: true
+proxy: 127.0.0.1:9091
+</code></pre>
+<p><strong>Don't attach <code>forward_auth</code> to the login portal</strong>, or users can't reach the login page.</p>
+<p>Application <code>sites/app1.yaml</code>:</p>
+<pre><code class="language-yaml">site: app1.example.com
+https: true
+forward_auth: http://127.0.0.1:9091/api/authz/forward-auth
+proxy: 127.0.0.1:8080
+</code></pre>
+<p>Validate before saving:</p>
+<pre><code class="language-bash">litegate -t -config config.yaml
+</code></pre>
+<p>A running LiteGate hot-reloads site files. If you're coming from an old binary, upgrade to a version that includes the Forward Auth plugin first.</p>
+<p>Open the application domain: you should be redirected to Authelia, log in with <code>demo</code> and the password from the user database, and return to the application. The backend receives <code>Remote-User</code>, <code>Remote-Groups</code>, <code>Remote-Name</code> and <code>Remote-Email</code>.</p>
+<h2 id="4-protect-only-some-paths-or-reuse-the-configuration">4. Protect only some paths, or reuse the configuration</h2>
+<p>Site-level <code>forward_auth</code> is inherited by all routes, including static files and PHP. To protect only the admin area, put it on the route:</p>
+<pre><code class="language-yaml">site: app1.example.com
+https: true
+/admin:
+  forward_auth: http://127.0.0.1:9091/api/authz/forward-auth
+  proxy: 127.0.0.1:8080
+proxy: 127.0.0.1:8080
+</code></pre>
+<p>To share one configuration across routes, the named middleware form is still supported:</p>
+<pre><code class="language-yaml">site: app1.example.com
+https: true
+middlewares:
+  login:
+    type: forward_auth
+    config:
+      address: 127.0.0.1:9091
+      uri: /api/authz/forward-auth
+      timeout: 3s
+      copy_headers: [Remote-User, Remote-Groups, Remote-Name, Remote-Email]
+/admin:
+  use: login
+  proxy: 127.0.0.1:8080
+/private:
+  use: login
+  proxy: 127.0.0.1:8080
+respond: public
+</code></pre>
+<p>Inline <code>forward_auth</code> can also be reused through <code>snippets</code> / <code>import</code>. A route's configuration replaces the whole site-level configuration rather than merging deeply; <code>false</code> doesn't mean &quot;authentication off&quot; and is an error. For public paths, put authentication only on protected routes or configure explicit access rules in Authelia. Don't attach the same kind of authentication middleware to one route both inline and through <code>use</code>.</p>
+<h2 id="5-admin-permissions-and-mfa">5. Admin permissions and MFA</h2>
+<p>The gateway decides whether to call authorization; Authelia decides who can access what. For example, only <code>admins</code> may access admin pages:</p>
+<pre><code class="language-yaml">access_control:
+  default_policy: deny
+  rules:
+    - domain: app1.example.com
+      resources: ['^/admin(?:/.*)?$']
+      subject: ['group:admins']
+      policy: one_factor
+    - domain: app1.example.com
+      resources: ['^/admin(?:/.*)?$']
+      policy: deny
+    - domain: app1.example.com
+      policy: one_factor
+</code></pre>
+<p>Rule order matters: allow admins first, then deny everyone else on the same path, and finally allow logged-in users to reach ordinary pages. Change the relevant rules' <code>policy</code> to <code>two_factor</code> to require MFA; users must still complete the corresponding enrollment and authentication in Authelia. The demo verified password login and group rules; verify the MFA enrollment flow against your actual notification and second-factor settings.</p>
+<h2 id="6-parameters-and-response-behavior">6. Parameters and response behavior</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>address</code></td>
+<td>required</td>
+<td>Full HTTP(S) URL, or a bare address accessed over HTTP</td>
+</tr>
+<tr>
+<td><code>uri</code></td>
+<td>doesn't override the address</td>
+<td>Authorization path and query; cannot duplicate a path or query already in the address</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td><code>5s</code></td>
+<td>Positive duration, such as <code>500ms</code>, <code>3s</code></td>
+</tr>
+<tr>
+<td><code>request_headers</code></td>
+<td><code>[Cookie, Authorization, Accept]</code></td>
+<td>Allow list of request headers sent to the authorization service; an empty array forwards none</td>
+</tr>
+<tr>
+<td><code>copy_headers</code></td>
+<td>the four <code>Remote-*</code> identity headers</td>
+<td>Headers copied from a successful authorization response into the business request; an empty array copies none</td>
+</tr>
+<tr>
+<td><code>response_headers</code></td>
+<td>same as <code>copy_headers</code></td>
+<td>Legacy field; cannot be combined with <code>copy_headers</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Only 2xx passes; 401/403 reject; 302/303/307/308 return the browser login redirect. Timeouts, connection errors, 5xx and unexpected statuses return 503 and never pass; there is no authorization cache.</li>
+<li>The gateway generates <code>X-Forwarded-Method/Proto/Host/Uri/For</code>; the URI includes the original query. IP and HTTPS state come from the host's resolved trusted information. With other proxies in front, configure LiteGate's trusted proxies correctly.</li>
+<li>The default identity headers and target headers in the copy allow list are first removed from the client request; only allow-listed headers returned by the authorization service can be injected. The backend should accept traffic only from the gateway, and later configuration shouldn't overwrite identity headers.</li>
+<li><code>Set-Cookie</code> from the authorization response is kept; <code>WWW-Authenticate</code> is kept on rejection. The body is generated by the gateway; the authorization service's HTML isn't forwarded.</li>
+<li>Authorization over HTTPS verifies with system certificates; internal calls don't use environment HTTP proxies. Client cancellation cancels the authorization request.</li>
+<li>WebSocket handshakes are authorized; messages after the upgrade are not authorized one by one.</li>
+</ul>
+<h2 id="7-verification-and-troubleshooting">7. Verification and troubleshooting</h2>
+<p>Check in order: without a session the application returns 302; after login it returns 200 with the right identity; an ordinary user gets 403 on admin paths; forged identity headers can't bypass login; with the authorization service down the result is 503.</p>
+<p>These five checks were verified on a Linux test machine with Authelia 4.39.28 and a LiteGate build; the repository also has tests for configuration shorthands, path rewriting, body preservation, cancellation and error redirects.</p>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Where to look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Endless redirects after login</td>
+<td>Does the cookie domain cover both the application and the portal? HTTPS? Does the browser accept the certificate and store the cookie?</td>
+</tr>
+<tr>
+<td>Immediate 403 without login</td>
+<td>Authelia domain, access rules and session cookie domain</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Is the authorization address reachable? Endpoint path, service health, timeout and TLS verification</td>
+</tr>
+<tr>
+<td>Unknown <code>forward_auth</code></td>
+<td>Is this the latest default build? Does a custom entrypoint import the plugin package?</td>
+</tr>
+<tr>
+<td>Empty identity headers</td>
+<td><code>copy_headers</code>, the header names the application reads, and whether later configuration overwrites them</td>
+</tr>
+<tr>
+<td>Wrong redirect on a non-standard HTTPS port</td>
+<td>Do <code>authelia_url</code> and <code>default_redirection_url</code> include the actual port, such as <code>:18443</code>?</td>
+</tr>
+</tbody>
+</table>
+<p>Further reading: <a href="https://www.authelia.com/reference/guides/proxy-authorization/">Authelia proxy authorization protocol</a> · <a href="oidc.html">LiteGate OIDC integration</a>. OIDC uses LiteGate's own login session while Forward Auth uses Authelia's per-request authorization; they are configured separately.</p>
+<p>Plugin implementation: <a href="https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugins/forwardauth">pkg/plugins/forwardauth</a>.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/05-middleware/forward-auth.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

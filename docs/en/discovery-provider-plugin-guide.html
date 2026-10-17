@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developing a Discovery Plugin: the Nomad Example · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../en/index.html">Home</a>
+      <a href="../../en/guide.html">Guide</a>
+      <a href="../../en/features.html">Features</a>
+      <a href="../../en/ecosystem.html">Ecosystem</a>
+      <a href="README.html" aria-current="page">Docs</a>
+      <a href="../zh-cn/discovery-provider-plugin-guide.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="README.html">Docs home</a></li><li><details><summary>User guide</summary><ul><li><a href="user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="user/01-getting-started/build.html">Build from source</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="user/08-observability/access-log.html">Access Log</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>Topics</summary><ul><li><a href="database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="discovery-provider-plugin-guide.html" class="current" aria-current="page">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="ids-recipes.html">IDS Recipes</a></li><li><a href="ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="release_control_guide.html">Configuration Release Control</a></li><li><a href="serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="developing-a-discovery-plugin-the-nomad-example">Developing a Discovery Plugin: the Nomad Example</h1>
+<p>Follow the complete workflow: <strong>develop → register → compile into LiteGate → deploy and configure → verify</strong>. Nomad is a working reference. A Nacos provider can reuse this structure, but needs its own registry queries, authentication and subscriptions.</p>
+<p>Read the complete <a href="https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugins/nomad/nomad.go">Nomad implementation</a>, <a href="https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugins/nomad/nomad_test.go">tests</a>, and <a href="https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin/discovery.go">public contract</a>. Go snippets below are simplified excerpts, not standalone compilable files.</p>
+<h2 id="1-create-a-plugin-and-define-responsibilities">1. Create a plugin and define responsibilities</h2>
+<p>An external plugin is an independent Go module using public <code>pkg/plugin</code>, never LiteGate's <code>internal</code> packages. Suggested files are <code>provider.go</code> (client and queries), <code>register.go</code> (registration), <code>provider_test.go</code>, and a user configuration README.</p>
+<p>Use a Go toolchain and SDK compatible with the target LiteGate. Pin production dependencies. For local development in the plugin module, run <code>go mod edit -replace github.com/jamesleeon/LiteGate=../LiteGate</code>, then <code>go get github.com/jamesleeon/LiteGate</code>, adjusting the sibling source path.</p>
+<p>For example, run these commands from the parent of the LiteGate source directory to create an independent plugin module:</p>
+<pre><code class="language-bash">mkdir litegate-discovery-nacos
+cd litegate-discovery-nacos
+go mod init example.com/acme/litegate-discovery-nacos
+go mod edit -replace github.com/jamesleeon/LiteGate=../LiteGate
+go get github.com/jamesleeon/LiteGate
+</code></pre>
+<p>Use your plugin's package name in source files, such as <code>package nacos</code>. Replace the placeholder <code>example.com/acme</code> with your real repository path when publishing.</p>
+<p>The plugin supplies services and instances. LiteGate validates and copies endpoints, filters selectors, parses tags, merges sources, creates routes and balances traffic. Do not access the Router or connection pools directly.</p>
+<h2 id="2-implement-listing-and-resolution">2. Implement listing and resolution</h2>
+<p>The minimum contract has two methods:</p>
+<pre><code class="language-go">type DiscoveryProvider interface {
+    ListServices(ctx context.Context) ([]plugin.DiscoveredService, error)
+    Resolve(ctx context.Context, query plugin.DiscoveryQuery) ([]plugin.DiscoveredEndpoint, error)
+}
+</code></pre>
+<p>Nomad's <code>ListServices</code> queries <code>/v1/services</code> and returns <code>DiscoveredService{Name, Namespace, Tags}</code>. Its <code>Resolve</code> queries <code>/v1/service/:service_name</code> using <code>query.Namespace</code> and maps registrations:</p>
+<pre><code class="language-go">result = append(result, plugin.DiscoveredEndpoint{
+    ID: value.ID, Address: value.Address, Port: value.Port,
+    Weight: 1, Healthy: true, Protocol: p.protocol,
+    ServiceName: value.ServiceName, Namespace: value.Namespace,
+    Tags: value.Tags,
+    Metadata: map[string]string{&quot;nomad.alloc_id&quot;: value.AllocID},
+})
+</code></pre>
+<p><code>Address</code> has no URL scheme, <code>Port</code> is the actual reachable port, and <code>Protocol</code> is separate. Nomad's <code>Healthy: true</code> means eligibility for selection: the registration API supplies no application checks and does not prove readiness. Map other registries' actual health semantics and use LiteGate active checks as needed.</p>
+<p>Implementation rules:</p>
+<ul>
+<li>Calls may be concurrent. Returned slices, Tags and Metadata must be snapshots that are not mutated afterward.</li>
+<li>Return the actual namespace. Catalog prefers it, otherwise falling back to the outer Catalog namespace or <code>default</code>.</li>
+<li>Honor contexts, bounded timeouts and complete pagination. Errors must remain errors; successful empty results remove instances, while errors retain the last successful snapshot.</li>
+<li>Expose <code>litegate.*</code> route declarations through Tags or appropriate Metadata for the host to parse.</li>
+<li>Define supported query fields and reject unsupported selectors. Nomad rejects job port-label <code>PortName</code> selection.</li>
+<li><code>Validate</code> performs pure configuration checks without networking; the Factory constructs a client. Never log tokens or credential-bearing API error bodies.</li>
+</ul>
+<p>Nomad's <code>parse</code>, <code>New</code> and <code>get</code> demonstrate strict fields, token-file rotation, TLS/mTLS, timeouts, response limits and protection against incomplete paginated snapshots.</p>
+<h2 id="3-register-the-provider-and-dashboard-metadata">3. Register the Provider and Dashboard metadata</h2>
+<p>Register from the plugin package's <code>init()</code>. The complete Nomad implementation defines <code>parse</code>, <code>New</code> and <code>configExample</code> used here:</p>
+<pre><code class="language-go">func init() {
+    if err := plugin.RegisterManifest(plugin.Manifest{
+        Kind: &quot;discovery&quot;, Name: &quot;nomad&quot;, Version: &quot;0.1.0&quot;,
+        APIVersion: plugin.APIVersion, DisplayName: &quot;Nomad&quot;,
+        Capabilities: []string{&quot;namespace&quot;, &quot;tags&quot;, &quot;metadata&quot;},
+        ConfigExample: configExample,
+    }); err != nil {
+        panic(err)
+    }
+    if err := plugin.RegisterDiscoveryProvider(&quot;nomad&quot;, plugin.DiscoveryRegistration{
+        Validate: func(config map[string]string) error {
+            _, err := parse(config)
+            return err
+        },
+        Factory: func(config map[string]string, _ *plugin.Dependencies) (plugin.DiscoveryProvider, error) {
+            return New(config)
+        },
+        Info: plugin.DiscoveryProviderInfo{
+            Name: &quot;nomad&quot;, DisplayName: &quot;Nomad&quot;,
+            SupportsNamespace: true, SupportsTags: true, SupportsMetadata: true,
+            RequiredConfig: []plugin.DiscoveryConfigField{
+                {Name: &quot;address&quot;, Required: true, Description: &quot;Nomad HTTP API URL&quot;},
+            },
+        },
+    }); err != nil {
+        panic(err)
+    }
+}
+</code></pre>
+<p>Keep registration, <code>Info.Name</code> and Manifest names consistent, avoid reserved built-in types, and handle duplicate registration errors. The full implementation also describes optional fields using <code>OptionalConfig</code>. <code>Dependencies</code> provides host logging, discovery and shared configuration capabilities.</p>
+<p>No outbound Dashboard registration request is required. Manifest supplies version, capabilities and copyable YAML under <strong>Plugins → Service Discovery</strong>. An enabled Catalog whose instance was constructed appears under <strong>Control Plane Providers</strong> on the overview. Keep <code>ConfigExample</code> aligned with supported fields and use placeholder credentials.</p>
+<h2 id="4-choose-polling-or-subscriptions-and-release-resources">4. Choose polling or subscriptions and release resources</h2>
+<p>A minimal plugin can rely on host scans. Nomad currently uses the initial scan and subsequent 30-second Catalog scans, without Watch.</p>
+<p>For subscriptions, implement <code>DiscoveryWatcher.Watch(ctx, notify)</code>: update the local snapshot before notifying and block until cancellation or an unrecoverable error. Advertising <code>SupportsWatch: true</code> requires this interface. Notifications are coalesced into Catalog rescans, without service-scoped deltas.</p>
+<p>When Watch returns an error, returns early or panics, the host restarts it with exponential backoff (1s up to 30s) and triggers a rescan on each restart; prefer returning the error and letting the host restart, so the Dashboard watch state reflects the failure; retrying silently inside the plugin leaves the watch reported as healthy while notifications are dead. Cover changes to existing instances, addresses and health as well as service-name additions/removals. Optional <code>Start(ctx)</code> currently receives a Background context, so bound initialization yourself. If you create workers, <code>Close(ctx)</code> must cancel and join them. Nomad's only background work is the Watch long poll, which exits with its ctx; Close only closes idle HTTP connections.</p>
+<h2 id="5-compile-the-plugin-into-the-system">5. Compile the plugin into the system</h2>
+<h3 id="build-the-existing-nomad-plugin">Build the existing Nomad plugin</h3>
+<p>From the repository root:</p>
+<pre><code class="language-bash">go build -o litegate-nomad ./cmd/litegate
+./litegate-nomad plugins inspect discovery/nomad
+</code></pre>
+<p><code>cmd/litegate/plugins.go</code> already blank-imports Nomad. Do not copy it and register the same name twice. On Windows, use an output name such as <code>litegate-nomad.exe</code>.</p>
+<h3 id="build-an-independent-third-party-plugin">Build an independent third-party plugin</h3>
+<p>The Nacos package below is a placeholder: implement the local plugin or publish the version first. The first command is for local development; the second pins a published version:</p>
+<pre><code class="language-bash">litegate build --with example.com/acme/litegate-discovery-nacos=../litegate-discovery-nacos --replace ../LiteGate -o litegate-custom
+litegate build --with example.com/acme/litegate-discovery-nacos@v0.1.0 -o litegate-custom
+</code></pre>
+<p>The local plugin replacement must contain its own <code>go.mod</code>. <code>--replace ../LiteGate</code> selects local core source; adjust paths as needed. Building requires a Go toolchain and dependency access.</p>
+<p>Alternatively, create a main in your own module, blank-import the plugin and call LiteGate's entry point:</p>
+<pre><code class="language-go">package main
+
+import (
+    &quot;log&quot;
+    &quot;github.com/jamesleeon/LiteGate/pkg/litegate&quot;
+    _ &quot;example.com/acme/litegate-discovery-nacos&quot;
+)
+
+func main() {
+    if err := litegate.Run(); err != nil {
+        log.Fatal(err)
+    }
+}
+</code></pre>
+<p>This main explicitly imports only the example plugin; import any other external plugins your configuration requires. Adding Go plugins requires rebuilding and deploying, not hot installation. See <a href="user/12-plugins/build-and-cli.html">Build and CLI</a>.</p>
+<h2 id="6-deploy-configure-and-use">6. Deploy, configure and use</h2>
+<p>Deploy the resulting binary as the running LiteGate and mount configuration, token and CA files. Example global <code>config.yaml</code> for Nomad:</p>
+<pre><code class="language-yaml">service_discovery:
+  catalogs:
+    - name: nomad-prod
+      enabled: true
+      provider: nomad
+      namespace: default
+      config:
+        address: &quot;https://nomad.example.com:4646&quot;
+        namespace: &quot;default&quot;
+        token_file: &quot;/run/secrets/nomad-token&quot;
+        region: &quot;global&quot;
+</code></pre>
+<p><code>provider</code> must match the registration name. Only the inner <code>config</code> reaches the Factory; the outer namespace is a Catalog fallback, not the plugin's API scope. The token file must be readable from the LiteGate process.</p>
+<p>Next register the application service in Nomad and declare routes through <code>litegate.*</code> Tags. Follow the <a href="user/07-discovery/nomad.html">Nomad user configuration guide</a> for all fields, job configuration, DNS, ACL/TLS, health limitations and troubleshooting.</p>
+<pre><code class="language-bash">./litegate-nomad plugins inspect discovery/nomad
+./litegate-nomad plugins doctor
+./litegate-nomad -config config.yaml -t
+./litegate-nomad -config config.yaml
+</code></pre>
+<p>CLI inventory and configuration checks do not prove connectivity. Verify listing, route creation and real requests, then scaling, deregistration, outages and recovery. Unit tests should cover token/TLS, namespace isolation, successful empty results, errors and cancellation. Run the reference tests with <code>go test ./pkg/plugins/nomad ./internal/status</code>.</p>
+<h2 id="7-adapt-the-pattern-to-nacos">7. Adapt the pattern to Nacos</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Step</th>
+<th style="text-align:left">Reusable structure</th>
+<th style="text-align:left">Registry-specific work</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Listing</td>
+<td style="text-align:left">ListServices returns the catalog</td>
+<td style="text-align:left">Target SDK/API version, authentication, pagination, namespace/group</td>
+</tr>
+<tr>
+<td style="text-align:left">Instances</td>
+<td style="text-align:left">Resolve returns Endpoints</td>
+<td style="text-align:left">Actual address/port, stable ID, weight, health and enabled state</td>
+</tr>
+<tr>
+<td style="text-align:left">Metadata</td>
+<td style="text-align:left">Common Tags/Metadata parsing</td>
+<td style="text-align:left">Mapping registration metadata to <code>litegate.*</code> and conflict rules</td>
+</tr>
+<tr>
+<td style="text-align:left">Updates</td>
+<td style="text-align:left">Watch and lifecycle interfaces</td>
+<td style="text-align:left">SDK subscriptions, snapshot synchronization, reconnects, cancellation and cleanup</td>
+</tr>
+<tr>
+<td style="text-align:left">Integration</td>
+<td style="text-align:left">Registration, Manifest, build, Catalog, Dashboard</td>
+<td style="text-align:left">Unique <code>nacos</code> name, validation and user examples</td>
+</tr>
+</tbody>
+</table>
+<p>Reuse the structure, rather than just replacing a name and URL. Define how groups are represented and namespaces mapped, then test health and subscription behavior. This guide does not implement Nacos; verify SDK/API behavior against the target deployment version.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/discovery-provider-plugin-guide.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

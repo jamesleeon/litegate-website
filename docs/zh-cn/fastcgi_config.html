@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate FastCGI 配置指南 · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html">首页</a>
+      <a href="../../guide.html">场景指南</a>
+      <a href="../../features.html">功能列表</a>
+      <a href="../../ecosystem.html">生态</a>
+      <a href="README.html" aria-current="page">文档</a>
+      <a href="../en/fastcgi_config.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="README.html">文档首页</a></li><li><details><summary>用户手册</summary><ul><li><a href="user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="user/01-getting-started/build.html">源码构建指南</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="user/01-getting-started/installation.html">安装指南</a></li><li><a href="user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="user/03-configuration/api.html">管理接口概览</a></li><li><a href="user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>使用专题</summary><ul><li><a href="database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="fastcgi_config.html" class="current" aria-current="page">LiteGate FastCGI 配置指南</a></li><li><a href="forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="ids-recipes.html">IDS 配方</a></li><li><a href="ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="litegate-fastcgi-配置指南">LiteGate FastCGI 配置指南</h1>
+<p>本文档介绍如何在 LiteGate 的 YAML 站点配置中,把请求反向代理到 <strong>FastCGI</strong> 后端(最常见的就是 <strong>PHP-FPM</strong>),让 LiteGate 直接为 PHP / WordPress / Laravel 等环境服务。</p>
+<p>普通 PHP 网站优先使用 <a href="user/03-configuration/site-config.html#php-%E7%BD%91%E7%AB%99wordpress--laravel">站点配置的 <code>php</code> 简写</a>，只需配置网站目录和 PHP-FPM 地址，即可自动处理静态文件、目录首页和入口回退。本文的底层 FastCGI 配置适合需要手动控制路由的场景。</p>
+<blockquote>
+<p>适用场景:用 LiteGate 替代「Nginx + php-fpm」中的 Nginx 角色,直接通过 TCP 端口或 Unix Socket 与 php-fpm 通信。</p>
+</blockquote>
+<hr>
+<h2 id="1-最小配置tcp">1. 最小配置(TCP)</h2>
+<p>假设 php-fpm 监听在 <code>127.0.0.1:9000</code>,站点代码在后端机器的 <code>/var/www/html</code>:</p>
+<pre><code class="language-yaml">site: example.com
+routes:
+  - name: php-route
+    match:
+      path: /index.php
+    action:
+      type: proxy
+      proto: fastcgi # 必填:声明走 FastCGI 协议
+      fastcgi_root: /var/www/html # 必填:后端的 Document Root(SCRIPT_FILENAME 的根)
+      upstream:
+        - &quot;fastcgi://127.0.0.1:9000&quot; # FastCGI 后端地址
+</code></pre>
+<p>三个必填项就这么简单:<strong><code>proto: fastcgi</code></strong> + <strong><code>fastcgi_root</code></strong> + <strong><code>upstream</code></strong>。</p>
+<hr>
+<h2 id="2-使用-unix-socket">2. 使用 Unix Socket</h2>
+<p>php-fpm 用 Unix Socket 时(性能更好,免去 TCP 开销),把 <code>upstream</code> 换成 <code>unix://</code> 加 socket 绝对路径即可:</p>
+<pre><code class="language-yaml">site: example.com
+action:
+  type: proxy
+  proto: fastcgi
+  fastcgi_root: /var/www/html
+  upstream:
+    - &quot;unix:///var/run/php/php8.2-fpm.sock&quot; # 注意是三个斜杠:unix:// + /绝对路径
+</code></pre>
+<blockquote>
+<p>Unix Socket 仅适用于 LiteGate 与 PHP-FPM 所在系统都支持 Unix Domain Socket 的场景。Windows 部署建议使用 <code>fastcgi://127.0.0.1:9000</code>；Windows Named Pipe 不是 Unix Socket，当前不作为 FastCGI upstream 支持。</p>
+</blockquote>
+<hr>
+<h2 id="3-upstream-支持的写法">3. upstream 支持的写法</h2>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fastcgi://127.0.0.1:9000</code></td>
+<td>TCP,<strong>必须带端口</strong></td>
+</tr>
+<tr>
+<td><code>fastcgi://[::1]:9000</code></td>
+<td>IPv6 + 端口</td>
+</tr>
+<tr>
+<td><code>unix:///var/run/php-fpm.sock</code></td>
+<td>Unix Socket,<strong>三斜杠</strong> + socket 绝对路径</td>
+</tr>
+<tr>
+<td><code>127.0.0.1:9000</code></td>
+<td>裸 TCP 地址(等价于 <code>fastcgi://</code>),也必须带端口</td>
+</tr>
+</tbody>
+</table>
+<p>FastCGI 路由的 <code>upstream</code> <strong>只接受</strong> <code>fastcgi://</code> / <code>unix://</code> / 裸 <code>host:port</code> 三种;写成 <code>http://</code>、<code>ftp://</code> 等会在加载时报错。</p>
+<hr>
+<h2 id="4-完整字段参考">4. 完整字段参考</h2>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>proto</code></td>
+<td>string</td>
+<td>—</td>
+<td><strong>必填</strong>,固定为 <code>fastcgi</code> 才会启用 FastCGI;只要设置了任意 <code>fastcgi_*</code> 字段而 <code>proto</code> 不是 <code>fastcgi</code>,加载会报错</td>
+</tr>
+<tr>
+<td><code>fastcgi_root</code></td>
+<td>string</td>
+<td>—</td>
+<td><strong>必填</strong>,后端的 Document Root,与脚本路径拼成 <code>SCRIPT_FILENAME</code></td>
+</tr>
+<tr>
+<td><code>upstream</code></td>
+<td>list</td>
+<td>—</td>
+<td><strong>必填</strong>,后端地址列表(见上表),支持多个做负载均衡</td>
+</tr>
+<tr>
+<td><code>index</code></td>
+<td>string</td>
+<td><code>index.php</code></td>
+<td>当请求路径以 <code>/</code> 结尾时,自动补的入口文件名</td>
+</tr>
+<tr>
+<td><code>fastcgi_split_path</code></td>
+<td>string</td>
+<td><code>.php</code></td>
+<td>PATH_INFO 切分点,必须含 <code>.</code>;用于把 <code>/a.php/b</code> 切成脚本 <code>/a.php</code> + PATH_INFO <code>/b</code></td>
+</tr>
+<tr>
+<td><code>fastcgi_extensions</code></td>
+<td>list</td>
+<td><code>[&quot;.php&quot;]</code></td>
+<td><strong>允许执行的扩展名白名单</strong>;元素必须以 <code>.</code> 开头(如 <code>.php</code>),或用 <code>*</code> 放行全部</td>
+</tr>
+<tr>
+<td><code>fastcgi_params</code></td>
+<td>map</td>
+<td><code>{}</code></td>
+<td>追加安全的 CGI 环境变量，例如 <code>APP_ENV</code>、<code>REDIRECT_STATUS</code>；不能覆盖 <code>SCRIPT_FILENAME</code>、<code>REQUEST_URI</code>、<code>HTTP_*</code> 等内置变量</td>
+</tr>
+<tr>
+<td><code>fastcgi_keep_conn</code></td>
+<td>bool</td>
+<td><code>false</code></td>
+<td>是否启用与后端的<strong>连接池复用</strong>(类似 Nginx <code>fastcgi_keep_conn</code>)</td>
+</tr>
+<tr>
+<td><code>fastcgi_max_idle_conns</code></td>
+<td>int</td>
+<td><code>2</code></td>
+<td>连接池保留的最大空闲连接数,不能为负</td>
+</tr>
+<tr>
+<td><code>fastcgi_idle_timeout</code></td>
+<td>int</td>
+<td><code>0</code></td>
+<td>空闲连接回收时间(秒),<code>0</code> 表示不超时回收,不能为负</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>int</td>
+<td><code>0</code></td>
+<td>整个请求/响应的硬超时(秒),<code>0</code> 表示不设硬超时</td>
+</tr>
+<tr>
+<td><code>host</code></td>
+<td>string</td>
+<td>—</td>
+<td>覆盖传给后端的 <code>HTTP_HOST</code> / <code>SERVER_NAME</code></td>
+</tr>
+<tr>
+<td><code>strip_prefix</code> / <code>prepend_prefix</code></td>
+<td>string</td>
+<td>—</td>
+<td>路径改写,会同步影响 <code>SCRIPT_NAME</code> 与 <code>SCRIPT_FILENAME</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="5-开启连接池keep-alive">5. 开启连接池(keep-alive)</h2>
+<p>默认每个请求都新建一条到后端的连接、用完即关。高并发 PHP 场景下,开启连接复用可显著降低连接建立开销:</p>
+<pre><code class="language-yaml">site: example.com
+action:
+  type: proxy
+  proto: fastcgi
+  fastcgi_root: /var/www/html
+  upstream:
+    - &quot;unix:///var/run/php/php8.2-fpm.sock&quot;
+  fastcgi_keep_conn: true # 开启连接池复用
+  fastcgi_max_idle_conns: 16 # 最多保留 16 条空闲连接
+  fastcgi_idle_timeout: 60 # 空闲 60 秒后回收
+  timeout: 30 # 单请求最长 30 秒
+</code></pre>
+<blockquote>
+<p>连接只有在<strong>响应被完整、干净地读完</strong>后才会还池;客户端提前断开或上传中断的连接会被直接关闭,不会污染下一个请求。取用前还会做一次轻量探活,自动丢弃被后端关掉的失效连接。</p>
+</blockquote>
+<hr>
+<h2 id="6-path_info-与子路径">6. PATH_INFO 与子路径</h2>
+<p><code>fastcgi_split_path</code>(默认 <code>.php</code>)用于把路径切分成「脚本 + PATH_INFO」。例如请求 <code>/app.php/user/42</code>:</p>
+<ul>
+<li><code>SCRIPT_NAME</code> = <code>/app.php</code></li>
+<li><code>PATH_INFO</code> = <code>/user/42</code></li>
+<li><code>SCRIPT_FILENAME</code> = <code>&lt;fastcgi_root&gt;/app.php</code></li>
+</ul>
+<p>切分采用「最后一个匹配且其后紧跟 <code>/</code> 或结尾」的贪婪规则,与 Nginx <code>fastcgi_split_path_info ^(.+\.php)(/.+)$</code> 行为一致。</p>
+<hr>
+<h2 id="7-自动注入的-cgi-环境变量">7. 自动注入的 CGI 环境变量</h2>
+<p>LiteGate 会自动构造并传给后端这些变量,<strong>无需手动配置</strong>:</p>
+<p><code>REQUEST_METHOD</code>、<code>REQUEST_URI</code>、<code>QUERY_STRING</code>、<code>CONTENT_TYPE</code>、<code>CONTENT_LENGTH</code>、<code>GATEWAY_INTERFACE</code>、<code>SERVER_PROTOCOL</code>、<code>SCRIPT_FILENAME</code>、<code>SCRIPT_NAME</code>、<code>PATH_INFO</code>、<code>PATH_TRANSLATED</code>、<code>DOCUMENT_ROOT</code>、<code>DOCUMENT_URI</code>、<code>REMOTE_ADDR</code>、<code>REMOTE_PORT</code>、<code>SERVER_ADDR</code>、<code>SERVER_PORT</code>、<code>SERVER_NAME</code>、<code>HTTP_HOST</code>,以及全部 <code>HTTP_*</code> 请求头。客户端使用 HTTPS 时还会带上 <code>HTTPS=on</code>。</p>
+<p>如需追加应用变量，使用 <code>fastcgi_params</code>：</p>
+<p>如果 TLS 在前置负载均衡终止，需要在全局 <code>real_ip.trusted_proxies</code> 中配置实际代理地址。来自可信直接连接的单一 <code>X-Forwarded-Proto: https</code> 会设置 <code>HTTPS=on</code>，且在 Host 未指定端口时使用 <code>SERVER_PORT=443</code>。不采信非可信来源、重复或逗号分隔的协议值。</p>
+<pre><code class="language-yaml">fastcgi_params:
+  APP_ENV: production
+  REDIRECT_STATUS: &quot;200&quot;
+</code></pre>
+<p>变量名必须是大写字母、数字或下划线且不能以数字开头。为避免绕过脚本路径和请求安全检查，内置 CGI 变量与 <code>HTTP_*</code> 变量不能覆盖。</p>
+<hr>
+<h2 id="8-安全说明">8. 安全说明</h2>
+<ul>
+<li><strong>扩展名白名单</strong>:默认仅允许 <code>.php</code> 被当作脚本执行。请求 <code>/uploads/avatar.jpg</code> 这类非白名单扩展名会被网关直接拒绝(返回错误),避免上传文件被误执行。务必<strong>不要</strong>轻易把 <code>fastcgi_extensions</code> 设成 <code>*</code>。</li>
+<li><strong>路径穿越防护</strong>:请求路径中包含 <code>..</code> 段、或拼接后逃出 <code>fastcgi_root</code> 的,都会被拦截。</li>
+<li><strong>httpoxy 防护</strong>:<code>Proxy</code> 请求头不会被透传成 <code>HTTP_PROXY</code>。</li>
+</ul>
+<hr>
+<h2 id="9-使用限制">9. 使用限制</h2>
+<p>LiteGate 不内嵌 PHP Runtime，也不负责启动或管理 PHP-FPM。PHP 脚本由独立 PHP-FPM 服务执行。</p>
+<p>WordPress、Laravel 等前端控制器应用可以通过 <code>serve</code> Action 的 <code>try_files</code> 回退到 <code>/index.php</code>。内部重定向会保留客户端原始 <code>REQUEST_URI</code> 和查询参数。<code>try_files</code> 不能直接配置在 <code>proxy</code> Action 下；错误配置会在加载时被拒绝。</p>
+<p><code>serve</code> 会检查 LiteGate 本机文件系统，所以 LiteGate 与远程 PHP-FPM 必须共享同一份站点文件，或者将静态资源部署到 LiteGate 可访问的目录。</p>
+<hr>
+<h2 id="10-完整示例">10. 完整示例</h2>
+<pre><code class="language-yaml">site: php.example.com
+routes:
+  # PHP 脚本和 PATH_INFO 请求交给 PHP-FPM。
+  - name: php-scripts
+    priority: 100
+    match:
+      rule: 'PathRegex(&quot;(?i)^/.*\.php(?:/.*)?$&quot;)'
+    action:
+      type: proxy
+      proto: fastcgi
+      fastcgi_root: /var/www/html
+      index: index.php
+      fastcgi_split_path: &quot;.php&quot;
+      fastcgi_extensions: [&quot;.php&quot;]
+      fastcgi_params:
+        APP_ENV: production
+        REDIRECT_STATUS: &quot;200&quot;
+      upstream:
+        - &quot;unix:///var/run/php/php8.2-fpm.sock&quot;
+      fastcgi_keep_conn: true
+      fastcgi_max_idle_conns: 16
+      fastcgi_idle_timeout: 60
+      timeout: 30
+  # 静态文件直接返回；不存在的干净 URL 内部转到 /index.php。
+  - name: php-static-and-front-controller
+    match:
+      path_prefix: /
+    serve:
+      root: /var/www/html
+      try_files:
+        - &quot;{path}&quot;
+        - &quot;/index.php&quot;
+</code></pre>
+<hr>
+<p>相关文档:<a href="user/03-configuration/site-config.html">站点配置</a> · <a href="user/04-actions/proxy.html">proxy action</a></p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/fastcgi_config.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

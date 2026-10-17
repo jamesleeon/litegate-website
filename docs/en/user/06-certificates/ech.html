@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encrypted ClientHello (ECH) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/06-certificates/ech.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details open><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html" class="current" aria-current="page">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="encrypted-clienthello-ech">Encrypted ClientHello (ECH)</h1>
+<p>ECH encrypts the browser-to-LiteGate ClientHello. The outer SNI contains the selected group's <code>public_name</code>; after decryption LiteGate selects the certificate, TLS policy and site using the inner name. Existing ACME certificates continue to work.</p>
+<h2 id="setup-guide-server-dns-and-client">Setup guide: server, DNS and client</h2>
+<p>The complete flow is: LiteGate installs ECH keys and publishes HTTPS DNS records, the resolver preserves their <code>ech</code> parameters, and the browser uses them to encrypt ClientHello. Enabling ECH on the server does not force ordinary clients to use it.</p>
+<h3 id="server-preparation-and-legacy-compatibility">Server preparation and legacy compatibility</h3>
+<p>Enable <code>auto_cert</code>, configure an Aliyun/Cloudflare DNS provider covering the hidden sites and public name, and grant HTTPS-record management permissions. Serve <code>websecure</code> on TCP 443 and allow TLS 1.3. Hidden sites need direct A/AAAA records pointing to the TLS terminator; persist and back up the ECH state. A CDN or proxy terminating browser TLS must itself implement ECH.</p>
+<p>Existing single-group configurations remain supported. Keep your existing provider and site definitions; this main-config block does not require site-level <code>ech: true</code>:</p>
+<pre><code class="language-yaml">ech:
+  enabled: true
+  public_name: ech.example.com
+  dns_provider: aliyun-main
+  domains:
+    - litemesh.example.com
+    - dashboard.example.com
+</code></pre>
+<p>Every listed domain needs a local HTTPS site, including sites eventually loaded from KV. Omitted storage retains the legacy automatic selection: Consul/LiteMesh KV when config_watch is enabled, otherwise file storage. Do not change storage or delete keys just to match a new example. Keep the original state and prefixes; see migration notes below. Root legacy public_name/dns_provider/domains cannot be mixed with groups. Site-level false does not cancel a legacy global domains entry; changing that list requires a restart.</p>
+<h3 id="start-and-verify-dns">Start and verify DNS</h3>
+<p>Restart after changing global ECH/provider settings. Run <code>litegate -t -config config.yaml</code>, then start the gateway. In KV mode, -t checks local configuration without fetching remote sites; complete validation is deferred to runtime. Publication waits for valid initial KV snapshots. Look for <code>ECH keys loaded</code> and per-domain <code>ECH HTTPS record published</code>; resolve errors identifying invalid_keys, certificates or providers.</p>
+<pre><code class="language-bash">dig app.example.com HTTPS
+# Replace with your resolver's actual address and port.
+dig @192.168.50.110 -p 53 app.example.com HTTPS
+</code></pre>
+<p>Expect HTTPS type 65 with <code>ech=&quot;...&quot;</code>, not just an A record. The ECHConfigList is public configuration; Base64 does not encrypt DNS transport. A successful DNS lookup alone does not prove the browser used ECH.</p>
+<h3 id="configure-the-browser">Configure the browser</h3>
+<p>Use your own resolver's DoH URL, for example <code>https://dns.example.com/dns-query</code>, with a valid certificate and standard wire-format DoH GET (<code>dns=</code>) / POST (<code>application/dns-message</code>) support. A JSON name/type lookup is a diagnostic interface, not the URL to paste into browser DNS settings.</p>
+<ul>
+<li>Vivaldi: Settings → Network → enable DNS Lookup Over HTTPS and choose your custom provider. <a href="https://vivaldi.com/blog/tips/tip-739/">Official instructions</a></li>
+<li>Other browsers: configure their secure DNS/DoH provider; ECH use depends on browser version, policy and proxies. <a href="https://support.mozilla.org/en-US/kb/understand-encrypted-client-hello">Firefox ECH guidance</a></li>
+<li>UDP/TCP DNS can also return ECH configuration, but pointing system DNS at CamoDNS does not guarantee the browser uses those records. DoH is not a protocol requirement of ECH; verify the actual client path. Plain DNS still exposes query names, whereas DoH/DoT encrypt DNS transport.</li>
+</ul>
+<p>Fully quit and restart the browser, then visit the original site URL, not the public name.</p>
+<h3 id="camodns-scripts-and-diagnostics">CamoDNS scripts and diagnostics</h3>
+<p>Do not reject HTTPS queries or remove HTTPS records in post-processing for ECH-enabled sites. For a two-domain test, add exceptions inside the existing HTTPS rejection branch (match the actual domain format supplied to your script):</p>
+<pre><code class="language-javascript">if qtype == &quot;HTTPS&quot; {
+    if domain == &quot;app.example.com&quot; || domain == &quot;dashboard.example.com&quot; {
+        return { &quot;action&quot;: &quot;continue&quot; }
+    }
+    return { &quot;action&quot;: &quot;reply&quot;, &quot;mode&quot;: &quot;reject&quot;, &quot;reason&quot;: &quot;noerror&quot; }
+}
+</code></pre>
+<p>Save and clear the script cache. Post-script filter_type must not strip HTTPS records for these sites. Filtering DNS type 65 does not block all HTTPS, HTTP/3 or third-party DoH traffic.</p>
+<p>For CamoDNS deployments offering JSON lookup:</p>
+<pre><code class="language-bash">curl 'https://dns.example.com/dns-query?name=app.example.com&amp;type=65'
+</code></pre>
+<p>Question.type and Answer.type should be 65 with an ech parameter. Question.type=1 indicates conversion to an A query: check numeric type parsing and the deployed version before blaming cache collisions. Displaying decoded JSON in a terminal is normal even over encrypted transport.</p>
+<h3 id="verify-ech-use">Verify ECH use</h3>
+<p>If the browser's Security panel reports Encrypted ClientHello enabled, that connection uses ECH. A fresh packet capture should show the public name as outer SNI while the original site opens normally. Server-side decrypted ServerName/HTTP Host and the address bar retain the original site name.</p>
+<p>Use Wireshark's <code>tls.handshake.extensions_server_name</code> filter; a target-IP/TCP-443 filter is useful for TCP tests. HTTP/3 uses UDP 443. An ECH extension alone may be GREASE, and TLS 1.3 or a successful page load alone does not establish ECH use.</p>
+<p>Empty HTTPS answers call for checking scripts, upstream failures, caches and local overrides. If DNS has ech but SNI remains the original name, check browser DNS settings, policy, proxies and reused connections. invalid_keys logs identify KV readiness blockers. Deleting a site still listed in global domains suspends publication and retains existing records rather than automatically withdrawing them.</p>
+<h2 id="new-configuration-groups-and-site-selection">New configuration: groups and site selection</h2>
+<p>Add to the main <code>config.yaml</code>, reusing an enabled DNS provider:</p>
+<p>For packet capture diagnostics, the presence of an <code>encrypted_client_hello</code> extension alone does not prove ECH worked: browsers can send a random GREASE extension. If the outer SNI still contains the hidden site name rather than the configured public name, that connection exposed the site name. Query the site's HTTPS (type 65) record through the browser's actual DNS/DoH resolver, then check browser ECH policy, secure DNS, proxy/hosts overrides, DNS caches and reused connections. Capture a fresh connection and verify the outer SNI is the group's <code>public_name</code>. After decryption, server-side ServerName and HTTP Host still contain the original site name.</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: admin@example.com
+  certs_dir: ./certs
+  dns_providers:
+    - name: aliyun-main
+      type: aliyun
+      enabled: true
+      domains: [&quot;*.example.com&quot;, &quot;example.com&quot;]
+      config:
+        access_key_id: &quot;...&quot;
+        access_key_secret: &quot;...&quot;
+    - name: cloudflare-main
+      type: cloudflare
+      enabled: true
+      domains: [&quot;*.example.net&quot;]
+      config:
+        api_token: &quot;...&quot;
+
+ech:
+  enabled: true
+  groups:
+    - public_name: ech.example.com
+      dns_provider: aliyun-main
+    - public_name: ech.example.net
+      dns_provider: cloudflare-main
+  storage: file
+  # For shared storage:
+  # storage: kv
+  # kv:
+  #   provider: litemesh  # or consul, reuse the existing connection
+  #   key_prefix: litegate/ech/mycluster/
+  # key_prefix: litegate/ech/mycluster/
+</code></pre>
+<p>Set <code>ech: ech.example.com</code> or <code>ech: ech.example.net</code> alongside site: to select a group. Global <code>ech.domains</code> is optional and remains compatible. <code>public_name</code> and <code>domains</code> must be concrete ASCII DNS names, without wildcards, IP addresses or ports. Use a dedicated public name. ECH defaults to disabled, requires <code>auto_cert.enabled</code>, and supports built-in <code>aliyun</code> and <code>cloudflare</code> providers and registered DNS plugins advertising <code>https_records</code> and implementing <code>plugin.HTTPSDNSProvider</code> with the <code>websecure</code> TCP listener on port 443. Site TLS policies must allow TLS 1.3. ECH/provider configuration changes require a restart.</p>
+<p>Each published site needs existing direct A/AAAA records pointing to this instance and must not use CNAME. Cloudflare records must be DNS only, without proxying. The provider needs permission to query, create, update and delete HTTPS records, and its DNS plan must support that record type. Existing unmanaged HTTPS records cause an error instead of being overwritten. Address records are never modified by ECH.</p>
+<p>LiteGate reuses a covering public-name certificate or schedules a separate certificate group using the selected provider's credentials. Enabling ECH never adds a SAN to an existing business certificate group; failure of the public-name order does not block its renewal. DNS-01 does not require an address record for the public name; adding one is useful for diagnosis. With DDNS enabled for matching names, the public name and concrete ECH names served by wildcard sites are synchronized too. Exact DNS-only A/AAAA records are required for ECH: creating an HTTPS record prevents wildcard address synthesis for that name. Once HTTPS is running and the public-name certificate is valid, it publishes:</p>
+<pre><code class="language-text">app.example.com. 600 IN HTTPS 1 . alpn=&quot;h2&quot; ech=&quot;&lt;Base64 ECHConfigList&gt;&quot;
+</code></pre>
+<p>Cloudflare reuses <code>api_token</code>/<code>token</code> credentials. Aliyun recognizes public suffixes such as <code>example.com.cn</code>; for a delegated zone set <code>config.zone</code> explicitly.</p>
+<p>Private keys persist in <code>auto_cert.certs_dir/ech/&lt;public_name&gt;/state.json</code>, falling back to <code>tls.certs_dir</code>. Back up and persist this directory. Unix permissions are 0700 for newly created directories and 0600 for files; configure appropriate directory ACLs on Windows. KV state is encrypted with auto_cert.storage_secret, which must match across nodes and contain at least 32 bytes. The local recovery copy still contains private keys. Initial KV creation imports local state with CAS.</p>
+<p>Keys rotate every 7 days. New keys are persisted and installed before DNS publication. Each domain has independent publication state: healthy domains are checked every 30 minutes; failed domains retry every minute without blocking other domains or rotation. Old keys remain accepted for 14 days after no domain references them in a confirmed or uncertain DNS write. Potentially advertised keys remain pinned. Exhausting all 256 config IDs during a prolonged outage warns and defers new key generation while existing keys and healthy publication remain usable. Restarts reuse saved keys; corrupt state fails startup instead of silently generating replacements. Disabling a site flag or deleting a site withdraws its owned HTTPS records on live reconciliation. Legacy global domains remain enabled even if a site flag is false.</p>
+<p>Auto storage reuses Consul/LiteMesh connections only when config_watch is enabled. A publisher lease selects one writer; followers consume KV watch/blocking query notifications and refresh within one five-second cycle. Rotation stages keys at least 15 seconds before DNS publication. All group members must use identical public name, provider, sites, prefix and storage secret, and synchronize successfully before receiving traffic. Explicit file storage supports one instance; a process lock prevents concurrent access to the same state directory. ECH belongs on the service that actually terminates client TLS, including when a CDN, Connect tunnel or L4 passthrough is involved. The public name is reserved for local TLS decryption in shared-port SNI routing and must not be the Connect control hostname.</p>
+<p>Before disabling ECH, stop every instance in the KV group and run <code>litegate ech withdraw -config config.yaml</code>. The command needs exclusive state access and the original provider credentials. It removes only HTTPS records belonging to saved keys, preserves keys, and clears publication state only after every withdrawal succeeds; partial failures can be retried. Wait at least the record TTL (600 seconds by default, allowing for client caches), then restart with ECH disabled. Removing the configuration does not automatically withdraw records. When changing the public name/provider, withdraw using the original configuration, wait for caches to expire and archive the old state file; otherwise startup rejects mismatched state. For continuous service while waiting, manual DNS withdrawal is possible, but complete disabling before the next full check republishes the record.</p>
+<p>Successful publication is checked every 30 minutes while configuration, protocols and keys remain unchanged; failures retry every minute. HTTP/3 availability adds <code>alpn=&quot;h2,h3&quot;</code>. Public-name certificate domains are derived only for runtime use and never written back into provider configuration. Waiting for a certificate for more than 5 minutes produces a warning.</p>
+<p>Post-load validation requires a local HTTPS site for every hidden domain and rejects passthrough, L4 or Connect control hostnames and TLS policies that disallow TLS 1.3. The public name cannot be a hidden domain. KV initialization suspends DNS publication until the complete site configuration is valid and logs the reason.</p>
+<p>Validation reads metadata snapshots without compiling live routes. Passthrough routes restricted to non-HTTP ALPN, such as <code>mqtt</code>, do not conflict with HTTP sites; routes matching <code>h2</code> or <code>http/1.1</code> still must not cover hidden names. Routes and L4 streams covering the public name generate a warning because the mux reserves it for local TLS.</p>
+<p>If runtime site validation fails, subsequent DNS publication is suspended; <strong>already published HTTPS records are not automatically withdrawn</strong>. Identical validation or shadow warnings repeat at most every 30 minutes. Changed failures, or failures recurring after recovery, warn immediately. Use the withdrawal command when needed, and investigate site deletion or disappearing discovered services rather than treating existing DNS records as proof of a working site.</p>
+<p>Clients must support ECH and receive HTTPS DNS responses containing <code>ech</code>. DoH/DoT also avoids exposing names through plaintext DNS. Ordinary TLS clients remain supported. Successful page loading alone does not prove ECH was accepted.</p>
+<p>For deployment, check <code>ECH keys loaded</code> and <code>ECH HTTPS record published</code> logs, query <code>dig app.example.com HTTPS</code>, and use an ECH-capable client or packet capture to verify the outer SNI. Publication failures log the cause and retry automatically. Tests exercise actual HTTP/1.1, HTTP/2 and HTTP/3 ECH handshakes, inner TLS policy, authenticated retry, TLS 1.2 compatibility, durable rotation, restart recovery and DNS ownership.</p>
+<p>References: <a href="https://pkg.go.dev/crypto/tls#EncryptedClientHelloKey">Go TLS</a>, <a href="https://caddyserver.com/docs/automatic-https#encrypted-clienthello-ech">Caddy ECH</a>, <a href="https://developers.cloudflare.com/dns/manage-dns-records/reference/dns-record-types/#https">Cloudflare HTTPS records</a>.</p>
+<p>Each group has independent keys, rotation, DNS publication and a publisher lease. Default KV keys are litegate/ech/&lt;public_name&gt;/state and publisher. Root key_prefix is a parent directory; a group override is an exact prefix and must be unique. Reuse existing connection credentials and LiteMesh namespace. One group permits ech: true; multiple groups require an explicit public name. Any public name is prohibited as a hidden name.</p>
+<p>Legacy single-group configs remain supported, cannot be mixed with groups, and retain their state path and litegate/ech/default/ prefix. Matching legacy local state is reused when upgrading. Existing KV deployments should explicitly set the matching group's key_prefix to litegate/ech/default/ to preserve shared state; stop old-config instances before migrating. Site transfers withdraw old records before the new group publishes. Group config changes require restart.</p>
+<p>Use litegate ech withdraw -config config.yaml -public-name ech.example.com for one group, or omit public-name to withdraw every configured group. Stop every instance in the affected KV group first. Withdraw and wait for caches before removing a group; archive both local and KV state when changing public name/provider/prefix.</p>
+<p>Sites must be covered by the selected DNS provider domains (wildcards match one label); uncovered names are rejected when loading. Withdrawal always proceeds before publication. Only names still claimed by another group wait and warn, so groups can exchange names without blocking independent domains. KV connection settings and LiteMesh namespace reuse the selected existing connection; DNS and KV providers are independent.</p>
+<p>DNS plugins manage only provider HTTPS record APIs. ECH keys, rotation, encrypted KV synchronization and publication state remain inside LiteGate. See the <a href="../../dns-provider-plugin-guide.html">plugin authoring guide</a>.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/06-certificates/ech.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

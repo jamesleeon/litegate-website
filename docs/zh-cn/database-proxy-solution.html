@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate 数据库安全访问方案 · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html">首页</a>
+      <a href="../../guide.html">场景指南</a>
+      <a href="../../features.html">功能列表</a>
+      <a href="../../ecosystem.html">生态</a>
+      <a href="README.html" aria-current="page">文档</a>
+      <a href="../en/database-proxy-solution.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="README.html">文档首页</a></li><li><details><summary>用户手册</summary><ul><li><a href="user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="user/01-getting-started/build.html">源码构建指南</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="user/01-getting-started/installation.html">安装指南</a></li><li><a href="user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="user/03-configuration/api.html">管理接口概览</a></li><li><a href="user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>使用专题</summary><ul><li><a href="database-proxy-solution.html" class="current" aria-current="page">LiteGate 数据库安全访问方案</a></li><li><a href="discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="ids-recipes.html">IDS 配方</a></li><li><a href="ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="litegate-数据库安全访问方案">LiteGate 数据库安全访问方案</h1>
+<p>MySQL、PostgreSQL 等数据库协议通常不能直接靠 SNI 与 HTTPS 共用 443。以 MySQL 为例，客户端先等待服务端握手包，之后才可能用 SSLRequest 升级连接；连接首包不是带 SNI 的 TLS ClientHello。因此把 <code>db.example.com:443</code> 直接配置成 SNI Stream，绝大多数数据库客户端都会失败。</p>
+<p>LiteGate 为此提供两种互补模式：</p>
+<ul>
+<li>有固定可信来源 IP：使用独立端口的 L4 Stream，并配置 IP 白名单。</li>
+<li>只能开放 443 或来源 IP 不固定：使用 <code>litegate forward</code>，在 HTTPS（默认 Forward v3 的 HTTP/2 流，必要时回退 WSS）内承载原始数据库字节流。</li>
+</ul>
+<h2 id="forward-的数据路径">Forward 的数据路径</h2>
+<pre><code class="language-text">Navicat / DBeaver
+        │  MySQL（默认明文，也可以启用 MySQL 自身 SSL）
+        ▼
+本地或局域网地址:3306
+        │
+litegate forward 客户端
+        │  TLS 1.2+，复用 LiteGate 的 443 和现有证书
+        ▼
+LiteGate Forward 端点
+        │  默认普通 TCP，或 Unix socket
+        ▼
+内网 MySQL / RDS
+</code></pre>
+<p>公网一段始终由 TLS 加密。LiteGate 到内网数据库默认是普通 TCP，这使 MySQL 无需证书配置，也是内网最易落地的方式。如果在 Navicat 中启用 MySQL SSL，MySQL 的 SSLRequest 和加密数据会原样穿过 Forward 隧道，LiteGate 不终止也不解析数据库 TLS。</p>
+<blockquote>
+<p>Forward Stream 不能同时启用 <code>tls.enabled</code>。Stream TLS 要求连接一开始就是 Raw TLS，与 MySQL/PostgreSQL 的协议内 TLS 升级不兼容。</p>
+</blockquote>
+<h2 id="服务端配置">服务端配置</h2>
+<p>Forward 是站点能力，不需要修改 <code>config.yaml</code>。创建域名对应的站点文件；域名必须由
+<code>websecure</code> 的现有证书覆盖。例如已有 <code>*.example.com</code> 泛域名证书时，可以直接使用
+<code>forward.example.com</code>，不会为 Forward 再申请一张证书。</p>
+<pre><code class="language-yaml"># sites/forward.example.com.yaml
+site: forward.example.com
+forward:
+  stream: rds-mysql
+  token_file: /etc/litegate/secrets/forward.token
+</code></pre>
+<p>这里无需显式配置 <code>entrypoints</code>。没有全局 <code>entrypoints</code> 段时，LiteGate 仍会根据 <code>http.https_port</code>（默认 443）自动提供 <code>websecure</code>；Forward 本身只接受 TLS。仅在部署了多个入口并需要限制暴露范围时，才添加 <code>entrypoints: [websecure]</code>。</p>
+<p>Token 至少 32 字节。推荐由 LiteGate 直接生成并以安全权限保存：</p>
+<pre><code class="language-bash">sudo litegate forward token --output /etc/litegate/secrets/forward.token
+</code></pre>
+<p>然后创建一个只供 Forward 使用的 Stream：</p>
+<pre><code class="language-yaml"># streams/rds-mysql-forward.yaml
+name: rds-mysql
+listen: false
+protocol: tcp
+upstream: 172.16.0.25:3306
+enabled: true
+
+max_sessions: 100
+idle_timeout: 7200
+ip_restriction:
+  allow_ips:
+    - 203.0.113.0/24
+</code></pre>
+<p><code>upstream</code> 也可以是 <code>unix:///run/mysqld/mysqld.sock</code>，或者改用 <code>service_name</code> 和服务发现。Forward 会进入完整的 Stream 数据面，因此负载均衡、服务发现、IP 限制、会话上限、超时和指标仍然生效。<code>forward.example.com.yaml</code> 已经把该域名唯一绑定到 <code>rds-mysql</code>；客户端不能选择其他 Stream 或传入任意目标地址。</p>
+<h2 id="客户端使用">客户端使用</h2>
+<p>把服务端的 token 安全复制到运行客户端的机器，然后执行：</p>
+<pre><code class="language-bash">litegate forward \
+  --remote https://forward.example.com \
+  --local 127.0.0.1:3306 \
+  --token-file ./forward.token
+</code></pre>
+<p>Navicat 中填写：</p>
+<pre><code class="language-text">主机：127.0.0.1
+端口：3306
+用户名/密码：数据库原有凭据
+</code></pre>
+<p>也可以通过环境变量传递 Token，避免把秘密放在命令行和进程列表中：</p>
+<pre><code class="language-bash">export LITEGATE_FORWARD_TOKEN='至少 32 字节的随机值'
+litegate forward --remote https://forward.example.com --local 127.0.0.1:3306
+</code></pre>
+<h3 id="在常开虚拟机上提供局域网入口">在常开虚拟机上提供局域网入口</h3>
+<p>默认地址是 loopback。若要让局域网内其他电脑的 Navicat 连接一台常开虚拟机，直接明确填写该虚拟机的局域网 IP：</p>
+<pre><code class="language-bash">litegate forward \
+  --remote https://forward.example.com \
+  --local 192.168.50.20:3306 \
+  --token-file ./forward.token
+</code></pre>
+<p>这时 Navicat 连接 <code>192.168.50.20:3306</code>。LiteGate 会打印局域网暴露警告；务必用虚拟机防火墙把 3306 限制到可信局域网网段。不要使用 <code>0.0.0.0:3306</code>，除非确实需要监听全部网卡并已配置防火墙。</p>
+<h2 id="tls-边界">TLS 边界</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">链路</th>
+<th style="text-align:left">默认行为</th>
+<th style="text-align:left">可选增强</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Forward 客户端 → LiteGate 443</td>
+<td style="text-align:left">强制 TLS 1.2+</td>
+<td style="text-align:left">使用受信任 CA、轮换 Token</td>
+</tr>
+<tr>
+<td style="text-align:left">LiteGate → 内网 MySQL</td>
+<td style="text-align:left">明文 TCP</td>
+<td style="text-align:left">在 Navicat 启用 MySQL SSL，端到端原样穿透</td>
+</tr>
+<tr>
+<td style="text-align:left">LiteGate → Unix socket</td>
+<td style="text-align:left">本机 Unix 字节流</td>
+<td style="text-align:left">通过 socket 属组和 <code>0660</code> 权限控制</td>
+</tr>
+</tbody>
+</table>
+<p>Forward 不接受 <code>http://</code> 或 <code>ws://</code>，也不会提供跳过证书校验的客户端参数。公网传输不会降级为明文。</p>
+<p>Forward v3 用 HTTP/2 PING 检测会话存活（空闲 30 秒探测、15 秒超时），PING 由协议栈应答，
+本地应用暂停读取时健康连接不会被误判断开；回退到 v2 时每 20 秒发送 WebSocket Ping，避免空闲
+隧道被 LB、CDN 或 NAT 静默回收。上游主动关闭时会立即结束对应隧道，
+不会等待 <code>idle_timeout</code> 才通知本地数据库客户端。<code>idle_timeout</code> 仍控制数据库业务流的
+空闲期限；连接池需要长期保留连接时应按数据库的 <code>wait_timeout</code> 合理调大。</p>
+<p>CLI 客户端和 LiteGate 服务端都会发送心跳，因此任一方向长时间没有 SQL 流量也能维持
+连接活性。心跳只能避免“空闲超时”；如果云负载均衡配置了连接的绝对最长存活时间，
+到期后仍会断开，应在 SLB/CDN 上调整该限制或让数据库客户端具备重连能力。</p>
+<h3 id="token-文件轮换">Token 文件轮换</h3>
+<p><code>token_file</code> 在 Site 加载时读取并保存到不可序列化的运行时字段。仅替换外部 secret 文件
+不会触发 <code>sites/</code> Watcher。轮换后需要触发该 Site 重载，例如：</p>
+<pre><code class="language-bash">sudo litegate forward token --output /etc/litegate/secrets/forward.token.new
+mv /etc/litegate/secrets/forward.token.new /etc/litegate/secrets/forward.token
+touch /etc/litegate/sites/forward.example.com.yaml
+</code></pre>
+<p>推荐先原子替换 Token，再触发 Site 重载。如果新 Token 文件不可读、为空或不足 32 字节，
+新配置会被拒绝，不应把不完整的 secret 直接覆盖到正在使用的文件。客户端必须同步换用新
+Token；现有已建立的隧道不会因 Token 轮换而被强制断开。v2 只在新建隧道时校验 Token；v3 在
+每个新连接上都重新校验，旧会话上的新连接会收到 403，客户端随即用当前 Token 重新握手。</p>
+<h3 id="前置代理与真实客户端-ip">前置代理与真实客户端 IP</h3>
+<p>Forward 会把 Router 已解析出的真实客户端 IP 写入隧道连接的 <code>RemoteAddr()</code>，因此
+Stream 的 <code>ip_restriction</code> 可以继续针对公网客户端生效。前面存在 SLB、WAF 或 CDN 时，
+必须只信任实际代理节点：</p>
+<pre><code class="language-yaml">real_ip:
+  trusted_proxies:
+    - 10.0.1.10/32       # 内部 SLB 地址
+    - 10.0.2.0/24        # 受控代理节点网段
+</code></pre>
+<p>不要把 <code>trusted_proxies</code> 配成 <code>0.0.0.0/0</code>。LiteGate 只应接受受信连接器提供的
+<code>X-Forwarded-For</code>；否则外部调用者可以伪造客户端 IP。未正确配置时，Stream ACL 通常看到
+的是 SLB/CDN 节点地址并安全地拒绝请求，但也会导致合法用户无法连接。</p>
+<h2 id="什么时候仍使用独立-stream">什么时候仍使用独立 Stream</h2>
+<p>办公室出口 IP 固定且允许开放独立端口时，直接 L4 Stream 更简单、开销也最低：</p>
+<pre><code class="language-yaml">name: mysql-office
+port: 13306
+protocol: tcp
+upstream: 172.16.0.25:3306
+enabled: true
+ip_restriction:
+  allow_ips: [&quot;203.0.113.10/32&quot;]
+</code></pre>
+<p>不要把 MySQL 的普通连接直接指向共享 443 的 SNI Stream。共享 443 的 Raw TLS/SNI 模式适合连接首包就是 ClientHello 的协议，例如 <code>rediss://</code>、gRPC、自带 Direct TLS 的 TCP 服务；数据库工具的通用访问优先使用 Forward。</p>
+<h2 id="当前安全边界">当前安全边界</h2>
+<ul>
+<li>Forward 为每个 Forward Site 使用一个静态 Token；适合小团队和受控运维环境。需要人员级身份、短期凭证和详细审计时，应在后续版本接入身份提供方或使用专业堡垒机。</li>
+<li>默认的 v3 在一条 TLS 长连接上为每个本地数据库连接开一个独立流（v2 为每个连接一条 WSS 隧道）；单个连接中断后数据库会话不会自动恢复，由数据库客户端重新连接。</li>
+<li><code>ip_restriction</code> 依据 LiteGate 解析出的真实客户端 IP 生效；前置负载均衡时应正确配置 <code>real_ip.trusted_proxies</code>。</li>
+</ul>
+<h2 id="相关文档">相关文档</h2>
+<ul>
+<li><a href="user/03-configuration/stream-config.html">Stream 配置参考</a></li>
+<li><a href="user/09-advanced/forward-and-connect.html">Forward 与 Connect 总览</a></li>
+<li><a href="user/09-advanced/connect.html">Connect 配置与上线</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/database-proxy-solution.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

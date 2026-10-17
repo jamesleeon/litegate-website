@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate Docker Provider Deployment &amp; Configuration Guide · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../en/index.html">Home</a>
+      <a href="../../en/guide.html">Guide</a>
+      <a href="../../en/features.html">Features</a>
+      <a href="../../en/ecosystem.html">Ecosystem</a>
+      <a href="README.html" aria-current="page">Docs</a>
+      <a href="../zh-cn/litegate_docker_provider_deployment_guide.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="README.html">Docs home</a></li><li><details><summary>User guide</summary><ul><li><a href="user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="user/01-getting-started/build.html">Build from source</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="user/08-observability/access-log.html">Access Log</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>Topics</summary><ul><li><a href="database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="ids-recipes.html">IDS Recipes</a></li><li><a href="ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="litegate_docker_provider_deployment_guide.html" class="current" aria-current="page">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="release_control_guide.html">Configuration Release Control</a></li><li><a href="serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="litegate-docker-provider-deployment--configuration-guide">LiteGate Docker Provider Deployment &amp; Configuration Guide</h1>
+<p>LiteGate features a built-in, highly optimized, non-intrusive <strong>Docker Dynamic Service Discovery (Docker Provider)</strong> engine. By directly listening to the real-time Docker Daemon event stream, LiteGate instantly reacts to container starts, deaths, and health checks, dynamically updating its internal reverse proxy upstream load balancer ring. This achieves true <strong>&quot;route on start, strip on death&quot;</strong> behavior.</p>
+<p>This guide provides an in-depth look into the core mechanics, gateway configuration parameters, container label specifications, typical deployment topologies, and production-grade best practices for the Docker Provider.</p>
+<hr>
+<h2 id="core-mechanics--key-benefits">Core Mechanics &amp; Key Benefits</h2>
+<p>LiteGate's Docker discovery engine is built with the following advantages:</p>
+<ol>
+<li><strong>Instant Event-Driven Discovery</strong>: Subscribed directly to the Docker Socket API event pipeline, completely eliminating polling overhead. Upstream routing updates execute in milliseconds upon receiving <code>start</code> or <code>die</code> events.</li>
+<li><strong>Native Health Check Integration</strong>: Integrates directly with Docker's native container health checks. When a container's status turns <code>unhealthy</code>, LiteGate instantly strips it from the active upstream ring, restoring it automatically once it returns to <code>healthy</code>.</li>
+<li><strong>Debounced Swarm Sync</strong>: During rolling deployments or massive scaling events under Docker Swarm, countless tasks start and stop concurrently. LiteGate's <strong>200ms debounce sync mechanism</strong> aggregates these events, preventing CPU and memory spikes from high-frequency route rebuilds.</li>
+<li><strong>Intelligent Port &amp; Network Resolution</strong>: Automatically infers the correct target port from exposed or published port configurations and dynamically bypasses the Swarm ingress network to prevent routing loops.</li>
+</ol>
+<hr>
+<h2 id="litegate-configuration">LiteGate Configuration</h2>
+<p>To enable the Docker Provider, add a new catalog item under the <code>service_discovery.catalogs</code> block in your principal configuration file (e.g., <code>config.yaml</code>):</p>
+<pre><code class="language-yaml"># HTTP listener settings
+http:
+  port: 80
+  https_port: 443
+
+# Active Service Discovery Catalogs
+service_discovery:
+  catalogs:
+    - enabled: true
+      provider: &quot;docker&quot;
+      socket_path: &quot;/var/run/docker.sock&quot;  # Unix path, tcp:///https:// URL, or omit to use DOCKER_HOST
+      network_mode: &quot;internal&quot;             # &quot;internal&quot; (container IP) or &quot;external&quot; (host port mapping)
+      swarm_mode: false                    # Enable Docker Swarm clustering support
+      swarm_auto_detect: false             # Optional; auto-enable only on a Swarm manager
+      swarm_network: &quot;litegate-net&quot;        # Preferred shared network in standalone or Swarm mode
+      swarm_reconcile_interval: 5s          # Swarm task reconciliation interval
+      namespace: &quot;default&quot;                 # Logical namespace for routing isolation
+</code></pre>
+<h3 id="configuration-parameters-reference">Configuration Parameters Reference</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Default</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>enabled</code></td>
+<td style="text-align:left"><code>bool</code></td>
+<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left">Enables/Disables this Docker discovery catalog.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>provider</code></td>
+<td style="text-align:left"><code>string</code></td>
+<td style="text-align:left">-</td>
+<td style="text-align:left">Must be explicitly set to <code>&quot;docker&quot;</code> to activate the Docker adapter.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>socket_path</code></td>
+<td style="text-align:left"><code>string</code></td>
+<td style="text-align:left"><code>&quot;/var/run/docker.sock&quot;</code></td>
+<td style="text-align:left">Unix socket path or <code>tcp://</code>, <code>http://</code>, or <code>https://</code> Docker API endpoint. If empty, <code>DOCKER_HOST</code> is used. Standard <code>DOCKER_TLS_VERIFY</code> and <code>DOCKER_CERT_PATH</code> (<code>ca.pem</code>, <code>cert.pem</code>, <code>key.pem</code>) are supported.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>network_mode</code></td>
+<td style="text-align:left"><code>string</code></td>
+<td style="text-align:left"><code>&quot;internal&quot;</code></td>
+<td style="text-align:left"><strong>Routing Communication Mode</strong>:<br>• <code>&quot;internal&quot;</code>: Proxies directly to internal container IPs/ports.<br>• <code>&quot;external&quot;</code>: Proxies to ports published on the host interface.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>swarm_mode</code></td>
+<td style="text-align:left"><code>bool</code></td>
+<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left">Activates Docker Swarm discovery, querying services and tasks API, and enabling event debouncing.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>swarm_auto_detect</code></td>
+<td style="text-align:left"><code>bool</code></td>
+<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left">Auto-detects Swarm only when the connected daemon is a manager capable of serving cluster APIs. Workers are rejected.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>swarm_network</code></td>
+<td style="text-align:left"><code>string</code></td>
+<td style="text-align:left">-</td>
+<td style="text-align:left">Preferred shared network. This applies to standalone containers too; stack-prefixed Swarm names are matched automatically.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>swarm_reconcile_interval</code></td>
+<td style="text-align:left"><code>duration</code></td>
+<td style="text-align:left"><code>5s</code></td>
+<td style="text-align:left">Interval for authoritative Swarm task reconciliation.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>namespace</code></td>
+<td style="text-align:left"><code>string</code></td>
+<td style="text-align:left"><code>&quot;default&quot;</code></td>
+<td style="text-align:left"><strong>(Optional)</strong> Logically isolates services under different namespaces when co-hosting multiple catalogs.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="container-labels-reference">Container Labels Reference</h2>
+<p>LiteGate utilizes non-intrusive <strong>Docker container labels</strong> to dynamically compile routes. Once your application container is stamped with <code>litegate.*</code> labels, the gateway captures it and creates a 7-layer routing binding.</p>
+<h3 id="standard-labels">Standard Labels</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Label Name</th>
+<th style="text-align:left">Example</th>
+<th style="text-align:left">Required</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>litegate.enable</code></td>
+<td style="text-align:left"><code>&quot;true&quot;</code></td>
+<td style="text-align:left">Recommended</td>
+<td style="text-align:left">Explicitly signs this container into LiteGate discovery. <code>false</code> always disables it; without this switch, any other <code>litegate.</code> label opts in.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>litegate.http.host</code> or <code>litegate.http.routers.&lt;name&gt;.*</code></td>
+<td style="text-align:left">Host / Router properties</td>
+<td style="text-align:left">Recommended</td>
+<td style="text-align:left">The shortcut, or a named Router with Host/path rules; attached to web and websecure by default.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>litegate.http.services.&lt;name&gt;.discovery.name</code></td>
+<td style="text-align:left"><code>&quot;mqserver&quot;</code></td>
+<td style="text-align:left">Optional</td>
+<td style="text-align:left">Docker discovery name; falls back to Compose <code>&lt;project&gt;-&lt;service&gt;</code> or the container name.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>litegate.http.services.&lt;name&gt;.loadbalancer.server.port</code></td>
+<td style="text-align:left"><code>&quot;8080&quot;</code></td>
+<td style="text-align:left">Optional</td>
+<td style="text-align:left">Internal container port; a single exposed or mapped port can be auto-detected.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="advanced-network--routing-labels">Advanced Network &amp; Routing Labels</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Label Name</th>
+<th style="text-align:left">Example</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>litegate.docker.usehostport</code></td>
+<td style="text-align:left"><code>&quot;true&quot;</code></td>
+<td style="text-align:left">Docker Provider hint that forces use of the mapped host port.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>litegate.docker.network</code></td>
+<td style="text-align:left"><code>&quot;custom-net&quot;</code></td>
+<td style="text-align:left"><strong>Preferred Network Interface</strong>. If a container is attached to multiple virtual networks, use this label to pinpoint which network interface LiteGate should connect to, avoiding unroutable private networks.</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="alert alert-tip"><p><strong>Instance identity</strong>: keep <code>version</code>, <code>sid</code>, <code>zone</code>, and similar fields as Endpoint Metadata. Match them with Service <code>discovery.selector.*</code> or a selector returned by IDS.</p>
+</blockquote>
+<hr>
+<h2 id="recommended-deployment-topologies">Recommended Deployment Topologies</h2>
+<h3 id="topology-a-flat-container-network-bridge-mode">Topology A: Flat Container Network (Bridge Mode)</h3>
+<p><strong>Scenario</strong>: Both LiteGate and your business backend containers are deployed on the same Docker host and share a user-defined bridge network. LiteGate connects to the Docker socket. Traffic flows directly within the virtual Docker networks, minimizing external host interface overhead.</p>
+<pre><code>                    ┌─────────────────────────┐
+                    │      Docker Network     │
+                    │     (litegate-net)      │
+                    └────────────┬────────────┘
+                                 │
+         ┌───────────────────────┴───────────────────────┐
+         ▼                                               ▼
+┌──────────────────┐  Direct Container IP Route  ┌──────────────────┐
+│  litegate-edge   ├──────────────────────────►│   saas-mqserver  │
+│  (Container IP)  │                           │   (172.25.0.3)   │
+└──────────────────┘                           └──────────────────┘
+</code></pre>
+<h4 id="steps-and-artifacts">Steps and Artifacts</h4>
+<ol>
+<li>
+<p><strong>Create the shared bridge network</strong>:</p>
+<pre><code class="language-bash">docker network create litegate-net
+</code></pre>
+</li>
+<li>
+<p><strong>Configure your LiteGate <code>config.yaml</code></strong>:</p>
+<pre><code class="language-yaml">http:
+  port: 80
+  https_port: 443
+
+service_discovery:
+  catalogs:
+    - enabled: true
+      provider: &quot;docker&quot;
+      socket_path: &quot;/var/run/docker.sock&quot;
+      network_mode: &quot;internal&quot;             # Direct IP routing
+</code></pre>
+</li>
+<li>
+<p><strong>Deploy LiteGate using <code>docker-compose.yaml</code></strong>:</p>
+<pre><code class="language-yaml">version: '3.8'
+
+services:
+  litegate:
+    image: jamesleeon/litegate:latest
+    container_name: litegate
+    restart: always
+    volumes:
+      - ./config.yaml:/app/config.yaml
+      - /var/run/docker.sock:/var/run/docker.sock  # Mount host engine socket
+    group_add:
+      - &quot;${DOCKER_GID}&quot;  # export DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)
+    ports:
+      - &quot;80:80&quot;
+      - &quot;443:443&quot;
+    networks:
+      - litegate-net
+
+networks:
+  litegate-net:
+    external: true
+</code></pre>
+<p>Launch with the Docker socket group ID:</p>
+<pre><code class="language-bash">export DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)
+docker compose up -d
+</code></pre>
+</li>
+<li>
+<p><strong>Launch your business container with discovery labels</strong>:</p>
+<pre><code class="language-bash">docker run -d \
+  --name business-api \
+  --network litegate-net \
+  -l litegate.enable=true \
+  -l litegate.http.routers.business.match.hosts=api.example.com \
+  -l litegate.http.services.business.discovery.name=business-service \
+  -l litegate.http.services.business.loadbalancer.server.port=8080 \
+  my-business-app:latest
+</code></pre>
+</li>
+</ol>
+<hr>
+<h3 id="topology-b-external-host-mode-mixed-deployment">Topology B: External Host Mode (Mixed Deployment)</h3>
+<p><strong>Scenario</strong>: LiteGate runs directly as a host binary (on a virtual machine or bare metal), while backend services are inside Docker containers. LiteGate routes traffic through published host interfaces (<code>HostIP:HostPort</code>).</p>
+<pre><code>┌────────────────────────────────────────────────────────┐
+│                      Host OS                           │
+│                                                        │
+│   ┌─────────────────┐    Forward Traffic to       ┌─┴───────────────┐  │
+│   │    LiteGate     ├────────────────────────────►│  saas-mqserver  │  │
+│   │  (Host Binary)  │    Published Host Port      │   (Container)   │  │
+│   │   (Port 80)     │         :8080               │   (Port 8080)   │  │
+│   └─────────────────┘                             └─────────────────┘  │
+└────────────────────────────────────────────────────────┘
+</code></pre>
+<h4 id="steps-and-artifacts-1">Steps and Artifacts</h4>
+<ol>
+<li>
+<p><strong>Configure <code>config.yaml</code></strong>:</p>
+<pre><code class="language-yaml">http:
+  port: 80
+  https_port: 443
+
+service_discovery:
+  catalogs:
+    - enabled: true
+      provider: &quot;docker&quot;
+      socket_path: &quot;/var/run/docker.sock&quot;
+      network_mode: &quot;external&quot;             # Host mapping mode
+</code></pre>
+</li>
+<li>
+<p><strong>Start the host binary</strong>:</p>
+<pre><code class="language-bash">./litegate -c ./config.yaml
+</code></pre>
+</li>
+<li>
+<p><strong>Start your container, exposing ports to the host</strong>:</p>
+<pre><code class="language-bash">docker run -d \
+  --name business-api \
+  -p 8080:8080 \
+  -l litegate.enable=true \
+  -l litegate.http.routers.business.match.hosts=api.example.com \
+  -l litegate.http.services.business.discovery.name=business-service \
+  -l litegate.http.services.business.loadbalancer.server.port=8080 \
+  my-business-app:latest
+</code></pre>
+<p>LiteGate detects the container start event, resolves its host-bound port bindings (such as <code>127.0.0.1:8080</code>), and registers it as an active upstream.</p>
+</li>
+</ol>
+<blockquote class="alert alert-note"><p><strong>Container Host IP Fallback (<code>LITEGATE_DOCKER_HOST</code>)</strong>:
+If LiteGate itself is containerized but running in <code>external</code> network mode, host port binding IPs are frequently reported by the engine as <code>0.0.0.0</code> or <code>::</code>.
+To prevent routing failure, LiteGate utilizes an intelligent fallback:</p>
+<ol>
+<li>It checks the environment variables <code>LITEGATE_DOCKER_HOST</code> or <code>DOCKER_HOST_IP</code> for the host's real IP.</li>
+<li>If missing, it scans <code>/proc/net/route</code> inside the container to parse the default gateway IP, utilizing it as the routing destination.</li>
+</ol>
+</blockquote>
+<hr>
+<h3 id="topology-c-docker-swarm-production-overlay">Topology C: Docker Swarm Production Overlay</h3>
+<p><strong>Scenario</strong>: An enterprise multi-node Docker Swarm cluster. LiteGate and business microservices are deployed as Swarm services on a shared overlay network, enabling flat, direct routing to individual Task instances.</p>
+<pre><code>                  ┌─────────────────────────────────┐
+                  │       Swarm Overlay Network     │
+                  │          (litegate-net)         │
+                  └────────────────┬────────────────┘
+                                   │
+         ┌─────────────────────────┼─────────────────────────┐
+         ▼                         ▼                         ▼
+┌──────────────────┐      ┌──────────────────┐      ┌──────────────────┐
+│  litegate.1.task ├─────►│  mqserver.1.task ├─────►│  mqserver.2.task ├─────► ...
+│    (Overlay IP)  │      │   (10.0.15.5)    │      │   (10.0.15.12)   │
+└──────────────────┘      └──────────────────┘      └──────────────────┘
+</code></pre>
+<h4 id="steps-and-artifacts-2">Steps and Artifacts</h4>
+<ol>
+<li>
+<p><strong>Create an attachable overlay network</strong>:</p>
+<pre><code class="language-bash">docker network create --driver overlay --attachable litegate-net
+</code></pre>
+</li>
+<li>
+<p><strong>Use the maintained <code>deploy/swarm/stack.yml</code> example.</strong> It runs LiteGate globally on labeled edge nodes with host-mode published ports, and puts the Docker socket behind a manager-side read-only Socket Proxy. LiteGate and the proxy share a dedicated internal <code>docker-api</code> overlay; business containers join only <code>litegate-net</code> and therefore cannot reach the Docker API. Keep the Docker catalog's <code>socket_path</code> empty so <code>DOCKER_HOST=tcp://docker-socket-proxy:2375</code> takes effect.</p>
+<p>The proxy enables only the Swarm endpoints used by this configuration (<code>EVENTS</code>, <code>INFO</code>, <code>SERVICES</code>, and <code>TASKS</code>); <code>CONTAINERS</code>, <code>NETWORKS</code>, and all POST requests remain disabled. Read-only does <strong>not</strong> mean non-sensitive: service and task responses can expose cluster topology and service configuration, so never attach untrusted workloads to <code>docker-api</code>.</p>
+</li>
+<li>
+<p><strong>Deploy using the stack CLI</strong>:</p>
+<pre><code class="language-bash">docker stack deploy -c deploy/swarm/stack.yml saas-app
+</code></pre>
+</li>
+</ol>
+<blockquote class="alert alert-important"><p><strong>Swarm Security: Bypassing the Ingress Network</strong>:
+Tasks inside a Docker Swarm have ingress endpoints (<code>10.255.x.x</code>) attached to map external traffic.
+Routing dynamic traffic to these ingress endpoints causes routing loop deadlocks. LiteGate <strong>automatically filters out ingress interfaces</strong>, resolving only the container overlay interfaces to establish healthy peer connections.
+Service discovery labels must be under <code>deploy.labels</code>; container-level <code>labels</code> are not read in Swarm mode. For ACME with multiple LiteGate replicas, enable <code>roles.cert_storage: true</code> in the Consul or Litemesh configuration so certificate state is stored in that shared control plane. It is a boolean role, not a filesystem path.</p>
+</blockquote>
+<hr>
+<h2 id="troubleshooting-guide">Troubleshooting Guide</h2>
+<h3 id="1-permission-denied-on-varrundockersock">1. &quot;Permission Denied&quot; on <code>/var/run/docker.sock</code></h3>
+<ul>
+<li><strong>Cause</strong>: The socket file on the host has restricted permissions (default is owned by root and readable by the docker group).</li>
+<li><strong>Fix</strong>: Prefer passing the socket's group ID to the container:
+<pre><code class="language-bash">export DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)
+docker compose up -d
+</code></pre>
+In production, prefer a restricted Docker Socket Proxy on a dedicated network accessible only to LiteGate. Read-only Docker metadata may still contain secrets and must not be exposed to business containers. Do not make the socket world-writable with <code>chmod 666</code>; direct Docker socket access is effectively host-level privilege.</li>
+</ul>
+<h3 id="2-containers-are-running-but-litegate-logs-do-not-react">2. Containers are Running but LiteGate Logs Do Not React</h3>
+<ul>
+<li><strong>Checkpoints</strong>:
+<ol>
+<li>Verify the socket is correctly mounted and not a dead symlink inside the LiteGate container.</li>
+<li>Ensure your containers are started with valid labels matching the <code>litegate.</code> prefix via <code>docker inspect</code>.</li>
+<li>A Docker catalog's <code>namespace</code> scopes discovery requests; containers do not carry a namespace label. With multiple Docker catalogs, give each catalog a distinct namespace and reference that namespace from the consuming route/catalog configuration.</li>
+</ol>
+</li>
+</ul>
+<h3 id="3-connection-timeouts-on-multi-nic-containers">3. Connection Timeouts on Multi-NIC Containers</h3>
+<ul>
+<li><strong>Cause</strong>: Backend containers linked to multiple interfaces might not share every network with LiteGate.</li>
+<li><strong>Fix</strong>:
+<ul>
+<li>Stamp your containers explicitly with the target interface selector label:
+<pre><code class="language-bash">-l litegate.docker.network=litegate-net
+</code></pre>
+This forces LiteGate to match the <code>litegate-net</code> interface. You can instead set catalog-level <code>swarm_network</code>; despite its legacy name, it also applies to standalone Docker. When LiteGate itself is containerized, a network shared by both containers is preferred automatically, and the final fallback is sorted for stable results.</li>
+</ul>
+</li>
+</ul>
+<p>When Service <code>discovery.name</code> is omitted, Compose containers are grouped as <code>&lt;project&gt;-&lt;service&gt;</code>; containers without both Compose labels fall back to the individual container name.</p>
+<p>The image healthcheck reads the local <code>web</code> entrypoint by default. When the running gateway obtains its configuration from Consul or Litemesh, set <code>LITEGATE_HEALTH_ADDR</code> (for example <code>127.0.0.1:8080</code>) to the actual listener. <code>litegate healthcheck --addr ...</code> takes precedence over that environment variable, and an explicit <code>--config</code> takes precedence over <code>LITEGATE_CONFIG</code>.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/litegate_docker_provider_deployment_guide.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

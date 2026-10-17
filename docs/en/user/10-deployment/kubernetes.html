@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kubernetes Deployment Guide · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/10-deployment/kubernetes.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details open><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html" class="current" aria-current="page">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="kubernetes-deployment-guide">Kubernetes Deployment Guide</h1>
+<p>This is the entry point for running LiteGate on Kubernetes. It is organized by task: choose a usage, install, then configure your scenario. Field-level details and capability limits are linked at the end.</p>
+<p>Inside a cluster LiteGate is both an <strong>Ingress / Gateway API controller</strong> and a complete <strong>web server</strong>. The same Pods can handle ingress routing, static frontends, SPAs, file downloads, Markdown documentation, WebDAV and status pages, without a separate nginx for the frontend. That is the main difference from proxy-only controllers such as Traefik.</p>
+<hr>
+<h2 id="1-choose-a-usage">1. Choose a usage</h2>
+<table>
+<thead>
+<tr>
+<th>Usage</th>
+<th>Good for</th>
+<th>Where routes live</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ingress controller</td>
+<td>Existing Ingress manifests, migrating from ingress-nginx</td>
+<td><code>Ingress</code> (<code>ingressClassName: litegate</code>)</td>
+</tr>
+<tr>
+<td>Gateway API controller</td>
+<td>New projects, multi-team delegation, L4 (TCP/UDP/TLS)</td>
+<td><code>Gateway</code> + <code>HTTPRoute</code> / <code>GRPCRoute</code> / <code>TLSRoute</code> etc.</td>
+</tr>
+<tr>
+<td>Gateway + web server</td>
+<td>SPA frontend + backend API, docs sites, download sites</td>
+<td>Native site YAML (mounted into the Pod) + either API above</td>
+</tr>
+<tr>
+<td>Service annotation shortcut</td>
+<td>Exposing simple services directly</td>
+<td>Service label <code>litegate.io/expose=true</code> + annotation <code>litegate.io/domain</code></td>
+</tr>
+</tbody>
+</table>
+<p>These usages can coexist in one deployment. For the same hostname, native sites and Kubernetes routes merge into one site and are matched by longest path, so a native <code>/</code> never shadows an HTTPRoute <code>/api</code>.</p>
+<hr>
+<h2 id="2-install">2. Install</h2>
+<h3 id="21-prerequisite-gateway-api-crds">2.1 Prerequisite: Gateway API CRDs</h3>
+<p>Skip this when you only use Ingress. For Gateway API, install the CRDs of the validated version (currently v1.4.1 experimental):</p>
+<pre><code class="language-bash">kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/experimental-install.yaml
+</code></pre>
+<h3 id="22-install-with-helm">2.2 Install with Helm</h3>
+<pre><code class="language-bash">helm install litegate ./deploy/helm/litegate -n litegate-system --create-namespace
+</code></pre>
+<p>By default this creates:</p>
+<ul>
+<li>a 2-replica Deployment with Lease leader election (the leader writes status);</li>
+<li>a <code>LoadBalancer</code> entry Service (80/443);</li>
+<li>an IngressClass and a GatewayClass named <code>litegate</code>, with <code>litegate</code> as the default IngressClass;</li>
+<li>a ClusterRole/ClusterRoleBinding and the runtime configuration Secret.</li>
+</ul>
+<p>Common values:</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Default</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>controller.ingressClass</code> / <code>controller.gatewayClass</code></td>
+<td><code>litegate</code></td>
+<td>Class names to claim; use distinct names per installation in one cluster</td>
+</tr>
+<tr>
+<td><code>controller.isDefaultIngressClass</code></td>
+<td><code>true</code></td>
+<td>Claim Ingresses without a class</td>
+</tr>
+<tr>
+<td><code>service.type</code></td>
+<td><code>LoadBalancer</code></td>
+<td>Use an LB in the cloud; <code>NodePort</code> or MetalLB on bare metal</td>
+</tr>
+<tr>
+<td><code>config.*</code></td>
+<td>see values.yaml</td>
+<td>Copied into the LiteGate main configuration</td>
+</tr>
+<tr>
+<td><code>existingConfigSecret</code></td>
+<td>empty</td>
+<td>External Secret (key <code>litegate.yaml</code>) holding the full configuration</td>
+</tr>
+<tr>
+<td><code>extraVolumes</code> / <code>extraVolumeMounts</code></td>
+<td>empty</td>
+<td>Mount site configuration, frontend files, etc.</td>
+</tr>
+<tr>
+<td><code>initContainers</code></td>
+<td>empty</td>
+<td>Prepare files before start, e.g. copy build output from a frontend image</td>
+</tr>
+</tbody>
+</table>
+<p>Without Helm, apply the native manifests in <code>deploy/k8s/</code> in this order: RBAC, IngressClass/GatewayClass, Deployment, Service.</p>
+<h3 id="23-check-readiness">2.3 Check readiness</h3>
+<pre><code class="language-bash">kubectl -n litegate-system get pods
+kubectl -n litegate-system logs deploy/litegate | grep -i -E &quot;error|forbidden&quot;
+</code></pre>
+<p><code>/readyz</code> returns 200 only after every enabled Kubernetes resource has completed its first sync and routes are published. A Pod that stays unready usually lacks RBAC or a CRD. Fix the permissions or explicitly disable unused watches (for example <code>disable_tcp_route_watch: true</code>); do not hide the problem with longer probe delays.</p>
+<h3 id="24-running-outside-a-cluster-kubeconfig">2.4 Running outside a cluster (kubeconfig)</h3>
+<p>For local debugging or deployments outside the cluster, LiteGate reads kubeconfig like kubectl does. When it is not in a cluster and <code>api_server_url</code> is not set, it looks for <code>$KUBECONFIG</code>, then <code>~/.kube/config</code>:</p>
+<pre><code class="language-yaml">service_discovery:
+  providers:
+    k8s:
+      kubeconfig: /home/ops/.kube/config   # optional; a path list like $KUBECONFIG
+      kube_context: prod-eks                # optional, defaults to current-context
+</code></pre>
+<ul>
+<li>Supported: token, tokenFile, client certificates (files or <code>-data</code>) and <strong>exec credential plugins</strong>, for example <code>aws eks get-token</code> for EKS, <code>gke-gcloud-auth-plugin</code> for GKE and <code>kubelogin</code> for AKS. Plugin credentials are cached until 30 seconds before they expire and fetched again immediately when the API returns 401.</li>
+<li>Legacy <code>auth-provider</code> plugins and username/password auth are rejected with an error instead of falling back to anonymous access.</li>
+<li><code>token</code>, <code>token_file</code>, <code>client_cert_file</code>/<code>client_key_file</code> and <code>ca_file</code> set explicitly in LiteGate configuration take precedence over the kubeconfig.</li>
+<li><code>api_server_url</code> may carry a path prefix, for example Rancher's <code>https://rancher.example.com/k8s/clusters/c-xxxxx</code>; the prefix is preserved.</li>
+<li>Connections to the API server use HTTP/2 by default: all watches share one connection, and pings detect dead connections. Set <code>disable_http2: true</code> when a proxy does not support HTTP/2.</li>
+</ul>
+<hr>
+<h2 id="3-scenario-1-ingress">3. Scenario 1: Ingress</h2>
+<pre><code class="language-yaml">apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: shop
+  namespace: shop
+spec:
+  ingressClassName: litegate
+  tls:
+    - hosts: [shop.example.com]
+      secretName: shop-tls
+  rules:
+    - host: shop.example.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: shop-api
+                port: {number: 80}
+</code></pre>
+<ul>
+<li>Certificates come from <code>kubernetes.io/tls</code> Secrets and rotate automatically when the Secret changes; cert-manager can maintain them.</li>
+<li>A subset of ingress-nginx annotations is supported (ssl-redirect, proxy-body-size, backend-protocol, timeouts, CORS, rewrite-target and others). Compatibility is not complete; check each annotation when migrating.</li>
+</ul>
+<h2 id="4-scenario-2-gateway-api">4. Scenario 2: Gateway API</h2>
+<pre><code class="language-yaml">apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: public
+  namespace: litegate-system
+spec:
+  gatewayClassName: litegate
+  listeners:
+    - name: https
+      port: 443
+      protocol: HTTPS
+      hostname: &quot;*.example.com&quot;
+      tls:
+        certificateRefs:
+          - name: wildcard-example-com
+      allowedRoutes:
+        namespaces: {from: All}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: shop-api
+  namespace: shop
+spec:
+  parentRefs:
+    - name: public
+      namespace: litegate-system
+  hostnames: [shop.example.com]
+  rules:
+    - matches:
+        - path: {type: PathPrefix, value: /api}
+      backendRefs:
+        - name: shop-api
+          port: 80
+</code></pre>
+<ul>
+<li>Cross-namespace references to backends, certificates or mirror targets need a <code>ReferenceGrant</code> in the target namespace.</li>
+<li>For HTTPS backends, <code>BackendTLSPolicy</code> sets the CA and SNI. CAs must be core-group ConfigMaps or Secrets; an invalid policy rejects traffic and never downgrades to plaintext.</li>
+<li>Retries, rate limiting, circuit breaking, WAF, CORS and similar governance attach to routes through the custom <code>LiteGateTrafficPolicy</code> resource.</li>
+<li>Non-HTTP ports (TCPRoute/UDPRoute/TLSRoute) must also be opened in <code>service.extraPorts</code>.</li>
+</ul>
+<p>When troubleshooting, read the resource status first: <code>kubectl get httproute shop-api -n shop -o yaml</code>, and check <code>Accepted</code> and <code>ResolvedRefs</code>.</p>
+<hr>
+<h2 id="5-scenario-3-gateway--web-server-specific-to-litegate">5. Scenario 3: Gateway + web server (specific to LiteGate)</h2>
+<p>With Traefik, static frontend files usually need a separate nginx Pod behind the gateway. LiteGate serves this content directly from the gateway Pods:</p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Native site syntax</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Static site / SPA</td>
+<td><code>serve:</code> / <code>spa:</code></td>
+<td>Fallback to index for frontend routes, compression, cache headers, try_files</td>
+</tr>
+<tr>
+<td>File download site</td>
+<td><code>list:</code></td>
+<td>Directory browsing with a page</td>
+</tr>
+<tr>
+<td>Markdown docs site</td>
+<td><code>markdown:</code></td>
+<td>Renders a directory of .md files</td>
+</tr>
+<tr>
+<td>WebDAV</td>
+<td><code>webdav:</code></td>
+<td>Shared read/write directory</td>
+</tr>
+<tr>
+<td>Template / fixed response</td>
+<td><code>template</code> / <code>respond</code></td>
+<td>Maintenance pages, error fallbacks, JSON placeholders</td>
+</tr>
+<tr>
+<td>Status page</td>
+<td><code>status:</code></td>
+<td>Status board based on real traffic</td>
+</tr>
+<tr>
+<td>PHP</td>
+<td>FastCGI</td>
+<td>Connects to php-fpm</td>
+</tr>
+</tbody>
+</table>
+<p>The setup has three steps:</p>
+<ol>
+<li>Put the <strong>site YAML</strong> in a ConfigMap, mount it into the Pod, and point <code>config.sites_dir</code> at the mount;</li>
+<li>Deliver the <strong>site files</strong> into the Pod with one of the methods below;</li>
+<li>Keep declaring dynamic APIs with Ingress/HTTPRoute. The same hostname merges automatically: certificates come from the Secret referenced by the Gateway/Ingress, and requests are matched by longest path.</li>
+</ol>
+<h3 id="51-site-yaml">5.1 Site YAML</h3>
+<pre><code class="language-yaml">site: shop.example.com
+https: false
+routes:
+  # Return JSON 503 while the API route is missing, instead of SPA HTML
+  - name: api-unavailable
+    priority: 1
+    match: {path_prefix: /api}
+    action:
+      type: respond
+      status: 503
+      content_type: application/json
+      body: '{&quot;error&quot;:&quot;api-route-unavailable&quot;}'
+/:
+  spa: /frontend
+</code></pre>
+<p><code>https: false</code> means the Kubernetes Secret provides the certificate and the site does not pin one itself. If the site YAML explicitly pins certificate files and they are unavailable, the site fails closed and does not fall back to the Gateway certificate.</p>
+<h3 id="52-four-ways-to-get-frontend-files-into-the-pod">5.2 Four ways to get frontend files into the Pod</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Size</th>
+<th>Release / rollback</th>
+<th>Good for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Immutable ConfigMap</td>
+<td>≤ 1 MiB</td>
+<td>Rename the ConfigMap and <code>helm upgrade</code>; <code>helm rollback</code></td>
+<td>Demos, very small pages</td>
+</tr>
+<tr>
+<td><strong>Frontend image + initContainer</strong> (recommended)</td>
+<td>Unlimited (emptyDir)</td>
+<td>Change the image tag and <code>helm upgrade</code>; <code>helm rollback</code></td>
+<td>Production SPAs, versioned with the image</td>
+</tr>
+<tr>
+<td>Shared volume (RWX PVC, e.g. NFS)</td>
+<td>Unlimited</td>
+<td>Written externally, effective immediately</td>
+<td>Download sites, WebDAV, content edited online</td>
+</tr>
+<tr>
+<td>Serve KV mode</td>
+<td>Unlimited</td>
+<td>Update a KV pointer; each Pod downloads the ZIP, verifies SHA256 and switches atomically, no rollout</td>
+<td>Frequent frontend releases decoupled from Pod releases</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommended: frontend image + initContainer.</strong> Frontend CI packages the build output into a small image, for example <code>FROM busybox</code> plus <code>COPY dist /dist</code>. When the Pod starts, an initContainer copies the output into an emptyDir, and LiteGate mounts it read-only and serves it:</p>
+<pre><code class="language-yaml"># values-web.yaml
+config:
+  sites_dir: /app/sites
+frontendImage:
+  repository: registry.example.com/shop/frontend
+  tag: &quot;1.4.2&quot;
+initContainers:
+  - name: frontend
+    image: &quot;{{ .Values.frontendImage.repository }}:{{ .Values.frontendImage.tag }}&quot;
+    command: [&quot;sh&quot;, &quot;-c&quot;, &quot;cp -R /dist/. /frontend/&quot;]
+    volumeMounts:
+      - name: frontend
+        mountPath: /frontend
+extraVolumes:
+  - name: frontend
+    emptyDir: {sizeLimit: 512Mi}
+  - name: sites
+    configMap:
+      name: shop-sites
+extraVolumeMounts:
+  - name: frontend
+    mountPath: /frontend
+    readOnly: true
+  - name: sites
+    mountPath: /app/sites
+    readOnly: true
+</code></pre>
+<pre><code class="language-bash">kubectl -n litegate-system create configmap shop-sites --from-file=shop.yaml
+helm upgrade --install litegate ./deploy/helm/litegate -n litegate-system -f values-web.yaml
+# Release a new frontend
+helm upgrade litegate ./deploy/helm/litegate -n litegate-system -f values-web.yaml --set frontendImage.tag=1.4.3
+</code></pre>
+<p><code>initContainers</code> is rendered through <code>tpl</code>, so it can reference your own <code>frontendImage</code> value. During a rolling update each new Pod gets the complete output of exactly one tag, so old and new files never mix. The full example is <code>deploy/helm/litegate/examples/webstack-image-values.yaml</code>; the ConfigMap variant is <code>webstack-values.yaml</code> in the same directory.</p>
+<p><strong>Serve KV mode</strong>: on Kubernetes, mount a writable emptyDir at <code>root</code>. <code>kv_provider</code> can be <code>litemesh</code>, <code>consul</code> or <code>http</code>; without litemesh, <code>http</code> can point at a URL that returns the version JSON. See <a href="../../serve_kv_mode.html">Serve KV mode</a> for the fields.</p>
+<h3 id="53-checks-after-a-frontend-release">5.3 Checks after a frontend release</h3>
+<p>Helm reporting ready does not mean every replica has the new files. After a release, also confirm: every ready Pod has the same file version; browsers actually load the new version; <code>/api</code> responds normally and, on failure, returns JSON 503 rather than HTML.</p>
+<hr>
+<h2 id="6-replicas-and-high-availability">6. Replicas and high availability</h2>
+<ul>
+<li>Every replica watches and serves traffic independently; Lease leader election only decides who writes status. The Lease lives in LiteGate's own namespace by default; expiry is judged by local observation, so clock skew between nodes does not matter; a leader that shuts down cleanly releases the Lease, so its successor does not wait for it to expire.</li>
+<li>Authentication sessions need a shared Redis and the same session key on every replica. Rate-limit and circuit-breaker counters live in each replica's memory and are not shared.</li>
+<li>The chart provides a PDB, topology spreading and graceful shutdown: 5 seconds unready, then 30 seconds to drain requests and connections, within a 45-second termination grace period.</li>
+<li>Chart upgrades do not update CRDs already installed from <code>crds/</code>; apply the new <code>LiteGateTrafficPolicy</code> CRD with <code>kubectl apply</code> first.</li>
+</ul>
+<h2 id="7-common-problems">7. Common problems</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pod never becomes ready</td>
+<td>403/404 in the logs: add RBAC or disable unused watches</td>
+</tr>
+<tr>
+<td>Ingress has no effect</td>
+<td>Does <code>ingressClassName</code> match <code>controller.ingressClass</code>? Are several installations in the cluster?</td>
+</tr>
+<tr>
+<td>HTTPRoute <code>Accepted=False</code></td>
+<td>parentRefs, the Gateway's <code>allowedRoutes</code> and the listener hostname</td>
+</tr>
+<tr>
+<td><code>ResolvedRefs=False</code></td>
+<td>Does the backend Service/port exist? Is a ReferenceGrant missing for a cross-namespace reference?</td>
+</tr>
+<tr>
+<td>Backend TLS errors</td>
+<td>Does the BackendTLSPolicy CA ConfigMap/Secret exist and belong to the core group? Does the hostname match the certificate?</td>
+</tr>
+<tr>
+<td>Frontend 404 or stale page</td>
+<td>The <code>sites_dir</code> mount, the directory <code>spa</code> points at, the file version on every Pod</td>
+</tr>
+<tr>
+<td><code>/api</code> returns HTML</td>
+<td>Add a JSON fallback route for <code>/api</code> (see 5.1)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-version-support">8. Version support</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Validated</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kubernetes</td>
+<td>K3s v1.34.5, v1.35.5, v1.36.5</td>
+<td>Other distributions (EKS/GKE/AKS/kind/OpenShift) not yet validated</td>
+</tr>
+<tr>
+<td>Gateway API CRDs</td>
+<td>v1.4.1 experimental</td>
+<td>Validated with the official test suite: all HTTP/GRPC/TLS core tests pass (self-run, not submitted upstream)</td>
+</tr>
+<tr>
+<td>Ingress</td>
+<td>networking.k8s.io/v1</td>
+<td></td>
+</tr>
+<tr>
+<td>EndpointSlice</td>
+<td>discovery.k8s.io/v1</td>
+<td></td>
+</tr>
+<tr>
+<td>Lease</td>
+<td>coordination.k8s.io/v1</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>For some Gateway API resources, the version is <strong>chosen by API discovery</strong>: the validated version is preferred; when the cluster no longer serves it, LiteGate switches to the next version it can decode and logs the version in use.</p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Preferred (validated)</th>
+<th>Fallback</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BackendTLSPolicy</td>
+<td>v1alpha3</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>ReferenceGrant</td>
+<td>v1beta1</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>TLSRoute</td>
+<td>v1alpha2</td>
+<td>v1alpha3, v1</td>
+</tr>
+<tr>
+<td>TCPRoute / UDPRoute</td>
+<td>v1alpha2</td>
+<td>v1</td>
+</tr>
+</tbody>
+</table>
+<p>GatewayClass, Gateway, HTTPRoute and GRPCRoute always use v1. If a resource's API returns 404, that feature is disabled and a Warn log names the resource and version. After upgrading Gateway API, check the logs for such messages.</p>
+<h2 id="further-reading">Further reading</h2>
+<ul>
+<li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage (topic)</a></li>
+<li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li>
+<li><a href="../04-actions/serve.html">Serve Action</a> · <a href="../04-actions/list.html">List</a> · <a href="../04-actions/markdown.html">Markdown</a> · <a href="../04-actions/webdav.html">WebDAV</a> · <a href="../04-actions/status.html">Status</a> · <a href="../../fastcgi_config.html">FastCGI</a></li>
+<li><a href="ha-state.html">Replica state and failure isolation</a></li>
+<li><a href="https://github.com/jamesleeon/LiteGate/blob/master/deploy/helm/litegate/README.md">Helm chart notes</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/10-deployment/kubernetes.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

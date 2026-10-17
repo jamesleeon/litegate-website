@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benchmarking · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/10-deployment/benchmarking.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details open><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html" class="current" aria-current="page">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="benchmarking">Benchmarking</h1>
+<p>This page gives a standard method for benchmarking LiteGate in an <strong>ESXi virtualized environment</strong>: how to set up the test environment, how to run it, and which metrics to read. The focus is performance attribution of the <strong>core proxy layer</strong>.</p>
+<hr>
+<h2 id="0-two-common-questions-first">0. Two common questions first</h2>
+<h3 id="can-esxi-measure-real-performance">Can ESXi measure real performance?</h3>
+<p>Yes. ESXi is a type-1 bare-metal hypervisor with low virtualization overhead and underlies most production clouds. <strong>Relative conclusions</strong> (the proxy's own overhead, the cost of each middleware, bottleneck location, capacity knee points) are barely affected; <strong>absolute peak QPS</strong> is somewhat lower than bare metal (depending on the network path). Only chasing absolute limits needs bare metal plus physical switches, which most scenarios don't.</p>
+<p>What actually makes measurements unreliable isn't ESXi but configuration pitfalls (see <a href="#13-required-esxi-settings">§1.3 Required ESXi settings</a>).</p>
+<h3 id="why-use-litegate-respond-as-the-fake-backend-instead-of-nginx">Why use LiteGate <code>respond</code> as the fake backend instead of nginx?</h3>
+<p>The fake backend's only job is to be &quot;an upstream fast enough to ignore&quot;. LiteGate's <code>respond</code> action is a static responder equivalent to <code>nginx return 200</code> in performance, <strong>so a LiteGate <code>respond</code> instance serves as the backend and nginx isn't needed</strong>.</p>
+<p>More importantly, distinguish two uses of <code>respond</code>; together they isolate the proxy layer's cost precisely:</p>
+<table>
+<thead>
+<tr>
+<th>Route type</th>
+<th>What it measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A <code>respond</code> route on the gateway (no forwarding)</td>
+<td>LiteGate's processing path <strong>without the proxy layer</strong> (accept + route matching + middleware + writing the response) = the gateway floor</td>
+</tr>
+<tr>
+<td>A <code>proxy</code> route → separate upstream</td>
+<td>The above <strong>plus</strong> the proxy layer (dialing, connection pool, <code>io.Copy</code>)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong><code>proxy route latency</code> − <code>respond route latency</code> ≈ the proxy layer's own cost.</strong> This is the &quot;core proxy layer metric&quot;.</p>
+<p>Use the difference to locate and compare, not as a strictly subtractable independent time: load, queueing and backend state change both paths, so compare under the same load and the same build.</p>
+</blockquote>
+<p>So the backend VM is still needed (a proxy route needs a <strong>real TCP upstream</strong> to exercise dialing, pooling and copying), but it runs LiteGate <code>respond</code>, not nginx.</p>
+<hr>
+<h2 id="1-test-environment">1. Test environment</h2>
+<h3 id="11-topology">1.1 Topology</h3>
+<pre><code>[load generator gen] ──► [gateway under test gw] ──► [fake backend be]
+  wrk2 / k6               LiteGate                    LiteGate (respond)
+</code></pre>
+<p>The three roles go on three VMs. <strong>Never put the load generator and the gateway on the same VM</strong>, or the generator takes the CPU and you measure contention, not the gateway.</p>
+<h3 id="12-vm-sizing">1.2 VM sizing</h3>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>VM</th>
+<th>Suggested size</th>
+<th>Software</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Load generator</td>
+<td><code>gen</code></td>
+<td>4–8 vCPU / 4G, <strong>vCPU ≥ gateway</strong></td>
+<td>wrk2, k6, vegeta</td>
+</tr>
+<tr>
+<td>Gateway under test</td>
+<td><code>gw</code></td>
+<td><strong>Fixed 4 vCPU / 4G (the key variable, locked)</strong></td>
+<td>LiteGate + node_exporter</td>
+</tr>
+<tr>
+<td>Fake backend</td>
+<td><code>be</code></td>
+<td>4 vCPU / 2G</td>
+<td>LiteGate (respond)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>The gateway's vCPU count is the object under test; <strong>once chosen, don't change it</strong>, or historical data can't be compared.</p>
+</blockquote>
+<p>Use the same OS everywhere (Ubuntu Server 22.04 / Debian 12), on the same vSwitch and subnet.</p>
+<h3 id="13-required-esxi-settings">1.3 Required ESXi settings</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Requirement</th>
+<th>Check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>No vCPU overcommit</strong></td>
+<td>Total vCPUs ≤ physical cores; give gw and gen CPU <strong>reservations</strong></td>
+<td>esxtop <code>%RDY &lt; 5%</code></td>
+</tr>
+<tr>
+<td><strong>Virtual NIC</strong></td>
+<td><strong>vmxnet3</strong> everywhere (not e1000)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Host power policy</strong></td>
+<td>High Performance, C-states off (BIOS + ESXi host)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Generator and gateway don't compete for cores</strong></td>
+<td>Put gen and gw on different NUMA nodes / physical hosts where possible</td>
+<td>esxtop <code>%CSTP ≈ 0</code></td>
+</tr>
+<tr>
+<td><strong>Clock sync</strong></td>
+<td>Install open-vm-tools</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="14-kernel-tuning-all-three-vms">1.4 Kernel tuning (all three VMs)</h3>
+<p>Linux defaults hit their limits before LiteGate does; adjust them before testing:</p>
+<pre><code class="language-bash">ulimit -n 1048576
+sysctl -w net.ipv4.ip_local_port_range=&quot;1024 65535&quot;
+sysctl -w net.ipv4.tcp_tw_reuse=1
+sysctl -w net.core.somaxconn=65535
+sysctl -w net.ipv4.tcp_max_syn_backlog=65535
+</code></pre>
+<hr>
+<h2 id="2-node-configuration">2. Node configuration</h2>
+<h3 id="21-fake-backend-be">2.1 Fake backend (be)</h3>
+<p><code>config.yaml</code>:</p>
+<pre><code class="language-yaml">mode: performance
+http:
+  port: 8080
+sites_dir: ./sites
+log:
+  level: error        # errors only
+  access_log:
+    enabled: false    # access log off so the backend isn't the bottleneck
+</code></pre>
+<p><code>sites/backend.yaml</code>:</p>
+<pre><code class="language-yaml">site: &quot;0.0.0.0&quot;
+respond:
+  status: 200
+  body: &quot;ok&quot;
+  content_type: &quot;text/plain&quot;
+</code></pre>
+<p>After starting, confirm <code>curl http://&lt;be-ip&gt;:8080/</code> returns <code>ok</code>.</p>
+<blockquote>
+<p>To test different response sizes or inject upstream latency, replace the backend with a configurable Go fake backend (response size and delay under control).</p>
+</blockquote>
+<h3 id="22-gateway-under-test-gw">2.2 Gateway under test (gw)</h3>
+<p><code>config.yaml</code>:</p>
+<pre><code class="language-yaml"># performance mode skips the per-request cost of dashboard real-time push (SSE) but keeps Prometheus metrics
+mode: performance
+
+http:
+  port: 8080
+
+# Metrics endpoint. Note: address defaults to 127.0.0.1; scraping across VMs requires 0.0.0.0
+metrics:
+  enabled: true
+  address: &quot;0.0.0.0&quot;
+  port: 9091           # scrape http://&lt;gw-ip&gt;:9091/metrics
+
+# pprof. Also bound to 127.0.0.1 by default
+pprof:
+  enabled: true
+  address: &quot;0.0.0.0&quot;
+  port: 6060           # http://&lt;gw-ip&gt;:6060/debug/pprof/
+
+sites_dir: ./sites
+
+log:
+  level: error
+  access_log:
+    enabled: false     # baseline round: access log off; run a separate round with it on for comparison
+</code></pre>
+<blockquote>
+<p>⚠️ <code>address: 0.0.0.0</code> exposes the metrics/pprof ports to the network. <strong>Only on an isolated test network; never configure this in production.</strong></p>
+</blockquote>
+<p><code>sites/bench.yaml</code> (baseline route and proxy route together):</p>
+<pre><code class="language-yaml">site: &quot;0.0.0.0&quot;
+# Baseline: pure gateway processing, no forwarding — the gateway floor
+/respond:
+  respond:
+    status: 200
+    body: &quot;ok&quot;
+    content_type: &quot;text/plain&quot;
+
+# Proxy: forward to be — the proxy layer
+/proxy:
+  proxy: &quot;&lt;be-ip&gt;:8080&quot;
+  strip_prefix: true
+</code></pre>
+<h3 id="23-load-generator-gen">2.3 Load generator (gen)</h3>
+<p>Install wrk2 (constant rate, corrects coordinated omission, trustworthy latency percentiles) and k6 (scriptable, cross-platform, supports WebSocket):</p>
+<pre><code class="language-bash"># wrk2
+git clone https://github.com/giltene/wrk2 &amp;&amp; cd wrk2 &amp;&amp; make
+# k6 (Debian/Ubuntu)
+sudo gpg -k &amp;&amp; sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg \
+  --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+echo &quot;deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main&quot; \
+  | sudo tee /etc/apt/sources.list.d/k6.list &amp;&amp; sudo apt update &amp;&amp; sudo apt install k6
+</code></pre>
+<hr>
+<h2 id="3-running-the-tests">3. Running the tests</h2>
+<h3 id="31-basic-procedure">3.1 Basic procedure</h3>
+<ol>
+<li><strong>Baseline first</strong>: gen directly against be records the backend's raw limit. Then go through gw; the difference is the gateway tax.</li>
+<li><strong>Warm up</strong>: run at a low rate for 30s so connection pools / GC settle, then load properly.</li>
+<li><strong>Step up constant-rate load to find the knee</strong> — not the maximum QPS, but <strong>the step where P99 starts to curve up</strong>; that step is the capacity limit.</li>
+<li><strong>Change one variable per round</strong> (response size / concurrency / keep-alive / TLS / HTTP2/3 / middleware on-off), or you can't attribute results.</li>
+</ol>
+<h3 id="32-key-comparison-isolating-proxy-layer-cost">3.2 Key comparison: isolating proxy layer cost</h3>
+<p>Hit both routes with the same load and subtract:</p>
+<pre><code class="language-bash"># Gateway floor: pure respond
+wrk -t4 -c64 -R10000 -d60s --latency http://&lt;gw-ip&gt;:8080/respond
+
+# Proxy path: forwarded to be
+wrk -t4 -c64 -R10000 -d60s --latency http://&lt;gw-ip&gt;:8080/proxy/
+</code></pre>
+<p>You can also read the difference from the gateway's Prometheus metrics (see §4), more precisely.</p>
+<h3 id="33-stepped-load">3.3 Stepped load</h3>
+<pre><code class="language-bash">for rate in 2000 5000 10000 20000 40000; do
+  echo &quot;=== ${rate} RPS ===&quot;
+  wrk -t4 -c128 -R${rate} -d60s --latency http://&lt;gw-ip&gt;:8080/proxy/
+done
+</code></pre>
+<p>Record P50 / P90 / P99 / P99.9 and the error rate per step. The step where P99 starts rising non-linearly is the knee.</p>
+<h3 id="34-capture-the-knee">3.4 Capture the knee</h3>
+<p>When the latency knee appears, capture a CPU profile immediately:</p>
+<pre><code class="language-bash">go tool pprof -http=:0 'http://&lt;gw-ip&gt;:6060/debug/pprof/profile?seconds=30'
+</code></pre>
+<p>The flame graph tells you whether the bottleneck is route matching, GC, syscalls or a middleware. Capture <code>heap</code>, <code>goroutine</code> and <code>mutex</code> as well.</p>
+<h3 id="35-scenario-matrix-proxy-layer">3.5 Scenario matrix (proxy layer)</h3>
+<p>Run them one by one; each targets a kind of proxy behavior:</p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Purpose</th>
+<th>Key metrics</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Small responses (&lt;1KB) with keep-alive at full load</td>
+<td>Peak forwarding QPS + own latency</td>
+<td>Latency difference, goroutines, CPU</td>
+</tr>
+<tr>
+<td>Large responses (1MB+)</td>
+<td>Throughput / bandwidth, the <code>io.Copy</code> path</td>
+<td><code>http_response_bytes_total</code>, NIC, memory</td>
+</tr>
+<tr>
+<td>New connection per request (no keep-alive)</td>
+<td>Connection setup cost, fd pressure</td>
+<td>goroutines, fd count</td>
+</tr>
+<tr>
+<td>HTTPS / HTTP2 / HTTP3</td>
+<td>TLS and protocol overhead</td>
+<td>CPU, handshake latency</td>
+</tr>
+<tr>
+<td>WebSocket / Upgrade long connections</td>
+<td>Tunnel concurrency limit</td>
+<td><code>litegate_proxy_active_tunnels</code>, goroutines, memory</td>
+</tr>
+<tr>
+<td>Turn WAF / rate limiting / auth on one at a time</td>
+<td>Quantify each middleware layer's cost</td>
+<td>Latency difference comparison</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="4-metrics-to-read-all-three-layers-together">4. Metrics to read (all three layers together)</h2>
+<h3 id="a-load-generator-results">A. Load generator (results)</h3>
+<p>QPS, <strong>P50 / P90 / P99 / P99.9 latency</strong>, error rate, timeouts. wrk2's <code>--latency</code> prints percentiles directly.</p>
+<h3 id="b-litegate-attribution--httpgw-ip9091metrics">B. LiteGate (attribution) — <code>http://&lt;gw-ip&gt;:9091/metrics</code></h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>What to look for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>litegate_http_request_duration_seconds</code> vs <code>litegate_proxy_duration_seconds</code></td>
+<td><strong>The difference = the proxy's own overhead</strong> (the most valuable number)</td>
+</tr>
+<tr>
+<td><code>litegate_goroutines_current</code></td>
+<td>Surging / not coming back down = a leak (watch closely with long connections)</td>
+</tr>
+<tr>
+<td><code>litegate_proxy_upstream_status_total{status_class}</code></td>
+<td>Do 5xx appear under load?</td>
+</tr>
+<tr>
+<td><code>litegate_proxy_requests_total{result}</code></td>
+<td>Distribution of forwarding results</td>
+</tr>
+<tr>
+<td><code>litegate_rate_limited_requests_total</code> / <code>litegate_waf_blocked_requests_total</code></td>
+<td>Make sure you aren't blocking yourself (mistaken for poor performance)</td>
+</tr>
+<tr>
+<td><code>litegate_circuit_breaker_state</code></td>
+<td>Unexpected breaker trips? (0=Closed, 1=Half, 2=Open)</td>
+</tr>
+<tr>
+<td><code>litegate_proxy_active_tunnels</code></td>
+<td>Active tunnels in WebSocket / Upgrade scenarios</td>
+</tr>
+</tbody>
+</table>
+<p>PromQL for the proxy layer's P99 overhead:</p>
+<pre><code class="language-promql">histogram_quantile(0.99, sum(rate(litegate_http_request_duration_seconds_bucket[1m])) by (le))
+-
+histogram_quantile(0.99, sum(rate(litegate_proxy_duration_seconds_bucket[1m])) by (le))
+</code></pre>
+<h3 id="c-host--esxi-bottleneck-location">C. Host / ESXi (bottleneck location)</h3>
+<ul>
+<li><strong>Inside the VM</strong> (node_exporter): CPU (including <strong>sys%</strong>), memory / GC, <strong>fd count</strong>, NIC bps/pps, <code>TIME_WAIT</code> connections.</li>
+<li><strong>ESXi layer</strong> (esxtop, the most important virtualization health signals):
+<ul>
+<li><strong><code>%RDY</code> (CPU Ready) must be &lt; 5%</strong> — above that, vCPUs are being preempted and latency data isn't trustworthy; add reservations or lower concurrency.</li>
+<li><strong><code>%CSTP</code> (co-stop) should be ≈ 0</strong> — multi-vCPU synchronization waits.</li>
+<li>Network <code>%DRPTX / %DRPRX</code> (drops) should be 0.</li>
+</ul>
+</li>
+</ul>
+<h3 id="how-to-read-it">How to read it</h3>
+<p>Latency curves up → <strong>check esxtop <code>%RDY</code> first</strong> to rule out ESXi stealing CPU → then look at gw's CPU <code>sys%</code> and the pprof flame graph to find whether it's route matching, GC, syscalls or a middleware.</p>
+<hr>
+<h2 id="5-common-pitfalls-checklist">5. Common pitfalls checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Are the load generator and the gateway on separate machines? (on one machine results are always wrong)</li>
+<li><input disabled="" type="checkbox"> esxtop <code>%RDY &lt; 5%</code>? (virtualization preemption pollutes all latency data)</li>
+<li><input disabled="" type="checkbox"> Virtual NIC vmxnet3, not e1000?</li>
+<li><input disabled="" type="checkbox"> <code>ulimit -n</code> and the ephemeral port range raised?</li>
+<li><input disabled="" type="checkbox"> Using wrk2 (constant rate) rather than wrk1 (open-loop maximum rate, which overestimates)?</li>
+<li><input disabled="" type="checkbox"> Confirmed the fake backend isn't the bottleneck? (watch be's CPU during the test)</li>
+<li><input disabled="" type="checkbox"> Tested with access logging both on and off? (log I/O is often a hidden bottleneck)</li>
+<li><input disabled="" type="checkbox"> metrics / pprof <code>address</code> set to <code>0.0.0.0</code> for cross-VM scraping?</li>
+<li><input disabled="" type="checkbox"> Only one variable changed per round?</li>
+</ul>
+<h2 id="related-docs-and-examples">Related docs and examples</h2>
+<ul>
+<li><a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/bench-lab/README.md">bench-lab: benchmark lab environment</a></li>
+<li><a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/bench-native/README.md">bench-native: native service baseline</a></li>
+<li><a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/bench-proxy">bench-proxy: proxy benchmark configuration</a></li>
+<li><a href="../08-observability/metrics.html">Metrics</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/10-deployment/benchmarking.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

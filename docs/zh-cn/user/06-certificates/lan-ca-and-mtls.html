@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/06-certificates/lan-ca-and-mtls.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details open><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html" class="current" aria-current="page">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="局域网-calitemesh-集中签发litegate-单机签发与服务间-mtls">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</h1>
+<p>本指南基于 2026-10-11 在局域网的实际测试。LiteGate 位于 <code>192.168.50.24</code>，LiteMesh 位于 <code>192.168.50.32:8787</code>，请求客户端为 <code>.32</code>。浏览器访问内网站点需要服务器证书；服务之间使用 mTLS 时，还需要调用方的客户端证书、身份校验和访问策略。</p>
+<h2 id="选择方式">选择方式</h2>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>签发方</th>
+<th>客户端信任的根 CA</th>
+<th>适用范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>https://a.dev.test/</code></td>
+<td>LiteMesh 私有 ACME</td>
+<td>LiteMesh Root CA</td>
+<td>集中管理、多网关共享证书</td>
+</tr>
+<tr>
+<td><code>https://b.dev.test:24443/</code></td>
+<td>LiteGate Local CA</td>
+<td>此单机的 Local Root CA</td>
+<td>单网关、开发或小型内网</td>
+</tr>
+<tr>
+<td>LiteGate / 服务 A → 服务 B</td>
+<td>LiteMesh 工作负载 CA</td>
+<td>LiteMesh Root CA</td>
+<td>双向认证、SPIFFE 身份与授权</td>
+</tr>
+</tbody>
+</table>
+<p>三者不能混用概念：DNS SAN 证明服务器对应哪个网站域名；SPIFFE URI SAN 证明工作负载身份。信任 CA 不会自动配置 DNS，也不会自动授予服务调用权限。LiteGate Local CA 不会自动注册服务、签发 SPIFFE 身份或开启后端 mTLS。</p>
+<pre class="mermaid">flowchart LR
+  C[局域网客户端：DNS + 根 CA] --&gt;|HTTPS：DNS SAN| G[LiteGate .24]
+  M[LiteMesh .32] --&gt;|私有 ACME + KV 证书共享| G
+  G --&gt;|mTLS：双向证书 + SPIFFE| B[后端服务]
+</pre>
+<h2 id="客户端准备解析域名并信任正确的-ca">客户端准备：解析域名并信任正确的 CA</h2>
+<p>内网 DNS 添加以下 A 记录；小规模验证也可以在客户端 hosts 添加：</p>
+<pre><code class="language-text">192.168.50.24 a.dev.test b.dev.test
+</code></pre>
+<p>Windows hosts 位于 <code>C:\Windows\System32\drivers\etc\hosts</code>；Linux/macOS 为 <code>/etc/hosts</code>。hosts 不包含端口，非标准端口要写在访问 URL 中。实际实验只给 <code>.24</code>、<code>.32</code> 配置了相关解析，其他客户端仍需自行配置。</p>
+<p>从可信管理渠道取得根 CA，核对管理员提供的证书指纹。只分发 <code>.crt</code>/根证书 PEM，不能分发 CA 私钥。下载文件并不等于已安装信任。</p>
+<p>Windows 当前用户信任库：</p>
+<pre><code class="language-powershell">certutil -user -addstore Root .\litemesh-root-ca.crt
+certutil -user -addstore Root .\litegate-local-root-ca.crt
+</code></pre>
+<p>需要访问哪套 CA 的站点，就安装哪套；无需为单一场景安装两套。Ubuntu/Debian 系统信任库：</p>
+<pre><code class="language-bash">sudo install -m 644 litemesh-root-ca.crt /usr/local/share/ca-certificates/litemesh-lan.crt
+sudo update-ca-certificates
+</code></pre>
+<p>使用单机 CA 时替换为对应根证书。浏览器、容器、Java 或独立证书库可能还需要单独导入；重启浏览器后再验证。<code>local_ca_trust: true</code> 只影响运行 LiteGate 的主机，不会把 CA 自动装到所有局域网客户端。</p>
+<p>也可以不修改系统信任库，先做一次显式 CA 校验：</p>
+<pre><code class="language-bash">curl --noproxy '*' --resolve a.dev.test:443:192.168.50.24 \
+  --cacert litemesh-root-ca.crt https://a.dev.test/api
+curl --noproxy '*' --resolve b.dev.test:24443:192.168.50.24 \
+  --cacert litegate-local-root-ca.crt https://b.dev.test:24443/
+</code></pre>
+<p>Windows 使用 <code>curl.exe</code>。<code>--resolve</code> 保留 URL 域名、SNI 和主机名校验；<code>-k</code> 会跳过校验，不能用它证明 CA 信任有效。</p>
+<h2 id="场景一litemesh-签发并共享-adevtest-证书">场景一：LiteMesh 签发并共享 a.dev.test 证书</h2>
+<p>流程是：LiteGate 生成站点私钥和 CSR，通过 LiteMesh 私有 ACME 完成 HTTP-01 验证，LiteMesh CA 签发 DNS 证书，LiteGate 将证书及加密私钥保存到 LiteMesh KV，其他配置一致的网关可以恢复使用。CA 签发与 KV 分发是两个步骤；不需要把 CA 私钥复制到网关。</p>
+<h3 id="litemesh-ca-配置片段">LiteMesh CA 配置片段</h3>
+<p>以下是 LiteMesh 的配置，不是 LiteGate 的配置：</p>
+<pre><code class="language-yaml">ca:
+  acme:
+    enabled: true
+    domain_policies: [&quot;a.dev.test&quot;]
+    disable_challenge: false
+    allow_private_http01: true
+</code></pre>
+<p>保持域名验证开启。内网 HTTP-01 需要允许私网验证目标；LiteMesh 主机必须能把 <code>a.dev.test</code> 解析到 <code>.24</code>，并访问 <code>.24:80/.well-known/acme-challenge/&lt;token&gt;</code>。这与客户端 DNS 是分别配置的。HTTP-01 使用端口 80，见 <a href="https://www.rfc-editor.org/rfc/rfc8555.html#section-8.3">RFC 8555 §8.3</a>。</p>
+<p>ACME directory 必须通过可信 HTTPS 提供。当前测试部署的 <code>.32:8787</code> 是 HTTP；我们用 <code>.24:18444</code> 的实验 HTTPS 转发入口，转发到 LiteMesh，并保留 Host 和 <code>X-Forwarded-Proto: https</code>。入口证书由 LiteMesh CA 签发，DNS 名为 <code>mtls-echo-demo.default.litemesh</code>。网关需要将这个名字解析到 <code>.24</code>。</p>
+<p>本地 LiteMesh 源码已有 <code>http.tls_cert_file</code> / <code>http.tls_key_file</code> 配置，但本次没有验证部署二进制的原生 HTTPS；不要直接改变现有 HTTP 端口，导致其他控制面客户端失联。正式使用可部署稳定的 HTTPS 反向代理，入口 URL、返回的 ACME URL 和证书域名应一致。</p>
+<h3 id="litegate-全局配置">LiteGate 全局配置</h3>
+<p>以下为集中 HTTPS 的独立配置示例；后端 mTLS 在后文追加：</p>
+<pre><code class="language-yaml">entrypoints:
+  web:
+    address: &quot;192.168.50.24:18090&quot;
+  websecure:
+    address: &quot;192.168.50.24:443&quot;
+    tls: true
+sites_dir: ./sites
+streams_dir: ./streams
+http:
+  https_port: 0
+tls:
+  enabled: false
+  certs_dir: ./certs-domain
+auto_cert:
+  enabled: true
+  email: ops@dev.test
+  ca_provider: custom
+  acme_url: &quot;https://mtls-echo-demo.default.litemesh:18444/acme/directory&quot;
+  acme_ca_cert: ./litemesh-root-ca.crt
+  default_challenge: http
+  certs_dir: ./certs-domain
+  renew_days: 30
+  storage_secret: &quot;file:///etc/litegate/cert-storage-secret&quot;
+litemesh:
+  enabled: true
+  address: &quot;http://192.168.50.32:8787&quot;
+  token: &quot;&lt;API_TOKEN&gt;&quot;
+  namespace: default
+  roles:
+    cert_storage: true
+  keys:
+    cert_prefix: &quot;litegate/demo-a-dev-test-v3/certs/&quot;
+dashboard:
+  enabled: false
+mcp:
+  enabled: false
+</code></pre>
+<p>创建 <code>sites</code>、<code>streams</code> 和 <code>www</code> 目录，并放置 <code>www/index.html</code>。密钥文件包含至少 32 字节的随机存储加密密钥，权限设为 <code>0600</code>；共享证书的网关应使用相同密钥、namespace、证书前缀和 ACME URL。<code>acme_ca_cert</code> 用于校验 ACME 服务器；当前 LiteGate 恢复已有证书时还会使用系统根信任库，因此本次也在 <code>.24</code> 安装了 LiteMesh 根 CA。</p>
+<p>站点配置 <code>sites/a-dev-test.yaml</code>：</p>
+<pre><code class="language-yaml">site: a.dev.test
+entrypoints: [web, websecure]
+https: true
+serve:
+  root: ./www
+  index: index.html
+</code></pre>
+<p>测试机器的端口 80 已有另一 LiteGate。该网关新增仅匹配 <code>a.dev.test</code> 的站点，将请求转给测试实例，保证 HTTP-01 到达持有 challenge token 的实例：</p>
+<pre><code class="language-yaml">site: a.dev.test
+https: false
+/:
+  proxy: 192.168.50.24:18090
+</code></pre>
+<p>没有现有端口 80 网关时，可以让签发实例的 <code>web</code> 直接监听 <code>:80</code>，不需要这层转发。仅在 HTTPS 上暴露站点不足以完成 HTTP-01。</p>
+<h3 id="本次发现的-litemesh-兼容问题">本次发现的 LiteMesh 兼容问题</h3>
+<p>未补偿的 challenge 响应缺少 <code>Link: &lt;authorization-url&gt;;rel=&quot;up&quot;</code>。LiteGate 使用的 lego 客户端从该响应头读取授权 URL，因此报 <code>authorization[get]: empty URL</code>。<a href="https://www.rfc-editor.org/rfc/rfc8555.html#section-7.1">RFC 8555 §7.1</a>说明 challenge 到 authorization 的 <code>up</code> 关系。</p>
+<p>2026-10-11 已在 LiteMesh <code>internal/app/acme.go</code> 修复：challenge 响应直接返回父 authorization 的 <code>Link</code>，并加入回归测试。修复版已部署到测试控制面；移除代理补偿、使用全新的本地证书目录和 KV 前缀后，重新签发成功，<code>https://a.dev.test/api</code> 返回 200。<code>examples/mtls-demo/acme-proxy.py</code> 现在仅提供 HTTPS 转发，签发不再依赖响应头补偿。HTTP 控制面缺少 HTTPS 配置是部署问题，与上述兼容缺陷分开处理。</p>
+<p><code>auth.security_admin_token</code> 未配置导致 intention 写入返回 503 则是预期的管理保护；本次经授权配置独立管理令牌并重启了 LiteMesh，不应绕过该保护。</p>
+<h2 id="场景二litegate-单机-local-ca">场景二：LiteGate 单机 Local CA</h2>
+<p>不依赖 LiteMesh，不需要 ACME、80 端口验证或公网 DNS。以下是已测试的独立实例配置：</p>
+<pre><code class="language-yaml">entrypoints:
+  web:
+    address: &quot;192.168.50.24:18092&quot;
+  secure:
+    address: &quot;192.168.50.24:24443&quot;
+    tls: true
+sites_dir: ./sites
+streams_dir: ./streams
+http:
+  https_port: 0
+auto_cert:
+  enabled: false
+tls:
+  enabled: false
+  certs_dir: ./certs
+  local_ca: true
+  local_ca_domains: [&quot;b.dev.test&quot;]
+  local_ca_trust: false
+dashboard:
+  enabled: false
+mcp:
+  enabled: false
+</code></pre>
+<p>显式 <code>secure.tls: true</code> 启用该监听器的 TLS，<code>tls.enabled: false</code> 关闭的是传统全局监听开关。站点 <code>sites/b-dev-test.yaml</code>：</p>
+<pre><code class="language-yaml">site: b.dev.test
+entrypoints: [secure]
+https: true
+serve:
+  root: ./www
+  index: index.html
+</code></pre>
+<p>启动后生成 <code>certs/local_root_ca.crt</code> 和 <code>certs/local_root_ca.key</code>。允许域名首次握手时按需签发叶子证书；客户端安装此实例的根 CA 后访问 <code>https://b.dev.test:24443/</code>。使用 24443 是为了与集中 CA 测试的 443 隔离，正常单机也可以监听 443。</p>
+<p>保留整个 CA 目录：重启会加载原根 CA，叶子证书可能重新生成，但客户端不需要重新安装根证书。不同主机独立生成的 Local CA 互不信任；本功能不是证书注册或多节点分发服务。白名单限制正常运行时的签发请求，<strong>不能限制已经泄露的 CA 私钥</strong>；不要把根私钥发给客户端。</p>
+<h2 id="场景三litegate--服务-a-与服务-b-之间的-mtls">场景三：LiteGate / 服务 A 与服务 B 之间的 mTLS</h2>
+<p>以下沿用已测试的身份：调用方 <code>spiffe://litemesh.local/ns/default/sa/litegate-mtls-demo</code>，后端 <code>spiffe://litemesh.local/ns/default/sa/mtls-echo-demo</code>。直接的服务 A → B 可以使用同一套工作负载证书机制，不需要浏览器证书或 Local CA。</p>
+<h3 id="后端注册身份与签发">后端注册、身份与签发</h3>
+<p>使用 <code>PUT /v1/registry</code> 注册后端，例如：</p>
+<pre><code class="language-json">{
+  &quot;service_id&quot;: &quot;litegate-mtls-echo-demo-20261011&quot;,
+  &quot;name&quot;: &quot;mtls-echo-demo&quot;,
+  &quot;namespace&quot;: &quot;default&quot;,
+  &quot;address&quot;: &quot;192.168.50.24&quot;,
+  &quot;port&quot;: 28443,
+  &quot;protocol&quot;: &quot;http&quot;,
+  &quot;tags&quot;: [&quot;mtls&quot;],
+  &quot;meta&quot;: {
+    &quot;mtls_port&quot;: &quot;28443&quot;,
+    &quot;spiffe_id&quot;: &quot;spiffe://litemesh.local/ns/default/sa/mtls-echo-demo&quot;
+  },
+  &quot;check&quot;: {
+    &quot;type&quot;: &quot;tcp&quot;,
+    &quot;target&quot;: &quot;192.168.50.24:28443&quot;,
+    &quot;interval&quot;: &quot;10s&quot;,
+    &quot;timeout&quot;: &quot;2s&quot;
+  }
+}
+</code></pre>
+<p>这里 <code>protocol: http</code> 是显式声明业务协议；如果省略，TCP 健康检查可能让 LiteMesh 推断为 TCP。TCP 检查只说明端口可达，不证明证书、身份或授权通过。<code>mtls_port</code> 是 TLS 端口，也可以与普通业务注册端口不同。</p>
+<p>注册响应会给出工作负载 bootstrap token，妥善保存，不写入公开配置。服务本机生成私钥，通过 <code>/v1/ca/sign</code> 提交 <code>public_key</code>、<code>spiffe_id</code>、<code>service_id</code>、<code>workload_token</code>；身份必须匹配注册的服务名、namespace 和来源地址。根证书来自 <code>/v1/ca/root</code>。实验由管理员令牌签发静态后端证书；长期部署应使用工作负载凭据和 SDK 自动续期。</p>
+<h3 id="后端必须要求客户端证书">后端必须要求客户端证书</h3>
+<p>Go SDK <code>github.com/james/litemesh/sdk</code> 可以通过 <code>WatchCertificateWithWorkloadAuth</code> 自动续期。以下为 TLS 配置片段，<code>certManager</code> 是该方法返回的管理器，<code>roots</code> 是只装入 LiteMesh 根证书的 <code>x509.CertPool</code>：</p>
+<pre><code class="language-go">tlsConfig := &amp;tls.Config{
+    MinVersion:     tls.VersionTLS12,
+    GetCertificate: certManager.GetCertificate,
+    ClientAuth:     tls.RequireAndVerifyClientCert,
+    ClientCAs:      roots,
+    VerifyConnection: func(cs tls.ConnectionState) error {
+        allowed := &quot;spiffe://litemesh.local/ns/default/sa/litegate-mtls-demo&quot;
+        if len(cs.PeerCertificates) == 0 {
+            return fmt.Errorf(&quot;client certificate required&quot;)
+        }
+        for _, uri := range cs.PeerCertificates[0].URIs {
+            if uri.String() == allowed { return nil }
+        }
+        return fmt.Errorf(&quot;client SPIFFE identity not allowed&quot;)
+    },
+}
+server := &amp;http.Server{Addr: &quot;:28443&quot;, Handler: mux, TLSConfig: tlsConfig}
+err := server.ListenAndServeTLS(&quot;&quot;, &quot;&quot;)
+</code></pre>
+<p>HTTPS 监听本身不会要求客户端证书；关键是 <code>RequireAndVerifyClientCert</code>。身份检查只看叶子证书，不应把 CA/中间证书的 URI 当成调用方身份。根 CA 校验通过后，再限制允许的 SPIFFE ID。</p>
+<h3 id="litegate-调用方配置">LiteGate 调用方配置</h3>
+<p>在集中 HTTPS 示例的 <code>litemesh</code> 块追加以下字段，并配置发现 catalog：</p>
+<pre><code class="language-yaml">litemesh:
+  enabled: true
+  address: &quot;http://192.168.50.32:8787&quot;
+  token: &quot;&lt;API_TOKEN&gt;&quot;
+  namespace: default
+  mtls: true
+  spiffe_id: &quot;spiffe://litemesh.local/ns/default/sa/litegate-mtls-demo&quot;
+service_discovery:
+  catalogs:
+    - enabled: true
+      provider: litemesh
+      url: &quot;http://192.168.50.32:8787&quot;
+      token: &quot;&lt;API_TOKEN&gt;&quot;
+      namespace: default
+</code></pre>
+<p>合并字段，不要覆盖掉已配置的 <code>roles.cert_storage</code>、<code>keys.cert_prefix</code>。也可以用 <code>workload_service_id</code> 与 <code>workload_token</code> 替代签发所需的管理员凭据，二者必须一起提供；控制面策略/发现读取所需令牌权限另行配置。</p>
+<p>当前实现需要全局 <code>litemesh.mtls: true</code> 初始化网关证书管理器；实例 <code>mtls</code> 标签本身不能替代这一步。而全局开关也会强制该发现源的实例使用 mTLS，混用明文和 mTLS 后端前应检查这一行为。本次实测为全局开关和标签同时开启，没有声称完成了仅靠标签初始化的验证。</p>
+<p>站点使用发现服务：</p>
+<pre><code class="language-yaml">site: a.dev.test
+entrypoints: [web, websecure]
+https: true
+services:
+  echo:
+    discovery:
+      name: mtls-echo-demo
+    timeout: 5s
+/api:
+  service: echo
+/:
+  serve:
+    root: ./www
+    index: index.html
+</code></pre>
+<p>发现层根据标签切到 HTTPS，选择 <code>mtls_port</code>，并验证后端 CA 和预期 SPIFFE 身份。本次发现服务池构建时会覆盖发现层的 mTLS 标记，已在 LiteGate 修复，并加入 <code>TestCatalogPoolPreservesDiscoveryMTLS</code>；旧二进制需要更新。</p>
+<h3 id="允许规则与服务-a-直接调用">允许规则与服务 A 直接调用</h3>
+<p>使用专用管理令牌向 <code>PUT /v1/authz/intentions</code> 写入以下规则，请求头为 <code>X-Litemesh-Security-Token</code>：</p>
+<pre><code class="language-json">{
+  &quot;source&quot;: &quot;spiffe://litemesh.local/ns/default/sa/litegate-mtls-demo&quot;,
+  &quot;destination&quot;: &quot;spiffe://litemesh.local/ns/default/sa/mtls-echo-demo&quot;,
+  &quot;action&quot;: &quot;allow&quot;
+}
+</code></pre>
+<p>LiteGate 拉取 intentions、撤销列表，并在本地握手校验中执行；无允许规则或策略未就绪时拒绝。数据面令牌需要读取 <code>/v1/authz/intentions</code>、<code>/v1/ca/revocations</code> 和 <code>/v1/events</code>，不应把专用管理令牌发给普通服务。</p>
+<p>服务 A 直接调用 B 时，也应注册 A、取得 A 的工作负载证书，并配置客户端：</p>
+<pre><code class="language-go">cfg, err := litemesh.BuildDynamicTLSConfigWithSPIFFE(
+    clientCertManager, rootPEM,
+    []string{&quot;spiffe://litemesh.local/ns/default/sa/mtls-echo-demo&quot;},
+    x509.ExtKeyUsageServerAuth,
+)
+// 检查 err 后，将 cfg 交给 http.Transport.TLSClientConfig。
+</code></pre>
+<p>该 SDK 配置验证 CA 链和后端 URI 身份，允许证书不含 IP SAN；它不是跳过认证。服务 B 则把允许的叶子 URI 改成 A 的身份。SDK TLS 帮助函数和简单白名单<strong>不会自动执行 intention 或撤销策略</strong>；自建服务若要使用动态策略，应维护 <code>PolicyCache</code>，检查 <code>Ready()</code>、<code>IsRevoked(leaf)</code> 和 <code>Authorize(source, destination).Allowed</code>，并在策略变化时处理旧连接。LiteGate 已集成这部分。</p>
+<h2 id="实测结果与复验">实测结果与复验</h2>
+<table>
+<thead>
+<tr>
+<th>测试</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>客户端信任 LiteMesh CA → <code>a.dev.test/api</code></td>
+<td>200，后端 mTLS 成功</td>
+</tr>
+<tr>
+<td>客户端不信任 LiteMesh CA</td>
+<td>证书链校验失败</td>
+</tr>
+<tr>
+<td>移走 a.dev.test 本地证书，重启网关</td>
+<td>从 KV 恢复，PEM 哈希一致，200</td>
+</tr>
+<tr>
+<td>客户端信任 Local CA → <code>b.dev.test:24443</code></td>
+<td>200，无 LiteMesh/ACME 依赖</td>
+</tr>
+<tr>
+<td>单机站点不带 CA / 使用 LiteMesh CA</td>
+<td>都被证书链校验拒绝</td>
+</tr>
+<tr>
+<td>Local CA 请求未授权域名</td>
+<td>TLS 拒绝</td>
+</tr>
+<tr>
+<td>重启单机实例</td>
+<td>根 CA 不变，客户端继续返回 200</td>
+</tr>
+<tr>
+<td>直连后端不带客户端证书 / 带非可信证书</td>
+<td>TLS 拒绝</td>
+</tr>
+<tr>
+<td>同 CA 签发但客户端 SPIFFE 不符</td>
+<td>后端 403</td>
+</tr>
+<tr>
+<td>测试 intention 改为 deny / 恢复 allow</td>
+<td>LiteGate 403 / 200</td>
+</tr>
+</tbody>
+</table>
+<p>记录位于仓库的 <code>artifacts/mtls-demo-20261011/</code>：<code>domain-verification.json</code>、<code>local-ca-verification.json</code>、<code>verification.json</code>。可下载的两套根 CA 为 <code>litemesh-root-ca.crt</code>、<code>litegate-local-root-ca.crt</code>；不含私钥。单机实验脚本为 <code>examples/mtls-demo/test-local-ca.py</code>，远程目录为 <code>.24:/root/litegate-local-ca-demo-20261011</code>。原集中/mTLS 实验目录为 <code>.24:/root/litegate-mtls-demo-20261011</code>。</p>
+<p>这些是手动启动的测试服务，没有配置开机启动。续期和自动轮换功能虽已配置/有实现，本次没有等待一年有效期或完成长期轮换测试；静态后端 PEM 需要自行续期或改为 SDK 管理。客户端系统时间、证书有效期、根 CA 备份与私钥权限都应保持正确。</p>
+<h2 id="排查顺序">排查顺序</h2>
+<p>先确认域名解析到正确主机及端口，再检查客户端根 CA、证书 DNS SAN 和有效期。ACME 失败时检查 HTTPS directory、HTTP-01 端口 80、CA 主机解析及 challenge 响应；<code>authorization[get]: empty URL</code> 对应上述兼容问题。服务间请求还要检查注册协议、<code>mtls_port</code>、双方 SPIFFE、允许规则和撤销状态；HTTP 403 与 TLS 握手失败是不同阶段的拒绝。</p>
+<p>域名白名单不能防御 CA 私钥泄露；备份根 CA 和私钥并限制访问，维护证书分发加密密钥。不要删除根 CA 来处理普通叶子证书问题，否则所有客户端都需要更新信任。</p>
+<p>参见：<a href="local-ca.html">Local CA</a>、<a href="auto-cert.html">自动证书</a>、<a href="../07-discovery/litemesh-mtls.html">LiteMesh mTLS 接入</a>。</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/06-certificates/lan-ca-and-mtls.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs";
+mermaid.initialize({ startOnLoad: true, theme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default" });
+</script>
+</body>
+</html>

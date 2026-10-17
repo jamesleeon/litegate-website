@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connect 证书委托签发与端到端私钥安全管理 · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/06-certificates/connect-csr-delegation.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details open><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html" class="current" aria-current="page">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="connect-证书委托签发与端到端私钥安全管理">Connect 证书委托签发与端到端私钥安全管理</h1>
+<p>LiteGate Connect 支持<strong>零信任委托证书签发模式</strong>：由位于内网/私有云的 Private 节点在本地生成并持有独立私钥，仅将证书签名请求（CSR）通过安全的 Connect 隧道委托给拥有公网 DNS 解析权限的 Cloud 节点，由 Cloud 代办 ACME DNS-01 验证并签发公网可信证书，再将公钥证书回传给 Private 本地加载。</p>
+<p>该模式同时实现了：</p>
+<ol>
+<li><strong>端到端 TLS 终结（E2EE）</strong>：公网客户端请求到达 Cloud 时，Cloud 仅根据 SNI 做四层密文盲透传（不终止 TLS），最终在 Private 本地完成解密，杜绝云端中间人攻击与数据劫持；</li>
+<li><strong>私钥绝对不出网</strong>：Private 节点的 TLS 私钥在本地生成，永不离开内网，也绝不向 Cloud 或网络上传；</li>
+<li><strong>DNS 凭据零泄露</strong>：域名所有权凭据（如阿里云、Cloudflare 的 DNS AccessKey/Secret）集中保存在 Cloud，内网各租户节点完全无需接触任何 DNS 密钥；</li>
+<li><strong>多租户严格隔离</strong>：严禁签发泛域名证书，且在签发前执行严格的域名所有权与归属绑定校验，租户之间无法越权伪造或解密彼此的流量。</li>
+</ol>
+<hr>
+<h2 id="1-业务场景与架构拓扑">1. 业务场景与架构拓扑</h2>
+<p>在典型的混合云与敏感业务数据下行架构（如公有云/聚石塔向私有机房下发电商订单、客户隐私数据）中，整体流量与证书控制模型如下：</p>
+<pre><code>【公有云 / 聚石塔】
+  云端应用 / MQ 消费者
+         │
+         │ HTTPS 请求 (Host: tenant-a.example.com)
+         ▼
+  LiteGate Cloud 集群 (公网入口 443)
+  ├── 掌控 *.example.com DNS 解析权限 (DNS Provider)
+  ├── 运行 Connect Server 控制面
+  └── 4 层 SNI 路由器 (不解密 TLS 密文，按 SNI 盲转发)
+         │
+         │ Connect TLS 数据隧道 (密文传输)
+         ▼
+【私有云 / 客户机房 / 内网】
+  LiteGate Private (Connect Client)
+  ├── 独占持有 tenant-a 私钥 (本地生成、本地存储、永不出网)
+  ├── 终止 TLS 握手 (解密报文)
+  └── 转发明文至客户内部业务系统 (JetStream / 本地 API / 数据库)
+</code></pre>
+<h3 id="控制面与证书签发时序">控制面与证书签发时序</h3>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant P as Private 节点 (租户A)
+    participant C as Cloud 节点 (LiteGate Server)
+    participant D as DNS 平台 (如 Aliyun DNS)
+    participant CA as 公网 CA (如 Let's Encrypt)
+
+    Note over P: 1. 本地生成私钥 (ECDSA/RSA)&lt;br/&gt;本地生成 CSR (CN: tenant-a.example.com)
+    P-&gt;&gt;C: 2. 通过 Connect 隧道上报 CSR (无私钥!)
+    Note over C: 3. 执行 6 重安全防护与所有权检查&lt;br/&gt;(防通配符/防声东击西/排他归属校验)
+    C-&gt;&gt;D: 4. 设置 _acme-challenge TXT 记录 (DNS-01)
+    C-&gt;&gt;CA: 5. 提交 CSR 申请签发
+    CA-&gt;&gt;D: 6. 校验 DNS TXT 记录
+    CA--&gt;&gt;C: 7. 颁发证书链 (纯公钥 CertPEM)
+    C-&gt;&gt;D: 8. 清理 DNS TXT 记录
+    C--&gt;&gt;P: 9. 下发 CertPEM (协议无私钥!)
+    Note over P: 10. 本地将 CertPEM 与本地私钥绑定&lt;br/&gt;落盘加密存储，热加载生效
+</pre>
+<hr>
+<h2 id="2-私钥key全生命周期安全管理">2. 私钥（Key）全生命周期安全管理</h2>
+<p>在多租户和敏感数据传输场景中，私钥一旦泄露，整个数据链路的机密性将彻底荡然无存。LiteGate 从架构设计和底层代码上对私钥施加了最高级别的物理隔离：</p>
+<h3 id="21-本地生成绝对不出网">2.1 本地生成，绝对不出网</h3>
+<ul>
+<li><strong>生成位置</strong>：私钥由 Private 节点上的 <code>internal/certmanager</code> 模块直接调用 Go 标准库密码学接口（默认 ECDSA P-256 或 RSA-2048/4096）生成。</li>
+<li><strong>协议约束</strong>：Connect 控制面协议结构体 <code>CSRAckPayload</code> 中<strong>彻底移除了私钥字段</strong>。Cloud 既没有能力向 Private 下发私钥，Private 也绝不会向 Cloud 上报私钥。</li>
+<li><strong>内存生命周期</strong>：私钥仅在 Private 进程的 TLS 握手层解密使用。</li>
+</ul>
+<h3 id="22-本地静态落盘加密-storage-encryption">2.2 本地静态落盘加密 (Storage Encryption)</h3>
+<p>Private 节点取得签发的公钥证书后，会将公钥与本地私钥持久化保存到 <code>certs_dir</code>。为了防止私钥在宿主机被未授权拷贝，LiteGate 支持对证书与私钥进行 <strong>AES-GCM-256 静态落盘加密</strong>。</p>
+<p>只需在 Private 的 <code>config.yaml</code> 中配置 <code>storage_secret</code>：</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  storage_secret: &quot;env://AUTOCERT_STORAGE_SECRET&quot;   # 至少 32 字节的随机密钥，用引用注入，不写明文
+  certs_dir: ./certs
+</code></pre>
+<p>配置该选项后，写入磁盘的所有私钥文件（<code>.key</code>）与证书文件（<code>.crt</code>）都会使用该密钥进行高强度认证加密，即使磁盘镜像被窃取也无法还原明文私钥。它防御的是磁盘或备份被拷走；主机已被完全控制时，进程内存和密钥来源同样可被读取，无法防御。</p>
+<h3 id="23-密钥与凭据的动态注入-zero-hardcoding">2.3 密钥与凭据的动态注入 (Zero Hardcoding)</h3>
+<p><code>storage_secret</code> 以及 Connect 通信所需的 <code>token</code> 支持通过 LiteGate 统一机密解析器动态拉取，避免在配置文件中留下任何明文：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">模式</th>
+<th style="text-align:left">语法示例</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>环境变量</strong></td>
+<td style="text-align:left"><code>env://AUTOCERT_STORAGE_SECRET</code></td>
+<td style="text-align:left">生产容器化标准注入</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>文件挂载</strong></td>
+<td style="text-align:left"><code>file:///run/secrets/storage_key</code></td>
+<td style="text-align:left">K8s Secret 或 Docker Swarm 挂载卷</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>远程 HTTPS</strong></td>
+<td style="text-align:left"><code>https://kms.example.com/v1/keys#secret</code></td>
+<td style="text-align:left">动态集中式 KMS 密钥管理服务</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>HashiCorp Vault</strong></td>
+<td style="text-align:left"><code>vault://secret/data/litegate#storage_secret</code></td>
+<td style="text-align:left">企业级 Vault KV 存储引擎</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="3-cloud-端六重安全防护体系">3. Cloud 端六重安全防护体系</h2>
+<p>为了防止恶意的或受损的内网节点利用 CSR 委托机制发起越权攻击，Cloud 节点在签发证书前执行严格的<strong>六重安全拦截机制</strong>：</p>
+<h3 id="①-csr-深度反解与声明一致性校验防声东击西">① CSR 深度反解与声明一致性校验（防声东击西）</h3>
+<p>有些攻击者可能在请求中声明域名为 <code>tenant-a.example.com</code>（以通过粗粒度的域名检查），但在二进制 CSR 数据中偷偷植入 <code>*.example.com</code> 或 <code>admin.example.com</code>。</p>
+<ul>
+<li><strong>防御机制</strong>：Cloud 强制解析 <code>CSRPEM</code> 报文，逐一提取 ASN.1 结构中的 <code>Subject.CommonName</code> 和 <code>DNSNames</code>（SAN）。</li>
+<li><strong>判定标准</strong>：CSR 内部实际包含的所有域名集合必须与请求声明的 <code>req.Domains</code> 集合<strong>完全 100% 对齐</strong>，若有多出、缺少或不一致，立刻物理拒签（<code>csr_reject</code>）。</li>
+</ul>
+<h3 id="②-绝对拦截通配符--泛域名no-wildcards">② 绝对拦截通配符 / 泛域名（No Wildcards）</h3>
+<ul>
+<li><strong>风险分析</strong>：如果内网租户 A 能签发 <code>*.example.com</code> 的证书，租户 A 即可利用该证书和私钥解密租户 B 的通信内容，甚至冒充整个平台。</li>
+<li><strong>防御机制</strong>：Cloud 对 CSR 提取出的每一个域名进行字符检测，只要发现包含 <code>*</code>（通配符），无论 Peer 配置了何种白名单，<strong>一律直接拒签</strong>。Connect 委托模式<strong>仅允许签发精确子域名证书</strong>。</li>
+</ul>
+<h3 id="③-保留域名与-cloud-本地站点统一规则">③ 保留域名与 Cloud 本地站点统一规则</h3>
+<ul>
+<li><strong>防御机制</strong>：
+<ol>
+<li><strong>保留域名绝对拦截</strong>：Cloud 自身的 Connect 通信入口（如 <code>connect.example.com</code>）与配置文件声明的 <code>reserved_domains</code> 属于平台基础设施，任何 Peer 绝不允许签发；</li>
+<li><strong>本地站点与覆盖统一</strong>：统一采用 Registry 权威路由判定。未配置 <code>connect_override</code> 的 Cloud 本地自建站点不会被签给 Peer；已显式配置 <code>connect_override</code> 并由当前 Peer 成功接管的站点则合法放行；Cloud 的本地通配站点亦不会误杀租户已精确注册的子域。</li>
+</ol>
+</li>
+</ul>
+<h3 id="④-peer-授权策略边界-allowed_cert_domains">④ Peer 授权策略边界 (<code>allowed_cert_domains</code>)</h3>
+<ul>
+<li><strong>防御机制</strong>：Cloud 为每个 Peer 单独配置了 <code>allowed_cert_domains</code>（允许申请证书的域名模式）。</li>
+<li><strong>隔离规则</strong>：路由授权（<code>allowed_domains</code>）与证书签发授权（<code>allowed_cert_domains</code>）独立定义，避免将宽泛的路由转发通配符误用为证书签发范围。</li>
+</ul>
+<h3 id="⑤-动态精确所有权校验杜绝通配抢占与-toctou-竞态">⑤ 动态精确所有权校验（杜绝通配抢占与 TOCTOU 竞态）</h3>
+<ul>
+<li><strong>风险分析</strong>：若租户 A 注册了 <code>*.example.com</code> 的通配 Site，普通的粗粒度匹配可能会让租户 A 判定为所有未分配子域名的“所有者”，进而抢签他人域名；此外，ACME 签发耗时 1~2 分钟，期间域名归属可能发生变更。</li>
+<li><strong>防御机制</strong>：
+<ol>
+<li><strong>精确注册强制要求</strong>：Cloud 在 Registry 中查找该域名，并要求命中的是精确注册而不是通配注册。<strong>通配注册绝对不能用于证明子域名的所有权</strong>，租户必须<strong>精确注册</strong>了该子域名才获准签发；</li>
+<li><strong>下发前二次校验（防竞态）</strong>：在 CA 签发完成、向客户端下发公钥证书之前，Cloud 会<strong>再次执行精确归属检查</strong>。若签发期间域名已被注销或转移，立刻就地销毁证书，绝不下发。</li>
+</ol>
+</li>
+</ul>
+<h3 id="⑥-防刷与-ca-额度双重防线冷却窗口--全局周预算">⑥ 防刷与 CA 额度双重防线（冷却窗口 + 全局周预算）</h3>
+<p>为了防止故障或恶意客户端无限轮换本地私钥狂刷 CSR 导致 Let's Encrypt 额度耗尽（主域每周 50 张新证书），Cloud 设立了严密的配额与断路器：</p>
+<ol>
+<li><strong>双 Cloud 集群共享与持久化存储</strong>：配额状态支持接入 <strong>Litemesh KV</strong>（<code>litegate/connect/csr-quota</code>）在双 Cloud A/B 节点间全局实时共享，单机或无 Litemesh 时自动通过本地文件持久化；Cloud 重启后历史记录不丢失，存量续期请求绝不会误当新签发；</li>
+<li><strong>防线一：单域名周重复限额与防抖（完美支持重装与主备）</strong>：
+<ul>
+<li>彻底摒弃硬性的 30 天拦截，采用符合 Let's Encrypt 官方 Duplicate Certificate 规则（官方允许 5 张/周）的弹性防线；</li>
+<li><strong>单域名周重复限额</strong>：同一精确域名在 7 天内最多允许签发 <strong>2 次</strong>，既满足了 <strong>Private 机器重装/私钥丢失</strong> 后的快速自愈，也完美支撑了 <strong>主备 HA 独立私钥部署</strong>（主备各 1 次）；</li>
+<li><strong>最小防抖冷却</strong>：同一域名连续签发间隔不得小于 <strong>5 分钟</strong>，杜绝死循环客户端秒级刷单。当前没有对外的配额重置接口，触顶后需等待窗口过期；</li>
+</ul>
+</li>
+<li><strong>防线二：全局注册主域周预算（Global Weekly Budget）</strong>：
+<ul>
+<li>按 <code>eTLD+1</code>（如 <code>example.com</code>）统计过去 7 天内的新证书总数。默认阈值为 <strong>40 张/周</strong>（保留 10 张作为平台缓冲）；</li>
+<li><strong>准入名额预占与回滚</strong>：在请求准入时立即原子预占配额名额，彻底闭合并发竞态窗口；若后续 ACME 签发失败则自动回滚释放名额；若周预算触顶，立即熔断新域名签发，仅放行存量续期请求。</li>
+</ul>
+</li>
+</ol>
+<h3 id="⑦-private-客户端的双重密码学校验">⑦ Private 客户端的双重密码学校验</h3>
+<p>Private 节点收到 Cloud 下发的公钥证书链后，在存盘与热加载前自动执行多维校验：</p>
+<ol>
+<li><strong>公私钥配对校验</strong>：调用 <code>tls.X509KeyPair</code> 验证证书中的公钥与本地私钥完全匹配；</li>
+<li><strong>SAN / CN 域名覆盖</strong>：调用 <code>leaf.VerifyHostname</code> 校验公钥证书完全覆盖了当前申请的所有域名；</li>
+<li><strong>有效期区间检查</strong>：验证当前系统时间处于证书的 <code>NotBefore</code> 与 <code>NotAfter</code> 之间，任何损坏、错配或过期的证书会被立即就地丢弃并报警。</li>
+</ol>
+<hr>
+<h2 id="4-生产部署实战配置">4. 生产部署实战配置</h2>
+<h3 id="41-cloud-端配置-configyaml">4.1 Cloud 端配置 (<code>config.yaml</code>)</h3>
+<p>Cloud 端需要启用公网端口、配置 DNS Provider（用于 DNS-01 验证）、并启动 Connect Server：</p>
+<pre><code class="language-yaml"># ==============================================================================
+# LiteGate Cloud 节点配置
+# ==============================================================================
+
+# 1. 入口监听
+entrypoints:
+  web:
+    address: &quot;:80&quot;
+  websecure:
+    address: &quot;:443&quot;
+
+# 2. 自动化证书与 DNS Provider
+auto_cert:
+  enabled: true
+  email: &quot;ops@example.com&quot;
+  ca_provider: &quot;letsencrypt&quot;     # 或 custom / zerossl
+  use_staging: false            # 首次上线调试可设为 true
+  certs_dir: ./certs
+
+  # 配置掌控主域名的 DNS Provider（用于代办 DNS-01 质询）
+  dns_providers:
+    - name: &quot;aliyun-main&quot;
+      type: &quot;aliyun&quot;
+      enabled: true
+      domains:
+        - &quot;*.example.com&quot;
+        - &quot;example.com&quot;
+      config:
+        access_key_id: &quot;env://ALIYUN_DNS_AK&quot;
+        access_key_secret: &quot;env://ALIYUN_DNS_SK&quot;
+        propagation_wait: &quot;60s&quot;
+        skip_propagation_check: &quot;true&quot;
+
+# 3. Connect Server 服务端配置
+connect:
+  server:
+    enabled: true
+    hostname: connect.example.com  # Connect 控制面通信域名（自动进入保留域名）
+    path: /_litegate/connect/v1
+    state_file: ./data/connect-registry.json
+
+    # 全局保留域名（任何 Peer 均不可注册或申请证书）
+    reserved_domains:
+      - admin.example.com
+      - gitea.example.com
+
+    peers:
+      # 租户 A 配置
+      tenant-a:
+        token_file: ./secrets/tenant-a.token
+        # 允许通过 Connect 隧道发布路由的范围
+        allowed_domains:
+          - &quot;tenant-a.example.com&quot;
+        # 允许委托 Cloud 签发证书的范围（精确最小权限）
+        allowed_cert_domains:
+          - &quot;tenant-a.example.com&quot;
+        max_sites: 50
+        max_connections: 2048
+        sessions: 2
+
+      # 租户 B 配置
+      tenant-b:
+        token_file: ./secrets/tenant-b.token
+        allowed_domains:
+          - &quot;tenant-b.example.com&quot;
+        allowed_cert_domains:
+          - &quot;tenant-b.example.com&quot;
+        max_sites: 50
+        max_connections: 2048
+        sessions: 2
+</code></pre>
+<hr>
+<h3 id="42-private--内网节点配置-configyaml">4.2 Private / 内网节点配置 (<code>config.yaml</code>)</h3>
+<p>Private 节点不需要配置任何公网 DNS 凭证，只需指定 DNS Provider 为 <code>connect</code>，并配置好本地业务 Site：</p>
+<pre><code class="language-yaml"># ==============================================================================
+# LiteGate Private / 内网租户 A 节点配置
+# ==============================================================================
+
+# 1. 本地入口（用于本地解密 TLS）
+entrypoints:
+  websecure:
+    address: &quot;:8443&quot;  # 本地 HTTPS 监听端口
+
+# 2. 自动化证书配置（关键：启用 connect 委托模式）
+auto_cert:
+  enabled: true
+  storage_secret: &quot;env://PRIVATE_STORAGE_SECRET&quot;  # 本地私钥落盘加密密码
+  certs_dir: ./certs
+  renew_days: 10                                 # 到期前 10 天触发自动平滑续期
+
+  dns_providers:
+    # 将 example.com 域名的证书申请委托给 Cloud
+    - name: &quot;cloud-csr-delegate&quot;
+      type: &quot;connect&quot;
+      enabled: true
+      domains:
+        - &quot;tenant-a.example.com&quot;
+
+# 3. Connect Client 客户端配置
+connect:
+  client:
+    enabled: true
+    name: tenant-a
+    remote: https://connect.example.com/_litegate/connect/v1
+    token_file: ./secrets/connect.token
+    publish_sites: true     # 将本地 Site 自动发布至 Cloud
+    publish_streams: false
+    sessions: 2
+    max_connections: 2048
+    exclude_domains:
+      - connect.example.com
+
+</code></pre>
+<p>业务 Site 写在独立的站点文件里（<code>sites/tenant-a.yaml</code>），挂在本地 <code>websecure</code> 上，证书由上面的 connect 委托自动获取：</p>
+<pre><code class="language-yaml"># sites/tenant-a.yaml
+site: tenant-a.example.com
+entrypoints: [websecure]
+proxy: http://127.0.0.1:8080   # 本地内部明文业务系统
+</code></pre>
+<hr>
+<h2 id="5-证书全生命周期演进">5. 证书全生命周期演进</h2>
+<h3 id="51-首次启动与证书就绪">5.1 首次启动与证书就绪</h3>
+<ol>
+<li>Private 节点启动，发现本地 <code>certs/</code> 目录下尚无 <code>tenant-a.example.com</code> 的证书；</li>
+<li>Private 此时会先向 Cloud 登记该 Site，状态为 <code>pending_certificate</code>；</li>
+<li>Cloud 将该域名记录在 Registry 中标记为未就绪，外部若有请求进入 Cloud，Cloud 会返回安全错误（Fail-Closed），绝不会泄露任何未加密数据；</li>
+<li>同时，Private 发起委托签发：
+<ul>
+<li>本地生成私钥并生成 CSR；</li>
+<li>将 CSR 发往 Cloud，Cloud 验证其所有权（此时已是当前 Peer 拥有该域名），代办 DNS-01 签发；</li>
+<li>签发完毕下发公钥证书；</li>
+</ul>
+</li>
+<li>Private 收到公钥证书后与本地私钥组装，热加载进 TLS 引擎；</li>
+<li>Private 发送站点状态变更，域名在 Cloud 上变为 <code>ready</code>；</li>
+<li>整个过程自动完成，耗时取决于 DNS 传播与 CA 响应，通常在一两分钟内。证书就绪前该域名处于 <code>pending_certificate</code>，期间到达 Cloud 的请求会被拒绝，因此首次上线应预留这段时间，不能视为无条件零中断。</li>
+</ol>
+<h3 id="52-自动续期zero-downtime-hot-renewal">5.2 自动续期（Zero-Downtime Hot Renewal）</h3>
+<ul>
+<li>Private 节点内部每日运行巡检定时器。</li>
+<li>当证书有效剩余天数小于 <code>renew_days</code> 时，Private 自动生成新的 CSR 请求并通过隧道向 Cloud 发起续期申请。</li>
+<li>Cloud 再次代办完成签发并下发新证书。</li>
+<li>Private 接收新证书并在内存中原子替换（Atomic Swap），不断开现有已建立的长连接，平滑过渡。</li>
+</ul>
+<hr>
+<h2 id="6-容量规划与-ca-频控边界">6. 容量规划与 CA 频控边界</h2>
+<h3 id="61-lets-encrypt-官方配额分析">6.1 Let's Encrypt 官方配额分析</h3>
+<p>如果平台统一使用 Let's Encrypt 作为公网免费 CA，需要注意以下关键限额：</p>
+<ul>
+<li><strong>按主注册域（Registered Domain）计算</strong>：每个主域（例如 <code>example.com</code>）<strong>每周最多签发 50 张新证书（Certificates per Registered Domain）</strong>；</li>
+<li><strong>续期不占用新证书限额</strong>：如果证书包含完全一致的域名集合，且在有效期内续期，属于 Renewal，受单主域每周 300 次限制。</li>
+</ul>
+<h3 id="62-规模估算">6.2 规模估算</h3>
+<p>按 Let's Encrypt 证书 90 天有效、约 60 天续期一次估算，每个主域每周 50 张新证书的额度在一个续期周期内大约能覆盖数百个独立子域名。实际可承载的租户数还取决于新租户的上线节奏、重装/主备导致的重复签发，以及 CA 当前公布的限额，上线前应按自己的增长预期核算，不要把这个估算当作容量承诺。Cloud 默认的全局周预算是 40 张，为平台保留了缓冲。</p>
+<h3 id="63-额度不足时的选择">6.3 额度不足时的选择</h3>
+<h4 id="方案-a向-lets-encrypt-官方申请配额提升-rate-limit-increase">方案 A：向 Let's Encrypt 官方申请配额提升 (Rate Limit Increase)</h4>
+<p>Let's Encrypt 为大规模 SaaS 提供配额提升申请通道，批准后无需改动架构。能提升到多少由 CA 审核决定。</p>
+<h4 id="方案-b结合内部调用方切换为私有-ca-private-pki">方案 B：结合内部调用方切换为私有 CA (Private PKI)</h4>
+<p>如果访问方都是企业自有服务，可将 Cloud 上的 <code>ca_provider</code> 切换为企业内部私有 CA（如 LiteMesh CA、HashiCorp Vault CA 或 Step-CA）：</p>
+<pre><code class="language-yaml">auto_cert:
+  ca_provider: &quot;custom&quot;
+  acme_url: &quot;https://ca.internal.example.com/acme/directory&quot;
+  acme_ca_cert: &quot;/etc/litegate/certs/internal-root-ca.pem&quot;
+</code></pre>
+<ul>
+<li><strong>优势</strong>：不受公网 CA 配额限制，有效期由私有 CA 决定；</li>
+<li><strong>调用端</strong>：仅需在云端调用方容器/系统中信任企业内网根证书即可。</li>
+</ul>
+<hr>
+<h2 id="7-常见问题与排障指南-faq">7. 常见问题与排障指南 (FAQ)</h2>
+<h3 id="q1-出现-wildcard-domain--in-csr-is-forbidden-for-multi-tenant-isolation-错误">Q1: 出现 <code>wildcard domain &quot;...&quot; in CSR is forbidden for multi-tenant isolation</code> 错误？</h3>
+<ul>
+<li><strong>原因</strong>：Private 端的 <code>domains</code> 配置或 CSR 中包含了通配符 <code>*.example.com</code>。</li>
+<li><strong>解决</strong>：Connect 委托模式为了多租户安全彻底关闭了通配符签发。请将 Private 端的 <code>domains</code> 配置为具体的子域名（如 <code>tenanta.example.com</code>）。</li>
+</ul>
+<h3 id="q2-出现-domain--in-csr-is-not-currently-ownedregistered-by-peer--with-an-exact-match-错误">Q2: 出现 <code>domain &quot;...&quot; in CSR is not currently owned/registered by peer ... with an exact match</code> 错误？</h3>
+<ul>
+<li><strong>原因</strong>：发起 CSR 请求的域名，尚未在 Cloud 的 Connect Registry 中被当前 Peer 成功注册，或者当前已被其他 Peer 注册占用。</li>
+<li><strong>解决</strong>：检查 Private 的 <code>sites</code> 配置，确保该域名已在 <code>entrypoints: [websecure]</code> 中配置且 <code>publish_sites: true</code>。必须先在控制面完成所有权登记，才能获准签发。</li>
+</ul>
+<h3 id="q3-出现-peer--exceeded-csr-rate-limit-或-reached-maximum-concurrent-csr-requests-错误">Q3: 出现 <code>peer &quot;...&quot; exceeded CSR rate limit</code> 或 <code>reached maximum concurrent CSR requests</code> 错误？</h3>
+<ul>
+<li><strong>原因</strong>：该 Peer 在短时间内重复发起了多次 CSR 签发请求，触发了防刷保护（单 Peer 并发为 1，每分钟最多 2 次）。同一域名 5 分钟内重复签发、7 天内超过 2 次，或主域周预算用尽时，会分别返回 <code>minimum cooldown</code>、<code>weekly duplicate certificate limit</code>、<code>global weekly certificate quota</code> 错误。</li>
+<li><strong>解决</strong>：检查 Private 节点的日志，排查是否存在频繁重启或本地证书文件无法写入磁盘导致反复重试的问题。正常情况下等待 1 分钟后会自动解冻。</li>
+</ul>
+<h3 id="q4-证书生成后存放在哪里文件格式是怎样的">Q4: 证书生成后存放在哪里？文件格式是怎样的？</h3>
+<ul>
+<li><strong>位置</strong>：保存在 Private 节点配置的 <code>auto_cert.certs_dir</code> 目录下。</li>
+<li><strong>内容</strong>：
+<ul>
+<li><code>tenant-a.example.com.crt</code>：CA 颁发的公钥证书链；</li>
+<li><code>tenant-a.example.com.key</code>：Private 本地生成的私钥（若启用了 <code>storage_secret</code>，则为 AES-GCM 密文格式）。</li>
+</ul>
+</li>
+</ul>
+<h2 id="相关文档与代码">相关文档与代码</h2>
+<ul>
+<li><a href="../09-advanced/connect.html">Connect 配置</a></li>
+<li><a href="certificate-application-guide.html">证书申请方式</a></li>
+<li><a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/connect">Connect 实现</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/06-certificates/connect-csr-delegation.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs";
+mermaid.initialize({ startOnLoad: true, theme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default" });
+</script>
+</body>
+</html>

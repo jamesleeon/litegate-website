@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate CredKeeper: Secure Hosting for DNS Credentials · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/06-certificates/credkeeper.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details open><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html" class="current" aria-current="page">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="litegate-credkeeper-secure-hosting-for-dns-credentials">LiteGate CredKeeper: Secure Hosting for DNS Credentials</h1>
+<blockquote>
+<p>The default LiteGate build includes Alibaba Cloud, Tencent Cloud and Cloudflare. The Huawei Cloud configuration on this page requires compiling the corresponding third-party DNS provider plugin into LiteGate first; CredKeeper can store credentials for those providers regardless.</p>
+</blockquote>
+<h2 id="1-background-and-purpose">1. Background and purpose</h2>
+<p>Issuing wildcard certificates (<code>*.example.com</code>) over ACME requires a <strong>DNS-01 challenge</strong>. The gateway typically has to call a cloud provider's DNS API (Alibaba Cloud, Tencent Cloud, Huawei Cloud, Cloudflare) to add <code>_acme-challenge</code> TXT records.</p>
+<p>In private enterprise deployments, financial compliance or multi-tenant settings, this raises key security problems:</p>
+<ol>
+<li><strong>No high-risk keys in plaintext configuration</strong>: a cloud account's <code>AccessKey Secret</code> is a high-risk credential. Written in plaintext into the gateway's <code>config.yaml</code>, it is easily exposed through leaked configuration, accidental commits or host audit violations.</li>
+<li><strong>No plaintext at rest</strong>: security standards usually require sensitive data to be stored with strong standard encryption (such as AES-256) so an offline disk copy reveals nothing.</li>
+<li><strong>Central management</strong>: when several gateways share one set of cloud credentials, you want to enter and rotate them in one place.</li>
+</ol>
+<p>LiteGate therefore provides <strong>CredKeeper</strong>, a credential hosting service. It runs as a small standalone executable in the customer's controlled data center, offers a web console for entering credentials, encrypts them locally with AES-256-GCM, and LiteGate fetches them on demand and uses them only in memory.</p>
+<blockquote>
+<p><strong>First check whether you need CredKeeper</strong>: if you only want to avoid plaintext AK/SK in YAML, <a href="sealed-secrets.html">sealed secrets</a> are simpler — write <code>enc://</code> ciphertext in YAML with no extra service. CredKeeper suits central credential management for many gateways.</p>
+</blockquote>
+<blockquote>
+<p><strong>Security boundary</strong>:</p>
+<ul>
+<li><code>secret_token</code> is used for both authentication and decryption. Whoever has it can retrieve every credential, so <strong>don't write it in plaintext in YAML</strong> either; use <code>enc://</code> ciphertext or a <code>file://</code> reference (see section 6).</li>
+<li>CredKeeper listens on <code>127.0.0.1</code> by default. In cross-host deployments over internal HTTP, the token travels in a request header, and <strong>transport security depends on the customer network</strong>; if eavesdropping is a concern, put HTTPS in front.</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>When it applies</strong>:</p>
+<ul>
+<li><strong>Ordinary single/multiple domains (public port 80 open)</strong>: plain <strong>HTTP-01</strong> works; LiteGate answers <code>/.well-known/acme-challenge/*</code> itself, and <strong>no cloud credentials or CredKeeper are needed</strong>.</li>
+<li><strong>Wildcard certificates (<code>*.example.com</code>) or internal environments that can't expose port 80</strong>: ACME requires <strong>DNS-01</strong>, and CredKeeper is recommended for keeping the keys safe.</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="2-architecture-and-encryption">2. Architecture and encryption</h2>
+<pre><code>                     +-------------------------------------------------------------+
+                     |                 Customer-controlled internal host           |
+                     |                                                             |
++----------------+   |   +-----------------------------------------------------+   |
+| Customer       |   |   | Embedded web console (http://localhost:8088)        |   |
+| security staff | -----&gt;| 1. Set the master token                             |   |
+| (browser)      |   |   | 2. Enter AK/SK for each cloud provider              |   |
++----------------+   |   +--------------------------+--------------------------+   |
+                     |                              | Click &quot;Encrypt and save&quot;     |
+                     |                              | SHA-256(Token) -&gt; AES key    |
+                     |                              v                              |
+                     |   +-----------------------------------------------------+   |
+                     |   | Local ciphertext file data/credentials.enc          |   |
+                     |   | (fully encrypted, no plaintext on disk)             |   |
+                     |   +--------------------------+--------------------------+   |
+                     |                              |                              |
+                     |                              | 3. HTTP GET /v1/secret/:name |
++----------------+   |                              |    (Bearer token auth)       |
+| LiteGate       |&lt;=================================+                              |
+| (business node)|   |   4. Returns: { encrypted: true, nonce: &quot;...&quot;,              |
++----------------+   |             ciphertext: &quot;encrypted with a random nonce&quot; }   |
+  Decrypts in memory +-------------------------------------------------------------+
+  with the token,
+  runs ACME, keeps
+  nothing on disk
+</code></pre>
+<h3 id="1-key-derivation">1. Key derivation</h3>
+<p>A high-entropy token agreed between both sides (or a 32-character random passphrase generated in the UI) is turned into a 32-byte master key with <code>SHA-256</code>.</p>
+<h3 id="2-encryption-at-rest">2. Encryption at rest</h3>
+<p>All credentials are encrypted with <code>AES-256-GCM</code> and written atomically to local disk as JSON (default <code>data/credentials.enc</code>). An offline copy of the file shows only ciphertext and random nonces; nothing can be recovered without the token.</p>
+<h3 id="3-encrypted-response-payloads">3. Encrypted response payloads</h3>
+<p>When LiteGate fetches a credential with <code>GET</code>, CredKeeper authenticates the token and encrypts the credential with a random nonce before returning it, so no plaintext appears in the response body.
+Note: this layer uses the same token as authentication, and the token travels in a request header, so it <strong>does not replace HTTPS</strong>. Its purpose is to keep plaintext out of proxy logs and debug output; to defend against network sniffing, use HTTPS or only the local loopback address.</p>
+<h3 id="4-transparent-decryption-in-litegate">4. Transparent decryption in LiteGate</h3>
+<p>LiteGate's built-in secret resolver (<code>internal/secret</code>) decrypts payloads marked <code>&quot;encrypted&quot;: true</code> with the <code>secret_token</code> from <code>config.yaml</code> and completes DNS-01 validation in memory; nothing is persisted on the gateway (to reduce requests, decrypted results are cached in memory for 5 minutes; a 401/403 from CredKeeper invalidates the cache immediately).</p>
+<hr>
+<h2 id="3-dns-provider-fields-supported-by-the-web-console">3. DNS provider fields supported by the web console</h2>
+<p>The CredKeeper web console can store credentials for these 4 providers. Alibaba Cloud, Tencent Cloud and Cloudflare are DNS providers built into LiteGate by default; Huawei Cloud requires compiling its plugin in with <code>litegate build --dns</code> first, see <a href="dns-providers.html">DNS providers</a>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Provider</th>
+<th style="text-align:left">Type (<code>type</code>)</th>
+<th style="text-align:left">Required fields</th>
+<th style="text-align:left">Optional fields</th>
+<th style="text-align:left">Permission advice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Alibaba Cloud DNS</strong></td>
+<td style="text-align:left"><code>aliyun</code></td>
+<td style="text-align:left"><code>access_key_id</code><br><code>access_key_secret</code></td>
+<td style="text-align:left"><code>zone</code> (hosted zone; found via SOA when omitted)</td>
+<td style="text-align:left">RAM user with <code>AliyunDNSFullAccess</code> or permission to change specific domains</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Tencent Cloud</strong></td>
+<td style="text-align:left"><code>tencent</code></td>
+<td style="text-align:left"><code>secret_id</code><br><code>secret_key</code></td>
+<td style="text-align:left">none</td>
+<td style="text-align:left">CAM key with <code>QcloudDNSPodFullAccess</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Huawei Cloud</strong></td>
+<td style="text-align:left"><code>huawei</code></td>
+<td style="text-align:left"><code>access_key_id</code><br><code>secret_access_key</code></td>
+<td style="text-align:left"><code>region</code> (default <code>cn-north-1</code>)</td>
+<td style="text-align:left">IAM user with DNS Administrator or permission for specific domains</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Cloudflare</strong></td>
+<td style="text-align:left"><code>cloudflare</code></td>
+<td style="text-align:left"><strong>Mode 1 (recommended)</strong>: <code>api_token</code><br><strong>Mode 2 (legacy)</strong>: <code>api_key</code> + <code>email</code></td>
+<td style="text-align:left"><code>timeout</code> (default <code>120s</code>)</td>
+<td style="text-align:left">A token with only <code>Zone.DNS:Edit</code>; least privilege is safer</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="4-building-and-running">4. Building and running</h2>
+<h3 id="1-build-the-binary">1. Build the binary</h3>
+<p>From the repository root:</p>
+<pre><code class="language-bash"># Build for the local platform (output cmd/bin/credkeeper or credkeeper.exe)
+make credkeeper
+
+# Or build everything (Windows/Linux/macOS, multiple architectures)
+make all
+</code></pre>
+<h3 id="2-flags-and-environment-variables">2. Flags and environment variables</h3>
+<p>CredKeeper takes a few flags and the matching environment variables (handy for containers or systemd):</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Flag</th>
+<th style="text-align:left">Environment variable</th>
+<th style="text-align:left">Default</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>-port</code></td>
+<td style="text-align:left"><code>CREDKEEPER_PORT</code></td>
+<td style="text-align:left"><code>8088</code></td>
+<td style="text-align:left">HTTP listening port</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>-host</code></td>
+<td style="text-align:left"><code>CREDKEEPER_HOST</code></td>
+<td style="text-align:left"><code>127.0.0.1</code></td>
+<td style="text-align:left">HTTP listening interface. Change to an internal IP or <code>0.0.0.0</code> only when LiteGate runs on another host</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>-data</code></td>
+<td style="text-align:left"><code>CREDKEEPER_DATA_FILE</code></td>
+<td style="text-align:left"><code>data/credentials.enc</code></td>
+<td style="text-align:left">Path of the local encrypted file</td>
+</tr>
+</tbody>
+</table>
+<h4 id="examples">Examples:</h4>
+<pre><code class="language-bash"># Start on the default port 8088
+./cmd/bin/credkeeper
+
+# Custom port and storage path
+./cmd/bin/credkeeper -port 9090 -data /var/lib/credkeeper/secrets.enc
+</code></pre>
+<hr>
+<h2 id="5-using-the-web-console">5. Using the web console</h2>
+<ol>
+<li>Open <code>http://&lt;service IP&gt;:8088</code> in a browser.</li>
+<li><strong>Set the master token</strong>:
+<ul>
+<li>Enter the agreed token in step 1, or click <strong>Generate</strong> for a 32-character high-entropy passphrase.</li>
+<li><em>Tip: click the eye icon to show it in plaintext, and keep the token safe.</em></li>
+</ul>
+</li>
+<li><strong>Enter DNS provider credentials</strong>:
+<ul>
+<li>Switch tabs (Alibaba Cloud / Tencent Cloud / Huawei Cloud / Cloudflare);</li>
+<li>Fill in the key and secret (leave unused providers empty).</li>
+</ul>
+</li>
+<li><strong>Click &quot;Encrypt and save locally&quot;</strong>:
+<ul>
+<li>The console confirms, and a strongly encrypted <code>credentials.enc</code> is created at the configured path.</li>
+<li>Saving <strong>merges</strong>: providers you didn't fill in this time keep their existing credentials.</li>
+<li>If the encrypted file exists, you must save with the <strong>original token</strong>, so others can't overwrite it. To change the token, back up and delete <code>credentials.enc</code>, then enter everything again with the new token.</li>
+</ul>
+</li>
+<li><strong>Copy the configuration</strong>:
+<ul>
+<li>&quot;Step 3&quot; at the bottom <strong>generates ready-to-use YAML from what you entered</strong>; click <strong>Copy configuration</strong>.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="6-complete-litegate-configuration">6. Complete LiteGate configuration</h2>
+<h3 id="1-litegate-configyaml-example-direct-configuration-no-environment-variables">1. LiteGate <code>config.yaml</code> example (direct configuration, no environment variables)</h3>
+<p>References are written as <code>secret+http://&lt;address&gt;/v1/secret/&lt;provider&gt;#&lt;field&gt;</code>; use <code>secret+https://</code> when CredKeeper is served over HTTPS. In LiteGate's configuration, set <code>secret_token</code> under <code>auto_cert</code> (or per DNS provider) to authenticate to CredKeeper and decrypt. <code>secret_token</code> supports <code>enc://</code>, <code>file://</code>, <code>env://</code> and <code>${VAR}</code> references:</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: &quot;admin@mycompany.com&quot;
+  renew_days: 30
+  check_interval: 24
+  # Token agreed with CredKeeper. Don't write it in plaintext; prefer ciphertext:
+  #   litegate secret keygen          # once on the gateway host
+  #   litegate secret encrypt         # enter the token, get enc://...
+  # or &quot;file:///etc/litegate/credkeeper.token&quot; (file mode 0600)
+  secret_token: &quot;enc://AWoirIpF...&quot;
+
+  dns_providers:
+    # 1. Alibaba Cloud wildcard certificates
+    - name: aliyun
+      type: aliyun
+      domains:
+        - &quot;*.aliyun.mycompany.com&quot;
+      config:
+        access_key_id: &quot;secret+http://127.0.0.1:8088/v1/secret/aliyun#access_key_id&quot;
+        access_key_secret: &quot;secret+http://127.0.0.1:8088/v1/secret/aliyun#access_key_secret&quot;
+        region_id: &quot;cn-hangzhou&quot;
+
+    # 2. Tencent Cloud wildcard certificates
+    - name: tencent
+      type: tencent
+      domains:
+        - &quot;*.tencent.mycompany.com&quot;
+      config:
+        secret_id: &quot;secret+http://127.0.0.1:8088/v1/secret/tencent#secret_id&quot;
+        secret_key: &quot;secret+http://127.0.0.1:8088/v1/secret/tencent#secret_key&quot;
+
+    # 3. Huawei Cloud wildcard certificates (requires the Huawei Cloud DNS plugin)
+    - name: huawei
+      type: huawei
+      domains:
+        - &quot;*.huawei.mycompany.com&quot;
+      config:
+        access_key_id: &quot;secret+http://127.0.0.1:8088/v1/secret/huawei#access_key_id&quot;
+        secret_access_key: &quot;secret+http://127.0.0.1:8088/v1/secret/huawei#secret_access_key&quot;
+
+    # 4. Cloudflare wildcard certificates
+    - name: cloudflare
+      type: cloudflare
+      domains:
+        - &quot;*.cloudflare.mycompany.com&quot;
+      config:
+        api_token: &quot;secret+http://127.0.0.1:8088/v1/secret/cloudflare#api_token&quot;
+        timeout: &quot;120s&quot;
+</code></pre>
+<hr>
+<h2 id="7-faq">7. FAQ</h2>
+<h3 id="q1-unauthorized-token-mismatch-or-corrupted-data">Q1: <code>Unauthorized: token mismatch or corrupted data</code>?</h3>
+<ul>
+<li><strong>Cause</strong>: the token LiteGate sends differs from the one CredKeeper used to encrypt the file, so the AES-GCM authentication tag check fails.</li>
+<li><strong>Fix</strong>: make sure <code>secret_token</code> in LiteGate's <code>config.yaml</code> exactly matches the token entered in the CredKeeper console.</li>
+</ul>
+<h3 id="q2-saving-says-the-token-doesnt-match-the-stored-credentials">Q2: Saving says the token doesn't match the stored credentials?</h3>
+<ul>
+<li><strong>Cause</strong>: the encrypted file exists and the token you entered differs from the original. CredKeeper refuses the save so others can't overwrite the credentials.</li>
+<li><strong>Fix</strong>: save with the original token. To change the token, back up and delete <code>credentials.enc</code>, enter all credentials again, and update <code>secret_token</code> on every gateway.</li>
+</ul>
+<h3 id="q3-can-credkeeper-run-as-a-systemd-service">Q3: Can CredKeeper run as a systemd service?</h3>
+<p>Create <code>/etc/systemd/system/credkeeper.service</code>:</p>
+<pre><code class="language-ini">[Unit]
+Description=LiteGate CredKeeper Security Sidecar
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/credkeeper
+ExecStart=/opt/credkeeper/credkeeper -host 127.0.0.1 -port 8088 -data /opt/credkeeper/data/credentials.enc
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<p>Then run <code>systemctl enable --now credkeeper</code>.</p>
+<hr>
+<h2 id="8-summary">8. Summary</h2>
+<p>With CredKeeper:</p>
+<ul>
+<li><strong>The customer</strong> gets a friendly web page for entering credentials; sensitive keys are AES-256 encrypted on local disk and cloud permissions stay under their control;</li>
+<li><strong>Implementers and operators</strong> see only references and ciphertext in configuration files, never plaintext keys;</li>
+<li><strong>Boundary</strong>: CredKeeper addresses &quot;no plaintext credentials in configuration or on disk&quot; and central management; rely on HTTPS or the internal network for transport security, and no purely software scheme defends a fully compromised host.</li>
+</ul>
+<h2 id="related-docs-and-code">Related docs and code</h2>
+<ul>
+<li><a href="sealed-secrets.html">Sealed secrets</a></li>
+<li><a href="dns-providers.html">DNS providers</a></li>
+<li><a href="https://github.com/jamesleeon/LiteGate/blob/master/credkeeper">CredKeeper implementation</a></li>
+<li><a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/secret">Secret resolver</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/06-certificates/credkeeper.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

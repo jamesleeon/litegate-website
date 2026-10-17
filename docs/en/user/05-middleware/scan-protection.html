@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scan Protection (Governance Rule Engine) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/05-middleware/scan-protection.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details open><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html" class="current" aria-current="page">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="scan-protection-governance-rule-engine">Scan Protection (Governance Rule Engine)</h1>
+<p><code>scan_protection</code> is LiteGate's built-in <strong>white-box traffic risk detection and automatic response</strong> module. It reuses decisions the gateway makes anyway (does the Host match a site, is the request a 404, user-agent features, path features, ...), aggregates these signals into a <strong>risk profile per source IP</strong>, and when risk accumulates past thresholds it automatically applies <strong>rate limiting / tarpit (delay) / temporary bans</strong>.</p>
+<p>This page covers <strong>every configuration option</strong> of <code>scan_protection</code>, including the <strong>governance rule engine</strong> (<code>global_rules</code> / <code>site_policies</code> / <code>tech_profiles</code>).</p>
+<blockquote>
+<p>It is <strong>not</strong> a WAF, nor DDoS/CC protection. It is <strong>opportunistic mitigation with per-process in-memory state, keyed by source IP</strong>. Distributed scanning, traffic through CDNs and forged sources can get around it. Risk state and bans are kept independently in each process and not shared across replicas (there is currently no Redis-backed shared ban list). Responses rely on the real client IP resolved through <code>real_ip.trusted_proxies</code>; configure trusted proxies correctly, or bans may land on the wrong IP.</p>
+</blockquote>
+<hr>
+<h2 id="1-quick-start">1. Quick start</h2>
+<p>The module is <strong>off by default</strong>. Add a top-level <code>scan_protection</code> section to enable it:</p>
+<pre><code class="language-yaml">scan_protection:
+  enabled: true                  # master switch
+  block_duration: &quot;1h&quot;           # long ban duration
+  max_404_attempts: 5            # maximum 404s allowed in the observation window
+  observation_period: &quot;1m&quot;       # 404 sliding window (also the basis for risk decay)
+  block_direct_ip: false         # block access that uses a bare IP as Host and matches no site
+  forbidden_paths:               # custom sensitive path keywords (scored only on 404)
+    - &quot;.env&quot;
+    - &quot;/wp-admin&quot;
+    - &quot;/phpmyadmin&quot;
+</code></pre>
+<blockquote>
+<p>When first rolling out, keep <code>block_direct_ip: false</code>, watch the risk data on the dashboard, and tighten only after confirming there are no false positives.</p>
+</blockquote>
+<hr>
+<h2 id="2-basic-options">2. Basic options</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td>bool</td>
+<td><code>false</code></td>
+<td>Master switch. Can be toggled at runtime from the dashboard/API.</td>
+</tr>
+<tr>
+<td><code>block_duration</code></td>
+<td>duration string</td>
+<td><code>&quot;1h&quot;</code></td>
+<td>Long ban duration. Short bans are 1/6 of this (at least 1 minute). Invalid values fall back to <code>1h</code>.</td>
+</tr>
+<tr>
+<td><code>max_404_attempts</code></td>
+<td>int</td>
+<td><code>5</code></td>
+<td>When an IP reaches this many 404s within <code>observation_period</code>, add <code>+5</code>. ≤0 falls back to <code>5</code>.</td>
+</tr>
+<tr>
+<td><code>observation_period</code></td>
+<td>duration string</td>
+<td><code>&quot;1m&quot;</code></td>
+<td>Length of the 404 sliding window. Invalid values fall back to <code>1m</code>.</td>
+</tr>
+<tr>
+<td><code>forbidden_paths</code></td>
+<td>list of strings</td>
+<td>empty</td>
+<td>Custom sensitive path keywords, substring-matched <strong>only when the request is a 404</strong>. Items starting with <code>/</code> are treated as <code>deny</code> (+30); others as extension-like and only scored (+6).</td>
+</tr>
+<tr>
+<td><code>block_direct_ip</code></td>
+<td>bool</td>
+<td><code>false</code></td>
+<td>When on, requests whose Host is a bare IP and match no site are judged <code>deny</code> (+8) and get 403.</td>
+</tr>
+<tr>
+<td><code>global_rules</code></td>
+<td>list</td>
+<td>empty</td>
+<td>Global governance rules, see section 4.</td>
+</tr>
+<tr>
+<td><code>site_policies</code></td>
+<td>map</td>
+<td>empty</td>
+<td>Per-site technology stack policies, see section 5.</td>
+</tr>
+<tr>
+<td><code>tech_profiles</code></td>
+<td>map</td>
+<td>empty</td>
+<td>Path fingerprints per technology stack, used with <code>site_policies</code>, see section 5.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Duration strings use Go format: <code>&quot;30s&quot;</code>, <code>&quot;5m&quot;</code>, <code>&quot;2h&quot;</code>.</p>
+</blockquote>
+<hr>
+<h2 id="3-governance-pipeline-stages">3. Governance pipeline (stages)</h2>
+<p>Every request flows through the engine at these hooks; decisions from any stage are merged (the highest-priority action wins: <code>deny &gt; tarpit &gt; rate_limit &gt; score &gt; observe &gt; allow</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>When</th>
+<th>What this module does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OnIngress</strong></td>
+<td>At the very front (before routing)</td>
+<td>Checks whether the source IP is already banned / tarpitted / rate-limited</td>
+</tr>
+<tr>
+<td><strong>OnRouteResolved</strong></td>
+<td>After the Host matches a site, before route matching</td>
+<td>Rechecks the IP block list; <code>block_direct_ip</code>; <code>site_policies</code> stack bans; <strong>terminal actions</strong> in <code>global_rules</code> (deny/tarpit/rate_limit)</td>
+</tr>
+<tr>
+<td><strong>OnRouteMiss</strong></td>
+<td>When the request is a 404</td>
+<td>Full 404 scoring (<code>score</code>/<code>observe</code> in <code>global_rules</code>, sensitive paths, UA, unknown Host, frequent 404s, multi-path scanning, ...)</td>
+</tr>
+<tr>
+<td><strong>OnDecisionCommit</strong></td>
+<td>When a terminal decision is actually enforced by the router</td>
+<td>Bookkeeping: writes dashboard events and rule hit statistics, updates the IP's risk state</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Key point</strong>: terminal actions (deny/tarpit/rate_limit) hit during route resolution are <strong>not recorded immediately</strong>; they are deferred to <code>OnDecisionCommit</code> (once interception is confirmed), so requests later let through by a magic-route fallback don't create false records. Non-terminal actions such as <code>score</code>/<code>observe</code> are recorded when hit.</p>
+</blockquote>
+<hr>
+<h2 id="4-global-rules-global_rules">4. Global rules: <code>global_rules</code></h2>
+<p><code>global_rules</code> is the core of the rule engine and applies to <strong>all sites</strong> (whether or not the Host matches).</p>
+<pre><code class="language-yaml">scan_protection:
+  enabled: true
+  global_rules:
+    - name: &quot;block_vcs&quot;                 # rule name (for dashboard statistics)
+      match:
+        path_exact: [&quot;/.git&quot;, &quot;/.svn&quot;]  # exact/segment match
+        path_prefix: [&quot;/.git/&quot;]         # prefix match
+        path_contains: [&quot;/id_rsa&quot;]      # substring match
+      action: &quot;deny&quot;                    # deny|tarpit|rate_limit|score|observe|allow
+      score: 30                         # risk score this rule contributes
+      reason: &quot;vcs_probe&quot;               # reason label (shown on the dashboard)
+
+    - name: &quot;soft_watch_admin&quot;
+      match:
+        path_prefix: [&quot;/admin&quot;]
+      action: &quot;observe&quot;                 # record only: no score, no blocking
+      score: 0
+      reason: &quot;admin_probe&quot;
+</code></pre>
+<h3 id="41-fields">4.1 Fields</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>Rule identifier, shown in the dashboard's rule hit statistics.</td>
+</tr>
+<tr>
+<td><code>match.path_exact</code></td>
+<td>Matches when <code>path == item</code>, <strong>or</strong> the path ends with the item, <strong>or</strong> the path contains <code>item + &quot;/&quot;</code> (treated as a path segment).</td>
+</tr>
+<tr>
+<td><code>match.path_prefix</code></td>
+<td>Path prefix match.</td>
+</tr>
+<tr>
+<td><code>match.path_contains</code></td>
+<td>Path substring match.</td>
+</tr>
+<tr>
+<td><code>action</code></td>
+<td>See action semantics below. Case-insensitive; unknown actions fall back to <code>allow</code> with a warning.</td>
+</tr>
+<tr>
+<td><code>score</code></td>
+<td>Added to the IP's risk score when hit.</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td>Custom reason label.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-action-semantics">4.2 Action semantics</h3>
+<table>
+<thead>
+<tr>
+<th>Action (synonyms)</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>deny</code> / <code>block</code> / <code>ban</code></td>
+<td>Reject directly (403) and record with <code>score</code>.</td>
+</tr>
+<tr>
+<td><code>tarpit</code></td>
+<td>Delay: the request sleeps before passing (once per request, about 3 seconds).</td>
+</tr>
+<tr>
+<td><code>rate_limit</code> / <code>ratelimit</code></td>
+<td>Return 429 and rate-limit for 1 minute.</td>
+</tr>
+<tr>
+<td><code>score</code> / <code>suspicious</code></td>
+<td>Only add risk score, no direct blocking (the accumulated score decides later actions).</td>
+</tr>
+<tr>
+<td><code>observe</code></td>
+<td>Record on the dashboard only; no score, no blocking.</td>
+</tr>
+<tr>
+<td><code>allow</code> / empty</td>
+<td>Explicit pass (allow list); when hit, <strong>no score and no record</strong>. Useful for carving exceptions out of sensitive paths.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Terminal actions (deny/tarpit/rate_limit) <strong>take effect immediately even with <code>score: 0</code></strong> — the action itself is mandatory; the score only affects the accumulated profile.</p>
+</blockquote>
+<h3 id="43-built-in-legacy-rules">4.3 Built-in (legacy) rules</h3>
+<p>Whether or not <code>global_rules</code> is configured, these built-in rules always apply (your rules are <strong>prepended</strong> and match first):</p>
+<ul>
+<li><strong>Critical paths blocked directly</strong> (<code>deny</code>, +30): <code>/.git</code>, <code>/.svn</code>, <code>/.hg</code>, <code>/.bzr</code>, <code>/.env</code>, <code>/wp-config.php</code>, <code>/etc/passwd</code>, <code>/proc/self/environ</code>, <code>/.aws/credentials</code>, <code>/.docker/config.json</code>, and paths containing <code>/.git/</code>, <code>/.env.</code>, <code>/id_rsa</code>, <code>/wp-json/gravitysmtp/</code>, <code>/wp-json/gravityforms/</code>, ...</li>
+<li><strong><code>forbidden_paths</code></strong> items starting with <code>/</code> → <code>deny</code> +30; others (such as <code>.php</code>) → <code>score</code> +6.</li>
+<li><strong>Special probe paths</strong> (404 only, +10): prefixes <code>/mcp</code>, <code>/sse</code>, <code>/actuator</code>, <code>/debug</code>, <code>/server-status</code>.</li>
+<li><strong><code>/wp-admin</code>, <code>/phpmyadmin</code></strong> (404 only, +10).</li>
+</ul>
+<hr>
+<h2 id="5-per-site-stack-bans-site_policies--tech_profiles">5. Per-site stack bans: <code>site_policies</code> + <code>tech_profiles</code></h2>
+<p>For &quot;this site should never see paths of a certain technology stack&quot; — for example a pure API site shouldn't be probed for WordPress paths.</p>
+<pre><code class="language-yaml">scan_protection:
+  enabled: true
+
+  # Reusable path fingerprints per stack
+  tech_profiles:
+    wordpress:
+      path_prefix: [&quot;/wp-admin&quot;, &quot;/wp-content&quot;, &quot;/wp-json/&quot;]
+      path_exact:  [&quot;/xmlrpc.php&quot;]
+    phpmyadmin:
+      path_prefix: [&quot;/phpmyadmin&quot;, &quot;/pma&quot;]
+
+  # Stacks to ban per site
+  site_policies:
+    api.example.com:
+      deny_tech: [&quot;wordpress&quot;, &quot;phpmyadmin&quot;]
+      critical_action: &quot;deny&quot;     # action on hit: deny|tarpit|rate_limit|score|observe|allow
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tech_profiles.&lt;name&gt;.path_prefix</code> / <code>path_exact</code></td>
+<td>Characteristic paths of the stack.</td>
+</tr>
+<tr>
+<td><code>site_policies.&lt;host&gt;.deny_tech</code></td>
+<td>Stacks forbidden on this site (keys of <code>tech_profiles</code>).</td>
+</tr>
+<tr>
+<td><code>site_policies.&lt;host&gt;.critical_action</code></td>
+<td>Action on hit. <code>deny</code> = 30 points, <code>tarpit</code> = 15, <code>rate_limit</code> = 10, <code>score</code> = 5, <code>observe</code> = 0, <code>allow</code> = pass.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>site_policies</code> keys are the <strong>Host (site domain)</strong>, case-insensitive. Matching happens in <strong>OnRouteResolved</strong> (site matched, route not yet matched), so requests can be blocked before reaching the backend.</p>
+</blockquote>
+<hr>
+<h2 id="6-scoring-and-response-thresholds">6. Scoring and response thresholds</h2>
+<p>Each source IP keeps an accumulated risk <code>score</code>, and the decision engine picks the action from it:</p>
+<table>
+<thead>
+<tr>
+<th>Accumulated score</th>
+<th>Action</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>≥ 30</td>
+<td><code>temp_ban_long</code></td>
+<td>Ban for <code>block_duration</code>, return 403</td>
+</tr>
+<tr>
+<td>≥ 20</td>
+<td><code>temp_ban_short</code></td>
+<td>Short ban for <code>block_duration/6</code> (at least 1 minute), return 403</td>
+</tr>
+<tr>
+<td>≥ 15</td>
+<td><code>tarpit</code></td>
+<td>Delay: each request sleeps about 3 seconds, for 1 minute</td>
+</tr>
+<tr>
+<td>≥ 10</td>
+<td><code>rate_limit</code></td>
+<td>Return 429 for 1 minute</td>
+</tr>
+<tr>
+<td>≥ 5</td>
+<td><code>suspicious</code></td>
+<td>Marked for observation only</td>
+</tr>
+<tr>
+<td>&lt; 5</td>
+<td><code>observe</code></td>
+<td>Passed normally</td>
+</tr>
+</tbody>
+</table>
+<h3 id="61-404-scoring-signals-onroutemiss">6.1 404 scoring signals (OnRouteMiss)</h3>
+<table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Points</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>not_found</code></td>
+<td>+1</td>
+<td>Every 404</td>
+</tr>
+<tr>
+<td><code>post_unknown_path</code></td>
+<td>+6</td>
+<td>404 with method POST</td>
+</tr>
+<tr>
+<td><code>unknown_host</code></td>
+<td>+5</td>
+<td>The request matched no site (each Host counted once per window)</td>
+</tr>
+<tr>
+<td><code>direct_ip_access</code></td>
+<td>+3</td>
+<td>No site matched and the Host is a bare IP</td>
+</tr>
+<tr>
+<td><code>bad_user_agent</code></td>
+<td>+2</td>
+<td>No site matched and the UA is missing or has scanner features</td>
+</tr>
+<tr>
+<td><code>sensitive_path</code></td>
+<td>+10</td>
+<td>Hit a special probe prefix (<code>/mcp</code>, ...) or <code>/wp-admin</code>, <code>/phpmyadmin</code></td>
+</tr>
+<tr>
+<td><code>frequent_404</code></td>
+<td>+5</td>
+<td><strong>Distinct-path</strong> 404s in the window ≥ <code>max_404_attempts</code></td>
+</tr>
+<tr>
+<td><code>scan_multiple_paths</code></td>
+<td>+8</td>
+<td>The same IP hit ≥ 3 distinct paths (scored once)</td>
+</tr>
+<tr>
+<td><code>robots_txt</code></td>
+<td>+1</td>
+<td>404 on <code>/robots.txt</code></td>
+</tr>
+<tr>
+<td><code>global_rules</code> hit</td>
+<td>the rule's <code>score</code></td>
+<td>See section 4</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>False-positive design</strong>: weak signals such as <code>bad_user_agent</code>, <code>unknown_host</code> and <code>direct_ip_access</code> are <strong>scored only when the request matched no site</strong>. Legitimate clients (<code>curl</code>, <code>Go-http-client</code>, <code>python-requests</code>, monitoring probes) accessing <strong>configured sites</strong> don't accumulate risk because of their UA.</p>
+<p>Scanner UA keywords: <code>curl</code>, <code>wget</code>, <code>python</code>, <code>go-http-client</code>, <code>nmap</code>, <code>sqlmap</code>, <code>scan</code>, <code>headless</code>, <code>nikto</code>, <code>masscan</code>, <code>zgrab</code>.</p>
+</blockquote>
+<blockquote>
+<p><strong>Deduplication of repeats</strong>: repeated 404s from the same IP on the same <code>method + Host + path</code> within <code>observation_period</code> <strong>score once</strong> (SSE reconnects, frontend polling, refreshes and duplicate form submits don't accumulate). Scanners don't hit the same path repeatedly, so detection is unaffected.</p>
+<p><strong>Strong/weak signals and the cap</strong>: <code>not_found</code>, <code>post_unknown_path</code>, <code>unknown_host</code>, <code>frequent_404</code> and <code>scan_multiple_paths</code> are <strong>weak signals</strong> that real browsers also produce when a site isn't fully deployed or an API is misconfigured. An IP with only weak signals keeps accumulating score, but the response is <strong>at most <code>suspicious</code></strong>; only when distinct-path 404s in the window reach <code>max_404_attempts</code> does it rise to <code>rate_limit</code>, and it <strong>never reaches tarpit or bans</strong>. Once a <strong>strong signal</strong> appears (<code>direct_ip_access</code>, <code>bad_user_agent</code>, <code>sensitive_path</code>, a scored <code>global_rules</code>/<code>deny_tech</code> hit), escalation follows the table normally, including the previously accumulated weak-signal score.</p>
+</blockquote>
+<h3 id="62-new-ip-threshold-and-score-decay">6.2 New-IP threshold and score decay</h3>
+<ul>
+<li><strong>New-IP threshold</strong>: an IP never seen before gets tracking state only when its first violation scores ≥ 5; one-off 404s below 5 pass without using memory.</li>
+<li><strong>Self-healing score</strong>: when an IP is not banned / tarpitted / rate-limited, its score drops by 3 for about every 2 minutes idle (floor 0). Occasional probes decay to zero over time, and a misjudged client's score falls back once it stops misbehaving.</li>
+</ul>
+<hr>
+<h2 id="7-runtime-switch-and-hot-reload">7. Runtime switch and hot reload</h2>
+<ul>
+<li><code>enabled</code> is the initial value at <strong>process start</strong>.</li>
+<li>At runtime toggle it with the dashboard's <strong>&quot;Scan Protection (Runtime)&quot;</strong> switch, or the API:
+<pre><code>POST /api/scan-protection/toggle?enabled=true     # on
+POST /api/scan-protection/toggle?enabled=false    # off
+</code></pre>
+This requires dashboard authentication and a CSRF check, and takes effect in memory.</li>
+<li>Other options (<code>block_duration</code>, <code>global_rules</code>, <code>site_policies</code>, ...) support <strong>hot reload</strong>; after a reload the policy is recompiled and takes effect immediately.</li>
+</ul>
+<blockquote>
+<p>✅ <strong>The runtime switch is authoritative</strong>: configuration reloads <strong>do not override</strong> the switch set from the dashboard/API. <code>UpdateConfig</code> keeps the current <code>enabled</code> state, updates only the other fields and recompiles the policy with the current state. So &quot;turn it off temporarily under heavy load and keep it off&quot; works — even if a reload happens, <code>enabled: true</code> in the file won't turn it back on. The file's <code>enabled</code> is only the initial value at <strong>process start</strong>.</p>
+</blockquote>
+<hr>
+<h2 id="8-performance-and-resource-limits">8. Performance and resource limits</h2>
+<p>The module bounds its own resources so it can't become an amplifier under targeted scanning:</p>
+<ul>
+<li><strong>Sharded state table</strong>: 32 shards, at most 1560 entries each (about 50,000 IPs in total). When full, expired entries are evicted first; if still full, new IPs are not tracked.</li>
+<li><strong>Background cleanup</strong>: every 10 seconds, removing IPs inactive for over 1 hour that aren't banned.</li>
+<li><strong>At most 64 404 timestamps per IP</strong>; the <strong>multi-path set</strong> is released as soon as multi-path scanning is triggered.</li>
+<li><strong>Dashboard event queue capped at 100</strong>; tracked paths truncated to 256 bytes, dashboard paths to 512 bytes.</li>
+<li><strong>Hot path cost</strong>: a normal request does &quot;one atomic read of the master switch + one shard read lock to check IP state + one linear scan of global rules&quot;. The more <code>global_rules</code> and path patterns, the costlier the OnRouteResolved scan — keep the rule set lean. Requests hitting legitimate routes get no 404 scoring.</li>
+</ul>
+<hr>
+<h2 id="9-tuning-and-troubleshooting">9. Tuning and troubleshooting</h2>
+<ul>
+<li><strong>Observe first, block later</strong>: start high-risk rules as <code>observe</code>/<code>score</code>, and switch them to <code>deny</code> after the dashboard shows no false positives.</li>
+<li><strong>Your own frontend bugs pollute scores</strong>: a frontend repeatedly requesting nonexistent paths (such as URLs containing <code>undefined</code>) builds up score for that real user's IP. Fix the frontend rather than relying on this module; as a stopgap add <code>allow</code> rules for those paths.</li>
+<li><strong>Allow-list sensitive paths</strong>: use <code>global_rules</code> with <code>action: &quot;allow&quot;</code> for precise exceptions.</li>
+<li><strong>More aggressive</strong>: lower <code>max_404_attempts</code>, shorten <code>observation_period</code>, or add <code>deny</code> rules.</li>
+<li><strong>More lenient</strong>: raise <code>max_404_attempts</code> and trim the rule set.</li>
+</ul>
+<hr>
+<h2 id="10-faq">10. FAQ</h2>
+<p><strong>Q: Will legitimate <code>curl</code> / Python / Go SDK clients get banned?</strong>
+A: No — as long as they access <strong>configured sites</strong>. Weak signals (UA, unknown Host) are scored only when no site matches.</p>
+<p><strong>Q: Will a legitimate <code>.php</code> site be hurt because <code>forbidden_paths</code> contains <code>.php</code>?</strong>
+A: No. <code>forbidden_paths</code> only matches on <strong>404</strong>; a legitimate <code>.php</code> site responds normally and produces no 404s.</p>
+<p><strong>Q: Does it protect against DDoS / CC?</strong>
+A: No. It is white-box detection and opportunistic mitigation by source IP; it doesn't replace dedicated DDoS/CC protection or a front WAF.</p>
+<hr>
+<h2 id="related-docs">Related docs</h2>
+<ul>
+<li>Implementation: <a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/middleware/scan_protection.go">scan_protection.go</a></li>
+<li>Multi-replica state: <a href="../10-deployment/ha-state.html">ha-state.md</a></li>
+<li>Dashboard and observability: <a href="../08-observability/dashboard.html">dashboard.md</a></li>
+<li>IP restriction: <a href="ip-restriction.html">ip-restriction.md</a></li>
+<li>Rate limiting: <a href="rate-limit.html">rate-limit.md</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/05-middleware/scan-protection.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

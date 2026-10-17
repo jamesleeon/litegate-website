@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records) · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../en/index.html">Home</a>
+      <a href="../../en/guide.html">Guide</a>
+      <a href="../../en/features.html">Features</a>
+      <a href="../../en/ecosystem.html">Ecosystem</a>
+      <a href="README.html" aria-current="page">Docs</a>
+      <a href="../zh-cn/dns-provider-plugin-guide.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="README.html">Docs home</a></li><li><details><summary>User guide</summary><ul><li><a href="user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="user/01-getting-started/build.html">Build from source</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="user/08-observability/access-log.html">Access Log</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>Topics</summary><ul><li><a href="database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="dns-provider-plugin-guide.html" class="current" aria-current="page">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="ids-recipes.html">IDS Recipes</a></li><li><a href="ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="release_control_guide.html">Configuration Release Control</a></li><li><a href="serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="dns-provider-plugin-authoring-guide-dns-01-ddns-and-ech-https-records">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</h1>
+<p>New to provider integration? Start with <a href="user/06-certificates/dns-providers.html">Add a DNS provider</a> for choosing, building, configuring and verifying a libdns provider.</p>
+<p>Default builds include Alibaba Cloud (<code>aliyun</code>), Tencent Cloud (<code>tencent</code> / <code>tencentcloud</code>), and Cloudflare (<code>cloudflare</code>). Built-in providers are lightweight hand-written HTTP clients with <strong>no vendor SDKs</strong>; lego is used only as the ACME protocol engine. Compile Huawei Cloud, Route 53 and other providers into <strong>your own build</strong> on demand, without growing the official binary:</p>
+<pre><code class="language-bash">litegate build --dns huaweicloud --dns route53 -o litegate-custom
+</code></pre>
+<p><code>--dns</code> uses the <a href="https://github.com/libdns/libdns">libdns</a> ecosystem: no code to write, and you get DNS-01, DDNS and ECH HTTPS records (see Shortcut 1 below). Built-in names (<code>aliyun</code>, <code>tencent</code>, <code>tencentcloud</code>, <code>cloudflare</code>) are reserved.</p>
+<h2 id="ech-extension-boundary">ECH extension boundary</h2>
+<p>LiteGate owns ECH keys, TLS installation, rotation, retention, encrypted file/KV state, Consul/LiteMesh synchronization, publisher leases, group selection and retries. A DNS plugin only reads and writes provider HTTPS (type 65) records. It does not implement KV or receive ECH private keys/storage secrets.</p>
+<p>Implement plugin.HTTPSDNSProvider (GetName and PublishHTTPS(ctx, name, value, owned)) and register via RegisterDNSProviderV2 with DNSCapabilityHTTPS (<code>https_records</code>). The capability is independent of DDNS: Sync is not required. Add CertDNSProviderV2/cert_dns01 only if the same plugin also performs certificate DNS-01 challenges; otherwise arrange a covering certificate provider. A libdns provider compiled in with <code>--dns</code> supports HTTPS records automatically when it implements <code>RecordGetter</code>; the lego example bridge does not.</p>
+<p>For an HTTPS-only plugin, <code>domains</code> selects ECH publication scope. LiteGate removes these selectors only in the certificate runtime copy, preserving the saved configuration. Configure a separate certificate-capable provider covering the public name and websites, such as a Cloudflare provider with <code>domains: [&quot;*.example.com&quot;]</code>. Both providers must operate on the appropriate authoritative zone: the record plugin manages HTTPS records, and the certificate provider manages ACME TXT records. The record plugin must be registered and compiled into the binary.</p>
+<p>Each group's public name needs certificate coverage: another enabled DNS-01 provider, legacy <code>auto_cert.provider</code> + <code>auto_cert.domains</code>, or a currently valid covering <code>.pem</code>/<code>.crt</code> certificate with its matching <code>.key</code> in <code>tls.certs_dir</code>. Missing coverage fails configuration validation, including <code>-t</code>. Manual certificates require your own renewal and must be readable during validation and startup. Withdrawal preserves foreign records and succeeds without an ownership conflict. The new value need not be in <code>owned</code>; ownership governs existing records. Plugin configuration validation resolves secrets and fills <code>secret_token</code> from provider/global certificate settings before calling Validate, so validation requires access to those secrets.</p>
+<p>name is the hidden DNS owner. value is a public presentation-format record such as <code>1 . alpn=&quot;h2,h3&quot; ech=&quot;...&quot;</code>, excluding owner/type/TTL; use TTL 600. owned is supplied by LiteGate from retained keys and publication state. Read the existing RRset and compare DNS semantics, not formatting. Reject foreign records before publishing a nonempty value; replace only owned records. Empty value withdraws owned records while preserving foreign values; missing records succeed. Never modify A/AAAA. Honor context cancellation, make operations idempotent and report API errors for core retries. DNSCloser may release resources.</p>
+<p>Compile with <code>litegate build --with your-module/mydns -o litegate</code>. Set dns_providers[].type to the registration name and ech.dns_provider to that configured entry's name. ECH storage/KV remains a core configuration, not a plugin responsibility. Missing capability declarations or implementations fail validation/startup.</p>
+<p>See the <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/memory/memory.go">compilable memory provider</a> for ownership checks, update and withdrawal. It is an in-memory demonstration, not a production authoritative DNS writer. See the <a href="user/06-certificates/ech.html">ECH deployment/client guide</a>.</p>
+<blockquote>
+<p>This guide shows you how to write a custom <strong>DNS Provider</strong> plugin for LiteGate, taking over two responsibilities: the <strong>DNS-01 challenge for ACME certificate issuance</strong> (adding/removing TXT records) and <strong>Dynamic DNS (DDNS) synchronization</strong> (writing the host's IP to A/AAAA records).</p>
+<p>Use it when: your DNS service is not in the built-in list (built-ins: Alibaba Cloud / Tencent Cloud / Cloudflare), or you want to use your own DNS API / internal IPAM / private DNS service for certificate validation and DDNS.</p>
+<p>The contract lives in the public package <a href="https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin"><code>github.com/jamesleeon/LiteGate/pkg/plugin</code></a>, so <strong>third parties can author and compile it from a standalone repository</strong>. For general plugins (Action / Middleware / LoadBalancer) see <a href="user/12-plugins/authoring-guide.html">plugin-authoring-guide.md</a>; for IDS auth plugins see <a href="ids-provider-plugin-guide.html">ids-provider-plugin-guide.md</a>; for DDNS usage itself see <a href="user/06-certificates/ddns.html">user/06-certificates/ddns.md</a>.</p>
+</blockquote>
+<hr>
+<h2 id="1-core-idea-one-name-two-capabilities">1. Core idea: one name, two capabilities</h2>
+<p>LiteGate models DNS operations as a <strong>named Provider</strong>. Your plugin registers a name (e.g. <code>&quot;mydns&quot;</code>), which users reference via <code>auto_cert.dns_providers[].type</code>. A single Provider can offer two capabilities, <strong>each implemented as needed, neither mandatory</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Interface</th>
+<th>What it does</th>
+<th>When it's called</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Certificate DNS-01</strong> (read/write TXT)</td>
+<td><code>plugin.CertDNSProvider</code></td>
+<td>Add/remove the <code>_acme-challenge</code> TXT record during ACME challenges</td>
+<td>On certificate issuance / renewal</td>
+</tr>
+<tr>
+<td><strong>DDNS sync</strong> (write A/AAAA)</td>
+<td><code>plugin.DDNSProvider</code></td>
+<td>Sync the latest IP to the domain's A / AAAA record</td>
+<td>On DDNS periodic sync / IP change</td>
+</tr>
+</tbody>
+</table>
+<p>Both build on a <strong>marker interface</strong> <code>plugin.DNSProvider</code> (which only has <code>GetName()</code>). <strong>A cert-only plugin implements just <code>CertDNSProvider</code>; a DDNS-only plugin implements just <code>DDNSProvider</code>; one that needs both implements both.</strong> The core asserts the capability at the point of use: if the required capability is missing, it returns a clear error there — it never silently fails mid-flight.</p>
+<blockquote>
+<p>Built-in providers (aliyun / cloudflare) and your third-party plugin go through the <strong>same public registry and the same assertion path</strong> — built-in features eat their own dog food.</p>
+</blockquote>
+<hr>
+<h2 id="2-the-interface-contract-pkgplugindnsgo">2. The interface contract (<code>pkg/plugin/dns.go</code>)</h2>
+<p>Everything is defined in <a href="https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin/dns.go">pkg/plugin/dns.go</a>:</p>
+<pre><code class="language-go">// marker: base interface for all DNS plugins
+type DNSProvider interface {
+	GetName() string // the provider's unique identifier
+}
+
+// Capability 1: ACME DNS-01 challenge (certificate issuance/renewal)
+type CertDNSProvider interface {
+	DNSProvider
+	AddTXTRecord(ctx context.Context, domain, token, keyAuth string) error    // add TXT
+	DeleteTXTRecord(ctx context.Context, domain, token, keyAuth string) error // delete TXT (cleanup after challenge)
+}
+
+// Capability 2: Dynamic DNS (A/AAAA sync)
+type DDNSProvider interface {
+	DNSProvider
+	Sync(ctx context.Context, domain string, ip string) error // write ip to domain's A/AAAA
+}
+</code></pre>
+<p>Plus three <strong>optional interfaces</strong> (effective only when implemented; the core probes them with type assertions):</p>
+<pre><code class="language-go">// Customize DNS-01 propagation waiting (otherwise lego's default authoritative-NS polling is used)
+type DNSPropagationChecker interface {
+	WaitForPropagation(ctx context.Context, domain, value string) error
+}
+
+// Customize DNS-01 propagation timeout (otherwise defaults to total 2min / poll interval 10s)
+type DNSOptionalTimeout interface {
+	GetTimeout() (totalTime, checkInterval time.Duration)
+}
+
+// Customize record-sync routing (preferred over DDNSProvider.Sync on the cert-manager sync path; gives direct control over recordType)
+type DNSSyncRecordRouter interface {
+	SyncRecord(ctx context.Context, domain, recordType, value string) error
+}
+
+// Validate provider-specific config early. Existing plugins may omit this.
+type DNSConfigValidator interface {
+	ValidateConfig(config map[string]string) error
+}
+
+// Describe capabilities/config fields for docs, dashboard, and preflight tooling.
+type DNSProviderDescriptor interface {
+	Describe() DNSProviderInfo
+}
+
+// Optional API reachability / credential health check for preflight tooling.
+type DNSHealthChecker interface {
+	CheckHealth(ctx context.Context) error
+}
+</code></pre>
+<p><strong>Registration function:</strong></p>
+<pre><code class="language-go">// Third parties register a custom DNS Provider; a clash with a built-in or already-registered name returns an error
+func RegisterDNSProvider(name string, factory DNSProviderFactory) error
+
+// Legacy factory: receives only a string config map (from the YAML dns_providers[].config)
+type DNSProviderFactory func(config map[string]string) (DNSProvider, error)
+
+// Dependency-aware factory: use this when the provider needs the host logger.
+func RegisterDNSProviderWithDependencies(name string, factory DNSProviderFactoryWithDependencies) error
+
+type DNSProviderFactoryWithDependencies func(config map[string]string, deps *Dependencies) (DNSProvider, error)
+</code></pre>
+<blockquote>
+<p>Note: <code>RegisterDNSProvider</code> stays backward compatible and only receives <code>config</code>. Use <code>RegisterDNSProviderWithDependencies</code> if your plugin needs the LiteGate logger. DNS providers should treat <code>deps.Discovery</code> as optional/not guaranteed.</p>
+</blockquote>
+<hr>
+<h2 id="3-writing-a-dns-provider-plugin">3. Writing a DNS Provider plugin</h2>
+<h3 id="shortcut-1-litegate-build---dns-recommended-no-code">Shortcut 1: <code>litegate build --dns</code> (recommended, no code)</h3>
+<p><a href="https://github.com/libdns">libdns</a> offers one interface for 80+ DNS providers (Huawei Cloud, Alibaba alidns, DNSPod, Route 53, GoDaddy, Porkbun, ...), each in its own small module. LiteGate's <a href="https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin/libdnsx"><code>pkg/plugin/libdnsx</code></a> adapts all of them into DNS plugins, and <code>litegate build</code> generates the registration code for you:</p>
+<pre><code class="language-bash"># Short name = github.com/libdns/&lt;name&gt;; a version is optional
+litegate build --dns huaweicloud --dns route53@v1.6.2 -o litegate
+
+# Full module paths work too; a type= prefix sets the config type name
+litegate build --dns hw=github.com/libdns/huaweicloud -o litegate
+
+# The libdns flavour of a built-in provider needs another name (built-in names are reserved)
+litegate build --dns libdns_cloudflare=cloudflare -o litegate
+</code></pre>
+<p>The config <code>type</code> is that name, and the <code>config</code> keys are the json tags of the libdns provider struct (see its README / pkg.go.dev):</p>
+<pre><code class="language-yaml">auto_cert:
+  dns_providers:
+    - name: hw
+      type: huaweicloud
+      domains: [&quot;*.example.com&quot;]
+      config:
+        access_key_id: &quot;${HW_AK}&quot;
+        secret_access_key: &quot;${HW_SK}&quot;
+        region_id: &quot;cn-south-1&quot;
+</code></pre>
+<p>Adaptation rules:</p>
+<table>
+<thead>
+<tr>
+<th>libdns interfaces the provider implements</th>
+<th>Capabilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RecordAppender</code> + <code>RecordDeleter</code></td>
+<td><code>cert_dns01</code></td>
+</tr>
+<tr>
+<td>plus <code>RecordGetter</code></td>
+<td>also <code>ddns</code> (append/withdraw A/AAAA) and <code>https_records</code> (ECH)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>String values are converted to the field type (numbers, booleans; <code>time.Duration</code> as <code>90s</code> or seconds; <code>[]string</code> comma-separated; other complex types as inline JSON). <strong>Unknown keys are rejected</strong>, so <code>litegate -t</code> catches typos.</li>
+<li>Reserved keys are handled by LiteGate and never reach the provider: <code>zone</code> (hosted zone, SOA lookup by default), <code>ttl</code>, <code>timeout</code> (propagation timeout, default 2m), <code>polling_interval</code> (default 10s). The host-level keys <code>secret_token</code>, <code>propagation_wait</code>, <code>skip_propagation_check</code>, <code>disable_complete_propagation</code> and <code>recursive_nameservers</code> keep working and are not passed on either.</li>
+<li>Only Append/Delete are used, <strong>never <code>SetRecords</code></strong>: it replaces a whole RRset and would drop addresses or parallel challenge values owned by other nodes.</li>
+<li>Only provider releases targeting the <strong>libdns v1 API</strong> are accepted. libdns kept its module path for v1, so older providers are detected before compiling, with a clear message.</li>
+<li>Only the provider itself is added (Huawei Cloud is about +200KB); a provider wrapping a vendor SDK only grows your own build. <code>litegate plugins list</code> shows the compiled-in providers and their module versions.</li>
+</ul>
+<h3 id="shortcut-2-reuse-a-lego-provider-example-dns-01-only">Shortcut 2: reuse a lego provider (example, DNS-01 only)</h3>
+<p>When a provider exists only in <a href="https://go-acme.github.io/lego/dns/">lego</a> and not in libdns, follow <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/legodns">examples/plugins/dns/legodns</a> (bridge) and <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/vegadns">examples/plugins/dns/vegadns</a> (usage) and copy the bridge into your own plugin module. It is an example, not a supported LiteGate API, and covers DNS-01 only.</p>
+<p>When neither ecosystem has your provider, or you need finer control, implement the interfaces directly as below.</p>
+<h3 id="step-1-implement-the-interfaces--register">Step 1: Implement the interfaces + register</h3>
+<p>Below is a minimal skeleton implementing <strong>both certificate DNS-01 and DDNS</strong>. When you only need one capability, drop the other method group.</p>
+<pre><code class="language-go">package mydns
+
+import (
+	&quot;context&quot;
+	&quot;fmt&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+	&quot;github.com/rs/zerolog/log&quot;
+)
+
+// providerName is the name users put in YAML dns_providers[].type; it must not clash with a built-in name.
+const providerName = &quot;mydns&quot;
+
+type provider struct {
+	apiKey    string
+	apiSecret string
+}
+
+// GetName implements the marker interface plugin.DNSProvider
+func (p *provider) GetName() string { return providerName }
+
+// --- Capability 1: certificate DNS-01 (implements plugin.CertDNSProvider) ---
+
+func (p *provider) AddTXTRecord(ctx context.Context, domain, token, keyAuth string) error {
+	// domain looks like &quot;example.com&quot;; you must add a TXT record on _acme-challenge.&lt;domain&gt; with value keyAuth.
+	// Add the record via your DNS API. Honor ctx cancellation (shutdown/timeout).
+	return p.upsertTXT(ctx, &quot;_acme-challenge.&quot;+domain, keyAuth)
+}
+
+func (p *provider) DeleteTXTRecord(ctx context.Context, domain, token, keyAuth string) error {
+	// Clean up the TXT above after the challenge passes.
+	return p.removeTXT(ctx, &quot;_acme-challenge.&quot;+domain, keyAuth)
+}
+
+// --- Capability 2: DDNS (implements plugin.DDNSProvider) ---
+
+func (p *provider) Sync(ctx context.Context, domain string, ip string) error {
+	// Set the domain's A/AAAA record to ip. The record type is determined by whether ip is IPv4 or IPv6.
+	return p.upsertAddr(ctx, domain, ip)
+}
+
+// init: auto-register when the package is imported
+func init() {
+	err := plugin.RegisterDNSProvider(providerName, func(config map[string]string) (plugin.DNSProvider, error) {
+		key := config[&quot;api_key&quot;]
+		secret := config[&quot;api_secret&quot;]
+		if key == &quot;&quot; || secret == &quot;&quot; {
+			return nil, fmt.Errorf(&quot;%s: api_key and api_secret are required&quot;, providerName)
+		}
+		return &amp;provider{apiKey: key, apiSecret: secret}, nil
+	})
+	if err != nil {
+		log.Error().Err(err).Str(&quot;plugin&quot;, providerName).Msg(&quot;register DNS provider failed&quot;)
+	}
+}
+
+// The following are stubs; replace with your DNS API calls
+func (p *provider) upsertTXT(ctx context.Context, fqdn, value string) error  { /* ... */ return nil }
+func (p *provider) removeTXT(ctx context.Context, fqdn, value string) error  { /* ... */ return nil }
+func (p *provider) upsertAddr(ctx context.Context, domain, ip string) error  { /* ... */ return nil }
+</code></pre>
+<h3 id="step-2-configuration--reference-it-under-auto_certdns_providers">Step 2: Configuration — reference it under <code>auto_cert.dns_providers</code></h3>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: admin@example.com
+  dns_providers:
+    - name: my-cloud              # logical name (referenced by domain routing; may differ from type)
+      type: mydns                 # ← your registered plugin name plugin.RegisterDNSProvider(&quot;mydns&quot;, …)
+      enabled: true
+      domains: [&quot;*.example.com&quot;]  # domains this provider issues certificates for (DNS-01)
+      config:                     # ← the whole map is passed verbatim to the factory's config param
+        api_key: &quot;AKxxxx&quot;
+        api_secret: &quot;yyyy&quot;
+        propagation_wait: &quot;60s&quot;   # optional: DNS-01 propagation wait (see §4)
+      ddns:                       # optional: enable DDNS sync
+        enabled: true
+        sync_a: true
+        domains: [&quot;home.example.com&quot;]
+</code></pre>
+<ul>
+<li><strong>Certificate DNS-01</strong>: when a domain matches <code>dns_providers[].domains</code>, the core uses that provider for the DNS-01 challenge (requires the provider to implement <code>CertDNSProvider</code>).</li>
+<li><strong>DDNS</strong>: when <code>ddns.enabled: true</code>, the periodic DDNS task calls <code>Sync</code> on <code>ddns.domains</code> (requires <code>DDNSProvider</code>). <code>DNSSyncRecordRouter</code> only applies to the cert-manager record-sync path described below.</li>
+<li>The entire <code>config</code> <code>map[string]string</code> is passed straight to your factory — put all custom parameters here.</li>
+</ul>
+<hr>
+<h2 id="4-optional-capabilities-in-detail">4. Optional capabilities in detail</h2>
+<h3 id="41-custom-propagation-wait--timeout-certificate-dns-01">4.1 Custom propagation wait / timeout (certificate DNS-01)</h3>
+<p>Default behavior: lego polls the authoritative NS to confirm the TXT record has propagated before letting the CA validate; the default total is 2 minutes with a 10-second interval. You can intervene in two ways:</p>
+<ul>
+<li><strong>Config-level</strong> (no code): set <code>propagation_wait: &quot;60s&quot;</code>, <code>skip_propagation_check: &quot;true&quot;</code>, <code>disable_complete_propagation: &quot;true&quot;</code>, or <code>recursive_nameservers: &quot;1.1.1.1,8.8.8.8&quot;</code> in <code>config</code> (parsed by <code>buildDNSChallengeOptions</code> in <a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/cert/interface.go">internal/cert/interface.go</a>).</li>
+<li><strong>Context</strong>: every method receives the ACME order's context; it is cancelled on shutdown or when this node loses the cluster certificate lock, so pass it to your SDK's HTTP calls. Cleanup runs with a context that is not cancelled with the order, so TXT records are still removed.</li>
+<li><strong>Resolvers</strong>: <code>auto_cert.propagation_dns</code> is process-wide (lego v5 shares one resolver set); a provider's <code>recursive_nameservers</code> is checked by LiteGate for that provider only.</li>
+<li><strong>Code-level</strong>: implement <code>DNSPropagationChecker</code> to fully take over the waiting logic; implement <code>DNSOptionalTimeout</code> to change the total/interval.</li>
+</ul>
+<pre><code class="language-go">func (p *provider) GetTimeout() (time.Duration, time.Duration) {
+	return 5 * time.Minute, 15 * time.Second // bump it up for slow DNS
+}
+</code></pre>
+<h3 id="42-custom-record-sync-routing-dnssyncrecordrouter">4.2 Custom record-sync routing (<code>DNSSyncRecordRouter</code>)</h3>
+<p>LiteGate has <strong>two paths</strong> that write A/AAAA records, with different interface requirements:</p>
+<ul>
+<li><strong>Standalone DDNS periodic task</strong> (<code>auto_cert.dns_providers[].ddns</code>): goes through <code>NewProvider</code> in <a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/ddns/provider.go">internal/ddns/provider.go</a> and <strong>directly calls <code>DDNSProvider.Sync(ctx, domain, ip)</code></strong>, with the record type determined by whether <code>ip</code> is IPv4/IPv6. This path only recognizes <code>DDNSProvider</code>.</li>
+<li><strong>Cert-manager record sync</strong> (e.g. automatic service-host sync, via <code>CertificateManager.SyncRecordWithProvider</code>): bridged through <code>externalCertProviderAdapter.SyncRecord</code>, which <strong>prefers</strong> <code>DNSSyncRecordRouter.SyncRecord</code> (where you get an explicit <code>recordType</code>) and falls back to <code>DDNSProvider.Sync</code>.</li>
+</ul>
+<p>Implement <code>DNSSyncRecordRouter</code> when you need fine-grained record-type control on the second path:</p>
+<pre><code class="language-go">func (p *provider) SyncRecord(ctx context.Context, domain, recordType, value string) error {
+	// recordType is computed by the core (IPv4→&quot;A&quot;, IPv6→&quot;AAAA&quot;)
+	return p.api.SetRecord(ctx, domain, recordType, value)
+}
+</code></pre>
+<hr>
+<h2 id="5-compiling-into-the-binary-user-owned-main">5. Compiling into the binary (user-owned main)</h2>
+<p>Just like other plugins, use the &quot;user-owned main&quot; approach — in <strong>your own repository</strong>, create a <code>main</code> that blank-imports the plugin package and calls <code>litegate.Run()</code>:</p>
+<pre><code class="language-go">// main.go
+package main
+
+import (
+	&quot;log&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/litegate&quot;
+
+	_ &quot;your-module/mydns&quot; // ← init() calls RegisterDNSProvider
+)
+
+func main() {
+	if err := litegate.Run(); err != nil {
+		log.Fatalf(&quot;litegate exited: %v&quot;, err)
+	}
+}
+</code></pre>
+<p><code>go build</code> produces a gateway with the plugin. The one-shot builder supports both published versions and local module replacements:</p>
+<pre><code class="language-bash">litegate build --with your-module/mydns@v1.2.3 -o litegate
+litegate build --with your-module/mydns=../your-module -o litegate
+</code></pre>
+<p>The right-hand side of a local replacement is the directory containing the plugin's <code>go.mod</code>. See <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/plugin-template">examples/plugin-template</a> for a copyable starter and <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/memory">examples/plugins/dns/memory</a> for a compilable DNS Provider V2 example. The in-memory provider is for learning and tests only; it does not change authoritative DNS.</p>
+<blockquote>
+<p>You can also develop in-tree in this repo (put the package in the repo and blank-import it in <a href="https://github.com/jamesleeon/LiteGate/blob/master/cmd/litegate/plugins.go">cmd/litegate/plugins.go</a>), but <strong>a standalone repo + user-owned main is the recommended approach</strong>.</p>
+</blockquote>
+<hr>
+<h2 id="6-things-you-must-watch-out-for-pitfalls">6. Things you must watch out for (pitfalls)</h2>
+<ol>
+<li>
+<p><strong>Implement capabilities as needed, but using the wrong one fails.</strong> A DDNS-only plugin configured to issue certificates (its domain entered <code>dns_providers[].domains</code>) makes the core's <code>CertDNSProvider</code> assertion fail and return a clear error — and vice versa. Whatever role you assign a provider, it must have the matching capability.</p>
+</li>
+<li>
+<p><strong>Choose the right factory.</strong> Use <code>RegisterDNSProvider</code> for simple providers that only need <code>config</code>. Use <code>RegisterDNSProviderWithDependencies</code> when you want LiteGate to inject <code>*plugin.Dependencies</code>, currently including <code>Logger</code>; <code>Discovery</code> is optional/not guaranteed for DNS providers.</p>
+</li>
+<li>
+<p><strong>You can't override a built-in name.</strong> <code>RegisterDNSProvider(&quot;aliyun&quot;, …)</code> and the like return an error. Built-in names: <code>aliyun</code> / <code>tencent</code> / <code>tencentcloud</code> / <code>cloudflare</code>. Pick a non-conflicting name.</p>
+</li>
+<li>
+<p><strong>Honor <code>ctx</code> cancellation.</strong> The <code>ctx</code> passed to <code>AddTXTRecord</code> / <code>DeleteTXTRecord</code> / <code>Sync</code> is canceled on gateway shutdown or challenge timeout — pass it to your HTTP calls, don't use <code>context.Background()</code>, or you'll hang/leak on shutdown.</p>
+</li>
+<li>
+<p><strong><code>AddTXTRecord</code>'s <code>domain</code> is the base domain.</strong> lego passes in the domain being issued (e.g. <code>example.com</code>); you operate on the <code>_acme-challenge.&lt;domain&gt;</code> TXT record with value <code>keyAuth</code>. On delete, clean up precisely by value to avoid removing TXT records from concurrent challenges.</p>
+</li>
+<li>
+<p><strong>The DDNS periodic task only calls <code>Sync</code>.</strong> The periodic sync driven by <code>auto_cert.dns_providers[].ddns</code> only calls <code>DDNSProvider.Sync(ctx, domain, ip)</code>, with the record type determined by whether <code>ip</code> is IPv4/IPv6 — implementing <code>DNSSyncRecordRouter</code> on this path will <strong>not</strong> be called. <code>DNSSyncRecordRouter.SyncRecord</code> (with the ready-made <code>recordType</code>) applies only to the cert-manager record-sync path (see §4.2).</p>
+</li>
+<li>
+<p><strong><code>config</code> values are all strings.</strong> A <code>map[string]string</code> has no numbers/booleans — write durations as <code>&quot;60s&quot;</code> and <code>time.ParseDuration</code> them yourself; write switches as <code>&quot;true&quot;</code> and check them yourself. Validate in the factory and return an error when key config is missing (surface the problem at startup).</p>
+</li>
+<li>
+<p><strong>Wildcard certificates must use a DNS Provider.</strong> Wildcard certs like <code>*.example.com</code> can't use HTTP-01; a provider implementing <code>CertDNSProvider</code> must be responsible for that domain.</p>
+</li>
+</ol>
+<hr>
+<h2 id="7-lifecycle-and-dispatch-how-it-works">7. Lifecycle and dispatch (how it works)</h2>
+<pre><code>Program start
+  └─ plugin package init() → plugin.RegisterDNSProvider(&quot;mydns&quot;, factory)
+     or plugin.RegisterDNSProviderWithDependencies(&quot;mydns&quot;, factory)        [name lands in the public registry]
+Config load
+  └─ auto_cert.dns_providers[].type references the name
+Certificate issuance/renewal (a domain matches dns_providers[].domains)
+  └─ cert.GetCertProvider(type, config)
+       ├─ Hit in the built-in registry? → use built-in
+       └─ Otherwise → public registry factory(config, deps) → assert CertDNSProvider → adapt to internal CertProvider
+            └─ lego calls AddTXTRecord → wait for propagation → CA validates → DeleteTXTRecord
+DDNS periodic sync (ddns.enabled, periodic / IP change)
+  └─ ddns.NewProvider(type, config) → assert DDNSProvider → Sync(ctx, domain, ip)
+Cert-manager record sync (e.g. service-host auto sync, SyncRecordWithProvider)
+  └─ cert.GetSyncProvider → adapter prefers DNSSyncRecordRouter.SyncRecord, falls back to DDNSProvider.Sync
+</code></pre>
+<ul>
+<li>When a built-in provider registers via the internal <code>RegisterProvider</code>, it <strong>first reverse-checks the public registry to prevent name clashes, then reserves the name in the public registry</strong> (see <a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/cert/interface.go">internal/cert/interface.go</a> and <a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/ddns/registerprovider.go">internal/ddns/registerprovider.go</a>).</li>
+<li>A third-party provider is bridged to the internal <code>CertProvider</code> by <code>externalCertProviderAdapter</code> (<a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/cert/interface.go">internal/cert/interface.go</a>): <code>WaitForPropagation</code> probes <code>DNSPropagationChecker</code>; <code>SyncRecord</code> prefers <code>DNSSyncRecordRouter</code> then falls back to <code>DDNSProvider.Sync</code>; <code>GetTimeout</code> probes <code>DNSOptionalTimeout</code> (defaulting to 2min/10s).</li>
+</ul>
+<hr>
+<h2 id="cheat-sheet">Cheat sheet</h2>
+<table>
+<thead>
+<tr>
+<th>I want to…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Use an existing provider (Huawei Cloud, Route 53, ...)</td>
+<td><code>litegate build --dns &lt;name&gt;</code>, no code; see Shortcut 1</td>
+</tr>
+<tr>
+<td>Add certificate issuance for a new DNS service</td>
+<td>Implement <code>plugin.CertDNSProvider</code>, register with <code>plugin.RegisterDNSProvider</code> or <code>plugin.RegisterDNSProviderWithDependencies</code>, configure <code>dns_providers[].type</code> + <code>domains</code></td>
+</tr>
+<tr>
+<td>Add DDNS for a new DNS service</td>
+<td>Implement <code>plugin.DDNSProvider</code>, register with <code>plugin.RegisterDNSProvider</code> or <code>plugin.RegisterDNSProviderWithDependencies</code>, configure <code>dns_providers[].ddns</code></td>
+</tr>
+<tr>
+<td>Support both certificates + DDNS</td>
+<td>One provider implements both interface groups</td>
+</tr>
+<tr>
+<td>Customize propagation wait</td>
+<td>Implement <code>plugin.DNSPropagationChecker</code>, or set <code>propagation_wait</code> etc. in <code>config</code></td>
+</tr>
+<tr>
+<td>Customize propagation timeout</td>
+<td>Implement <code>plugin.DNSOptionalTimeout</code></td>
+</tr>
+<tr>
+<td>Fine-grained record type on cert-manager sync</td>
+<td>Implement <code>plugin.DNSSyncRecordRouter</code> (with ready-made <code>recordType</code>, see §4.2)</td>
+</tr>
+<tr>
+<td>Fail fast on bad plugin config</td>
+<td>Implement <code>plugin.DNSConfigValidator</code>; LiteGate calls it when creating external cert/DDNS providers</td>
+</tr>
+<tr>
+<td>Expose plugin metadata</td>
+<td>Implement <code>plugin.DNSProviderDescriptor</code> for docs/UI/preflight tools</td>
+</tr>
+<tr>
+<td>Support preflight health checks</td>
+<td>Implement <code>plugin.DNSHealthChecker</code></td>
+</tr>
+<tr>
+<td>Read plugin config</td>
+<td>Factory param <code>config map[string]string</code> (values are all strings)</td>
+</tr>
+<tr>
+<td>Compile into the binary</td>
+<td>User-owned <code>main</code>, blank-import the plugin package + <code>litegate.Run()</code>, <code>go build</code>, or <code>litegate build --with</code></td>
+</tr>
+</tbody>
+</table>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/dns-provider-plugin-guide.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

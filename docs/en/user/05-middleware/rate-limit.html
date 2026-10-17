@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rate limiting (V2 configuration) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/05-middleware/rate-limit.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details open><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html" class="current" aria-current="page">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: internal/configdocs/docs/en/rate-limit.md (package internal/configdocs)
+     Regenerate: go generate ./internal/configdocs/...
+     Edit the source instead; a drift test fails if this copy is edited directly. -->
+<h1 id="rate-limiting-v2-configuration">Rate limiting (V2 configuration)</h1>
+<p>Rate limiting controls request throughput to protect upstreams from overload. LiteGate supports four rate limiting algorithms:</p>
+<ul>
+<li><strong>Token Bucket (<code>token_bucket</code>, default)</strong>: Allows brief burst capacity while sustaining a steady long-term average rate. Recommended for core API traffic shaping and avalanche prevention. Supports arbitrary <code>&lt;= 1s</code> and <code>&gt; 1s</code> windows, replenishing tokens uniformly at <code>rate / window</code>.</li>
+<li><strong>Sliding Window Counter (<code>sliding_window</code>)</strong>: Approximates rolling windows with linear weighting in $O(1)$ memory. Smooths transitions under normal traffic, but because it is an approximation, worst-case bursts (clustered at window edges) across an arbitrary rolling window can still approach up to 200%. Recommended for high-concurrency API traffic shaping and general abuse mitigation.</li>
+<li><strong>Exact Sliding Window Log (<code>sliding_window_log</code>)</strong>: Records precise request timestamps, strictly guaranteeing that total requests in any arbitrary rolling window never exceed the configured limit. Ideal for billing/metering and high-security SaaS API quotas (backed by Redis ZSET).</li>
+<li><strong>Fixed Window (<code>fixed_window</code>)</strong>: Resets counters within discrete time windows with minimal overhead. Suitable for coarse-grained frequency limits.</li>
+</ul>
+<h2 id="shared-route-budgets-and-client-ip-budgets">Shared route budgets and client IP budgets</h2>
+<p>Configure rate limiting on V2 path routes:</p>
+<pre><code class="language-yaml">site: api.example.com
+/api:
+  proxy: localhost:8080
+  rate_limit: 100
+/upload:
+  proxy: localhost:8080
+  rate_limit: {rate: 10, key: ip}
+/quota:
+  proxy: localhost:8080
+  rate_limit: {rate: 60, key: ip, algorithm: sliding_window, window: 1m}
+</code></pre>
+<p>Numeric limits share a budget within a site and route, equivalent to <code>{rate: 100, key: route}</code>. <code>key: ip</code> allocates one limiter per client IP. Only <code>route</code> and <code>ip</code> are supported; header and tenant expressions are not supported. Forwarded addresses honor global <code>trusted_proxies</code>. At the process-wide 100000 client-bucket cap, new clients share the route fallback bucket.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rate_limit</code></td>
+<td><code>0</code> (disabled)</td>
+<td>Limit number, or <code>{rate: number, key: route/ip, algorithm: ..., window: ...}</code></td>
+</tr>
+<tr>
+<td><code>rate_limit_key</code></td>
+<td><code>route</code></td>
+<td>Key scope: <code>route</code> or <code>ip</code></td>
+</tr>
+<tr>
+<td><code>rate_limit_algorithm</code></td>
+<td><code>token_bucket</code></td>
+<td>Limiter algorithm: <code>token_bucket</code>, <code>sliding_window</code>, <code>sliding_window_log</code>, or <code>fixed_window</code></td>
+</tr>
+<tr>
+<td><code>rate_limit_window</code></td>
+<td><code>1s</code></td>
+<td>Window duration (e.g. <code>500ms</code>, <code>1s</code>, <code>10s</code>, <code>1m</code>, must be integer milliseconds, min 1ms). Supported by all algorithms</td>
+</tr>
+<tr>
+<td><code>rate_limit_policy</code></td>
+<td><code>static</code></td>
+<td><code>static</code> or <code>adaptive</code> (<code>adaptive</code> only supports <code>token_bucket</code> and the default 1s window)</td>
+</tr>
+</tbody>
+</table>
+<p>Under the token bucket algorithm, regardless of whether <code>window</code> is greater than, equal to, or less than 1s (e.g. <code>{rate: 10, window: 500ms}</code> or <code>{rate: 100, window: 1m}</code>), the burst capacity is automatically set to <code>ceil(rate)</code>, and tokens refill at <code>rate / window.Seconds()</code> (e.g. 10 tokens per 500ms refilled at 20 QPS; 100 tokens per minute refilled at ~1.67 QPS). This permits initial bursts up to <code>rate</code> while strictly bounding the long-term inflow rate. When <code>window</code> is omitted, standard 1-second QPS mode applies (fractional rates like <code>0.5</code> average one request every two seconds). Sliding and fixed windows enforce the limit per <code>window</code> duration. Rejected requests receive <strong>429 Too Many Requests</strong>. Numeric <code>0</code> disables limiting.</p>
+<p>Per-IP limits use the client address resolved at ingress, never the raw request header. XFF is honored only when the direct peer belongs to <code>real_ip.trusted_proxies</code> (or a Unix ingress protected by filesystem permissions). All same-name fields form one chain, scanned right to left for the first untrusted IP; IPv4/IPv6 representations are canonicalized. Invalid or empty boundary hops fall back to the direct peer. The front proxy must overwrite incoming XFF or append the client IP it actually observes on the right of the complete chain. A gateway cannot authenticate client-supplied addresses blindly passed through by its trusted proxy. Do not trust public client networks, <code>0.0.0.0/0</code> or <code>::/0</code>.</p>
+<h2 id="algorithm-selection-guide">Algorithm Selection Guide</h2>
+<table>
+<thead>
+<tr>
+<th>Algorithm Key</th>
+<th>Name</th>
+<th>Characteristics &amp; Advantages</th>
+<th>Typical Use Cases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>token_bucket</code></td>
+<td>Token Bucket (default)</td>
+<td>Allows configurable bursts; smooth token replenishment; long-term stable QPS</td>
+<td>Gateway general traffic shaping, high-concurrency API protection</td>
+</tr>
+<tr>
+<td><code>sliding_window</code></td>
+<td>Sliding Window Counter</td>
+<td>Weighted linear estimation in $O(1)$ memory; worst-case edge bursts can still approach ~200%</td>
+<td>General minute/hour quotas, high-concurrency abuse mitigation</td>
+</tr>
+<tr>
+<td><code>sliding_window_log</code></td>
+<td>Exact Sliding Window Log</td>
+<td>Strict timestamp logging; strictly guarantees no excess requests in any rolling window</td>
+<td>Billing/metering, strict SaaS tier quotas, financial APIs</td>
+</tr>
+<tr>
+<td><code>fixed_window</code></td>
+<td>Fixed Window</td>
+<td>Discrete time slicing; instant counter reset; lightweight execution</td>
+<td>SMS/verification codes, coarse rate limits</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-yaml">site: api.example.com
+/sms/send:
+  proxy: localhost:8080
+  rate_limit: {rate: 5, key: ip, algorithm: fixed_window, window: 1m}
+/openapi:
+  proxy: localhost:8080
+  rate_limit: {rate: 1000, key: ip, algorithm: sliding_window, window: 1h}
+/billing:
+  proxy: localhost:8080
+  rate_limit: {rate: 100, key: ip, algorithm: sliding_window_log, window: 1m}
+</code></pre>
+<h2 id="shared-middleware-budget">Shared middleware budget</h2>
+<pre><code class="language-yaml">site: api.example.com
+middlewares:
+  total-budget:
+    type: ratelimit
+    config: {qps: &quot;50&quot;, key: route, algorithm: sliding_window, window: 1s}
+/api:
+  use: total-budget
+  proxy: localhost:8080
+  rate_limit: 10
+/assets:
+  use: total-budget
+  proxy: localhost:8080
+</code></pre>
+<p>Routes referencing the same middleware within a site share its 50 QPS budget; <code>/api</code> also has its own 10 QPS budget. Middleware and route buckets remain independent even when names match. Use <code>config.key: ip</code> for a shared budget per client. Named middleware accepts <code>qps</code>, <code>key</code>, <code>algorithm</code>, and <code>window</code>. Do not repeat a middleware reference on one route.</p>
+<p>A catch-all route does not wrap other matching routes. Apply a shared middleware to every route that needs a site-wide budget.</p>
+<h2 id="adaptive-limits-and-reloads">Adaptive limits and reloads</h2>
+<pre><code class="language-yaml">site: api.example.com
+/api/compute:
+  proxy: localhost:8080
+  rate_limit: 100
+  rate_limit_policy: adaptive
+</code></pre>
+<p><code>rate_limit_policy</code> defaults to <code>static</code>. Adaptive limiting uses host <strong>CPU</strong>, not memory. Every two seconds, CPU above 80% reduces the effective rate by 20%; CPU below 50% increases it by 10%. The floor is <code>min(maximum, max(1, maximum * 0.1))</code>. Reloading updates the ceiling, floor and burst; a lower ceiling applies immediately, while a higher ceiling retains load throttling and recovers gradually. Adaptive limits are local, only support <code>token_bucket</code> with the default 1s window, do not use Redis, and cannot use <code>key: ip</code>.</p>
+<h2 id="distributed-limits-and-fallback">Distributed limits and fallback</h2>
+<p>Enable Redis in the gateway global configuration, separate from the site YAML:</p>
+<pre><code class="language-yaml">redis:
+  enabled: true
+  mode: standalone
+  address: localhost:6379
+  db: 0
+</code></pre>
+<p>Static route and middleware limits automatically use Redis, including IP buckets. All four algorithms support Redis distributed mode:</p>
+<ul>
+<li><strong><code>token_bucket</code></strong>: Millisecond-precision atomic token refills (<code>tokens</code>, <code>last_update</code>), with dynamic TTL extending according to refill duration.</li>
+<li><strong><code>sliding_window</code></strong>: Weighted sliding window counter evaluation in $O(1)$ memory (<code>curr</code>, <code>prev</code>, <code>win</code>).</li>
+<li><strong><code>sliding_window_log</code></strong>: Redis ZSET-backed millisecond sliding window log for exact rolling quota enforcement.</li>
+<li><strong><code>fixed_window</code></strong>: Atomic <code>INCR</code> with window millisecond <code>PEXPIRE</code>. The Lua script passes the complete key directly via <code>KEYS[1]</code>, natively compatible with Redis Cluster slot routing.</li>
+</ul>
+<p>Redis operations have a 200 ms budget and a shared concurrency cap of 64 per client. Three consecutive failures open a dependency circuit for five seconds; one request probes recovery. Errors, an open circuit or saturation fall back to a local limiter matching the configured algorithm on each gateway node.</p>
+<p><strong>Fallback does not preserve a strict cluster-wide quota</strong>: Multiple nodes each enforce local limits. Local fallback limiters do not account for successful Redis requests. This Redis circuit is separate from upstream Service circuit breaking.</p>
+<h2 id="state-retention-lifecycle--redis-time-synchronization">State Retention Lifecycle &amp; Redis Time Synchronization</h2>
+<ol>
+<li><strong>State Retention (TTL)</strong>: Both in-memory limiter caches and Redis keys dynamically calculate idle retention considering both window duration and token replenishment time (<code>burst / fill_rate</code>), setting TTL to <code>max(600s, max(window, fill_time) * 2)</code>. For fractional rates with long windows (e.g. <code>rate: 0.1, window: 1h</code>, which takes 10 hours to refill), the state is preserved for 20 hours (72000s), preventing premature eviction and renewal.</li>
+<li><strong>Unified Redis Time Source &amp; Cluster Routing</strong>:
+<ul>
+<li>Distributed Lua scripts directly query <code>redis.call('TIME')</code> on the Redis server, eliminating node-to-node clock skew discrepancies.</li>
+<li>Fixed window passes full key via <code>KEYS[1]</code>, ensuring full compatibility with Redis Cluster slot routing.</li>
+</ul>
+</li>
+<li><strong>Algorithm Switching &amp; Concurrent Reload Safety</strong>: Redis keys use isolated namespaces (<code>gate:ratelimit:&lt;algo&gt;:&lt;window_ms&gt;ms:&lt;key&gt;</code>). Key-level singleflight serialization prevents concurrent reloads from spawning duplicate limiter instances.</li>
+</ol>
+<h2 id="concurrent-requests">Concurrent requests</h2>
+<pre><code class="language-yaml">site: api.example.com
+/upload:
+  proxy: localhost:8080
+  rate_limit: {rate: 10, key: ip}
+  limit_conn: 20
+  limit_conn_key: ip
+</code></pre>
+<p><code>limit_conn</code> controls in-flight requests; rejection returns <strong>503</strong> with <code>Retry-After: 5</code>. See <a href="../09-advanced/circuit-breaker.html">circuit breaking</a> for upstream failure protection.</p>
+<h2 id="traffic-protection-on-registered-services">Traffic protection on registered services</h2>
+<p>Register this identical resource tag set on every orders instance. Rate limiting admits at most 100 requests per client IP in a one-minute sliding log window. Circuit breaking tracks completed upstream outcomes independently per backend address over 30 seconds, opening at 20 samples and a failure ratio of 0.5. Rate-limit window accepts a duration (1m) or integer milliseconds; breaker window is integer seconds (30). Deregistration removes an instance after the discovery update reaches the gateway; requests during that propagation interval can still fail. Backend failures remain breaker samples. Do not mix named resources with shortcut tags.</p>
+<pre><code class="language-properties">litegate.http.routers.orders.match.hosts=api.example.com
+litegate.http.routers.orders.match.path_prefix=/orders
+litegate.http.routers.orders.service=orders
+litegate.http.routers.orders.middlewares=orders-limit
+litegate.http.middlewares.orders-limit.ratelimit.qps=100
+litegate.http.middlewares.orders-limit.ratelimit.key=ip
+litegate.http.middlewares.orders-limit.ratelimit.algorithm=sliding_window_log
+litegate.http.middlewares.orders-limit.ratelimit.window=1m
+litegate.http.services.orders.circuitbreaker.enabled=true
+litegate.http.services.orders.circuitbreaker.strategy=failure_rate
+litegate.http.services.orders.circuitbreaker.window=30
+litegate.http.services.orders.circuitbreaker.minimumrequests=20
+litegate.http.services.orders.circuitbreaker.failureratio=0.5
+</code></pre>
+<p>For MCP generation, read <code>get_config_guide(topic=&quot;traffic&quot;)</code>, then run <code>preview_service_tags</code>: errors must be fixed; review warnings before applying. For YAML, run <code>validate_site_config</code> before <code>save_site_config</code>.</p>
+<h2 id="large-transfers-and-request-body-protection">Large transfers and request body protection</h2>
+<p><code>rate_limit</code> limits request counts; <code>bandwidth</code> limits upload and download bytes per second. Proxy requests and file responses remain streaming.</p>
+<p>Global configuration (<code>config.yaml</code>):</p>
+<pre><code class="language-yaml">http:
+  max_request_body_size: 67108864 # Default 64MiB; 0 means unlimited
+  body_buffer_budget: 67108864   # Default 64MiB; 0 selects the default budget
+  bandwidth:
+    total_upload: 20971520       # All routed traffic in this process: 20MiB/s
+    total_download: 52428800     # All routed traffic in this process: 50MiB/s
+</code></pre>
+<p>Site configuration:</p>
+<pre><code class="language-yaml">site: files.example.com
+max_request_body_size: 1048576
+bandwidth:
+  total_download: 20971520
+
+/upload:
+  max_request_body_size: 4294967296 # 4GiB; explicit 0 means unlimited
+  bandwidth:
+    key: ip
+    upload: 2097152
+    download: 4194304
+    total_upload: 10485760
+  limit_conn: 4
+  limit_conn_key: ip
+  proxy: http://127.0.0.1:8080
+
+/:
+  serve: ./public
+</code></pre>
+<p>Rates are integer <strong>bytes/second</strong>; 0 disables that rate. <code>key</code> defaults to <code>ip</code>, using LiteGate's trusted client IP resolution rather than accepting arbitrary forwarding headers. <code>global</code> shares <code>upload</code> / <code>download</code> across all requests in that scope. Concurrent connections from one IP share their quota, including users behind the same NAT. Upload and download are independent.</p>
+<p>Global, site and route quotas apply together. Site quotas span every route in that site; route quotas span every connection to that route. Token buckets allow an initial burst of at most 32KiB, or one second of quota for lower rates. Waiting responds to cancellation and deadlines. Adjust proxy timeouts for the intended file size and rate, and combine bandwidth quotas with <code>limit_conn</code> to bound long-lived requests.</p>
+<p>Body size uses the explicit route value, then a positive site value, then the global value. Site 0 inherits the global setting; explicit route 0 allows unlimited size. A declared length exceeding the limit returns 413 before reading the body. Chunked and unknown-length bodies are limited while reading. A rejected streaming upload may already have sent a prefix to the backend; the backend must clean up failed uploads and commit files atomically. A limit error after the response has been committed cannot change its earlier status.</p>
+<p>Retry buffering only handles known lengths below 1MiB. Larger and unknown-length bodies stream without retries or proxy mirroring. <code>disable_chunked</code> still buffers at most 2MiB and is unsuitable for large uploads. The named mirror middleware has a separate 4MiB body limit.</p>
+<p><code>body_buffer_budget</code> is a process-wide shared budget for proxy replay, <code>disable_chunked</code> and named mirror buffers. Reservations account for three times the read limit to cover buffer growth and remain held until asynchronous readers and mirrors finish. Budget exhaustion skips optional retry buffering or mirroring; mandatory <code>disable_chunked</code> buffering returns 503. This is not a process RSS limit: connections, IDS, response caches and plugins have their own overhead.</p>
+<p>Bandwidth limits cover regular HTTP uploads, proxy responses, static files and cache hits. Download accounting counts compressed HTTP body bytes, excluding protocol and TLS overhead. WebSocket, CONNECT and other hijacked tunnel traffic are outside this feature. Quotas are local to one instance.</p>
+<p>Handler rebuilds reuse limiter state. Idle client keys expire after five minutes. The process retains at most 10,000 client keys and 4,096 scopes; capacity exhaustion returns 503 with <code>Retry-After: 60</code>.</p>
+<p>The new default 64MiB body limit changes unconfigured upload endpoints. Configure a suitable route override before upgrading those endpoints.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/05-middleware/rate-limit.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

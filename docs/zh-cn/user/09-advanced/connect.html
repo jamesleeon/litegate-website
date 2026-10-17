@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate Connect 配置与上线指南 · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/09-advanced/connect.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details open><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html" class="current" aria-current="page">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="litegate-connect-配置与上线指南">LiteGate Connect 配置与上线指南</h1>
+<p>LiteGate Connect 用一条由 Home 主动拨向 Cloud 的 TLS 隧道，把 Home 上的 HTTPS Site 和可选的
+L4 TCP Stream 发布到公网。Home 不需要开放入站端口；业务域名和 Connect 控制域名的 DNS 都指向
+Cloud。</p>
+<p>Connect 与 Forward 的区别、如何选择和组合见 <a href="forward-and-connect.html">Forward 与 Connect 总览</a>。</p>
+<p>本文是运维配置指南。协议、所有权和安全设计见
+<a href="connect.html">LiteGate Connect 设计文档</a>；如何选择模式、如何用 Connect 落地私有化数据通道，
+见 <a href="connect-scenarios.html">Connect 场景与架构指南</a>。</p>
+<h2 id="1-上线前准备">1. 上线前准备</h2>
+<ul>
+<li>Cloud 的 <code>web</code>（通常 <code>:80</code>）和 <code>websecure</code>（通常 <code>:443</code>）入口已经工作；</li>
+<li><code>connect.example.com</code> 和待发布业务域名均解析到 Cloud；</li>
+<li>Cloud 能为 <code>connect.example.com</code> 完成正常 TLS 终止；</li>
+<li>Home 能主动访问 Cloud TCP/443；</li>
+<li>Home 的业务 Site 已绑定 <code>websecure</code>，且证书已就绪；</li>
+<li>准备至少 32 字节的随机 Token，并以 <code>0600</code> 权限保存在两端。</li>
+</ul>
+<p>推荐由 LiteGate 直接生成并以安全权限（自动创建 <code>0700</code> 目录、文件设为 <code>0600</code>、防止意外覆盖）保存：</p>
+<pre><code class="language-bash">sudo litegate connect token --output /etc/litegate/secrets/home-connect.token
+</code></pre>
+<p>也可以使用 LiteGate 的密钥生成命令直接在控制台输出随机密钥：</p>
+<pre><code class="language-bash">litegate -gen-secret
+</code></pre>
+<p>不要把 Token 直接写进 YAML 或提交到 Git。</p>
+<h2 id="2-cloud-配置">2. Cloud 配置</h2>
+<p>在 Cloud 的主配置中启用 Connect Server：</p>
+<pre><code class="language-yaml">connect:
+  server:
+    enabled: true
+    hostname: connect.example.com
+    path: /_litegate/connect/v1
+    state_file: data/connect-registry.json
+
+    # 可选：控制域名之外仍禁止 Peer 注册的域名。
+    reserved_domains:
+      - admin.example.com
+
+    peers:
+      home:
+        token_file: /etc/litegate/secrets/home-connect.token
+        allowed_domains:
+          - &quot;*.home.example.com&quot;
+          - camera.example.com
+        max_sites: 200
+        max_connections: 4096
+        sessions: 2
+        max_registrations_per_minute: 30
+</code></pre>
+<p><code>hostname</code> 必须是精确域名，不能是 IP 或通配域名。它会自动加入保留域名，任何 Home 都不能注册
+该名称。<code>allowed_domains</code> 是授权边界，不是路由配置：Home 只能发布其中允许的精确域名或通配
+pattern，Cloud 仍会检查本地 Site、保留名称和其他 Peer 的所有权冲突。</p>
+<p><code>connect.server.peers</code> 支持通过现有配置重载和全局配置源入口热更新。新增 Peer 不会打断其他租户；
+<code>peers: {}</code> 允许零租户启动及删除最后一个租户，此时所有 Connect 认证请求都会被拒绝。
+删除 Peer 会撤销其会话与所有权。修改发布策略或 Session 策略只撤销该 Peer，它需要重连并重新注册。
+Token 变更保留已建立会话；修改 <code>max_connections</code> 只影响新数据流，保留已有流和共享计数。
+监听端点、CA、健康检查配置及 Home 客户端配置仍需要重启。</p>
+<p><code>state_file</code> 是所有权检查点，旁边的 <code>state_file.wal</code> 按 Peer 保存增量变更；每次变更同步落盘后才确认注册。
+日志达到 256 条记录或 4 MiB 后，在下次变更前压缩。两者都不保存 Token 或活动 Session。
+备份或迁移时请停机并同时保留两个文件。旧版 v1 检查点会自动升级为 v2，旧二进制无法读取 v2。
+因策略收紧而不合法的 Peer 条目会跳过，由该 Peer 重连后重新注册。
+恢复时会丢弃末尾未写完整的日志记录；完整记录损坏或检查点不可读时 Cloud 仍可启动，
+但会拒绝持久化注册，需要恢复或修复状态文件并重启。</p>
+<p>默认值：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th style="text-align:right">默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>path</code></td>
+<td style="text-align:right"><code>/_litegate/connect/v1</code></td>
+<td>TLS Upgrade 端点；可配置为任意绝对路径，Cloud 与 Home 必须保持一致</td>
+</tr>
+<tr>
+<td><code>state_file</code></td>
+<td style="text-align:right"><code>data/connect-registry.json</code></td>
+<td>Cloud 所有权缓存</td>
+</tr>
+<tr>
+<td><code>max_sites</code></td>
+<td style="text-align:right"><code>200</code></td>
+<td>Peer 最多发布的 Site 数</td>
+</tr>
+<tr>
+<td><code>max_connections</code></td>
+<td style="text-align:right"><code>4096</code></td>
+<td>Peer 全局活动数据流上限</td>
+</tr>
+<tr>
+<td><code>sessions</code></td>
+<td style="text-align:right"><code>2</code></td>
+<td>同一 Peer 允许的物理 Session 数</td>
+</tr>
+<tr>
+<td><code>max_registrations_per_minute</code></td>
+<td style="text-align:right"><code>30</code></td>
+<td>新 generation 注册速率上限</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-home-配置">3. Home 配置</h2>
+<p>Home 使用相同的 Peer 名称和 Token 主动连接 Cloud：</p>
+<pre><code class="language-yaml">connect:
+  client:
+    enabled: true
+    name: home
+    remote: https://connect.example.com/_litegate/connect/v1
+    token_file: /etc/litegate/secrets/home-connect.token
+    publish_sites: true
+    publish_streams: false
+    sessions: 2
+    max_connections: 4096
+    registration_debounce: 500ms
+    exclude_domains:
+      - connect.example.com
+      - admin.example.com
+</code></pre>
+<p><code>publish_sites</code> 发布 Home Loader 中暴露在 <code>websecure</code> 的 Site。证书或 Home websecure 尚未就绪时，
+域名以 <code>pending_certificate</code> 注册并在 Cloud fail-closed，不会回落到 Cloud 的泛域名站点。</p>
+<p><code>exclude_domains</code> 用于排除只应留在 Home 本机或控制面的域名。它不能扩大 Cloud
+<code>allowed_domains</code> 的授权范围。</p>
+<h3 id="31-用-cli-快速发布-http-服务">3.1 用 CLI 快速发布 HTTP 服务</h3>
+<p>完整的 Cloud、DNS、证书、Dashboard 和排障步骤见<a href="connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a>。</p>
+<p>少量 HTTP 服务无需启动 Home LiteGate 的 <code>web</code>、<code>websecure</code> 或配置 Site，可以直接运行：</p>
+<pre><code class="language-bash">litegate connect http \
+  --remote https://connect.example.com \
+  --name home \
+  --token-file /etc/litegate/secrets/home-connect.token \
+  --domain audit.home.example.com \
+  --upstream http://192.168.50.247:8090
+</code></pre>
+<p>Cloud 终止公网 TLS，再以单个 HTTP 请求为单位通过 Connect 转发。普通请求、上传、下载、长轮询和
+SSE 均支持流式传输；WebSocket 和其他 HTTP Upgrade 当前不支持，请继续使用完整的 Connect Site。
+除 Connect 控制端点和 ACME challenge 外，发布服务拥有完整路径空间，包括 <code>/healthz</code>、
+<code>/readyz</code> 和 <code>/_litegate/*</code>。</p>
+<p>Cloud 必须能为 <code>--domain</code> 提供证书：可以预装精确/泛域名证书，也可以设置
+<code>auto_cert.on_demand.enabled: true</code> 启用自动签发；仅完成 Connect 注册不会自动开启按需 TLS。
+开启后，通过认证且满足 Peer <code>allowed_domains</code> 的活动 Connect HTTP 注册会把已注册的精确域名
+加入受限流保护的按需签发授权，并在注册 ACK 后异步预签发缺少的证书。HTTP 注册不接受通配 hostname，
+未注册域名也不会获得签发权限；已有精确、SAN 或泛域名证书时不会重复申请。</p>
+<p>默认保留公网 Host（等价于 <code>--host-header preserve</code>），例如 upstream 会收到 <code>Host: audit.home.example.com</code>。需要按内部虚拟主机选路时
+可使用 <code>--host-header upstream</code>，或传入明确值（例如 <code>--host-header audit.internal</code>）。CLI 会删除
+客户端提供的 <code>Forwarded</code>、<code>X-Forwarded-*</code> 和 <code>X-Real-IP</code>，再根据 Cloud 的
+<code>trusted_proxies</code> 结果生成可信客户端地址。</p>
+<p>Token 不接受明文 <code>--token</code> 参数，以免出现在 shell 历史和进程列表中；除 <code>--token-file</code> 外，也可
+使用 <code>LITEGATE_CONNECT_TOKEN</code>。<code>LITEGATE_CONNECT_REMOTE</code>、<code>LITEGATE_CONNECT_NAME</code> 和
+<code>LITEGATE_CONNECT_TOKEN_FILE</code> 可用于省略重复参数。</p>
+<h2 id="4-home-site-示例">4. Home Site 示例</h2>
+<pre><code class="language-yaml">site: camera.home.example.com
+entrypoints:
+  - websecure
+tls:
+  enabled: true
+  cert_file: /etc/litegate/certs/home-wildcard.crt
+  key_file: /etc/litegate/certs/home-wildcard.key
+routes:
+  - name: camera
+    match:
+      path_prefix: /
+    proxy:
+      - http://192.168.1.50:8080
+</code></pre>
+<p>客户端 TLS 最终在 Home / Private 终止，因此私钥与证书必须由本地持有（Cloud 仅做 4 层 SNI 盲转发）。
+为保障多租户隔离与私钥绝对安全，LiteGate 严禁向客户端下发泛域名证书与私钥，推荐在 Home 端配置 <code>auto_cert</code> 启用 <code>type: connect</code> 的委托签发模式：</p>
+<ul>
+<li><strong>私钥本地生成</strong>：私钥在本地生成并支持 AES-GCM 本地落盘加密，绝不出网；</li>
+<li><strong>DNS-01 集中代办</strong>：由掌控 DNS 凭据的 Cloud 代理完成 ACME 验证；</li>
+<li><strong>无感签发与热续期</strong>：公钥证书自动下发并热加载，杜绝租户越权。</li>
+</ul>
+<p>详细配置与安全原则详见 <a href="../06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a>。</p>
+<p>已登记的 Connect Host 通过 Cloud TCP/80 访问时会返回 308 到相同规范化 Host 和 URI 的 HTTPS
+地址，包括 <code>pending_certificate</code> 和 <code>offline</code> 状态。未知 Host 不会被重定向，避免 Host Header
+开放重定向。</p>
+<h2 id="5-多-cloud-与-mtls">5. 多 Cloud 与 mTLS</h2>
+<p>多 Cloud 节点使用 <code>remotes</code>；<code>sessions</code> 必须不少于远端数量：</p>
+<pre><code class="language-yaml">connect:
+  client:
+    enabled: true
+    name: home
+    remotes:
+      - https://connect-a.example.com/_litegate/connect/v1
+      - https://connect-b.example.com/_litegate/connect/v1
+    sessions: 4
+    token_file: /etc/litegate/secrets/home-connect.token
+    publish_sites: true
+</code></pre>
+<p>可选 mTLS：Cloud 设置 <code>connect.server.client_ca_file</code>，Home 同时设置
+<code>connect.client.cert_file</code> 和 <code>connect.client.key_file</code>。客户端证书的 DNS 或 URI SAN 必须绑定 Peer
+名称；mTLS 是 Token 认证之外的第二层身份校验。</p>
+<h2 id="6-发布-l4-tcp--socks5-stream">6. 发布 L4 TCP / SOCKS5 Stream</h2>
+<p>Home 开启 <code>publish_streams</code>，并只对需要发布的 Stream 设置 <code>connect_publish</code>。普通 TCP
+Stream 使用 <code>true</code> 时既能从公网按 SNI 直连，也能被 Forward 分发：</p>
+<pre><code class="language-yaml">name: home-git-ssh
+protocol: tcp
+enabled: true
+listen: false
+connect_publish: true
+hostnames:
+  - git-ssh.home.example.com
+upstream: 192.168.1.60:22
+idle_timeout: 300
+</code></pre>
+<p>只打算给 Forward 使用时，设置 <code>connect_publish: forward_only</code>。Cloud 会保留该域名的
+Connect 路由供 Forward 查找，但拒绝不带 Forward token 的公网 SNI 直连。</p>
+<p>SOCKS5 Stream 也可以发布。为兼容旧配置，布尔值 <code>connect_publish: true</code> 会记录提示日志并
+自动收紧为 <code>forward_only</code>；显式写 <code>connect_publish: public</code> 会校验失败，避免误以为 SOCKS5
+可以安全地通过公网 SNI 直接发布：</p>
+<pre><code class="language-yaml">name: home-socks
+protocol: socks5
+enabled: true
+listen: false
+connect_publish: forward_only
+hostnames: [access.home.example.com]
+idle_timeout: 600
+socks5:
+  allowed_destinations:
+    - private:22,80,443,3389
+</code></pre>
+<p>Cloud 只需一个使用 <code>target.type: connect</code> 的 Forward Site：</p>
+<pre><code class="language-yaml">site: forward.example.com
+forward:
+  target:
+    type: connect
+    name: access.home.example.com
+  token_file: /etc/litegate/secrets/home-forward.token
+  max_sessions: 200
+  idle_timeout: 600
+</code></pre>
+<p>以后新增家庭服务只需调整 Home 白名单和客户端 mapping，无需修改 Cloud。Connect 当前发布
+TCP 和 SOCKS5 Stream；原生 QUIC/UDP 数据面尚未实现。</p>
+<h2 id="7-从-cloud-site-零中断迁移">7. 从 Cloud Site 零中断迁移</h2>
+<p>在现有 Cloud Site 上添加指定 Peer 的迁移授权：</p>
+<pre><code class="language-yaml">site: camera.example.com
+connect_override: home
+routes:
+  - name: old-cloud-upstream
+    match:
+      path_prefix: /
+    proxy:
+      - http://127.0.0.1:8080
+</code></pre>
+<p><code>connect_override</code> 只能用于精确域名，值必须是 Cloud 已配置的 Peer 名称。配置授权本身不会立即
+切流：在 <code>home</code> 成功注册同名精确域名后，新连接才原子切换到 Connect。接管后即使 Home 离线也
+保持 fail-closed，不会自动回落旧 Cloud upstream。回滚时先让 Home 撤销发布，再移除
+<code>connect_override</code>。</p>
+<h2 id="8-token-轮换">8. Token 轮换</h2>
+<p>Cloud Token 文件允许每个非空行一个 Token。零中断轮换顺序：</p>
+<ol>
+<li>Cloud 文件写入“新 Token”第一行、“旧 Token”第二行；</li>
+<li>Home 文件只写新 Token；</li>
+<li>等待所有 Home Session 使用新 Token 重连；</li>
+<li>从 Cloud 文件删除旧 Token。</li>
+</ol>
+<p>已有 Session 不会因 Token 文件变化被强制断开；新握手使用最新有效凭据快照。</p>
+<h2 id="9-验证与排障">9. 验证与排障</h2>
+<p>推荐分阶段上线：</p>
+<ol>
+<li>只启用 Cloud，确认原有 443 Site 和 Stream 不受影响；</li>
+<li>启用 Home，但先用测试域名；</li>
+<li>检查 Dashboard 中 Peer、Session、generation 和域名状态；</li>
+<li>对完整 Site 测试 WebSocket/SSE；对 CLI HTTP 模式测试 HTTP 308、HTTPS、SSE、大文件上传下载及断网恢复；</li>
+<li>稳定运行一晚后，再用 <code>connect_override</code> 逐个迁移。</li>
+</ol>
+<p>重点指标：</p>
+<ul>
+<li><code>litegate_connect_sessions</code></li>
+<li><code>litegate_connect_domains{state=&quot;ready|pending|offline|conflict&quot;}</code></li>
+<li><code>litegate_connect_active_connections</code></li>
+<li><code>litegate_connect_connections_total</code></li>
+<li><code>litegate_connect_registrations_total</code></li>
+<li><code>litegate_connect_authentication_total</code></li>
+<li><code>litegate_sni_connect_dispatch_queue_depth</code></li>
+</ul>
+<p>常见状态：</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>含义与处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pending_certificate</code></td>
+<td>Home websecure 或证书未就绪；检查证书文件、自动签发和 Site entrypoint</td>
+</tr>
+<tr>
+<td><code>offline</code></td>
+<td>所有物理 Session 已断开；检查 Cloud 地址、DNS、Token、TLS 和出口防火墙</td>
+</tr>
+<tr>
+<td><code>conflict</code></td>
+<td>同精度 Cloud 本地 pattern 占用；移除冲突或显式配置正确的 <code>connect_override</code></td>
+</tr>
+<tr>
+<td>注册被拒绝</td>
+<td>检查 <code>allowed_domains</code>、保留域名、跨 Peer 重名和注册速率限制</td>
+</tr>
+</tbody>
+</table>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/09-advanced/connect.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

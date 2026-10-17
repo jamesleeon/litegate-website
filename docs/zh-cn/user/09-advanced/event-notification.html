@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>事件通知：NATS &#43; LiteGate 通知体系 · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/09-advanced/event-notification.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details open><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html" class="current" aria-current="page">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="事件通知nats--litegate-通知体系">事件通知：NATS + LiteGate 通知体系</h1>
+<p>适用于这些场景：异步任务处理完要通知页面、列表和角标要实时刷新、配置变更要通知到各个服务、一个服务的状态变化要提醒另一个服务、租户被关闭后网关插件要立即丢掉缓存。</p>
+<p>一条通知可以有两类消费方：</p>
+<ul>
+<li><strong>客户端</strong>：浏览器和 Go 服务通过 SSE 订阅（第 5 到 8 节）。业务后端不再需要写 SSE、维护长连接和连接注册表，只需要状态变化后<strong>发一个 HTTP 请求</strong>，并继续提供原有的<strong>查询接口</strong>。</li>
+<li><strong>网关插件</strong>：插件声明自己关心的 subject，网关把通知直接投给它（第 9 节）。IDS 插件可以放心地缓存租户，租户关闭后秒级失效。</li>
+</ul>
+<p>推送、广播、多实例、心跳、断线重连，都交给 LiteGate 和 NATS。</p>
+<h2 id="1-自建-sse-的常见做法和问题">1. 自建 SSE 的常见做法和问题</h2>
+<p>很多系统是这样实现实时通知的：</p>
+<pre><code class="language-text">生产服务 ──POST /internal/events──▶ 业务后端（事件分发器）──进程内广播──▶ 浏览器 SSE 长连接
+</code></pre>
+<p>后端维护一张&quot;在线连接表&quot;，收到事件就遍历这张表往每条连接里写。前端用 <code>EventSource</code> 连上来，断线后自己重连。这种做法能跑起来，但有几个绕不开的问题：</p>
+<ul>
+<li><strong>广播只在本进程内有效。</strong> 后端一旦扩成两个实例，连在 A 上的浏览器就收不到 B 上产生的事件。</li>
+<li><strong>长连接压在业务后端上。</strong> 每个打开的页面都占一条连接，心跳、慢客户端、写超时、代理缓冲、停机时断开，全要后端自己处理。</li>
+<li><strong>每个系统都要重写一遍。</strong> 连接注册表、事件分发器、前端重连逻辑，换一个项目又写一次，各写各的。</li>
+<li><strong>前端分不清&quot;漏了消息&quot;和&quot;没有消息&quot;。</strong> 断线期间产生的事件丢了，页面也不知道该刷新。</li>
+</ul>
+<h2 id="2-新方案">2. 新方案</h2>
+<pre><code class="language-text">                          ┌──────────────── NATS ────────────────┐
+生产服务 ──HTTP POST──▶ LiteGate（发布路由）           LiteGate（订阅路由，每个节点）──SSE──▶ 浏览器 / Go 服务
+                                                                                         │
+                                                收到信号后 ──HTTP GET──▶ 业务后端原有接口（按权限返回数据）
+                                    └──▶ 声明了该 subject 的网关插件 ──▶ 删除缓存、重新加载
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>负责什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>生产服务</td>
+<td>状态变化后 POST 一个很小的信号，不需要 NATS 客户端</td>
+</tr>
+<tr>
+<td>LiteGate 发布路由</td>
+<td>校验主题白名单，把 HTTP 请求转成 NATS 消息</td>
+</tr>
+<tr>
+<td>NATS</td>
+<td>把消息广播给所有网关节点</td>
+</tr>
+<tr>
+<td>LiteGate 订阅路由</td>
+<td>鉴权，为每个在线客户端维持 SSE 连接、心跳、背压和限额</td>
+</tr>
+<tr>
+<td>客户端</td>
+<td>连上时刷新一次；收到信号后调用业务接口拉取最新数据</td>
+</tr>
+<tr>
+<td>业务后端</td>
+<td>继续提供原来的查询接口，权限照常在这里检查</td>
+</tr>
+</tbody>
+</table>
+<p>无论有多少个网关节点、多少个后端实例，每个节点上的订阅者都能收到广播。业务后端里不再有任何长连接。</p>
+<h2 id="3-核心约定只推信号数据自己拉">3. 核心约定：只推信号，数据自己拉</h2>
+<p>这一节是整套方案能&quot;简单又不丢状态&quot;的原因，<strong>生产方和客户端都必须遵守</strong>。</p>
+<p><strong>约定 1：消息只说明&quot;什么变了&quot;，不带业务数据。</strong></p>
+<pre><code class="language-json">{&quot;type&quot;: &quot;work_order.changed&quot;, &quot;key&quot;: &quot;WO-1001&quot;, &quot;version&quot;: 7, &quot;occurred_at&quot;: &quot;2026-10-08T10:30:00+08:00&quot;}
+</code></pre>
+<ul>
+<li><code>type</code>：什么类型的东西变了，客户端据此决定刷新哪一块。</li>
+<li><code>key</code>：哪一条变了，没有可以不填（表示&quot;整类都要刷新&quot;）。</li>
+<li><code>version</code>：可选，单调递增的版本号，客户端用来跳过旧信号。</li>
+<li>不要放金额、手机号、地址这类数据。信号会广播给订阅这个主题的所有客户端，<strong>权限只在拉取时检查</strong>。</li>
+</ul>
+<p><strong>约定 2：每次连上（包括重连）先刷新一次当前状态。</strong></p>
+<p>断线期间漏掉的信号，都靠这一次刷新补回来。LiteGate 会先确认 NATS 订阅已经生效，才向客户端写出第一个字节，所以客户端的&quot;连接已打开&quot;回调一触发，之后的变更都不会漏；而之前的变更，一定会体现在这次刷新的结果里。</p>
+<p><strong>约定 3：收到信号后按需重新拉取。</strong></p>
+<ul>
+<li>带了 <code>version</code> 的，本地已经是这个版本或更新，就直接跳过。</li>
+<li>短时间内收到多条信号，合并成一次拉取。</li>
+<li>拉取地址由客户端根据自己的配置拼出来，<strong>不要从消息里取 URL</strong>。否则能往这个主题发消息的人，就能把客户端引到任意地址。</li>
+</ul>
+<p>正因为有约定 2 兜底，这里用 Core NATS 就够了，不需要消息持久化，也不需要逐条确认：信号丢了，下一次连接时的刷新会补上；信号重复了，拉一次也无妨。</p>
+<h2 id="4-适用场景">4. 适用场景</h2>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>主题示例</th>
+<th>信号示例</th>
+<th>客户端收到后</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>工单有新回复</td>
+<td><code>notify.workorder</code></td>
+<td><code>{&quot;type&quot;:&quot;work_order.changed&quot;,&quot;key&quot;:&quot;WO-1001&quot;}</code></td>
+<td>刷新未读数和提醒列表</td>
+</tr>
+<tr>
+<td>新单据进来</td>
+<td><code>notify.refund</code></td>
+<td><code>{&quot;type&quot;:&quot;refund.created&quot;,&quot;key&quot;:&quot;R-88&quot;}</code></td>
+<td>刷新列表第一页</td>
+</tr>
+<tr>
+<td>异步任务完成</td>
+<td><code>notify.task</code></td>
+<td><code>{&quot;type&quot;:&quot;export.completed&quot;,&quot;key&quot;:&quot;job-42&quot;}</code></td>
+<td>查询任务状态，提示下载</td>
+</tr>
+<tr>
+<td>配置变更</td>
+<td><code>notify.config</code></td>
+<td><code>{&quot;type&quot;:&quot;config.changed&quot;,&quot;key&quot;:&quot;store-001&quot;,&quot;version&quot;:42}</code></td>
+<td>拉取新配置并应用</td>
+</tr>
+<tr>
+<td>服务之间的状态提醒</td>
+<td><code>notify.config</code></td>
+<td>同上</td>
+<td>Go 服务刷新本地缓存</td>
+</tr>
+<tr>
+<td>租户被关闭</td>
+<td><code>notify.tenant</code></td>
+<td><code>{&quot;tenant_id&quot;:&quot;acme&quot;,&quot;type&quot;:&quot;tenant.disabled&quot;}</code></td>
+<td>IDS 插件删除该租户的缓存（第 9 节）</td>
+</tr>
+<tr>
+<td>凭据被吊销</td>
+<td><code>notify.credential</code></td>
+<td><code>{&quot;app_key&quot;:&quot;k-1&quot;,&quot;type&quot;:&quot;revoked&quot;}</code></td>
+<td>鉴权插件删除该凭据的缓存</td>
+</tr>
+</tbody>
+</table>
+<p>主题建议按&quot;一类信号一个主题&quot;划分，客户端按页面需要订阅一个或几个主题。</p>
+<h2 id="5-网关配置">5. 网关配置</h2>
+<h3 id="51-nats-连接">5.1 NATS 连接</h3>
+<p>在插件配置文件中声明连接，所有网关节点连到同一个 NATS 集群：</p>
+<pre><code class="language-yaml">plugins:
+  nats:
+    connections:
+      default:
+        servers: &quot;nats://10.0.0.20:4222&quot;
+        connect_timeout: &quot;3s&quot;
+        reconnect_wait: &quot;1s&quot;
+        max_reconnects: &quot;-1&quot;
+</code></pre>
+<p>生产环境请配置 NATS 凭证和 TLS，详见 <a href="../../nats_deployment_guide.html">NATS 部署指南</a>。</p>
+<h3 id="52-站点文件">5.2 站点文件</h3>
+<pre><code class="language-yaml">site: app.example.com
+
+middlewares:
+  login:
+    type: forward_auth
+    config:
+      address: 127.0.0.1:8080    # 业务后端
+      uri: /api/auth/check       # 登录有效返回 2xx，否则返回 401
+
+routes:
+  # 发布：只给内网的生产服务用。POST /internal/notify/&lt;主题&gt;
+  - match: { prefix: /internal/notify/ }
+    ip_restriction:
+      allow_ips: [10.0.0.0/8, 127.0.0.1/32]
+    action:
+      type: nats
+      mode: publish
+      connection: default
+      subject_from: path.1                     # /internal/notify/workorder → workorder
+      subject_prefix: notify                   # 最终主题 notify.workorder
+      subject_allowlist: [workorder, refund, task, config, tenant]
+
+  # 订阅：登录后才能连。每类信号一条路由
+  - match: { path: /events/workorder }
+    use: login
+    action:
+      type: nats
+      mode: subscribe
+      connection: default
+      subject: notify.workorder
+      sse:
+        tenant: app              # 限额和监控分组，不是鉴权
+        max_connections: 500     # 单节点上限
+
+  # 业务接口照旧
+  - match: { prefix: /api/ }
+    proxy: 127.0.0.1:8080
+</code></pre>
+<p>几点说明：</p>
+<ul>
+<li><strong>发布路由只对内网开放。</strong> 除了 <code>ip_restriction</code>，最好再给网关使用的 NATS 账号只授予 <code>notify.&gt;</code> 的发布权限。这是 NATS 服务端强制的第二道防线。</li>
+<li><strong><code>subject_allowlist</code> 是必需的。</strong> 不在名单里的主题直接返回 403，生产方写错主题会马上发现。</li>
+<li><strong>订阅路由一定要鉴权。</strong> 上面用 <code>forward_auth</code> 把请求里的 <code>Cookie</code>、<code>Authorization</code> 转给后端的 <code>/api/auth/check</code>，后端只需要写一个&quot;检查登录是否有效&quot;的接口；但每建立一条连接都要回调一次后端。业务系统使用 JWT 时，推荐改用下一节的方式，由网关直接验签。</li>
+<li>前缀匹配必须写 <code>prefix</code>；写成 <code>path</code> 是精确匹配，<code>/internal/notify/workorder</code> 会匹配不上。</li>
+</ul>
+<h3 id="53-订阅鉴权用-jwt-cookie-保护订阅推荐">5.3 订阅鉴权：用 JWT Cookie 保护订阅（推荐）</h3>
+<p>不加鉴权的订阅，任何人连上来都能收到信号。信号虽然不带业务数据，但仍会暴露单号、业务节奏，大量匿名连接还会耗尽连接额度。业务系统已经在用 JWT 时，只需让同一个 JWT 也出现在 Cookie 里，网关就能自己验证，不再回调后端：</p>
+<pre><code class="language-text">登录成功 ──▶ 后端照常返回 JWT，另外下发 Set-Cookie: lg_token=&lt;同一个 JWT&gt;; HttpOnly
+new EventSource('/events/workorder') ──▶ 浏览器自动带上 Cookie ──▶ 网关验签通过才建立订阅
+令牌过期 ──▶ 网关断开推送流 ──▶ 浏览器重连时带上续签后的 Cookie，重新验证
+</code></pre>
+<p>网关配置：</p>
+<pre><code class="language-yaml">site: app.example.com
+/events/workorder:
+  auth:
+    type: jwt
+    secret: env://APP_JWT_SECRET      # 和业务后端签发 JWT 用的是同一个密钥
+    token_from: [cookie:lg_token]
+    subject_claim: user_id
+    tenant_claim: tenant_id
+  subscribe: notify.{auth.tenant}.workorder   # 每个租户一个主题，见 5.4 节
+</code></pre>
+<p>业务后端要在<strong>所有</strong>签发或更换令牌的地方同步写这个 Cookie，并在退出时清除：</p>
+<table>
+<thead>
+<tr>
+<th>时机</th>
+<th>后端要做的事</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>登录成功</td>
+<td>写 Cookie</td>
+</tr>
+<tr>
+<td>令牌续签（例如在响应头里下发新令牌的滑动续签）</td>
+<td><strong>同一个响应里</strong>重新写 Cookie。只更新前端 localStorage 不够：业务接口还能用，订阅重连却会一直 401</td>
+</tr>
+<tr>
+<td>退出登录</td>
+<td>写一个立即过期的同名 Cookie（<code>Max-Age=0</code>）。HttpOnly Cookie 只能由服务端清除，前端脚本删不掉</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-go">http.SetCookie(w, &amp;http.Cookie{
+
+```go
+http.SetCookie(w, &amp;http.Cookie{
+	Name:     &quot;lg_token&quot;,
+	Value:    token,           // 与返回给前端的 JWT 相同
+	Path:     &quot;/events&quot;,       // 只在订阅路径上发送
+	Expires:  expiresAt,       // 与 JWT 的 exp 一致
+	HttpOnly: true,            // 页面脚本读不到，XSS 偷不走
+	Secure:   true,            // 只经 HTTPS 发送
+	SameSite: http.SameSiteLaxMode,
+})
+</code></pre>
+<p>在下面两个条件都满足时，令牌的携带方式不用改，<code>new EventSource('/events/workorder')</code> 会自动带上 Cookie：页面和订阅地址同源；订阅路径落在 Cookie 的 <code>Path</code> 之内。生产环境应明确设置 <code>Secure</code>、<code>SameSite</code>，并让 <code>Expires</code> 和 JWT 的 <code>exp</code> 一致，规则见 <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie">MDN Set-Cookie</a>。需要注意以下几点：</p>
+<ul>
+<li><strong>401 要引导重新登录。</strong> 没有 Cookie 或令牌已过期时，网关返回 401，原生 <code>EventSource</code> 收到非 200 的响应后会永久停止重连。应用应在 <code>onerror</code> 中判断登录状态，重新登录后再新建 <code>EventSource</code>。</li>
+<li><strong>令牌过期，推送就停。</strong> 只要 JWT 验证通过，网关就会在 <code>max_duration</code> 和令牌 <code>exp</code> 中较早的时刻断开连接，断开原因记为 <code>auth_expired</code>，与是否配置 <code>subject_claim</code> 无关。没有 <code>exp</code> 的令牌没有过期边界，连接只受 <code>max_duration</code> 限制，签发方应始终写入 <code>exp</code>。</li>
+<li><strong>CSRF。</strong> 订阅是只读的 GET 请求；离线模式的 ACK 必须是 <code>Content-Type: application/json</code>，普通表单发不出这种请求。<code>Path=/events</code> 能让这个 Cookie 只出现在订阅路径上。</li>
+<li><strong>跨域订阅。</strong> 页面和网关不同源时，使用 <code>new EventSource(url, { withCredentials: true })</code>，Cookie 设为 <code>SameSite=None; Secure</code>，订阅路由配置允许凭证的 CORS。</li>
+<li><strong>离线进度按租户和用户区分。</strong> 加上 <code>offline: auth.subscriber</code>，离线进度、会话租约和确认凭据都绑定&quot;租户 + <code>subject_claim</code>&quot;，不同租户里相同的用户 ID 互不影响，也不能互相确认消息。这个值只能包含字母、数字、<code>_</code>、<code>-</code>，最长 128 个字符。</li>
+<li><strong>离线模式需要可靠订阅客户端。</strong> 离线模式推送的是 <code>{sequence, ack_token, payload}</code>，业务处理完成后必须 POST ACK，否则这个用户会一直停在第一条消息上。原来直接读取 <code>event.data</code> 的前端代码要换成可靠客户端 <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/nats-events/browser-client.js">browser-client.js</a>（Go 用 <code>pkg/eventclient</code>）。只需在线信号时不加 <code>offline</code>，前端处理方式不变。</li>
+<li><strong>改不了登录流程时</strong>，退回到 5.2 节的 <code>forward_auth</code>，由后端校验登录状态。</li>
+</ul>
+<p>字段的完整说明见 <a href="../05-middleware/authentication.html#%E7%94%A8-jwt-%E4%BF%9D%E6%8A%A4%E6%8E%A5%E5%8F%A3%E5%92%8C%E8%AE%A2%E9%98%85">认证概述</a>。</p>
+<h3 id="54-多租户隔离">5.4 多租户隔离</h3>
+<p>固定主题（如 <code>notify.workorder</code>）会被所有通过鉴权的租户共同订阅。不同租户只能收到自己的信号时，把已验证的身份写进主题：</p>
+<pre><code class="language-yaml">/publish:                                   # 内网发布方在正文里给出租户
+  publish: notify.{body.tenant_id}.workorder
+  offline: true
+/events/workorder:                          # 订阅方只能订阅自己租户的主题
+  auth: { type: jwt, secret: env://APP_JWT_SECRET, token_from: [cookie:lg_token], subject_claim: user_id, tenant_claim: tenant_id }
+  subscribe: notify.{auth.tenant}.workorder
+  offline: auth.subscriber
+</code></pre>
+<ul>
+<li>订阅主题只能使用 <code>{auth.tenant}</code>、<code>{auth.subscriber}</code>，它们只来自网关验证过的身份：5.3 节 JWT 的 <code>tenant_claim</code>、<code>subject_claim</code>，或者 <a href="../05-middleware/ids-governance.html">IDS 身份治理</a>。写 <code>{query.x}</code>、<code>{body.x}</code> 会在加载时被拒绝，客户端在 URL 里带 <code>?tenant=xxx</code> 也改变不了订阅范围。</li>
+<li><code>{auth.subscriber}</code> 可以做&quot;按用户的私信&quot;，例如 <code>notify.user.{auth.subscriber}</code>。</li>
+<li>发布路由是内网路由，可以从正文、请求头、查询参数里取（<code>{body.x}</code>、<code>{header.x}</code>、<code>{query.x}</code>）。</li>
+<li>离线模式下，发布和订阅两边自动共用一个覆盖 <code>notify.*.workorder</code> 的 stream。</li>
+<li>连接限额按站点统计。需要按租户分配限额时，用完整写法 <code>action: {type: nats, ...}</code> 的 <code>sse.tenants</code> 白名单。</li>
+</ul>
+<p>只用 <code>forward_auth</code> 时不会产生租户身份。这种情况有两种做法：按租户拆成不同的路由和主题，各自挂不同的鉴权；或者坚持约定 1，信号里不带数据，靠拉取接口的权限检查兜底。</p>
+<h2 id="6-生产方发一个-http-请求">6. 生产方：发一个 HTTP 请求</h2>
+<p>Go 服务使用 <code>pkg/natspub</code>：</p>
+<pre><code class="language-go">import &quot;github.com/jamesleeon/LiteGate/pkg/natspub&quot;
+
+var notify = natspub.New(&quot;http://10.0.0.10&quot;)   // LiteGate 内网地址
+
+// 业务事务提交之后再发；发送失败只记日志，不要影响业务结果。
+func emitWorkOrderChanged(ctx context.Context, id string, version int64) {
+	_, err := notify.Publish(ctx, &quot;/internal/notify/workorder&quot;, map[string]any{
+		&quot;type&quot;:    &quot;work_order.changed&quot;,
+		&quot;key&quot;:     id,
+		&quot;version&quot;: version,
+	})
+	if err != nil {
+		log.Warn().Err(err).Str(&quot;work_order&quot;, id).Msg(&quot;notify failed&quot;)
+	}
+}
+</code></pre>
+<p>其它语言直接发 HTTP 请求即可：</p>
+<pre><code class="language-bash">curl -X POST http://10.0.0.10/internal/notify/workorder -H &quot;Content-Type: application/json&quot; -d &quot;{\&quot;type\&quot;:\&quot;work_order.changed\&quot;,\&quot;key\&quot;:\&quot;WO-1001\&quot;}&quot;
+</code></pre>
+<p>网关返回 <code>202</code> 表示消息已交给 NATS，<strong>不代表已持久化，也不代表客户端收到了</strong>。这是有意的设计：通知是尽力而为的，丢失由客户端的&quot;连上先刷新&quot;兜底。所以发送失败时不要回滚业务，也不需要重试队列。</p>
+<h2 id="7-web-客户端">7. Web 客户端</h2>
+<h3 id="71-使用-cookie-登录的页面eventsource">7.1 使用 Cookie 登录的页面：EventSource</h3>
+<pre><code class="language-javascript">// 将仓库 examples/nats-events/notify-browser-client.js 复制到应用中。
+import { subscribeSignals } from './notify-browser-client.js';
+
+const stop = subscribeSignals({
+  url: '/events/workorder',
+  // 每次重新查询整个列表和角标；不同对象的信号可以安全合并。
+  refreshAll,
+  onError: error =&gt; console.error(error)
+});
+// 页面离开时调用 stop()。
+</code></pre>
+<p>示例在首次连接和每次重连时刷新当前状态，串行执行查询，并将短时间内不同 key 的通知合并成一次完整刷新；刷新期间的新通知会触发后续刷新，查询失败会重试。若改为按 key 查询，需累计所有变更 key，不能仅保留最后一条通知。完整实现见 <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/nats-events/notify-browser-client.js">notify-browser-client.js</a>。</p>
+<p>浏览器会按网关下发的 <code>retry</code>（2 到 8 秒的随机值）自动重连，所以不用自己写重连逻辑。注意：如果网关返回非 200（比如登录过期返回 401），<code>EventSource</code> 会<strong>永久停止</strong>重连，这时应该引导用户重新登录，登录后再建一个新的 <code>EventSource</code>。</p>
+<h3 id="72-使用-bearer-令牌的页面fetch-读流">7.2 使用 Bearer 令牌的页面：fetch 读流</h3>
+<p>原生 <code>EventSource</code> 不能设置 <code>Authorization</code> 请求头。令牌存在 localStorage 里的单页应用，可以用下面这个模块代替：</p>
+<pre><code class="language-javascript">// notify.js
+export function subscribeNotify({ url, headers = {}, onOpen, onEvent, onError = console.error }) {
+  let stopped = false;
+  let controller;
+  let failures = 0;
+
+  async function run() {
+    while (!stopped) {
+      let retry = 2000 + Math.random() * 6000;
+      try {
+        controller = new AbortController();
+        const res = await fetch(url, {
+          headers: { ...headers, Accept: 'text/event-stream' },
+          credentials: 'include',
+          signal: controller.signal,
+        });
+        if (res.status === 401 || res.status === 403) {
+          onError(new Error(`unauthorized: ${res.status}`));
+          return; // let the app re-login, then subscribe again
+        }
+        if (!res.ok || !res.body) throw new Error(`subscribe failed: ${res.status}`);
+        failures = 0;
+        await onOpen?.(); // resync: reload current state on every (re)connect
+        let buffer = '';
+        let data = [];
+        const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+        for (;;) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += value;
+          let nl;
+          while ((nl = buffer.indexOf('\n')) &gt;= 0) {
+            const line = buffer.slice(0, nl).replace(/\r$/, '');
+            buffer = buffer.slice(nl + 1);
+            if (line === '') {
+              if (data.length) await onEvent?.(data.join('\n'));
+              data = [];
+            } else if (line.startsWith('data:')) {
+              data.push(line.slice(5).replace(/^ /, ''));
+            } else if (line.startsWith('retry:')) {
+              const ms = Number(line.slice(6));
+              if (ms &gt;= 1000 &amp;&amp; ms &lt;= 60000) retry = ms;
+            } // ':' comments (heartbeats) and 'event:' lines need no handling
+          }
+        }
+      } catch (err) {
+        if (stopped) return;
+        onError(err);
+        failures++;
+      }
+      if (stopped) return;
+      // Server-chosen jitter first; back off further while the gateway keeps failing.
+      await new Promise(r =&gt; setTimeout(r, Math.min(retry * 2 ** Math.min(failures, 3), 30000)));
+    }
+  }
+  run();
+  return () =&gt; { stopped = true; controller?.abort(); };
+}
+</code></pre>
+<p>使用方式：</p>
+<pre><code class="language-javascript">import { subscribeNotify } from './notify.js';
+
+const stop = subscribeNotify({
+  url: '/events/workorder',
+  headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+  onOpen: () =&gt; refreshAll(),
+  onEvent: data =&gt; refreshFor(JSON.parse(data)),
+  onError: err =&gt; console.warn('notify:', err.message),
+});
+// 退出登录或离开页面时：stop();
+</code></pre>
+<p>收到 401 或 403 时模块会停止，不会反复重试。应用刷新令牌后重新调用 <code>subscribeNotify</code> 即可。</p>
+<h2 id="8-go-客户端">8. Go 客户端</h2>
+<p>服务之间的通知（比如配置变更后刷新本地缓存）可以使用下面这个客户端。它只依赖标准库：</p>
+<pre><code class="language-go">package notify
+
+import (
+	&quot;bufio&quot;
+	&quot;context&quot;
+	&quot;errors&quot;
+	&quot;fmt&quot;
+	&quot;math/rand/v2&quot;
+	&quot;net/http&quot;
+	&quot;strconv&quot;
+	&quot;strings&quot;
+	&quot;time&quot;
+)
+
+// Subscriber consumes a LiteGate `mode: subscribe` event stream.
+// Messages are signals: OnOpen reloads state after every (re)connect, so
+// anything missed while disconnected is recovered by that reload.
+type Subscriber struct {
+	URL     string
+	Header  http.Header  // e.g. Authorization; sent on every connect
+	Client  *http.Client // must not set Client.Timeout (the stream is long-lived)
+	OnOpen  func(ctx context.Context) error
+	OnEvent func(ctx context.Context, data []byte) error
+	OnError func(err error)
+}
+
+var ErrUnauthorized = errors.New(&quot;notify: unauthorized&quot;)
+
+func (s *Subscriber) Run(ctx context.Context) error {
+	client := s.Client
+	if client == nil {
+		client = &amp;http.Client{}
+	}
+	failures := 0
+	for {
+		retry, err := s.session(ctx, client)
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		if errors.Is(err, ErrUnauthorized) {
+			return err
+		}
+		if err == nil {
+			failures = 0 // the stream ended normally (max_duration, reload)
+		} else {
+			failures++
+			if s.OnError != nil {
+				s.OnError(err)
+			}
+		}
+		wait := min(retry&lt;&lt;min(failures, 3), 30*time.Second)
+		select {
+		case &lt;-ctx.Done():
+			return ctx.Err()
+		case &lt;-time.After(wait):
+		}
+	}
+}
+
+// session runs one connection and returns the reconnect delay to use next.
+func (s *Subscriber) session(ctx context.Context, client *http.Client) (time.Duration, error) {
+	retry := time.Duration(2000+rand.IntN(6001)) * time.Millisecond
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, s.URL, nil)
+	if err != nil {
+		return retry, err
+	}
+	for k, v := range s.Header {
+		req.Header[k] = v
+	}
+	req.Header.Set(&quot;Accept&quot;, &quot;text/event-stream&quot;)
+	resp, err := client.Do(req)
+	if err != nil {
+		return retry, err
+	}
+	defer resp.Body.Close()
+	switch {
+	case resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden:
+		return retry, ErrUnauthorized
+	case resp.StatusCode != http.StatusOK:
+		return retry, fmt.Errorf(&quot;notify: subscribe status %d&quot;, resp.StatusCode)
+	}
+	if s.OnOpen != nil {
+		if err := s.OnOpen(ctx); err != nil {
+			return retry, fmt.Errorf(&quot;notify: resync: %w&quot;, err)
+		}
+	}
+	scanner := bufio.NewScanner(resp.Body)
+	scanner.Buffer(make([]byte, 64*1024), 1024*1024)
+	var data []string
+	for scanner.Scan() {
+		line := scanner.Text()
+		switch {
+		case line == &quot;&quot;:
+			if len(data) &gt; 0 &amp;&amp; s.OnEvent != nil {
+				if err := s.OnEvent(ctx, []byte(strings.Join(data, &quot;\n&quot;))); err != nil {
+					return retry, err // reconnect; OnOpen will resync
+				}
+			}
+			data = data[:0]
+		case strings.HasPrefix(line, &quot;data:&quot;):
+			data = append(data, strings.TrimPrefix(strings.TrimPrefix(line, &quot;data:&quot;), &quot; &quot;))
+		case strings.HasPrefix(line, &quot;retry:&quot;):
+			if ms, err := strconv.Atoi(strings.TrimSpace(line[6:])); err == nil &amp;&amp; ms &gt;= 1000 &amp;&amp; ms &lt;= 60000 {
+				retry = time.Duration(ms) * time.Millisecond
+			}
+		} // ':' heartbeats and 'event:' lines need no handling
+	}
+	return retry, scanner.Err()
+}
+</code></pre>
+<p>使用方式（需要 Go 1.21 及以上）：</p>
+<pre><code class="language-go">sub := &amp;notify.Subscriber{
+	URL:    &quot;http://10.0.0.10/events/config&quot;,
+	Header: http.Header{&quot;Authorization&quot;: {&quot;Bearer &quot; + serviceToken}},
+	OnOpen: func(ctx context.Context) error {
+		return cache.ReloadAll(ctx) // 约定 2：连上就全量刷新
+	},
+	OnEvent: func(ctx context.Context, data []byte) error {
+		var sig struct {
+			Key     string `json:&quot;key&quot;`
+			Version int64  `json:&quot;version&quot;`
+		}
+		if err := json.Unmarshal(data, &amp;sig); err != nil {
+			return nil // 不认识的信号直接忽略
+		}
+		if cache.Version(sig.Key) &gt;= sig.Version {
+			return nil // 约定 3：旧信号跳过
+		}
+		return cache.Reload(ctx, sig.Key)
+	},
+	OnError: func(err error) { log.Warn().Err(err).Msg(&quot;notify reconnecting&quot;) },
+}
+go sub.Run(ctx) // 返回 ErrUnauthorized 时说明凭证失效，需要排查配置
+</code></pre>
+<p><code>OnEvent</code> 返回错误时，客户端会断开并重连，重连后 <code>OnOpen</code> 会再全量刷新一次，所以处理失败也不会留下不一致的状态。</p>
+<h2 id="9-插件订阅通知插件自己定义-subject">9. 插件订阅通知：插件自己定义 subject</h2>
+<p>前面几节的消费方是浏览器和 Go 服务。网关里的<strong>插件</strong>同样可以消费通知，典型例子是 IDS：插件为了性能把租户、凭据缓存在进程内，租户在租户系统里被关闭后，网关缓存里还是旧状态，请求照样能通过，直到缓存过期。</p>
+<p>LiteGate 不假设插件有没有缓存、缓存了什么。它提供的是一条<strong>可选的通知通道</strong>：插件声明自己关心的 subject，外部系统往这个 subject 发信号，网关把信号投递给这个插件。</p>
+<pre><code class="language-text">租户系统关闭租户 ──POST /internal/notify/tenant──▶ LiteGate ──▶ NATS: notify.tenant
+                                                                   │
+                     每个网关节点上声明了 notify.tenant 的插件 ◀──────┘ → 删除自己的缓存
+</code></pre>
+<p>subject 就是插件和外部系统之间的约定：插件定义它，外部系统往它发信号，只有声明了它的插件会收到。插件不需要在代码里判断&quot;这条是不是给我的&quot;。</p>
+<h3 id="91-插件要写什么">9.1 插件要写什么</h3>
+<p>仅需要通知的插件才实现可选接口 <code>plugin.NotifySubscriber</code>。IDS 本身不要求缓存，也不要求订阅 notify；例如只做 MD5 验签的插件可以只实现 <code>Evaluate</code>。未实现此接口或返回空 subject 列表的插件不建立订阅，无需配置 <code>shared.notify</code>。</p>
+<p>接口如下：</p>
+<pre><code class="language-go">type NotifySubscriber interface {
+	NotifySubjects() []string
+	HandleNotify(ctx context.Context, n plugin.Notification) error
+}
+</code></pre>
+<p>下面仅以使用本地缓存、需要主动失效的 IDS Provider 为例：</p>
+<pre><code class="language-go">func (p *Provider) NotifySubjects() []string { return []string{&quot;notify.tenant&quot;} }
+
+func (p *Provider) HandleNotify(ctx context.Context, n plugin.Notification) error {
+	if n.Resync { // 可能漏了消息：清掉全部
+		p.tenants.InvalidateAll()
+		return nil
+	}
+	var signal struct {
+		TenantID string `json:&quot;tenant_id&quot;`
+	}
+	if json.Unmarshal(n.Data, &amp;signal) == nil &amp;&amp; signal.TenantID != &quot;&quot; {
+		p.tenants.Invalidate(signal.TenantID)
+	}
+	return nil
+}
+</code></pre>
+<p><code>p.tenants</code> 是 <code>idskit.IdentityLoader</code>。<code>InvalidateAll</code> 除了清空缓存，还会隔离正在进行的回源，旧结果不会被写回。</p>
+<p>subject 支持通配符：<code>notify.tenant.*</code> 匹配一级，<code>notify.config.&gt;</code> 匹配剩余所有层级。<code>_INBOX</code>、<code>$SYS</code>、<code>$JS</code> 开头的 subject 会被拒绝；写错的 subject 会让插件创建失败，而不是悄悄收不到消息。</p>
+<h3 id="92-网关保证什么">9.2 网关保证什么</h3>
+<table>
+<thead>
+<tr>
+<th>保证</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>生命周期</td>
+<td>仅声明非空 subject 的 Provider 在创建时订阅，退役或关闭前退订</td>
+</tr>
+<tr>
+<td>串行</td>
+<td>同一个实例的 <code>HandleNotify</code> 串行调用，可能与 <code>Evaluate</code> 并发，插件维护的状态要线程安全</td>
+</tr>
+<tr>
+<td>隔离</td>
+<td>每个插件有独立的订阅和队列，一个插件处理慢或出错不影响其他插件</td>
+</tr>
+<tr>
+<td><code>Resync</code></td>
+<td>消息不持久化、不重投。以下情况网关都会下发一次 <code>Resync</code>：订阅刚生效；断线重连；NATS 丢了消息；队列积压溢出；上一次 <code>HandleNotify</code> 返回错误或 panic（退避 1 到 30 秒后）</td>
+</tr>
+</tbody>
+</table>
+<p>收到 <code>Resync</code> 表示可能漏过通知，插件应重新校准自己依赖的状态：有缓存可以失效缓存，持有本地快照可以重新加载，没有本地状态可以直接成功返回。恢复正确性依赖插件能够重新读取当前状态，通知不会补发历史消息。</p>
+<h3 id="93-外部系统要发什么">9.3 外部系统要发什么</h3>
+<p>和第 6 节完全一样，只是换一个主题。在第 5.2 节发布路由的 <code>subject_allowlist</code> 里加上 <code>tenant</code>，租户系统在关闭租户的事务<strong>提交之后</strong>发信号：</p>
+<pre><code class="language-bash">curl -X POST http://10.0.0.10/internal/notify/tenant -H &quot;Content-Type: application/json&quot; -d &quot;{\&quot;tenant_id\&quot;:\&quot;acme\&quot;,\&quot;type\&quot;:\&quot;tenant.disabled\&quot;}&quot;
+</code></pre>
+<p>消息格式由插件和发布方约定，网关不解析。</p>
+<h3 id="94-开启通知总线">9.4 开启通知总线</h3>
+<p>插件订阅默认关闭，在插件配置里指定使用哪个 NATS 连接即可开启：</p>
+<pre><code class="language-yaml">plugins:
+  nats:
+    connections:
+      default:
+        servers: &quot;nats://10.0.0.20:4222&quot;
+shared:
+  notify:
+    connection: default
+</code></pre>
+<p>没有配置时，声明了 subject 的插件照常工作，只是收不到通知，启动日志里会有提示。订阅权限被 NATS 拒绝时，监听会报错并重试，在线指标为 0；Flush 成功不会被当作已授权。修改连接配置会等待旧回调退出，再重建订阅并先处理 <code>Resync</code>；与通知无关的配置变更、站点热重载都不会打断它。</p>
+<h3 id="95-注意事项">9.5 注意事项</h3>
+<ul>
+<li><strong>共享缓存（Redis）由发布方删除。</strong> 插件只删自己进程内的缓存。Redis 这类多个网关共用的缓存，建议由租户系统在发信号<strong>之前</strong>删掉。如果让每个网关都去删，可能有网关正在用旧数据回源，删完之后又把旧值写回去。另一种做法是缓存值里带版本号，旧版本拒绝写入。</li>
+<li><strong>使用缓存时应保留 TTL。</strong> 通知把失效延迟从&quot;等 TTL 过期&quot;缩短到秒级；万一通知总线长时间不可用，TTL 是最坏情况下的上限。</li>
+<li><strong>拒绝要在 <code>Evaluate</code> 里做。</strong> 缓存失效只负责让插件尽快读到新状态；租户已关闭时，<code>Evaluate</code> 仍需返回明确的 401 或 403。</li>
+<li><strong>已经建立的连接不会被撤回。</strong> 通知生效后，新请求会走新状态；已经在执行的请求和已经建立的长连接不受影响。</li>
+</ul>
+<p>可以从这些指标观察插件订阅，<code>subscriber</code> 标签形如 <code>ids:&lt;provider 名称&gt;</code>：</p>
+<ul>
+<li><code>litegate_notify_subscription_live</code>：订阅是否在线（1 为在线）。</li>
+<li><code>litegate_notify_messages_total</code>：成功处理的通知数。</li>
+<li><code>litegate_notify_resyncs_total</code>：下发 <code>Resync</code> 的次数。</li>
+<li><code>litegate_notify_errors_total</code>：失败次数，<code>stage</code> 区分 subscribe、handler、overflow。</li>
+</ul>
+<p>目前由框架自动接入的是 IDS Provider；其它类型的插件需要同样能力时，也会使用同一个接口。</p>
+<h2 id="10-运行特性和边界">10. 运行特性和边界</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>心跳</td>
+<td>默认每 15 秒一次注释心跳。前置代理的空闲超时要大于心跳间隔，并关闭响应缓冲</td>
+</tr>
+<tr>
+<td>连接时长</td>
+<td>默认 15 分钟（<code>max_duration</code>）后断开，客户端随即重连；重连时会重新鉴权</td>
+</tr>
+<tr>
+<td>配置热重载</td>
+<td>大约 15 秒后会断开所有流，客户端在 2 到 8 秒的随机时间后重连并刷新，不会同时涌入</td>
+</tr>
+<tr>
+<td>慢客户端</td>
+<td>缓冲满了就断开这一条连接，不影响其他人；重连后由&quot;刷新&quot;补齐</td>
+</tr>
+<tr>
+<td>NATS 掉线</td>
+<td>网关检测到重连后会断开流，让客户端重连并刷新</td>
+</tr>
+<tr>
+<td>限额</td>
+<td><code>max_connections</code> 按单节点、单个 <code>tenant</code> 分组计算</td>
+</tr>
+<tr>
+<td>压缩</td>
+<td>LiteGate 对 SSE 自动关闭压缩。不要给事件路由配置响应缓存</td>
+</tr>
+</tbody>
+</table>
+<p>可以从这些指标观察运行状态：</p>
+<ul>
+<li><code>litegate_nats_sse_connections</code>：当前连接数。</li>
+<li><code>litegate_nats_sse_messages_total</code>：推送出去的信号数。</li>
+<li><code>litegate_nats_sse_disconnects_total</code>：断开次数，<code>reason</code> 区分限额、慢客户端、写错误、NATS 不可用、到达最长时长和停机。</li>
+<li><code>litegate_nats_sse_dropped_events_total</code>：因格式错误或超大而丢弃的消息。</li>
+</ul>
+<p><strong>这套方案不保证的事：</strong> 消息不持久化、不重放，也不知道客户端是否处理了某条信号。这些都由第 3 节的约定兜底，所以只适合&quot;信号 + 拉取&quot;的模式。如果一条消息本身就是数据，必须逐条送达并由应用确认，请使用 <a href="../04-actions/nats-events.html">可靠事件通知</a>。它的成本高得多：每个订阅者对应一个 JetStream 持久消费者。</p>
+<h2 id="11-从自建-sse-迁移">11. 从自建 SSE 迁移</h2>
+<p>JWT、Cookie 续签、多租户隔离、可靠 ACK、租户停用及 MCP 操作的配置与限制，集中见 <a href="./notify-jwt-integration.html">Notify 与业务 JWT 接入</a>。</p>
+<ol>
+<li>部署 NATS，按第 5 节配置发布路由和订阅路由。</li>
+<li>业务后端写一个&quot;检查登录&quot;接口给 <code>forward_auth</code> 用，通常复用现有的鉴权逻辑。</li>
+<li>生产方把&quot;POST 到后端的内部事件接口&quot;改成&quot;POST 到 <code>/internal/notify/&lt;主题&gt;</code>&quot;，消息体按约定 1 精简为信号。</li>
+<li>前端把 <code>EventSource</code> 的地址改到 <code>/events/&lt;主题&gt;</code>，确认 <code>onopen</code> 里会刷新、<code>onmessage</code> 里只做&quot;按信号拉取&quot;。如果原来的消息里带了业务数据，改成收到信号后调用接口查询。</li>
+<li>观察一段时间指标，确认没问题后，删除后端的 SSE 接口、连接注册表和内部事件分发器。</li>
+</ol>
+<p>迁移完成后，业务后端就是一个普通的无状态 HTTP 服务，可以随意扩成多个实例，不用再考虑广播。</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/09-advanced/event-notification.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

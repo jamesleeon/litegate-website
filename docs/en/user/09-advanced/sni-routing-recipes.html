@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L4 SNI Routing on Port 443 Combined with L7: Recipes · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/09-advanced/sni-routing-recipes.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details open><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html" class="current" aria-current="page">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="l4-sni-routing-on-port-443-combined-with-l7-recipes">L4 SNI Routing on Port 443 Combined with L7: Recipes</h1>
+<p>On one TCP/443, the SNI (and ALPN) in the TLS ClientHello decides where a connection goes: some are passed through untouched to other programs, some have TLS terminated by LiteGate and become layer-4 byte streams, and the rest enter LiteGate's own HTTPS sites. Starting from common caddy-l4 configurations, this page shows the LiteGate equivalents and more combinations.</p>
+<p>For mechanism details, hot reload and troubleshooting see <a href="shared-443-l4-stream.html">HTTPS and L4 TCP on one port 443</a>; for field definitions see <a href="../03-configuration/entrypoints.html">Entrypoints</a> and the <a href="../03-configuration/stream-config.html">Stream configuration reference</a>.</p>
+<h2 id="1-migrating-from-caddy-l4-an-l4-passthrough-service-and-websites-on-one-443">1. Migrating from caddy-l4: an L4 passthrough service and websites on one 443</h2>
+<p>A typical caddy-l4 configuration:</p>
+<pre><code class="language-caddyfile">layer4 {
+    :443 {
+        @tls-regexp tls sni_regexp ^a.example.com$
+        route @tls-regexp {
+            proxy localhost:444      # a.example.com traffic to a backend L4 service
+        }
+        @tls-any tls
+        route @tls-any {
+            proxy localhost:1234     # everything else to caddy's own HTTPS
+        }
+    }
+}
+</code></pre>
+<p>The LiteGate equivalent:</p>
+<pre><code class="language-yaml"># config.yaml
+entrypoints:
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    routes:
+      - name: a-service
+        match:
+          sni: a.example.com
+        handle:
+          proxy: tcp://127.0.0.1:444
+</code></pre>
+<p>No &quot;everything else&quot; rule is needed: connections that match no route go straight into LiteGate's built-in HTTPS pipeline and are handled by the sites in <code>sites/</code>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>caddy-l4</th>
+<th>LiteGate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Remaining traffic to websites</td>
+<td><code>proxy</code> to local 1234, an extra TCP hop</td>
+<td>Handed to HTTPS within the same process, no second hop</td>
+</tr>
+<tr>
+<td>Client IP seen by websites</td>
+<td>Port 1234 needs PROXY protocol for the real IP</td>
+<td>The real IP natively</td>
+</tr>
+<tr>
+<td>Domain matching</td>
+<td>Write your own regex</td>
+<td>Exact, <code>*.</code> wildcard, regex and ALPN, with a fixed priority</td>
+</tr>
+<tr>
+<td>Changing routes</td>
+<td>Reload configuration</td>
+<td>Atomic hot update without rebinding 443</td>
+</tr>
+<tr>
+<td>L4 governance</td>
+<td>Separate matchers</td>
+<td>Named Streams: ACLs, load balancing, service discovery, session limits, metrics</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-three-ways-to-handle-a-match">2. Three ways to handle a match</h2>
+<p>Once an SNI matches, there are three ways to say who handles it:</p>
+<table>
+<thead>
+<tr>
+<th>Form</th>
+<th>TLS</th>
+<th>Capabilities</th>
+<th>Use for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entrypoint route <code>handle.proxy</code></td>
+<td>Passed through; the backend does the handshake</td>
+<td>A single target (TCP or Unix socket), optional PROXY protocol</td>
+<td>The simplest passthrough, such as a self-hosted TCP/TLS proxy or a service with its own certificate</td>
+</tr>
+<tr>
+<td>Entrypoint route <code>handle.stream: &lt;name&gt;</code></td>
+<td>Decided by the Stream</td>
+<td>Everything a Stream can do</td>
+<td>When you need manual match conditions (regex, ALPN) plus Stream features</td>
+</tr>
+<tr>
+<td>A Stream with its own <code>entrypoints</code> + <code>hostnames</code></td>
+<td>Decided by the Stream</td>
+<td>Everything a Stream can do, with routes and certificate domains generated</td>
+<td><strong>Recommended</strong>: the domain is written once</td>
+</tr>
+</tbody>
+</table>
+<p>Unmatched connections → L7 HTTPS sites.</p>
+<h2 id="3-combinations">3. Combinations</h2>
+<h3 id="31-passthrough-the-certificate-stays-on-the-backend">3.1 Passthrough: the certificate stays on the backend</h3>
+<p>This is the form from section 1. The backend speaks TLS from the first byte and must hold the domain's certificate itself.</p>
+<p>Plan how the backend gets certificates: LiteGate occupies port 80, so the backend can't complete HTTP-01; the domain is passed through on 443, so TLS-ALPN-01 must be answered by the backend too. Usually the backend uses DNS-01, or you switch to the next form and let LiteGate manage certificates.</p>
+<p>When the backend supports PROXY protocol, the real client address can be passed on:</p>
+<pre><code class="language-yaml">        handle:
+          proxy: tcp://127.0.0.1:444
+          proxy_protocol: 2     # the backend must parse it, or it treats the header as data
+</code></pre>
+<h3 id="32-termination-litegate-manages-certificates-the-backend-receives-plaintext">3.2 Termination: LiteGate manages certificates, the backend receives plaintext</h3>
+<p>When the backend only needs to handle plaintext TCP (or can turn its own TLS listener off), let a Stream terminate TLS:</p>
+<pre><code class="language-yaml"># streams/tunnel.yaml
+name: tunnel
+listen: false
+entrypoints: [websecure]
+hostnames: [tunnel.example.com]
+protocol: tcp
+upstream: tcp://127.0.0.1:10000
+enabled: true
+tls:
+  enabled: true
+  auto_cert: true        # shares the certificate pool with HTTPS sites; an existing *.example.com is reused
+</code></pre>
+<p><code>hostnames</code> decides both the SNI route and the certificate domains. Certificates are requested and renewed exactly as for HTTPS sites, and the backend no longer deals with them.</p>
+<h3 id="33-one-sni-several-backends">3.3 One SNI, several backends</h3>
+<p>Passthrough can be load-balanced or use service discovery too, written as a Stream:</p>
+<pre><code class="language-yaml"># streams/tls-pool.yaml
+name: tls-pool
+listen: false
+entrypoints: [websecure]
+hostnames: [api-tls.example.com]
+protocol: tcp
+enabled: true
+lb_policy: round_robin
+backends:
+  - {upstream: 10.0.0.11:8443}
+  - {upstream: 10.0.0.12:8443}
+</code></pre>
+<p><code>service_name</code> can also fetch backends dynamically from Consul, LiteMesh and other registries, so instances coming and going need no configuration change; see the <a href="../03-configuration/stream-config.html#stream-entry-and-upstreams">Stream configuration reference</a>.</p>
+<h3 id="34-one-domain-split-by-protocol-alpn">3.4 One domain split by protocol (ALPN)</h3>
+<p>Browsers send <code>h2</code> / <code>http/1.1</code> in the ClientHello, and other clients can send their own ALPN. So one domain can serve half as a website and half as layer 4:</p>
+<pre><code class="language-yaml">entrypoints:
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    routes:
+      # PostgreSQL 17+ (sslnegotiation=direct) → database
+      - name: pg
+        match:
+          sni: db.example.com
+          alpn: postgresql
+        handle:
+          stream: pg
+</code></pre>
+<ul>
+<li>A browser opening <code>https://db.example.com</code> → ALPN doesn't match → L7 site (for example the database's web console);</li>
+<li><code>psql &quot;host=db.example.com sslnegotiation=direct&quot;</code> → the <code>pg</code> Stream.</li>
+</ul>
+<p>An in-house client only needs a custom ALPN in its TLS configuration (such as <code>myproto/1</code>) to share the domain and certificate with a website the same way.</p>
+<h3 id="35-wildcards-and-regexes-onboarding-in-bulk">3.5 Wildcards and regexes: onboarding in bulk</h3>
+<pre><code class="language-yaml">entrypoints:
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    routes:
+      # One subdomain per tenant, all passed through to the tenant cluster's entry
+      - name: tenants
+        match:
+          sni: &quot;*.tenant.example.com&quot;
+        handle:
+          proxy: tcp://10.1.0.10:443
+
+      # Numbered nodes: node-1.example.com, node-23.example.com ...
+      - name: nodes
+        match:
+          sni_regex: 'node-[0-9]+\.example\.com'
+        handle:
+          stream: node-pool
+</code></pre>
+<p><code>sni_regex</code> matches the whole name case-insensitively; no <code>^</code> or <code>$</code> needed. Priority is fixed: <strong>exact domain → longest wildcard → regex → ALPN-only</strong>. So you can use a broad wildcard as a fallback and pull individual subdomains back with exact names:</p>
+<pre><code class="language-yaml">      - name: tenant-special
+        match:
+          sni: vip.tenant.example.com     # exact wins over *.tenant.example.com above
+        handle:
+          proxy: tcp://10.1.0.20:443
+</code></pre>
+<h3 id="36-tightening-the-public-entry">3.6 Tightening the public entry</h3>
+<pre><code class="language-yaml">entrypoints:
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    on_non_tls: reject    # first packet isn't TLS (scanners, plaintext protocols): disconnect
+    on_no_sni: reject     # connections by IP without SNI: disconnect
+    inspect:
+      timeout: 5s
+      per_ip_pending: 16  # connections per source IP allowed in handshake inspection at once
+</code></pre>
+<p>Access control for layer-4 services goes on the Stream:</p>
+<pre><code class="language-yaml"># streams/admin-tunnel.yaml
+ip_restriction:
+  allow_ips: [&quot;203.0.113.0/24&quot;]
+max_sessions: 200
+idle_timeout: 600
+</code></pre>
+<p>HTTP sites keep using WAF, authentication, rate limiting and other L7 middleware. On one port 443, each kind of traffic uses its own governance.</p>
+<h3 id="37-with-another-layer-4-load-balancer-in-front">3.7 With another layer-4 load balancer in front</h3>
+<p>When LiteGate sits behind a cloud LB or HAProxy, have the entrypoint accept PROXY protocol to recover real addresses. SNI routing, L7 sites and passthrough backends all use the recovered address:</p>
+<pre><code class="language-yaml">entrypoints:
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    proxy_protocol:
+      accept: true
+      required: true
+      trusted: [10.0.0.0/8]   # trust only the LB's range
+    routes:
+      - name: a-service
+        match: {sni: a.example.com}
+        handle:
+          proxy: tcp://127.0.0.1:444
+          proxy_protocol: 2   # pass the recovered address on to the backend
+</code></pre>
+<h3 id="38-internal-services-by-sni-through-a-tunnel">3.8 Internal services by SNI through a tunnel</h3>
+<p>A Cloud LiteGate can hand an SNI to an internal Home node through a Connect tunnel, with no inbound port opened internally. These routes are created dynamically by Connect registrations and aren't written in <code>routes</code>; see <a href="connect.html">LiteGate Connect configuration and rollout</a>.</p>
+<h2 id="4-priority-at-a-glance">4. Priority at a glance</h2>
+<p>A new connection's destination is decided in this order:</p>
+<ol>
+<li>First packet isn't TLS → <code>on_non_tls</code> (<code>http</code> hands it to the HTTPS service to return an error / <code>reject</code> disconnects);</li>
+<li>No SNI → <code>on_no_sni</code>; when not rejected, only ALPN-only routes can still match, otherwise L7;</li>
+<li>The Connect control-plane domain → Connect;</li>
+<li>Exact domain (for the same domain, routes matching ALPN win over routes without ALPN);</li>
+<li>Longest <code>*.</code> wildcard;</li>
+<li><code>sni_regex</code>, in configuration order;</li>
+<li>ALPN-only routes;</li>
+<li>Nothing matched → L7 HTTPS sites.</li>
+</ol>
+<p>Routes generated from Stream <code>hostnames</code> take part in steps 4 and 5. For the same pattern, rules written explicitly in <code>routes</code> win.</p>
+<h2 id="5-notes">5. Notes</h2>
+<ul>
+<li><strong><code>default</code> can only be <code>http</code>.</strong> There's no switch for &quot;send everything else to another program&quot;. Don't use <code>sni_regex: '.+'</code> as a fallback: L7 sites aren't in the SNI routing table, so that regex swallows connections meant for websites. To hand a set of domains to an old service, list their exact names or wildcards.</li>
+<li><strong>Don't repeat a domain on both L4 and L7.</strong> When one SNI is both a Stream <code>hostnames</code> entry and an HTTPS site domain, L4 takes over first and the site gets no traffic. LiteGate logs the conflict at startup and on hot reload but doesn't choose for you. If one domain really needs both, split by ALPN as in 3.4.</li>
+<li><strong>HTTP/3 doesn't take part.</strong> It runs on UDP/443 with a separate listener; everything here is about TCP/443.</li>
+<li><strong>ECH and missing SNI.</strong> With ECH the gateway sees only the outer SNI; clients connecting by IP send no SNI and can only be handled by ALPN or <code>on_no_sni</code>.</li>
+<li><strong>The first packet must be TLS.</strong> Plaintext SSH, native MySQL TLS and older PostgreSQL SSLRequest can't be routed by SNI; for alternatives see <a href="shared-443-l4-stream.html#9-protocol-limitations">protocol limitations</a>.</li>
+<li><strong>Once any route exists, every connection goes through ClientHello inspection first</strong>, including those that end up at websites. When a CDN origin or corporate NAT shares one IP, raise <code>per_ip_pending</code> to the real handshake peak.</li>
+</ul>
+<h2 id="6-related-docs">6. Related docs</h2>
+<ul>
+<li><a href="shared-443-l4-stream.html">HTTPS and L4 TCP on one port 443</a></li>
+<li><a href="../03-configuration/entrypoints.html">Entrypoints</a></li>
+<li><a href="../03-configuration/stream-config.html">Stream configuration reference</a></li>
+<li><a href="../06-certificates/auto-cert.html">Auto-Cert</a></li>
+<li><a href="forward-and-connect.html">Forward and Connect overview</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/09-advanced/sni-routing-recipes.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

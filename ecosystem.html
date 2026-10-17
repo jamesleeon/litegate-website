@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lite 生态 · LiteGate</title>
+<meta name="description" content="客户案例：一个电商 ISV 小团队如何用 LiteGate、litedeploy、litemesh、LiteDNS 跑生产。几个单文件程序管好入口、部署、服务发现和内网解析，不上 Kubernetes，节约机器和运维成本。">
+<link rel="alternate" hreflang="en" href="en/ecosystem.html">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add("js")</script>
+<script src="main.js" defer></script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="index.html">首页</a>
+      <a href="guide.html">场景指南</a>
+      <a href="features.html">功能列表</a>
+      <a href="ecosystem.html" aria-current="page">生态</a>
+      <a href="docs/zh-cn/">文档</a>
+      <a href="en/ecosystem.html" data-lang-switch="en">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="kicker">客户案例 · Lite 生态</p>
+    <h1>一个电商 ISV 小团队，<em>如何用几个单文件程序跑生产</em></h1>
+    <p class="lead">这个团队为大量电商商家提供 SaaS 服务，同时给大客户做私有化部署。人手不多，不想为了部署和服务治理再养一套 Kubernetes。他们把入口交给 LiteGate，用 litedeploy 发布服务；服务之间需要加密时加上 litemesh，存量的 Consul 老服务原样保留；办公室和门店的内网用户通过 LiteDNS 直连网关。几个单文件程序覆盖了入口、部署、服务发现和内网解析，机器和运维成本都明显降了下来。</p>
+    <dl class="case-facts">
+      <div><dt>行业</dt><dd>电商 ISV（SaaS + 私有化交付）</dd></div>
+      <div><dt>团队</dt><dd>小团队，开发兼运维</dd></div>
+      <div><dt>起点</dt><dd>一批跑在 Consul 上的老服务</dd></div>
+      <div><dt>用到的组件</dt><dd>LiteGate · litedeploy · litemesh · LiteDNS</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ── 四个组件 ── -->
+<section class="alt" style="padding-top:64px">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">四个组件</p>
+      <h2>他们用到的四个组件：各管一件事，用到才加</h2>
+      <p>每个组件都是一个 Go 二进制，没有外部依赖；LiteGate、litedeploy、litemesh 自带 Web 控制台和 MCP，LiteDNS 刻意保持为一个只做解析的小程序。只有 LiteGate 是必需的；大多数小团队加上 litedeploy 就够用了。</p>
+    </div>
+    <div class="eco-cards">
+      <div class="card eco-card" data-animate>
+        <span class="tag ok">必选</span>
+        <h3>LiteGate</h3>
+        <span class="like">入口网关 · 类似 Nginx / Traefik / Caddy</span>
+        <p>所有外部流量的唯一入口：路由、自动证书、负载均衡、认证、内网发布（Connect）、实时推送；可同时接多个服务发现源，日志和链路接入现有监控。</p>
+        <a class="card-link" href="index.html">了解 LiteGate</a>
+      </div>
+      <div class="card eco-card" data-animate>
+        <span class="tag">推荐</span>
+        <h3>litedeploy</h3>
+        <span class="like">部署与调度 · 类似 Nomad</span>
+        <p>把二进制包或 Docker 镜像发布到各台机器，支持批次发布、健康检查和失败恢复。服务实例注册到 litedeploy，LiteGate 直接订阅，<strong>不需要再部署注册中心</strong>。</p>
+        <ul>
+          <li>Raft 强一致，多 Server 自动选主</li>
+          <li>Agent 通过 gRPC 长连接接收指令</li>
+        </ul>
+      </div>
+      <div class="card eco-card" data-animate>
+        <span class="tag need">按需</span>
+        <h3>litemesh</h3>
+        <span class="like">服务网格控制面 · 类似 Consul</span>
+        <p>服务之间也要 mTLS 加密认证，或者需要配置中心、分布式锁、跨机房服务发现时再加。就像 Nomad 自己能做服务发现，需要更多时才配 Consul。</p>
+        <ul>
+          <li>内置 CA，无 Sidecar 的服务间 mTLS</li>
+          <li>KV、Session、锁；Gossip 组网，无主节点</li>
+        </ul>
+      </div>
+      <div class="card eco-card" data-animate>
+        <span class="tag need">按需</span>
+        <h3>LiteDNS</h3>
+        <span class="like">内网解析 · 轻量本地 DNS</span>
+        <p>办公室、门店、机房里的用户访问同一个域名时，也直连网关的内网地址，同一张证书内外通用。还能把已有的 Nacos 等注册中心接给 LiteGate。</p>
+        <ul>
+          <li>只拦截网关和服务域名，其余交给 CamoDNS 或企业现有 DNS</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 架构 ── -->
+<section>
+  <div class="wrap">
+    <div class="section-head center" data-animate>
+      <p class="kicker">放在一起</p>
+      <h2>它们之间怎么配合</h2>
+      <p>虚线框是按需加入的组件。LiteGate 可以同时从 litedeploy、litemesh 和存量的 Consul 发现服务，访问日志和链路送到你已有的监控平台。</p>
+    </div>
+    <div class="flow eco-diagram" data-animate>
+      <svg viewBox="0 0 740 440" role="img" aria-label="Lite 生态架构：外网与内网用户访问 LiteGate；LiteGate 同时从 litedeploy、litemesh 和存量 Consul 发现服务，把访问日志和 OTLP 链路送到企业的日志与链路平台；litemesh 提供服务间 mTLS；LiteDNS 为内网用户解析网关域名，其余域名转给企业 DNS">
+        <defs>
+          <marker id="ea" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 z"/></marker>
+          <marker id="eat" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow tls" d="M0,0 L8,4 L0,8 z"/></marker>
+        </defs>
+        <g class="node"><rect x="10" y="64" width="110" height="44" rx="8"/><text x="65" y="91" text-anchor="middle">外网用户</text></g>
+        <g class="node"><rect x="10" y="274" width="110" height="44" rx="8"/><text x="65" y="301" text-anchor="middle">内网用户</text></g>
+        <g class="node"><rect x="250" y="12" width="150" height="56" rx="8"/><text x="325" y="36" text-anchor="middle">日志 · 链路平台</text><text class="sub" x="325" y="55" text-anchor="middle">ELK / Loki · Jaeger / Tempo</text></g>
+        <g class="node hub"><rect x="250" y="140" width="150" height="70" rx="10"/><text x="325" y="171" text-anchor="middle">LiteGate</text><text class="sub" x="325" y="191" text-anchor="middle">入口 · 证书 · 多源路由</text></g>
+        <g class="node opt"><rect x="250" y="300" width="150" height="56" rx="8"/><text x="325" y="324" text-anchor="middle">LiteDNS</text><text class="sub" x="325" y="343" text-anchor="middle">内网解析（按需）</text></g>
+        <g class="node"><rect x="520" y="16" width="200" height="56" rx="8"/><text x="620" y="40" text-anchor="middle">litedeploy</text><text class="sub" x="620" y="59" text-anchor="middle">部署 · 服务注册</text></g>
+        <g class="node"><rect x="520" y="148" width="200" height="56" rx="8"/><text x="620" y="172" text-anchor="middle">业务服务</text><text class="sub" x="620" y="191" text-anchor="middle">Agent 运行的实例</text></g>
+        <g class="node opt"><rect x="520" y="246" width="200" height="56" rx="8"/><text x="620" y="270" text-anchor="middle">litemesh</text><text class="sub" x="620" y="289" text-anchor="middle">服务发现 · mTLS（按需）</text></g>
+        <g class="node"><rect x="520" y="318" width="200" height="44" rx="8"/><text x="620" y="345" text-anchor="middle">Consul（存量老服务）</text></g>
+        <g class="node"><rect x="520" y="386" width="200" height="44" rx="8"/><text x="620" y="413" text-anchor="middle">CamoDNS / 企业 DNS</text></g>
+        <path class="edge tls" d="M120,86 C190,86 190,160 248,160" marker-end="url(#eat)"/>
+        <text class="lbl" x="184" y="104" text-anchor="middle">HTTPS</text>
+        <path class="edge tls" d="M120,286 C200,272 200,204 248,198" marker-end="url(#eat)"/>
+        <text class="lbl" x="196" y="250" text-anchor="middle">内网直连</text>
+        <path class="edge" d="M120,304 C180,310 200,328 248,328" marker-end="url(#ea)"/>
+        <text class="lbl" x="182" y="334" text-anchor="middle">DNS</text>
+        <path class="edge" d="M400,334 C470,344 470,408 518,408" marker-end="url(#ea)"/>
+        <text class="lbl" x="458" y="392" text-anchor="middle">其余域名</text>
+        <path class="edge" d="M325,140 L325,70" marker-end="url(#ea)"/>
+        <text class="lbl" x="325" y="110" text-anchor="middle">访问日志 · OTLP</text>
+        <path class="edge" d="M400,176 L518,176" marker-end="url(#ea)"/>
+        <text class="lbl" x="459" y="170" text-anchor="middle">转发</text>
+        <path class="edge" d="M620,72 L620,146" marker-end="url(#ea)"/>
+        <text class="lbl" x="644" y="114" text-anchor="middle">部署</text>
+        <path class="edge" d="M520,44 C450,44 400,90 382,138" marker-end="url(#ea)"/>
+        <text class="lbl" x="458" y="38" text-anchor="middle">实例变化（SSE）</text>
+        <path class="edge tls" d="M620,246 L620,206" marker-end="url(#eat)"/>
+        <text class="lbl" x="644" y="230" text-anchor="middle">mTLS</text>
+        <path class="edge" d="M520,268 C470,268 440,232 402,204" marker-end="url(#ea)"/>
+        <text class="lbl" x="478" y="250" text-anchor="middle">服务发现</text>
+        <path class="edge" d="M520,340 C450,340 420,262 390,212" marker-end="url(#ea)"/>
+        <text class="lbl" x="462" y="318" text-anchor="middle">存量发现</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ── 多源与监控 ── -->
+<section class="alt">
+  <div class="wrap">
+    <div class="split" data-animate>
+      <div>
+        <p class="kicker">多源发现</p>
+        <h2>新老服务并存，不用一次迁完</h2>
+        <p>这个团队就是这样做的：新服务注册到 litemesh，一批老服务继续留在 Consul 里，不再改动。LiteGate 同时订阅多个发现源，所有实例都变成同一种服务端点，用同一套 <code>litegate.*</code> 标签生成路由。迁移可以按服务一个个来，网关配置不用跟着改。</p>
+        <p>litedeploy、Docker、Kubernetes、Nomad 也都可以作为发现源同时接入。</p>
+        <a class="card-link" href="docs/zh-cn/user/07-discovery/overview.html">服务发现源总览</a>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml</div>
+<pre><span class="k">service_discovery</span>:
+  <span class="k">catalogs</span>:
+    - <span class="k">enabled</span>: <span class="s">true</span>
+      <span class="k">provider</span>: <span class="s">litemesh</span>     <span class="c"># 新服务</span>
+      <span class="k">url</span>: <span class="s">http://10.0.0.6:8080</span>
+    - <span class="k">enabled</span>: <span class="s">true</span>
+      <span class="k">provider</span>: <span class="s">consul</span>       <span class="c"># 存量老服务</span>
+      <span class="k">url</span>: <span class="s">http://10.0.0.7:8500</span></pre>
+      </div>
+    </div>
+
+    <div class="split reverse" data-animate>
+      <div>
+        <p class="kicker">接入监控体系</p>
+        <h2>日志和链路，直接进你现有的平台</h2>
+        <ul class="checklist">
+          <li><strong>访问日志</strong>：JSON 输出到控制台或文件（自带轮转），由 Filebeat、Vector、Promtail 采集进 ELK 或 Loki；流量大时用 Webhook 批量投递到消息队列。也可以用模板输出类 Nginx 格式。</li>
+          <li><strong>分布式追踪</strong>：按 OTLP/HTTP 把链路发到 OpenTelemetry Collector，再进 Jaeger、Tempo 等；支持采样率，访问日志里带 <code>trace_id</code>，日志和链路能对上。</li>
+          <li><strong>指标</strong>：Prometheus 格式，配合官方 Grafana 面板。</li>
+        </ul>
+        <a class="card-link" href="docs/zh-cn/user/08-observability/access-log.html">访问日志</a>
+        <a class="card-link" href="docs/zh-cn/user/08-observability/trace-id.html" style="margin-left:16px">Trace ID 与链路</a>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml</div>
+<pre><span class="k">log</span>:
+  <span class="k">format</span>: <span class="s">json</span>
+  <span class="k">access_log</span>:
+    <span class="k">enabled</span>: <span class="s">true</span>
+    <span class="k">file_enabled</span>: <span class="s">true</span>
+    <span class="k">file</span>: <span class="s">./logs/access.log</span>   <span class="c"># 交给采集器</span>
+<span class="k">tracing</span>:
+  <span class="k">enabled</span>: <span class="s">true</span>
+  <span class="k">endpoint</span>: <span class="s">http://otel-collector:4318</span>
+  <span class="k">sample_ratio</span>: <span class="s">0.1</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 循序渐进 ── -->
+<section>
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">怎么组合</p>
+      <h2>跟着业务长大，一次只加一个</h2>
+    </div>
+    <div class="path">
+      <div class="path-step" data-animate>
+        <span class="time">一台服务器</span>
+        <h3>只用 LiteGate</h3>
+        <p>官网、后台、几个 API，一台云主机就够。网站、反向代理、证书、状态页都在网关上。</p>
+      </div>
+      <div class="path-step" data-animate>
+        <span class="time">服务多起来</span>
+        <h3>+ litedeploy</h3>
+        <p>需要在多台机器上发布、扩容和回滚。服务一上线，LiteGate 自动加上路由。<strong>大多数小团队到这一步就够了。</strong></p>
+      </div>
+      <div class="path-step" data-animate>
+        <span class="time">服务间要加密</span>
+        <h3>+ litemesh</h3>
+        <p>服务之间的调用也要 mTLS，或者需要配置中心、分布式锁、多机房。</p>
+      </div>
+      <div class="path-step" data-animate>
+        <span class="time">内网也走网关</span>
+        <h3>+ LiteDNS</h3>
+        <p>办公室、门店和客户机房里的用户也要直连网关；或者已经有 Nacos，想接给 LiteGate。</p>
+      </div>
+    </div>
+
+    <div class="split" style="margin-top:56px" data-animate>
+      <div>
+        <h3>最常用的组合只要一段配置</h3>
+        <p>LiteGate 订阅 litedeploy 的服务注册。业务服务注册时带上 <code>litegate.http.path</code> 之类的标签，就会自动出现在网关上；实例下线自动摘除。</p>
+        <a class="card-link" href="docs/zh-cn/user/07-discovery/overview.html">服务发现源总览</a>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>LiteGate · config.yaml</div>
+<pre><span class="k">service_discovery</span>:
+  <span class="k">catalogs</span>:
+    - <span class="k">enabled</span>: <span class="s">true</span>
+      <span class="k">provider</span>: <span class="s">litedeploy</span>
+      <span class="k">url</span>: <span class="s">http://10.0.0.5:8080</span>  <span class="c"># litedeploy Server</span>
+      <span class="k">token</span>: <span class="s">"replace-with-token"</span>
+      <span class="k">default_domain</span>: <span class="s">example.com</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 省在哪里 ── -->
+<section class="alt">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">成本</p>
+      <h2>钱省在哪里</h2>
+      <p>同样的需求，常见做法要拼好几套系统，每套都要机器、要升级、要有人懂。这个团队用四个单文件程序覆盖了这些需求。</p>
+    </div>
+    <div class="table-scroll" data-animate>
+      <table class="cmp">
+        <thead><tr><th>需求</th><th>常见做法</th><th>Lite 生态</th></tr></thead>
+        <tbody>
+          <tr><td>入口与证书</td><td>Nginx + Certbot，或 Ingress + cert-manager</td><td>LiteGate，证书自动申请续期</td></tr>
+          <tr><td>部署与调度</td><td>Kubernetes 集群，或 Jenkins + 脚本</td><td>litedeploy</td></tr>
+          <tr><td>服务发现</td><td>Nacos / Consul / etcd 集群</td><td>litedeploy 自带；要 mTLS 时加 litemesh</td></tr>
+          <tr><td>配置中心与锁</td><td>Nacos / Apollo、Redis 锁</td><td>litemesh KV 与锁（按需）</td></tr>
+          <tr><td>内网穿透与私有化</td><td>frp、VPN、给客户开放端口</td><td>LiteGate Connect，客户机房不开入站端口</td></tr>
+          <tr><td>内网解析</td><td>手工维护 hosts、内网 DNS</td><td>LiteDNS（按需）</td></tr>
+          <tr><td>实时推送</td><td>MQTT、自建 WebSocket 服务</td><td>LiteGate 事件通知</td></tr>
+          <tr><td>日志与链路</td><td>解析 Nginx 日志、各服务自己埋点</td><td>LiteGate JSON 访问日志 + OTLP 链路，直接进现有平台</td></tr>
+          <tr><td>监控大屏</td><td>Prometheus + Grafana 全套</td><td>内置控制台和状态页，也能接 Grafana</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="savings">
+      <div class="reason" data-animate>
+        <h3>机器少</h3>
+        <p>不需要 Kubernetes 控制面节点和托管集群费用，也不用为注册中心、配置中心单独准备机器。几台普通云主机就能跑起整套业务。</p>
+      </div>
+      <div class="reason" data-animate>
+        <h3>私有化交付轻</h3>
+        <p>给客户部署时只带几个二进制。客户机房通过 Connect 主动连出来，不用开放入站端口，远程运维也走同一条加密隧道。</p>
+      </div>
+      <div class="reason" data-animate>
+        <h3>运维人手少</h3>
+        <p>单文件、YAML、热加载，排错有控制台和状态页；LiteGate、litedeploy、litemesh 都内置 MCP，日常的发布、配置和排障可以交给 AI 助手。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap" data-animate>
+    <h2>从 LiteGate 开始</h2>
+    <p>不管最后用到几个组件，第一步都是把入口交给 LiteGate。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="index.html#quickstart">5 分钟跑起来</a>
+      <a class="btn btn-ghost" href="guide.html">按场景开始</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="index.html"><span class="brand-mark">L</span>LiteGate</a>
+      <p class="note">单一二进制的 HTTP / TCP 网关。本站由 LiteGate 托管。</p>
+    </div>
+    <div>
+      <h4>了解</h4>
+      <ul>
+        <li><a href="index.html">首页</a></li>
+        <li><a href="guide.html">场景指南</a></li>
+        <li><a href="features.html">完整功能列表</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>文档</h4>
+      <ul>
+        <li><a href="docs/zh-cn/">文档首页</a></li>
+        <li><a href="docs/zh-cn/user/07-discovery/overview.html">服务发现源总览</a></li>
+        <li><a href="docs/zh-cn/user/07-discovery/litemesh-mtls.html">litemesh mTLS 接入</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>社区</h4>
+      <ul>
+        <li><a href="https://github.com/jamesleeon/LiteGate">GitHub</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/issues">Issues</a></li>
+        <li><a href="en/ecosystem.html" data-lang-switch="en">English</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

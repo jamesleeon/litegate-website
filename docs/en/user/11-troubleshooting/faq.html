@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frequently Asked Questions (FAQ) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/11-troubleshooting/faq.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details open><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html" class="current" aria-current="page">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="frequently-asked-questions-faq">Frequently Asked Questions (FAQ)</h1>
+<hr>
+<h2 id="1-installation--bootstrapping">1. Installation &amp; Bootstrapping</h2>
+<h3 id="q-how-do-i-install-litegate">Q: How do I install LiteGate?</h3>
+<p><strong>A:</strong> Refer to the detailed <a href="../01-getting-started/installation.html">Installation &amp; Quick Start Guide</a>.</p>
+<h3 id="q-litegate-fails-to-start-throwing-an-address-already-in-use-error">Q: LiteGate fails to start, throwing an &quot;address already in use&quot; error?</h3>
+<p><strong>A:</strong> Modify the gateway port bindings inside <code>config.yaml</code> to use non-conflicting ports:</p>
+<pre><code class="language-yaml">http:
+  port: 8080
+  https_port: 8443
+</code></pre>
+<h3 id="q-how-do-i-bind-litegate-to-privileged-ports-such-as-80-or-443-on-linux">Q: How do I bind LiteGate to privileged ports (such as 80 or 443) on Linux?</h3>
+<p><strong>A:</strong> You can run the process via <code>sudo</code> or grant bound-service capabilities using <code>setcap</code>:</p>
+<pre><code class="language-bash"># Option 1: Execute with sudo
+sudo litegate
+
+# Option 2: Set kernel bind capabilities (Recommended best practice)
+sudo setcap 'cap_net_bind_service=+ep' /usr/local/bin/litegate
+litegate
+</code></pre>
+<hr>
+<h2 id="2-gateway-configurations">2. Gateway Configurations</h2>
+<h3 id="q-where-does-litegate-search-for-config-files">Q: Where does LiteGate search for config files?</h3>
+<p><strong>A:</strong> LiteGate scans the following pathways sequentially:</p>
+<ol>
+<li>The pathway declared explicitly via the <code>--config</code> startup parameter flag.</li>
+<li>The current working directory: <code>./config.yaml</code>.</li>
+<li>The default system configuration directory: <code>/etc/litegate/config.yaml</code>.</li>
+</ol>
+<h3 id="q-how-do-i-apply-configuration-modifications">Q: How do I apply configuration modifications?</h3>
+<p><strong>A:</strong> LiteGate automatically watches for filesystem changes in your configuration files. Configurations are hot-loaded in real-time without restarting active daemon processes or interrupting connections.</p>
+<h3 id="q-does-litegate-support-loading-system-environment-variables">Q: Does LiteGate support loading system environment variables?</h3>
+<p><strong>A:</strong> Yes. Declare variables inside your configuration files using the standard <code>${VAR_NAME}</code> replacement syntax:</p>
+<pre><code class="language-yaml">auto_cert:
+  email: ${ADMIN_EMAIL}
+</code></pre>
+<hr>
+<h2 id="3-ssltls-certificates">3. SSL/TLS Certificates</h2>
+<h3 id="q-how-do-i-enable-automated-https">Q: How do I enable automated HTTPS?</h3>
+<p><strong>A:</strong> Turn on the <code>auto_cert</code> parameters block in your site YAML:</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: admin@example.com
+</code></pre>
+<h3 id="q-why-is-my-acme-certificate-generation-failing">Q: Why is my ACME certificate generation failing?</h3>
+<p><strong>A:</strong> Verify the following requirements:</p>
+<ol>
+<li>Confirm your public DNS A-records resolve correctly to your gateway's IP address.</li>
+<li>Confirm port 80 is open and publicly accessible from Let's Encrypt servers.</li>
+<li>Check if you have exceeded Let's Encrypt's weekly certificate issuance rate-limits.</li>
+</ol>
+<h3 id="q-how-do-i-configure-wildcard-ssl-certificates">Q: How do I configure wildcard SSL certificates?</h3>
+<p><strong>A:</strong> Set up a globally defined DNS Provider under <code>auto_cert</code>:</p>
+<pre><code class="language-yaml">auto_cert:
+  dns_providers:
+    - name: aliyun
+      type: aliyun
+      domains: [&quot;*.example.com&quot;]
+      config:
+        access_key_id: &quot;...&quot;
+        access_key_secret: &quot;...&quot;
+</code></pre>
+<hr>
+<h2 id="4-backends--reverse-proxies">4. Backends &amp; Reverse Proxies</h2>
+<h3 id="q-i-am-getting-a-502-bad-gateway-error-how-do-i-fix-it">Q: I am getting a &quot;502 Bad Gateway&quot; error. How do I fix it?</h3>
+<p><strong>A:</strong> Verify the following issues:</p>
+<ol>
+<li>Confirm your target backend microservice is active and running.</li>
+<li>Confirm the physical IP address or hostname defined in the route's <code>upstream</code> block is correct.</li>
+<li>Confirm the gateway host has routing connectivity to the backend service subnet.</li>
+</ol>
+<h3 id="q-the-gateway-returns-504-gateway-timeout-how-do-i-increase-timeouts">Q: The gateway returns &quot;504 Gateway Timeout&quot;. How do I increase timeouts?</h3>
+<p><strong>A:</strong> Adjust response timeouts inside your proxy action parameters:</p>
+<pre><code class="language-yaml">site: example.com
+action:
+  type: proxy
+  upstream:
+    - &quot;backend:8080&quot;
+  timeout: 60
+</code></pre>
+<h3 id="q-how-do-i-configure-websocket-connections">Q: How do I configure WebSocket connections?</h3>
+<p><strong>A:</strong> LiteGate automatically detects and promotes WebSocket handshakes. Use standard proxy configurations:</p>
+<pre><code class="language-yaml">site: example.com
+action:
+  type: proxy
+  upstream:
+    - &quot;ws-backend:8080&quot;
+  proto: http # Keep proto as http; LiteGate automatically promotes WS requests
+</code></pre>
+<hr>
+<h2 id="5-performance-optimizations">5. Performance Optimizations</h2>
+<h3 id="q-how-do-i-optimize-litegate-for-high-traffic-environments">Q: How do I optimize LiteGate for high-traffic environments?</h3>
+<p><strong>A:</strong> Refer to our <a href="../10-deployment/production.html">Production Deployment Best Practices</a> blueprint.</p>
+<h3 id="q-litegates-memory-footprint-is-higher-than-expected-how-do-i-tune-it">Q: LiteGate's memory footprint is higher than expected. How do I tune it?</h3>
+<p><strong>A:</strong> The upstream connection pool is sized by built-in defaults tuned for high throughput; it is not configured via YAML. To reduce memory pressure, lower per-route concurrency (e.g. <code>rate_limit</code>) and set a sensible <code>http.response_header_timeout</code> in <code>config.yaml</code> so stalled upstreams release connections promptly:</p>
+<pre><code class="language-yaml">http:
+  response_header_timeout: 30   # seconds
+</code></pre>
+<h3 id="q-cpu-utilization-is-spiking-what-should-i-check">Q: CPU utilization is spiking. What should I check?</h3>
+<p><strong>A:</strong> Investigate the following potential causes:</p>
+<ol>
+<li>Review if you have nested too many computationally heavy filters (e.g., extensive WAF regex checks or compression) on high-throughput routes.</li>
+<li>Confirm that log levels are not set to <code>debug</code> in production.</li>
+<li>Check if your backends are experiencing high volumes of error states or connection drops.</li>
+</ol>
+<hr>
+<h2 id="6-telemetry--monitoring">6. Telemetry &amp; Monitoring</h2>
+<h3 id="q-how-do-i-access-the-visual-administration-panel">Q: How do I access the visual administration panel?</h3>
+<p><strong>A:</strong> Navigate to <code>http://localhost:9999</code> to access the Web Dashboard.</p>
+<h3 id="q-how-do-i-integrate-prometheus-metrics">Q: How do I integrate Prometheus metrics?</h3>
+<p><strong>A:</strong> Turn on the global metrics configurations block:</p>
+<pre><code class="language-yaml">metrics:
+  enabled: true
+  port: 9091
+</code></pre>
+<h3 id="q-where-are-gateway-logs-written">Q: Where are gateway logs written?</h3>
+<p><strong>A:</strong> By default, logs write to standard stdout streams. You can configure file writers globally:</p>
+<pre><code class="language-yaml">log:
+  level: info
+  format: json
+</code></pre>
+<hr>
+<h2 id="7-troubleshooting--verification">7. Troubleshooting &amp; Verification</h2>
+<h3 id="q-how-do-i-enable-debug-log-verbosity">Q: How do I enable debug log verbosity?</h3>
+<p><strong>A:</strong> Start the gateway passing the <code>--log-level debug</code> flag, or declare it in your configuration:</p>
+<pre><code class="language-yaml">log:
+  level: debug
+</code></pre>
+<h3 id="q-how-do-i-debug-route-evaluation-paths-and-matcher-cascades">Q: How do I debug route evaluation paths and matcher cascades?</h3>
+<p><strong>A:</strong> Send a test request containing the special administrative header <code>X-LiteGate-Debug: true</code> to get detailed routing decisions in response headers:</p>
+<pre><code class="language-bash">curl -H &quot;X-LiteGate-Debug: true&quot; http://localhost/
+</code></pre>
+<h3 id="q-why-are-configuration-changes-not-taking-effect">Q: Why are configuration changes not taking effect?</h3>
+<p><strong>A:</strong> Verify the following issues:</p>
+<ol>
+<li>Check the gateway logs to ensure your YAML configuration files contain no syntax errors.</li>
+<li>Review route ordering. LiteGate evaluates routes sequentially; a broader catch-all rule higher in the stack may intercept requests before they reach your target rule.</li>
+</ol>
+<hr>
+<h2 id="8-general-specifications">8. General Specifications</h2>
+<h3 id="q-what-operating-systems-are-supported">Q: What operating systems are supported?</h3>
+<p><strong>A:</strong> Linux, Windows, and macOS are fully supported.</p>
+<h3 id="q-can-litegate-run-in-docker">Q: Can LiteGate run in Docker?</h3>
+<p><strong>A:</strong> Yes. Refer to the <a href="../10-deployment/production.html">Production Deployment Best Practices</a> guide.</p>
+<h3 id="q-is-kubernetes-supported">Q: Is Kubernetes supported?</h3>
+<p><strong>A:</strong> Yes, it is fully supported.</p>
+<h3 id="q-how-do-i-contribute-to-the-project">Q: How do I contribute to the project?</h3>
+<p><strong>A:</strong> Check out our <a href="https://github.com/jamesleeon/LiteGate/blob/master/CONTRIBUTING.md">Contribution Guidelines</a>.</p>
+<hr>
+<h2 id="getting-help">Getting Help</h2>
+<ul>
+<li><a href="https://github.com/jamesleeon/LiteGate/issues">GitHub Issues</a></li>
+<li><a href="https://github.com/jamesleeon/LiteGate/discussions">GitHub Discussions Community</a></li>
+<li><a href="debugging.html">Troubleshooting &amp; Debugging Guide</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/11-troubleshooting/faq.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

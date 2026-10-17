@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rewrite：路径与查询参数改写 · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/03-configuration/rewrite.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details open><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html" class="current" aria-current="page">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="rewrite路径与查询参数改写">Rewrite：路径与查询参数改写</h1>
+<p>LiteGate 的 <code>rewrite</code> 用来把请求 URL 适配成当前后端认识的格式。<strong>路由匹配先决定使用哪条 route 和哪个上游，rewrite 随后修改这条 route 内的路径与查询参数。改写后不会重新匹配路由。</strong></p>
+<p>例如 <code>/legacy/users/42</code> 可以改成 <code>/api/users/42</code>，但请求仍由原来命中的 route 处理。浏览器地址不变，也不会收到 rewrite 产生的 <code>3xx</code> 响应。</p>
+<h2 id="1-执行顺序与-nginx-的区别">1. 执行顺序与 Nginx 的区别</h2>
+<p>对一个进入路由处理流程的请求，主要顺序是：</p>
+<pre><code class="language-text">原始请求 → 匹配 Site / Route → CORS 与预检处理
+         → rewrite → 其他 RequestTransform 中间件
+         → 安全检查与流量控制 → 当前 route 的 Action
+</code></pre>
+<p>因此，路由的 <code>Path</code>、<code>Query</code>、<code>Header</code> 等条件在 rewrite 之前判断；后续 WAF、IP 策略、鉴权、限流看到的是经过 RequestTransform 阶段处理的请求。CORS 预检可能提前返回，此时不会进入 rewrite。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">场景</th>
+<th style="text-align:left">Nginx</th>
+<th style="text-align:left">LiteGate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">改写后重新选路</td>
+<td style="text-align:left"><code>rewrite ... last</code> 会按新 URI 重新查找 location</td>
+<td style="text-align:left">rewrite 不会重新匹配 route；需要在原始请求的匹配条件中直接选路</td>
+</tr>
+<tr>
+<td style="text-align:left">当前处理分支内改写</td>
+<td style="text-align:left"><code>break</code> 停止当前 rewrite 指令集，继续当前 location 的处理</td>
+<td style="text-align:left">用当前 route 的 <code>rewrite</code>，没有 <code>last</code> / <code>break</code> 标志</td>
+</tr>
+<tr>
+<td style="text-align:left">让浏览器访问新地址</td>
+<td style="text-align:left">rewrite 可使用 <code>redirect</code> / <code>permanent</code>，或 URL replacement</td>
+<td style="text-align:left">使用 <code>redirect</code> Action，或 <code>redirect_regex</code> / <code>redirect_scheme</code> 中间件</td>
+</tr>
+<tr>
+<td style="text-align:left">正则语法</td>
+<td style="text-align:left">PCRE</td>
+<td style="text-align:left">Go <code>regexp</code>；不能直接照搬前后向断言、正则反向引用等 PCRE 写法</td>
+</tr>
+<tr>
+<td style="text-align:left">新增或删除查询参数</td>
+<td style="text-align:left">replacement 可以包含查询串，并有旧参数追加规则</td>
+<td style="text-align:left"><code>path.target</code> 只写路径；参数单独放到 <code>query</code> 中操作</td>
+</tr>
+</tbody>
+</table>
+<p>Nginx 行为参见 <a href="https://nginx.org/en/docs/http/ngx_http_rewrite_module.html#rewrite">官方 rewrite 模块文档</a>。上述对比用于迁移配置；LiteGate 的 rewrite 并不是对 Nginx 指令集的兼容实现。</p>
+<h2 id="2-一份完整的路径改写配置">2. 一份完整的路径改写配置</h2>
+<pre><code class="language-yaml">site: api.example.com
+
+routes:
+  - name: legacy-users
+    match:
+      rule: 'PathRegex(&quot;^/legacy/users/([^/]+)$&quot;)'
+    proxy: [&quot;127.0.0.1:8080&quot;]
+    rewrite:
+      path:
+        pattern: '^/legacy/users/([^/]+)$'
+        target: '/api/users/${1}'
+</code></pre>
+<p>请求 <code>/legacy/users/42?view=full</code> 会发送到当前上游的 <code>/api/users/42?view=full</code>。这里只改路径，原始查询串保持不变。</p>
+<p><code>match.rule</code> 决定是否选择这条 route；<code>rewrite.path.pattern</code> 决定这条 route 中是否执行改写。这是两次不同用途的匹配。<strong>rewrite 中的捕获组来自自己的 <code>path.pattern</code>，不是路由匹配正则的捕获组。</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">字段</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>path.pattern</code></td>
+<td style="text-align:left">Go 正则，作用于解码后的 <code>URL.Path</code>，不包含查询串；非法正则会在加载时拒绝</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>path.target</code></td>
+<td style="text-align:left">替换后的路径，必须以 <code>/</code> 开头，不能包含 <code>?</code>、<code>#</code> 或控制字符</td>
+</tr>
+</tbody>
+</table>
+<p><code>pattern</code> 和 <code>target</code> 必须成对配置。建议用 <code>^</code>、<code>$</code> 限定整条路径：底层使用 <code>ReplaceAllString</code>，未加锚点的正则可能替换多个匹配片段。</p>
+<p>替换文本支持 <code>$1</code>、<code>${1}</code> 和命名捕获组引用。捕获组后紧接普通字符时，用 <code>${1}</code> 明确边界，例如 <code>/v${1}suffix</code>。路径 target 不展开 <code>{query.x}</code>、<code>{header.X}</code> 等请求变量；这些变量可用于下面的 query <code>set</code> / <code>add</code>。</p>
+<p>旧版写法 <code>rewrite.pattern</code> / <code>rewrite.target</code> 仍兼容，但不能与 <code>rewrite.path</code> 同时配置。新配置建议使用 <code>path</code>。</p>
+<h2 id="3-查询参数改写">3. 查询参数改写</h2>
+<p>路径与查询参数可以一起改写：</p>
+<pre><code class="language-yaml">site: api.example.com
+
+routes:
+  - name: legacy-users
+    match:
+      rule: 'PathRegex(&quot;^/legacy/users/([^/]+)$&quot;)'
+    proxy: [&quot;127.0.0.1:8080&quot;]
+    rewrite:
+      path:
+        pattern: '^/legacy/users/([^/]+)$'
+        target: '/api/users/${1}'
+      query:
+        remove: [debug]
+        rename:
+          uid: user_id
+        set:
+          source: litegate
+          path_user: '$1'
+          trace: '{header.X-Trace-ID}'
+        add:
+          tag: migrated
+</code></pre>
+<p>若请求为 <code>/legacy/users/42?uid=7&amp;debug=1&amp;tag=old</code>，且请求头 <code>X-Trace-ID: t123</code>，上游收到：</p>
+<pre><code class="language-text">/api/users/42?path_user=42&amp;source=litegate&amp;tag=old&amp;tag=migrated&amp;trace=t123&amp;user_id=7
+</code></pre>
+<p>操作顺序固定为 <strong><code>remove → rename → set → add</code></strong>，与 YAML 中字段书写的先后顺序无关。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">操作</th>
+<th style="text-align:left">行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>remove</code></td>
+<td style="text-align:left">删除参数及其全部值；不存在时跳过</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>rename</code></td>
+<td style="text-align:left">移动源参数的全部值，覆盖目标参数已有值；源不存在时不改变目标</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>set</code></td>
+<td style="text-align:left">将参数覆盖为一个值；不存在时创建</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>add</code></td>
+<td style="text-align:left">追加一个值，保留已有同名值</td>
+</tr>
+</tbody>
+</table>
+<p>rename 使用同一份源值快照，不会按 map 遍历顺序串行搬运。例如 <code>a: b</code>、<code>b: c</code> 将旧 <code>a</code> 移到 <code>b</code>，旧 <code>b</code> 移到 <code>c</code>，不会把旧 <code>a</code> 连续搬到 <code>c</code>。多个源重命名到同一个目标会在加载时拒绝。</p>
+<p><code>set</code> / <code>add</code> 的值支持路径捕获组及 <code>{host}</code>、<code>{path}</code>、<code>{query.x}</code>、<code>{header.X}</code>、<code>{cookie.x}</code> 等请求变量。此时 <code>{path}</code> 是本次路径改写后的路径；<code>{query.x}</code> 读取请求 URL 中的查询参数，不读取正在构建的 query 操作结果，因此不要依赖 <code>set</code> 字段之间的先后顺序。query 捕获引用使用 <code>$1</code>、<code>$2</code> 等写法；当前 query 模板会把花括号解析为请求变量，因此不要照搬路径 target 的 <code>${1}</code> 写法。请求提供的字符串只展开一次，例如请求值本身是 <code>$1</code> 时，会作为普通文本保留。</p>
+<p>可以省略 <code>path</code>，只配置 <code>query</code>。<strong>如果配置了 <code>path</code> 却没有匹配成功，整条 rewrite 都跳过，query 操作也不执行。</strong> 想对整条 route 的所有请求改参数时，使用纯 query 改写，或确保路径正则覆盖该 route 的请求。</p>
+<h2 id="4-从-nginx-last-迁移直接用匹配规则选上游">4. 从 Nginx <code>last</code> 迁移：直接用匹配规则选上游</h2>
+<p>假设 <code>/callback</code> 默认交给旧服务，但 <code>state</code> 以 <code>sub.</code> 开头的请求需要交给新服务，而新服务只接受 <code>/sub_callback</code>。不要先改成 <code>/sub_callback</code> 再期待另一条 route 接管；直接在原始请求上匹配条件，并在同一条 route 中指定上游与目标路径：</p>
+<pre><code class="language-yaml">site: oauth.example.com
+
+routes:
+  - name: sub-callback
+    priority: 200
+    match:
+      rule: 'Path(&quot;/callback&quot;) &amp;&amp; QueryPrefix(&quot;state&quot;, &quot;sub.&quot;)'
+    proxy: [&quot;127.0.0.1:9002&quot;]
+    rewrite:
+      path:
+        pattern: '^/callback$'
+        target: '/sub_callback'
+
+  - name: default-callback
+    priority: 100
+    match:
+      rule: 'Path(&quot;/callback&quot;)'
+    proxy: [&quot;127.0.0.1:9001&quot;]
+</code></pre>
+<p><code>/callback?state=sub.abc</code> 发往 9002 的 <code>/sub_callback?state=sub.abc</code>；其他 <code>/callback</code> 请求走 9001。若新服务也接受 <code>/callback</code>，删除第一条 route 的 rewrite 即可，分流仍然有效。</p>
+<p>这里的 <code>state</code> 前缀只负责选路，OAuth 后端仍要校验 state 的随机性、有效期和会话绑定。完整方案见 <a href="../09-advanced/oauth-single-callback.html">单回调地址分流</a>。</p>
+<h2 id="5-命名-middleware-写法">5. 命名 middleware 写法</h2>
+<p>复用规则时，也可以定义命名 <code>rewrite</code> middleware：</p>
+<pre><code class="language-yaml">site: api.example.com
+
+middlewares:
+  legacy-adapter:
+    type: rewrite
+    config:
+      path_pattern: '^/legacy/(.*)$'
+      path_target: '/api/${1}'
+      query_remove: 'debug,internal'
+      query_rename.uid: user_id
+      query_set.source: litegate
+      query_add.tag: migrated
+
+routes:
+  - name: legacy
+    match:
+      path_prefix: /legacy/
+    use: [legacy-adapter]
+    proxy: [&quot;127.0.0.1:8080&quot;]
+</code></pre>
+<p>命名形式与路由内联的 <code>rewrite</code> 是同一能力，执行语义一致。一个 route 只能有一个有效 rewrite；不能同时配置内联 rewrite 与命名 rewrite，也不能通过 chain 引用多份 rewrite。命名配置使用上面的扁平字段，不使用内联形式的 <code>path</code> / <code>query</code> 嵌套结构。</p>
+<h2 id="6-编码签名与排查">6. 编码、签名与排查</h2>
+<ul>
+<li>路径正则匹配解码后的路径。改写后清除 <code>RawPath</code>，转发时会重新转义；依赖原始百分号编码形式的协议应特别检查。</li>
+<li>只改 path 时不重编码 query。执行 query 修改后会按标准 URL 编码生成查询串，参数顺序、空格和百分号编码形式可能变化。</li>
+<li>对原始 URI 做签名校验的组件应使用 <code>{original_uri}</code> / <code>{original_path}</code>，或避免修改参与签名的内容。rewrite 保留原始 URI 的请求上下文；需要交给可信后端时，可用 Action 的 <code>headers</code> 显式投射为请求头，见 <a href="../04-actions/proxy.html#8-url-rewrite-rewrite">Proxy 文档</a>。</li>
+<li>配置 query 操作时，畸形查询串返回 <code>400</code>；执行 rewrite 后 URI 超过 16 KiB 返回 <code>414</code>。路径正则未命中时直接跳过本 rewrite 的处理与检查。</li>
+<li>后端返回 404 时，先检查命中的 route、上游地址和最终路径。可以开启 debug 日志查看 <code>URL rewrite executed</code>，也可以通过 MCP 的 <code>lookup_route</code> 检查有效执行链。</li>
+</ul>
+<p>选择能力时：简单剥前缀可用 <code>strip_prefix</code>，纯正则路径替换可用 <code>replace_path_regex</code>；改路径和参数用 rewrite；让浏览器跳转用 redirect；SPA 或入口脚本回退用 <code>try_files</code>。具体配置见 <a href="../05-middleware/path-and-redirect.html">路径改写与重定向中间件</a> 和 <a href="../04-actions/serve.html">Serve</a>。</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/03-configuration/rewrite.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>站点 YAML V2：结构与基本概念 · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/03-configuration/site-yaml-v2-concepts.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details open><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html" class="current" aria-current="page">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="站点-yaml-v2结构与基本概念">站点 YAML V2：结构与基本概念</h1>
+<p>本文从一份最短的配置开始，介绍 V2 的文件结构、站点地址、路由匹配、动作、配置复用和校验。先理解每一层负责什么，再查具体字段，会更容易写出正确的配置。</p>
+<p>新建站点使用 <code>sites/*.yaml</code> 和顶层 <code>site:</code>。下面是一份完整的站点配置：</p>
+<pre><code class="language-yaml">site: :9090
+~/goapi: 127.0.0.1:8080
+spa: ./www
+</code></pre>
+<p>它在 9090 端口接受任意 Host；<code>/goapi</code> 路径段及其子路径交给后端，匹配时忽略 ASCII 大小写；其余路径由 <code>./www</code> 中的单页应用处理。代理默认保留请求路径。</p>
+<h2 id="阅读导航">阅读导航</h2>
+<ol>
+<li><a href="#1-%E6%96%87%E4%BB%B6%E4%B8%8E%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84">文件与整体结构</a></li>
+<li><a href="#2-yaml-%E5%86%99%E6%B3%95%E7%BC%A9%E8%BF%9B%E4%B8%8E%E5%BC%95%E5%8F%B7">YAML 写法、缩进与引号</a></li>
+<li><a href="#3-%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE%E4%B8%8E%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE">全局配置与站点配置</a></li>
+<li><a href="#4-%E7%AB%99%E7%82%B9%E5%9C%B0%E5%9D%80https-%E4%B8%8E-ech">站点地址、HTTPS 与 ECH</a>（含 4.3 站点顶层属性全览、4.4 客户端握手加密 ECH）</li>
+<li><a href="#5-%E8%B7%AF%E5%BE%84%E8%B7%AF%E7%94%B1%E4%B8%8E%E5%8C%B9%E9%85%8D%E5%99%A8">路径路由与匹配器</a>（含 5.4 match 完整匹配属性）</li>
+<li><a href="#6-%E5%8A%A8%E4%BD%9C%E4%B8%8E%E7%AE%80%E5%86%99">动作与简写</a>（含 proxy / serve / php 等各动作属性清单）</li>
+<li><a href="#7-%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F">路由选择与执行顺序</a></li>
+<li><a href="#8-%E9%85%8D%E7%BD%AE%E4%BD%9C%E7%94%A8%E5%9F%9F%E4%B8%8E%E7%BB%A7%E6%89%BF">配置作用域与继承</a>（含 8.3 CORS / 鉴权 / 限流 / 缓存等路由治理属性全览）</li>
+<li><a href="#9-%E5%8D%A0%E4%BD%8D%E7%AC%A6%E4%B8%8E%E5%8A%A8%E6%80%81%E5%80%BC">占位符与动态值</a></li>
+<li><a href="#10-%E7%89%87%E6%AE%B5%E4%B8%8E%E5%85%B1%E4%BA%AB%E5%AE%9A%E4%B9%89">片段与共享定义</a>（含 10.3 片段支持治理字段清单）</li>
+<li><a href="#11-%E4%B8%AD%E9%97%B4%E4%BB%B6service-%E4%B8%8E-transport">中间件、Service 与 Transport</a>（含资源定义完整属性）</li>
+<li><a href="#12-%E6%B3%A8%E9%87%8A%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E%E8%B7%AF%E5%BE%84">注释、环境变量与路径</a></li>
+<li><a href="#13-%E6%A0%A1%E9%AA%8C%E7%83%AD%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF">校验、热加载与常见错误</a></li>
+<li><a href="#14-%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E6%BA%90%E6%A0%87%E7%AD%BE%E4%B8%8E-v2-%E7%9A%84%E6%95%B4%E5%90%88">服务发现源、标签与 V2 的整合</a></li>
+</ol>
+<h2 id="1-文件与整体结构">1. 文件与整体结构</h2>
+<h3 id="11-一个文档描述一个站点">1.1 一个文档描述一个站点</h3>
+<p>默认目录组织如下，实际目录以全局配置为准：</p>
+<pre><code class="language-text">config.yaml                全局配置
+sites/
+  app.yaml                 应用站点
+  api.yaml                 API 站点
+  _shared.yaml             共享匹配器与片段
+www/
+  index.html               前端构建产物
+</code></pre>
+<p>V2 通过 <code>site:</code> 识别格式，<code>version: 2</code> 可以省略。文件名用于组织文件，站点地址由文件里的 <code>site</code> 决定。</p>
+<h3 id="12-先看各层的位置">1.2 先看各层的位置</h3>
+<pre><code class="language-yaml">site: app.example.com
+https: false
+# 站点范围的响应头
+response_headers:
+  X-Frame-Options: DENY
+# 命名资源：只定义，不会自动产生路由
+services:
+  orders:
+    to: localhost:8080
+    timeout: 5s
+# 路径路由：匹配条件写在键名里
+/api:
+  service: orders
+  strip_prefix: true
+# 显式路由：用于精确路径、方法等条件
+routes:
+  - name: health
+    match: {path: /health}
+    respond: ok
+# 站点级动作：作为兜底路由
+spa: ./www
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>位置</th>
+<th>负责什么</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>site</code>、<code>https</code>、<code>port</code>、<code>entrypoints</code></td>
+<td>站点地址和入口设置</td>
+<td><code>site: :9090</code></td>
+</tr>
+<tr>
+<td><code>/api</code>、<code>~/api</code></td>
+<td>按路径前缀定义路由</td>
+<td><code>/api: localhost:8080</code></td>
+</tr>
+<tr>
+<td><code>routes</code> 中的 <code>match</code></td>
+<td>描述复杂匹配条件</td>
+<td><code>match: {path: /health}</code></td>
+</tr>
+<tr>
+<td>路由里的动作</td>
+<td>生成响应或转发请求</td>
+<td><code>proxy</code>、<code>respond</code>、<code>serve</code></td>
+</tr>
+<tr>
+<td>路由里的治理字段</td>
+<td>处理命中该路由的请求</td>
+<td><code>cors</code>、<code>strip_prefix</code></td>
+</tr>
+<tr>
+<td><code>services</code>、<code>transports</code>、<code>middlewares</code></td>
+<td>定义可引用的资源</td>
+<td><code>service: orders</code></td>
+</tr>
+<tr>
+<td><code>matchers</code>、<code>snippets</code></td>
+<td>复用匹配条件和配置</td>
+<td><code>match: '@api'</code>、<code>import: common</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="13-多站点">1.3 多站点</h3>
+<p>多个站点可以分别放在不同文件，也可以使用 <code>---</code> 分隔为同一文件中的多个 YAML 文档：</p>
+<pre><code class="language-yaml">site: app.example.com
+spa: ./www
+---
+site: api.example.com
+proxy: localhost:8080
+</code></pre>
+<p>多个地址使用完全相同的配置时，可以在 <code>site</code> 中用逗号分隔：</p>
+<pre><code class="language-yaml">site: example.com, www.example.com
+respond: hello
+</code></pre>
+<p>这会为每个地址展开一份站点配置。同一文件中的多个文档应使用同一种格式；不要混放 V2 和旧格式。不同站点也不会自动继承对方的配置。</p>
+<h2 id="2-yaml-写法缩进与引号">2. YAML 写法、缩进与引号</h2>
+<h3 id="21-缩进决定层级">2.1 缩进决定层级</h3>
+<p>使用空格缩进，建议每层两个空格：</p>
+<pre><code class="language-yaml">site: example.com
+/api:
+  proxy: localhost:8080
+  strip_prefix: true
+spa: ./www
+</code></pre>
+<p><code>proxy</code> 和 <code>strip_prefix</code> 属于 <code>/api</code>；<code>spa</code> 与 <code>/api</code> 同级，是站点的兜底动作。若把 <code>spa</code> 缩进到 <code>/api</code> 下，就会在同一路由中声明两个动作，校验会拒绝。</p>
+<h3 id="22-字符串对象和列表">2.2 字符串、对象和列表</h3>
+<p>同一个代理动作可以从短写法逐步展开：</p>
+<pre><code class="language-yaml">site: example.com
+/api: localhost:8080
+</code></pre>
+<pre><code class="language-yaml">site: example.com
+/api:
+  proxy: localhost:8080
+</code></pre>
+<pre><code class="language-yaml">site: example.com
+/api:
+  proxy:
+    to: ['localhost:8080', 'localhost:8081']
+    timeout: 5s
+    retry: 2
+</code></pre>
+<p>前两份等价；第三份增加了多个后端、超时和重试。对象也能写成一行，例如 <code>proxy: {to: localhost:8080, timeout: 5s}</code>。较复杂的配置建议展开，以便添加注释。</p>
+<h3 id="23-哪些值需要加引号">2.3 哪些值需要加引号</h3>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>推荐写法</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>以 <code>*</code> 开头的地址</td>
+<td><code>site: '*.example.com'</code></td>
+<td><code>*</code> 在 YAML 中有别名含义</td>
+</tr>
+<tr>
+<td>以 <code>@</code> 开头的引用</td>
+<td><code>match: '@api'</code></td>
+<td>避免 YAML 特殊字符解析</td>
+</tr>
+<tr>
+<td>单独的占位符</td>
+<td><code>X-Path: '{path}'</code></td>
+<td>避免被识别为对象</td>
+</tr>
+<tr>
+<td>Windows 路径</td>
+<td><code>spa: 'D:\web\dist'</code></td>
+<td>单引号保留反斜杠</td>
+</tr>
+<tr>
+<td>字符串形式的布尔词</td>
+<td><code>respond: 'true'</code></td>
+<td>未加引号的 <code>true</code> 是布尔值</td>
+</tr>
+<tr>
+<td>包含冒号加空格的文本</td>
+<td><code>respond: 'result: ok'</code></td>
+<td>避免被识别为键值结构</td>
+</tr>
+</tbody>
+</table>
+<p><code>site: :9090</code> 和 <code>proxy: localhost:8080</code> 可以直接写，因为冒号后没有空格。</p>
+<h3 id="24-多行文本">2.4 多行文本</h3>
+<pre><code class="language-yaml">site: example.com
+respond:
+  content_type: text/plain
+  body: |
+    Welcome to LiteGate.
+    This is a multi-line response.
+</code></pre>
+<p><code>|</code> 保留换行，<code>&gt;</code> 折叠普通换行。重复键、YAML 锚点/别名、合并键和 <code>null</code> 在 V2 中不受支持；省略不需要的字段即可。</p>
+<h2 id="3-全局配置与站点配置">3. 全局配置与站点配置</h2>
+<p>全局配置 <code>config.yaml</code> 描述网关运行方式，例如监听入口、站点目录、日志、服务发现和证书管理。站点文件描述某个站点如何处理 HTTP 请求。</p>
+<p>站点根部的字段不一定是“全局字段”。例如 <code>spa: ./www</code> 是这个站点的兜底动作，不会影响其他站点。</p>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>配置位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>配置网关入口、服务发现源</td>
+<td><code>config.yaml</code></td>
+</tr>
+<tr>
+<td>接入一个域名或独立站点端口</td>
+<td>站点文件中的 <code>site</code></td>
+</tr>
+<tr>
+<td>API 转发和前端分流</td>
+<td>路径键或 <code>routes</code></td>
+</tr>
+<tr>
+<td>复用后端连接、重试和负载均衡配置</td>
+<td>站点中的 <code>services</code></td>
+</tr>
+<tr>
+<td>跨站点复用匹配条件和治理配置</td>
+<td><code>sites/_shared.yaml</code></td>
+</tr>
+</tbody>
+</table>
+<p>全局字段的完整说明见 <a href="global-config.html">全局配置</a>。</p>
+<h2 id="4-站点地址https-与-ech">4. 站点地址、HTTPS 与 ECH</h2>
+<h3 id="41-地址对照">4.1 地址对照</h3>
+<table>
+<thead>
+<tr>
+<th><code>site</code> 值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>example.com</code></td>
+<td>按 HTTP Host 匹配域名，使用既有入口</td>
+</tr>
+<tr>
+<td><code>example.com:9090</code></td>
+<td>在指定端口上匹配该域名</td>
+</tr>
+<tr>
+<td><code>:9090</code></td>
+<td>在指定端口接受任意 Host</td>
+</tr>
+<tr>
+<td><code>'*:9090'</code></td>
+<td>与 <code>:9090</code> 等价</td>
+</tr>
+<tr>
+<td><code>0.0.0.0:9090</code></td>
+<td>与 <code>:9090</code> 等价</td>
+</tr>
+<tr>
+<td><code>'[::]:9090'</code></td>
+<td>与 <code>:9090</code> 等价</td>
+</tr>
+<tr>
+<td><code>127.0.0.1:9090</code></td>
+<td>在指定端口匹配 Host 为该 IP 的请求</td>
+</tr>
+<tr>
+<td><code>'[::1]:9090'</code></td>
+<td>IPv6 Host 与端口；有端口时需要方括号</td>
+</tr>
+<tr>
+<td><code>https://example.com</code></td>
+<td>声明 HTTPS 站点意图</td>
+</tr>
+</tbody>
+</table>
+<p>地址中的 Host 用于选择请求，不能用它指定绑定哪张本机网卡。实际绑定地址由入口设置控制。域名写在配置里也不会自动创建 DNS 记录。</p>
+<p>端口范围为 1–65535。地址已经带端口时，不能再同时声明 <code>port</code> 或 <code>entrypoints</code>。</p>
+<h3 id="42-https-必须明确配置">4.2 HTTPS 必须明确配置</h3>
+<p>V2 的 <code>https</code> 默认是 <code>false</code>。单独写域名、IP 或 <code>:443</code> 不会自动把它变为 <code>true</code>。</p>
+<pre><code class="language-yaml">site: example.com
+https: true
+proxy: localhost:8080
+</code></pre>
+<p>也可以写 <code>site: https://example.com</code>，此时不能再声明 <code>https: false</code>。<code>http://</code> 前缀不是当前 V2 支持的地址写法；HTTP 站点使用普通地址和 <code>https: false</code>。</p>
+<p>HTTPS 正常工作还需要相应入口和可用证书。证书申请、存储等配置见 <a href="../06-certificates/certificate-application-guide.html">证书申请配置指南</a>。</p>
+<h3 id="43-站点顶层属性全览">4.3 站点顶层属性全览</h3>
+<p>除了 <code>site</code> 与 <code>https</code> 外，站点根层级还支持配置入口、网络限制、全局继承与 TLS 等属性：</p>
+<table>
+<thead>
+<tr>
+<th>顶层属性</th>
+<th>类型</th>
+<th>默认值</th>
+<th>作用与深入说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>site</code></td>
+<td>字符串</td>
+<td>必需</td>
+<td>站点监听与匹配地址。支持域名（<code>example.com</code>）、端口简写（<code>:9090</code>）、带端口域名（<code>example.com:9090</code>）、IPv6（<code>'[::1]:9090'</code>）、HTTPS 意图（<code>https://example.com</code>）或逗号分隔多地址。</td>
+</tr>
+<tr>
+<td><code>https</code></td>
+<td>布尔值</td>
+<td><code>false</code></td>
+<td>是否开启 HTTP 至 HTTPS 自动重定向。即使绑定 443 端口，V2 也不会默认开启，需显式声明 <code>https: true</code>。</td>
+</tr>
+<tr>
+<td><code>ech</code></td>
+<td>布尔值 / 字符串</td>
+<td><code>false</code></td>
+<td>站点级 ECH（Encrypted ClientHello）握手加密。全局仅配置单组 ECH 时可设为 <code>true</code>；多组时必须指定具体的公共域名（如 <code>ech: ech.example.com</code>）；<code>false</code> 为关闭（默认）。启用要求站点为 HTTPS（443 端口且支持 TLS 1.3），域名将自动纳入对应 DNS 提供商的 HTTPS (Type 65) 记录发布。不可用于通配符、纯 IP 或 L4 透传站点。</td>
+</tr>
+<tr>
+<td><code>port</code></td>
+<td>整数 (1–65535)</td>
+<td>依赖全局配置</td>
+<td>显式指定独立端口。若 <code>site</code> 地址中已包含端口，严禁重复设置 <code>port</code>。</td>
+</tr>
+<tr>
+<td><code>entrypoints</code></td>
+<td>字符串列表</td>
+<td>全局入口</td>
+<td>关联全局 <code>config.yaml</code> 定义的入口监听器名称（如 <code>[web, websecure]</code>）。与包含端口的 <code>site</code> 互斥。</td>
+</tr>
+<tr>
+<td><code>max_request_body_size</code></td>
+<td>整数 (字节)</td>
+<td><code>0</code> (不限)</td>
+<td>客户端请求体大小上限（单位：字节）。超出限制网关直接返回 413 Payload Too Large。例如 <code>10485760</code> (10MB)。</td>
+</tr>
+<tr>
+<td><code>disable_trace_id</code></td>
+<td>布尔值</td>
+<td><code>false</code></td>
+<td>全站禁用请求追踪 ID。开启后网关不再自动生成 <code>X-Trace-Id</code> 响应头与跨度日志。</td>
+</tr>
+<tr>
+<td><code>ip_restriction</code></td>
+<td>对象</td>
+<td>无</td>
+<td>站点级客户端 IP 访问限制。包含 <code>allow_ips</code> 与 <code>deny_ips</code> 列表（支持单 IP 与 CIDR 网段）。</td>
+</tr>
+<tr>
+<td><code>request_headers</code></td>
+<td>键值映射</td>
+<td>无</td>
+<td>站点级请求头继承字典。自动附加到站内所有代理 (<code>proxy</code>) 动作；头名前缀 <code>-</code>（如 <code>-Authorization</code>）表示移除该请求头。支持占位符。</td>
+</tr>
+<tr>
+<td><code>response_headers</code></td>
+<td>键值映射</td>
+<td>无</td>
+<td>站点级响应头继承字典。自动附加到站内所有路由与动作的最外层；头名前缀 <code>-</code> 表示移除该响应头。</td>
+</tr>
+<tr>
+<td><code>upstream_client</code></td>
+<td>字符串</td>
+<td>跟随全局</td>
+<td>站点级上游 HTTP 客户端策略。可选 <code>fast</code>（超高性能同步 HTTP/1.1 客户端）或 <code>standard</code>（标准 Go HTTP 客户端）。</td>
+</tr>
+<tr>
+<td><code>use</code></td>
+<td>字符串 / 列表</td>
+<td>无</td>
+<td>站点级绑定的命名中间件。在编译时自动拼接到站内每条路由的中间件流水线前面。</td>
+</tr>
+<tr>
+<td><code>error_pages</code></td>
+<td>对象列表</td>
+<td>无</td>
+<td>站点级自定义 HTTP 错误页面映射。格式为 <code>[{status: [404], template: /var/www/404.html}]</code>。</td>
+</tr>
+<tr>
+<td><code>tls</code></td>
+<td>对象</td>
+<td>无</td>
+<td>站点独立 TLS 证书与策略覆盖（包含 <code>cert_file</code>, <code>key_file</code>, <code>client_auth</code> 等）。</td>
+</tr>
+<tr>
+<td><code>forward</code></td>
+<td>对象</td>
+<td>无</td>
+<td>Layer 4 穿透转发配置（与 HTTP 路由互斥）。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>站点顶层配置完整示例：</strong></p>
+<pre><code class="language-yaml">site: api.example.com
+https: true
+ech: ech.example.com # 绑定 ECH 公共组，对外加密 SNI（按需开启）
+max_request_body_size: 20971520 # 限制客户端请求体最大 20MB
+upstream_client: fast # 默认使用高性能上游客户端
+# 站点级 IP 限制（站内所有路由生效）
+ip_restriction:
+  allow_ips:
+    - 192.168.0.0/16
+    - 10.0.0.0/8
+  deny_ips:
+    - 192.168.1.100
+# 站点级请求头（继承给所有 proxy 路由）与响应头（继承给所有动作）
+request_headers:
+  X-Gateway-Site: api.example.com
+response_headers:
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+# 站点级自定义错误页
+error_pages:
+  - status: [404]
+    template: /var/www/errors/404.html
+  - status: [500, 502, 503, 504]
+    template: /var/www/errors/50x.html
+# 站点级独立证书覆盖（可选，默认使用 ACME 自动证书或全局证书）
+tls:
+  enabled: true
+  cert_file: /etc/ssl/certs/api.crt
+  key_file: /etc/ssl/certs/api.key
+  min_version: &quot;1.2&quot;
+  client_auth: &quot;none&quot; # mTLS 双向认证时可设为 require_and_verify
+/api: localhost:8080
+</code></pre>
+<h3 id="44-客户端握手加密-ech-ech">4.4 客户端握手加密 ECH (<code>ech</code>)</h3>
+<p>ECH（Encrypted ClientHello）用于加密客户端浏览器到网关的 TLS ClientHello 握手扩展，隐藏真实访问域名（SNI）。公网监听只能看到外层公共域名（如 <code>ech.example.com</code>），LiteGate 在边缘完成解密后，仍按内层实际域名（如 <code>api.example.com</code>）执行证书匹配与业务路由：</p>
+<pre><code class="language-yaml">site: api.example.com
+https: true
+ech: ech.example.com
+proxy: localhost:8080
+</code></pre>
+<ul>
+<li><strong>配置方式</strong>：
+<ul>
+<li><code>ech: ech.example.com</code>：指定绑定的 ECH 公共组域名（多组场景下必需）。网关自动将当前站点域名纳入该公共组及其对应 DNS 提供商的 HTTPS（Type 65）记录发布列表。</li>
+<li><code>ech: true</code>：仅当全局 <code>config.yaml</code> 只配置了一个 ECH 组时允许使用；若配置了多个 ECH 组则会报错提示必须明确指定公共域名。</li>
+<li><code>ech: false</code>：显式关闭 ECH（缺省值）。</li>
+</ul>
+</li>
+<li><strong>生效前提与约束</strong>：
+<ul>
+<li>全局 <code>config.yaml</code> 必须开启 <code>ech.enabled: true</code> 并配置 <code>groups</code>（及关联的 DNS 提供商凭据）。</li>
+<li>站点必须开启 HTTPS（<code>https: true</code> 或 <code>site: https://...</code>），监听 443 端口，且 TLS 策略允许 TLS 1.3（默认允许）。</li>
+<li>站点域名必须被所选 DNS 提供商的 <code>domains</code> 范围覆盖。</li>
+<li><strong>不支持的场景</strong>：通配符站点（如 <code>*.example.com</code>）、纯 IP 站点（如 <code>127.0.0.1:9090</code>、<code>:9090</code>）以及 Layer 4 穿透转发站点（<code>forward:</code>）。</li>
+</ul>
+</li>
+<li><strong>热加载与换组</strong>：
+<ul>
+<li>站点级 <code>ech</code> 的开启、关闭与换组完全支持热加载，无需重启网关。</li>
+<li>换组时网关会先安全撤回在旧 DNS 提供商处发布的 HTTPS 记录，再由新组发布。</li>
+<li>完整 DNS 发布、DoH 客户端接入与多节点 KV 密钥同步说明见 <a href="../06-certificates/ech.html">ECH 配置指南</a>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-路径路由与匹配器">5. 路径路由与匹配器</h2>
+<h3 id="51-路径键是前缀匹配">5.1 路径键是前缀匹配</h3>
+<pre><code class="language-yaml">site: example.com
+/api: localhost:8080
+~/goapi: localhost:8081
+spa: ./www
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>请求路径</th>
+<th>命中路由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/api</code>、<code>/api/orders</code></td>
+<td><code>/api</code></td>
+</tr>
+<tr>
+<td><code>/API/orders</code></td>
+<td>SPA 兜底</td>
+</tr>
+<tr>
+<td><code>/goapi</code>、<code>/GoApi/Orders</code></td>
+<td><code>~/goapi</code></td>
+</tr>
+<tr>
+<td><code>/apix</code>、<code>/goapix</code>、<code>/other/goapi</code></td>
+<td>SPA 兜底</td>
+</tr>
+</tbody>
+</table>
+<p>路径键按路径段边界匹配。<code>~/</code> 表示忽略 ASCII 大小写，不是正则表达式。不要同时定义 <code>/goapi</code> 和 <code>~/goapi</code>。</p>
+<p>路径键下不能再写 <code>match</code>；需要额外条件时改用 <code>routes</code>。</p>
+<h3 id="52-精确路径与组合条件">5.2 精确路径与组合条件</h3>
+<pre><code class="language-yaml">site: example.com
+routes:
+  - name: health
+    match: {path: /health, method: GET}
+    respond: ok
+  - name: api-write
+    match: {prefix: /api, method: [POST, PUT, DELETE]}
+    proxy: localhost:8081
+/api: localhost:8080
+</code></pre>
+<p><code>path</code> 为精确路径，<code>prefix</code> 是 <code>path_prefix</code> 的别名；<code>method</code> 接受字符串或列表。不同种类的条件共同限制请求，上例写操作走 8081，其余 <code>/api</code> 请求走 8080。</p>
+<p>精确路径不提供可删除的匹配前缀，所以不能搭配 <code>strip_prefix: true</code>。此时需要显式指定要删除的字符串，或者改用前缀匹配。</p>
+<h3 id="53-命名匹配器">5.3 命名匹配器</h3>
+<pre><code class="language-yaml">site: example.com
+matchers:
+  writes:
+    prefix: /api
+    method: [POST, PUT, DELETE]
+routes:
+  - match: '@writes'
+    proxy: localhost:8081
+/api: localhost:8080
+</code></pre>
+<p><code>matchers</code> 定义条件，<code>match: '@writes'</code> 使用条件。定义本身不会产生路由，也不会改变优先级。名称使用字母或下划线开头，后续可包含数字、下划线和连字符。</p>
+<p>写成列表表示各项同时满足，同一个 matcher 因此可以被多条路由复用，每条路由追加自己的条件；定义里也可以这样组合：</p>
+<pre><code class="language-yaml">site: example.com
+matchers:
+  api: {prefix: /api}
+  api-write: ['@api', {method: [POST, PUT, DELETE]}]
+routes:
+  - match: '@api-write'
+    proxy: localhost:8081
+  - match: ['@api', {header: {X-Canary: &quot;1&quot;}}]
+    proxy: localhost:8082
+/api: localhost:8080
+</code></pre>
+<p><code>rule</code> 以 AND 连接，<code>header</code>/<code>query</code> 合并；其他字段只能由一项提供，值冲突时报错，不会静默覆盖。</p>
+<p>正则及更复杂的表达式通过 <code>match.rule</code> 配置；路径列表、通配路径和详细条件请查 <a href="site-config.html">站点配置参考</a>。不要把路径键 <code>/api/*</code> 当作 <code>/api</code> 前缀简写。</p>
+<h3 id="54-路由与匹配属性清单-match-完整参数与元属性">5.4 路由与匹配属性清单 (match 完整参数与元属性)</h3>
+<p>在 <code>routes:</code> 列表中，每个路由项包含元属性与匹配条件：</p>
+<table>
+<thead>
+<tr>
+<th>路由元属性</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>字符串</td>
+<td>无 (自动编号)</td>
+<td>路由唯一名称标识符。用于日志审计、指标观测和调试追踪。同一站点内必须唯一。</td>
+</tr>
+<tr>
+<td><code>priority</code></td>
+<td>整数</td>
+<td><code>0</code></td>
+<td>显式路由匹配优先级。数值越大越优先评估。同等具体程度下，高优先级路由排在前面。</td>
+</tr>
+<tr>
+<td><code>match</code></td>
+<td>字符串 / 对象 / 列表</td>
+<td>必需</td>
+<td>匹配条件。标量字符串为路径前缀或 <code>@name</code>；对象形式支持下列组合条件；列表表示各项同时满足。</td>
+</tr>
+</tbody>
+</table>
+<p><code>match</code> 条件对象的属性列表：</p>
+<table>
+<thead>
+<tr>
+<th><code>match</code> 属性</th>
+<th>类型</th>
+<th>示例</th>
+<th>作用与匹配机制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>prefix</code> / <code>path_prefix</code></td>
+<td>字符串</td>
+<td><code>prefix: /api</code></td>
+<td>路径前缀匹配。必须以 <code>/</code> 开头，按路径段边界严格匹配（<code>/api</code> 匹配 <code>/api</code> 与 <code>/api/users</code>，不匹配 <code>/apix</code>）。</td>
+</tr>
+<tr>
+<td><code>path</code></td>
+<td>字符串 / 列表</td>
+<td><code>path: /health</code><br><code>path: [&quot;/v1/*&quot;, &quot;/v2/*&quot;]</code></td>
+<td>精确路径匹配（以 <code>/</code> 开头），或带 <code>*</code> 通配符的路径列表（系统自动编译为高效正则 <code>PathRegexp</code> 表达式）。路径必须以 <code>/</code> 或 <code>*</code> 开头。</td>
+</tr>
+<tr>
+<td><code>method</code></td>
+<td>字符串 / 列表</td>
+<td><code>method: GET</code><br><code>method: [POST, PUT, DELETE]</code></td>
+<td>请求 HTTP 方法匹配，忽略大小写。支持单值或字符串列表。</td>
+</tr>
+<tr>
+<td><code>header</code></td>
+<td>键值映射</td>
+<td><code>header: {X-Role: admin}</code><br><code>header: {Accept: [application/json, text/plain]}</code></td>
+<td>HTTP 请求头匹配。支持精确匹配，值支持字符串或匹配候选列表。</td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td>键值映射</td>
+<td><code>query: {version: v2, debug: &quot;true&quot;}</code></td>
+<td>URL Query 查询参数匹配。请求中必须包含对应参数且值匹配。</td>
+</tr>
+<tr>
+<td><code>rule</code></td>
+<td>字符串</td>
+<td><code>rule: &quot;Method('GET') &amp;&amp; PathPrefix('/api')&quot;</code></td>
+<td>高级规则 DSL 表达式（Traefik 兼容风格）。可单独使用，也可与上述条件并存（自动执行逻辑与 <code>&amp;&amp;</code>）。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>简写匹配与命名匹配说明：</strong></p>
+<ul>
+<li><strong>路径前缀标量简写</strong>：<code>match: /api</code> 等价于 <code>match: {prefix: /api}</code>。</li>
+<li><strong>命名匹配器引用</strong>：<code>match: '@writes'</code> 引用站点 <code>matchers.writes</code> 中预先定义的匹配条件。</li>
+<li><strong>大小写不敏感路径键</strong>：站点层路径键 <code>~/goapi:</code> 自动开启大小写不敏感的前缀匹配（忽略 ASCII 大小写）。</li>
+</ul>
+<p><strong>路由匹配综合示例：</strong></p>
+<pre><code class="language-yaml">site: example.com
+matchers:
+  admin_only:
+    prefix: /admin
+    header: {X-Role: admin}
+routes:
+  # 精确路径 + 方法匹配 + 自定义优先级
+  - name: health_check
+    priority: 100
+    match:
+      path: /healthz
+      method: [GET, HEAD]
+    respond: &quot;healthy\n&quot;
+  # 通配路径列表 + 写操作方法过滤
+  - name: api_v1_writes
+    priority: 10
+    match:
+      path: [&quot;/api/v1/*&quot;, &quot;/api/v2/*&quot;]
+      method: [POST, PUT, DELETE]
+    proxy: localhost:8081
+  # 引用命名匹配器
+  - name: admin_console
+    match: '@admin_only'
+    proxy: localhost:8082
+/api: localhost:8080
+spa: ./dist
+</code></pre>
+<h2 id="6-动作与简写">6. 动作与简写</h2>
+<p>每条路由只能有一个终结动作。治理字段可以配合动作，但不能同时配置 <code>proxy</code> 和 <code>spa</code> 等两个动作。</p>
+<table>
+<thead>
+<tr>
+<th>动作类型</th>
+<th>简写形式</th>
+<th>展开或深入配置方式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>proxy</code></td>
+<td><code>proxy: localhost:8080</code></td>
+<td><code>proxy: {to: [...], timeout: 5s, lb: least_conn}</code></td>
+<td>反向代理到上游地址或发现服务</td>
+</tr>
+<tr>
+<td><code>service</code></td>
+<td><code>service: orders</code></td>
+<td><code>proxy: {service: orders}</code></td>
+<td>快捷引用在 <code>services:</code> 中定义的命名后端</td>
+</tr>
+<tr>
+<td><code>serve</code></td>
+<td><code>serve: ./public</code></td>
+<td><code>serve: {root: ./public, index: index.html}</code></td>
+<td>提供本地静态文件，<code>file_server</code> 是同义写法</td>
+</tr>
+<tr>
+<td><code>spa</code></td>
+<td><code>spa: ./dist</code></td>
+<td><code>serve: {root: ./dist, spa: true}</code></td>
+<td>单页应用，未命中文件时回退到 <code>index.html</code></td>
+</tr>
+<tr>
+<td><code>php</code></td>
+<td>-</td>
+<td><code>php: {root: /var/www, upstream: unix:///run/php-fpm.sock}</code></td>
+<td>PHP-FPM 网站，内置目录首页与回退</td>
+</tr>
+<tr>
+<td><code>respond</code></td>
+<td><code>respond: ok</code></td>
+<td><code>respond: {status: 200, body: ok, content_type: text/plain}</code></td>
+<td>直接返回固定状态码与响应正文</td>
+</tr>
+<tr>
+<td><code>redirect</code></td>
+<td><code>redirect: /new</code></td>
+<td><code>redirect: {location: /new, status: 301}</code></td>
+<td>URL 重定向，简写默认 302</td>
+</tr>
+<tr>
+<td><code>webdav</code></td>
+<td><code>webdav: ./share</code></td>
+<td><code>webdav: {root: ./share, read_only: false}</code></td>
+<td>提供 WebDAV 网络存储与文件管理</td>
+</tr>
+<tr>
+<td><code>template</code></td>
+<td>-</td>
+<td><code>template: {template: index.html, fetch_json: [...]}</code></td>
+<td>动态模板引擎，支持数据预取与 HTMX</td>
+</tr>
+</tbody>
+</table>
+<p>路径字符串简写固定表示代理地址。例如 <code>/api: orders</code> 会被识别为代理到主机名为 <code>orders</code> 的机器，不能代替 <code>service: orders</code>；<code>/static: ./public</code> 也不能代替静态文件动作。</p>
+<h3 id="61-反向代理属性-proxy">6.1 反向代理属性 (<code>proxy</code>)</h3>
+<p><code>proxy</code> 对象用于反向代理到静态地址池、服务发现或引用 Service：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>简写形式</th>
+<th>默认值</th>
+<th>作用与深入说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>to</code> / <code>servers</code></td>
+<td>字符串 / 列表</td>
+<td><code>to: localhost:8080</code></td>
+<td>无</td>
+<td>静态后端物理地址列表（<code>host:port</code>）。多个地址用逗号或列表指定，自动形成负载均衡池。<code>to</code> 与 <code>servers</code> 互为别名（不可同时出现）。</td>
+</tr>
+<tr>
+<td><code>service</code></td>
+<td>字符串</td>
+<td><code>service: orders</code></td>
+<td>无</td>
+<td>引用在 <code>services:</code> 中预先定义的命名后端资源。引用 Service 时，路由层不能重复覆盖其后端连接属性。</td>
+</tr>
+<tr>
+<td><code>discovery</code></td>
+<td>字符串 / 对象</td>
+<td><code>discovery: orders</code></td>
+<td>无</td>
+<td>动态服务发现后端。标量字符串为注册服务名；对象形式支持 <code>name</code> 及硬/软标签选择器 <code>selector: {match: {...}, meta: {...}}</code>。与静态地址互斥。</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>字符串 / 整数</td>
+<td><code>timeout: 5s</code></td>
+<td>全局默认 (30s)</td>
+<td>后端响应超时。支持带时间单位字符串（如 <code>5s</code>, <code>500ms</code>, <code>2m</code>）或整秒数字。</td>
+</tr>
+<tr>
+<td><code>retry</code></td>
+<td>整数 / 对象</td>
+<td><code>retry: 2</code> 或 <code>retry: {attempts: 2}</code></td>
+<td><code>0</code> (不重试)</td>
+<td>请求后端失败时向其他可用实例重试的最大次数。</td>
+</tr>
+<tr>
+<td><code>lb</code> / <code>loadbalancer</code></td>
+<td>字符串 / 对象</td>
+<td><code>lb: least_conn</code></td>
+<td><code>round_robin</code></td>
+<td>负载均衡算法策略。可选：<code>round_robin</code> (轮询), <code>least_conn</code> (最少连接), <code>ip_hash</code> (IP 哈希), <code>p2c_least_conn</code> (P2C 最少连接)。对象形式支持 <code>{strategy, server: {port, scheme}, serverstransport}</code>。</td>
+</tr>
+<tr>
+<td><code>health</code> / <code>healthcheck</code></td>
+<td>字符串 / 对象</td>
+<td><code>health: /health</code></td>
+<td>无</td>
+<td>后端主动存活健康检查探针。标量为检测路径；对象形式支持 <code>path: /health</code> 及探测周期 <code>interval: 10s</code>。</td>
+</tr>
+<tr>
+<td><code>circuitbreaker</code></td>
+<td>对象</td>
+<td><code>circuitbreaker: {...}</code></td>
+<td>无</td>
+<td>后端熔断器保护机制。包含 <code>enabled</code> (bool), <code>timeout</code> (熔断开启时长秒), <code>maxrequests</code> (半开状态放行请求数), <code>tripthreshold</code> (连续触发熔断的失败次数)。</td>
+</tr>
+<tr>
+<td><code>resolver</code></td>
+<td>字符串</td>
+<td><code>resolver: internal-dns</code></td>
+<td>全局 DNS</td>
+<td>引用全局配置中定义的上游 DNS 解析器名称。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>内联 Proxy 完整配置示例：</strong></p>
+<pre><code class="language-yaml">site: example.com
+/api:
+  proxy:
+    to:
+      - 10.0.1.10:8080
+      - 10.0.1.11:8080
+    timeout: 3s
+    retry: 2
+    lb: least_conn
+    health:
+      path: /healthz
+      interval: 5s
+    circuitbreaker:
+      enabled: true
+      timeout: 30
+      tripthreshold: 5
+  strip_prefix: true
+</code></pre>
+<h3 id="62-静态文件与单页应用-serve--file_server--spa">6.2 静态文件与单页应用 (<code>serve</code> / <code>file_server</code> / <code>spa</code>)</h3>
+<p><code>serve</code>（同义词 <code>file_server</code>）用于对外提供本地静态文件，<code>spa</code> 专门提供单页应用回退：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>简写形式</th>
+<th>默认值</th>
+<th>作用与说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>root</code></td>
+<td>字符串</td>
+<td><code>serve: ./public</code><br><code>spa: ./dist</code></td>
+<td>必需</td>
+<td>静态文件资源根目录路径。建议使用绝对路径或基于网关工作目录的明确相对路径。</td>
+</tr>
+<tr>
+<td><code>index</code></td>
+<td>字符串</td>
+<td>-</td>
+<td><code>index.html</code></td>
+<td>目录访问时的默认首页文件名。</td>
+</tr>
+<tr>
+<td><code>file</code></td>
+<td>字符串</td>
+<td>-</td>
+<td>无</td>
+<td>直接提供指定的单一文件（如用于根路由提供下载或站点图标）。</td>
+</tr>
+<tr>
+<td><code>spa</code></td>
+<td>布尔值</td>
+<td><code>spa: ./dist</code> 自动为 true</td>
+<td><code>false</code></td>
+<td>是否开启单页应用 (SPA) 路由回退。找不到对应静态文件时自动回退至 <code>index.html</code>，保障前端 History 路由。</td>
+</tr>
+<tr>
+<td><code>browse</code> / <code>allow_browse</code></td>
+<td>布尔值</td>
+<td>-</td>
+<td><code>false</code></td>
+<td>是否允许列出目录下的文件列表（适用于下载站或共享目录）。</td>
+</tr>
+<tr>
+<td><code>show_hidden</code></td>
+<td>布尔值</td>
+<td>-</td>
+<td><code>false</code></td>
+<td>是否允许访问以 <code>.</code> 开头的隐藏文件。默认拒绝访问。</td>
+</tr>
+<tr>
+<td><code>cache_control</code></td>
+<td>字符串</td>
+<td>-</td>
+<td>无</td>
+<td>注入静态响应的 <code>Cache-Control</code> 头（如 <code>public, max-age=31536000, immutable</code>）。</td>
+</tr>
+<tr>
+<td><code>try_files</code></td>
+<td>字符串列表</td>
+<td>-</td>
+<td>无</td>
+<td>自定义文件探测顺序候选列表（如 <code>[&quot;{path}&quot;, &quot;{path}.html&quot;, &quot;/index.html&quot;]</code>）。</td>
+</tr>
+<tr>
+<td><code>not_found_file</code></td>
+<td>字符串</td>
+<td>-</td>
+<td>无</td>
+<td>找不到文件时的自定义 404 HTML 文件相对路径。</td>
+</tr>
+<tr>
+<td><code>render_markdown</code></td>
+<td>布尔值</td>
+<td>-</td>
+<td><code>false</code></td>
+<td>是否将目录中的 <code>.md</code> Markdown 文件就地渲染为 HTML 返回。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>静态文件与 SPA 示例：</strong></p>
+<pre><code class="language-yaml">site: example.com
+# 静态资源目录（带缓存控制）
+/static:
+  serve:
+    root: /var/www/assets
+    cache_control: &quot;public, max-age=604800&quot;
+# 站点兜底单页应用
+spa:
+  root: /var/www/dist
+  not_found_file: 404.html
+</code></pre>
+<h3 id="63-php-网站-php">6.3 PHP 网站 (<code>php</code>)</h3>
+<p><code>php</code> 自动协调 FastCGI、静态资源查找与前端控制器路由，无需手工配置复杂的重写规则：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>默认值</th>
+<th>作用与安全说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>root</code></td>
+<td>字符串</td>
+<td>必需</td>
+<td>PHP 网站的物理代码根目录（例如 <code>/var/www/wordpress</code>）。</td>
+</tr>
+<tr>
+<td><code>upstream</code></td>
+<td>字符串 / 列表</td>
+<td>必需</td>
+<td>PHP-FPM 监听地址。支持 Unix socket（<code>unix:///run/php/php8.3-fpm.sock</code>）或 TCP 地址（<code>127.0.0.1:9000</code> 或 <code>fastcgi://127.0.0.1:9000</code>）。</td>
+</tr>
+<tr>
+<td><code>deny_scripts</code></td>
+<td>字符串列表</td>
+<td>无</td>
+<td>禁止执行 PHP 脚本的根相对目录（如 <code>[/wp-content/uploads]</code>），拦截并返回 403，防范恶意上传脚本执行。</td>
+</tr>
+<tr>
+<td><code>index</code></td>
+<td>字符串</td>
+<td><code>index.php</code></td>
+<td>默认 PHP 首页文件，必须以 <code>.php</code> 结尾。</td>
+</tr>
+<tr>
+<td><code>try_files</code></td>
+<td>字符串列表</td>
+<td>见说明</td>
+<td>静态文件与 PHP 脚本回退候选列表。默认 <code>[&quot;{path}&quot;, &quot;{path}/index.php&quot;, &quot;{path}/index.html&quot;, &quot;/index.php&quot;]</code>。</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>整数 (秒)</td>
+<td><code>30</code></td>
+<td>FastCGI 处理超时时间（秒）。</td>
+</tr>
+<tr>
+<td><code>keep_conn</code></td>
+<td>布尔值</td>
+<td><code>false</code></td>
+<td>是否开启 FastCGI 长连接复用。高并发生产站点推荐开启。</td>
+</tr>
+<tr>
+<td><code>max_idle_conns</code></td>
+<td>整数</td>
+<td><code>16</code></td>
+<td>最大空闲 FastCGI 连接数。</td>
+</tr>
+<tr>
+<td><code>idle_timeout</code></td>
+<td>整数 (秒)</td>
+<td><code>60</code></td>
+<td>空闲连接保持时长（秒）。</td>
+</tr>
+<tr>
+<td><code>params</code></td>
+<td>键值映射</td>
+<td>无</td>
+<td>附加传递给 PHP-FPM 的自定义 FastCGI 环境变量（如 <code>{APP_ENV: production}</code>）。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>WordPress / Laravel 生产级配置：</strong></p>
+<pre><code class="language-yaml">site: example.com
+https: true
+compress: true
+php:
+  root: /var/www/wordpress
+  upstream: unix:///run/php/php8.3-fpm.sock
+  deny_scripts: [/wp-content/uploads]
+  keep_conn: true
+  max_idle_conns: 16
+  idle_timeout: 60
+</code></pre>
+<h3 id="64-直接响应与重定向-respond--redirect">6.4 直接响应与重定向 (<code>respond</code> / <code>redirect</code>)</h3>
+<p>JSON 对象可以直接作为 <code>respond</code> 的值，自动展开为状态码 <code>200</code>、<code>content_type: application/json</code> 和序列化后的 <code>body</code>，不用额外加引号或转义：</p>
+<pre><code class="language-yaml">/check:
+  respond: {&quot;code&quot;:1,&quot;message&quot;:&quot;dbserver is running&quot;}
+</code></pre>
+<p>对象支持嵌套、数组、布尔值和空值。如果顶层含有 <code>status</code>、<code>body</code>、<code>content_type</code> 或 <code>location</code>，按原有响应配置解析；JSON 业务字段使用这些名称时，请用显式 <code>body</code> 字符串写法。</p>
+<ul>
+<li>
+<p><strong><code>respond</code> 属性</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>简写形式</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td>整数</td>
+<td>-</td>
+<td><code>200</code></td>
+<td>HTTP 响应状态码，如 200, 403, 503。</td>
+</tr>
+<tr>
+<td><code>body</code></td>
+<td>字符串</td>
+<td><code>respond: &quot;OK&quot;</code></td>
+<td>无</td>
+<td>响应正文文本。支持使用 YAML <code>|</code> 语法书写多行文本或 JSON 内容。</td>
+</tr>
+<tr>
+<td><code>content_type</code></td>
+<td>字符串</td>
+<td>-</td>
+<td><code>text/plain</code></td>
+<td>响应 Content-Type，如 <code>application/json</code>, <code>text/html; charset=utf-8</code>。</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p><strong><code>redirect</code> 属性</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>简写形式</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>location</code></td>
+<td>字符串</td>
+<td><code>redirect: /new-path</code></td>
+<td>必需</td>
+<td>重定向目标 URL 或路径。支持 <code>{uri}</code>、<code>{path}</code> 等请求占位符。</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>整数</td>
+<td>-</td>
+<td><code>302</code></td>
+<td>重定向状态码。可选 301 (永久重定向), 302 (临时重定向), 307 (保持动词临时重定向), 308 (保持动词永久重定向)。</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<pre><code class="language-yaml">site: example.com
+# 维护页或健康检查响应
+/health:
+  respond:
+    status: 200
+    body: '{&quot;status&quot;:&quot;UP&quot;}'
+    content_type: application/json
+# 路径永久重定向
+/old-docs:
+  redirect:
+    location: https://docs.example.com{path}
+    status: 301
+</code></pre>
+<h3 id="65-webdav-与动态模板-webdav--template">6.5 WebDAV 与动态模板 (<code>webdav</code> / <code>template</code>)</h3>
+<ul>
+<li><strong><code>webdav</code> 属性</strong>：<code>root</code>（存储根目录，必需）、<code>read_only</code>（是否只读布尔值，默认 false）、<code>direct_download</code>（是否开启直链下载）、<code>allow_browse</code>（是否允许 Web 目录索引展示）。</li>
+<li><strong><code>template</code> 属性</strong>：<code>template</code>（模板文件路径）、<code>template_root</code>（模板根目录）、<code>template_fragment</code>（HTMX 局部渲染块名）、<code>template_csp</code>（Content-Security-Policy 策略）、<code>template_debug</code>（调试模式）、<code>fetch_json</code>（预取 JSON 数据配置列表，每项包含 <code>key</code>, <code>url</code>, <code>ttl</code>, <code>timeout</code>, <code>forward_headers</code> 等）。</li>
+</ul>
+<h3 id="66-路径匹配不会自动改写代理路径">6.6 路径匹配不会自动改写代理路径</h3>
+<pre><code class="language-yaml">site: :9090
+~/goapi:
+  proxy: localhost:8080
+  strip_prefix: true
+spa: ./www
+</code></pre>
+<p>请求 <code>/GoApi/Orders</code> 转发为 <code>/Orders</code>，剩余部分保留大小写。不加 <code>strip_prefix</code> 时，后端收到 <code>/GoApi/Orders</code>。</p>
+<p>静态文件动作有自己的文件路径映射规则：挂载在 <code>/static</code> 下的 <code>file_server: ./public</code> 默认去掉挂载前缀，<code>/static/app.js</code> 对应 <code>./public/app.js</code>。不要把这个行为套用到代理或 PHP 上。</p>
+<h3 id="67-高级动作出口">6.7 高级动作出口</h3>
+<p>需要原动作模型中的高级能力或插件动作时，可以使用通用 <code>action</code>：</p>
+<pre><code class="language-yaml">site: example.com
+/api:
+  action:
+    type: proxy
+    upstream: ['localhost:8080']
+    host: backend.internal
+</code></pre>
+<p>通用 <code>action</code> 必须显式声明 <code>type</code>，不能再并列写 <code>proxy</code> 等动作。优先使用常规 V2 写法；高级字段按相应动作参考填写。</p>
+<h3 id="68-通知发布与-sse-订阅publish--subscribe">6.8 通知发布与 SSE 订阅（<code>publish</code> / <code>subscribe</code>）</h3>
+<p>NATS 插件启用并配置默认连接后，通知路由可以直接写为：</p>
+<pre><code class="language-yaml">site: :18085
+/publish:
+  publish: notify.demo
+  offline: true
+/events/a:
+  subscribe: notify.demo
+  offline: browser-a
+/events/b:
+  subscribe: notify.demo
+  offline: browser-b
+file_server: ./www
+</code></pre>
+<p><code>publish</code> 接受 POST；<code>subscribe</code> 接受 GET。通知简写使用精确路径匹配，不包含子路径。配置 CORS（内联或通过 <code>use</code>）时，编译器还会生成 OPTIONS 预检路由，分别应用 GET 订阅与 POST 发布/ACK 的 CORS 策略。默认连接配额按站点隔离，同站点简写订阅共享默认 100 个连接；显式 <code>notify.sse.tenant</code> 可覆盖此分组。早期简写版本按连接生成默认分组；升级后默认分组改变，也会改变 durable 消费身份。需要保留旧进度时，显式填写原来的 <code>notify.sse.tenant</code>，或先同步当前业务状态再切换。</p>
+<p><code>publish: true</code>（布尔值）是发布门户，<code>publish: notify.demo</code>（字符串）是 NATS 发布；带引号的 <code>publish: &quot;true&quot;</code> / <code>&quot;false&quot;</code> 会被明确拒绝，避免混淆。</p>
+<p>省略 <code>offline</code>（或设为 <code>false</code>）表示 Core NATS 在线通知，不保留离线消息。发布侧的 <code>offline: true</code> 写入 JetStream，收到 PubAck 后才返回成功。订阅侧的 <code>offline</code> 是稳定订阅身份；GET 建立 SSE，POST <strong>同一路径</strong>提交 <code>{&quot;ack_token&quot;:&quot;...&quot;}</code> 确认消息。ACK 必须使用 <code>Content-Type: application/json</code>。编译器自动生成 ACK 路由，并保留订阅路由的鉴权、中间件等治理配置。</p>
+<p>同一连接与 subject 自动生成稳定的 stream 名称，使用 file storage、LimitsPolicy、默认 7 天消息保留、1 副本；订阅者无活动默认保留 7 天。首次发布或首次订阅会自动建流，所以可以先打开订阅页。首次创建订阅者只接收创建之后的消息；重连恢复其未确认消息。不同身份独立确认，同一身份的多个连接会发生会话抢占。交付可能重复，业务处理应幂等，处理成功后才 ACK。发布到网关之前的失败仍需要发布方可靠重试。</p>
+<p>高级默认值可在站点集中设置：</p>
+<pre><code class="language-yaml">notify:
+  connection: default
+  retention: 168h             # 消息和无活动订阅者的保留期：1m..720h
+  replicas: 1                 # 1..5，按 NATS 集群能力配置
+  ack_secret_ref: shared.notify_ack_secret
+  sse:
+    heartbeat: 15s
+    max_connections: 100
+</code></pre>
+<p><code>ack_secret_ref</code> 引用插件配置中的密钥（至少 32 字节），不在站点文件填写密钥本身。单进程未指定密钥时使用进程级随机签名密钥，配置热加载不会改变它；进程重启后旧 ACK token 失效，客户端重连获取新的投递和 token。使用默认进程密钥时，配置加载日志会输出一次 Warn，说明负载均衡下跨节点 ACK 会返回 403。多节点必须配置相同的共享签名密钥，才能跨节点 ACK。保留期配置用于自动创建的新 stream，不会改写既有 stream 的保留策略；调整已有 stream 请通过 NATS 管理工具操作。</p>
+<p>生产应用可用 <code>offline: auth.subscriber</code> 从经过验证的 <code>X-Lito-Subscriber</code> 身份获取消费进度，不应让所有访客共用一个固定身份。该配置要求认证链生成可信身份（例如 <code>auth: {type: jwt, subject_claim: ..., tenant_claim: ...}</code>）；离线进度、会话租约和 ACK 凭据都绑定&quot;已验证租户 + 订阅者&quot;。固定 subject 会被所有通过鉴权的租户共同订阅，按租户隔离时写 <code>subscribe: notify.{auth.tenant}.orders</code>：订阅只接受 <code>{auth.tenant}</code>、<code>{auth.subscriber}</code>，发布可以使用 <code>{body.x}</code>、<code>{header.x}</code>、<code>{query.x}</code>，离线模式自动建立覆盖 <code>notify.*.orders</code> 的 stream。简写的连接限额按站点统计，不支持 <code>notify.sse.tenants</code>；需要按租户分配限额时，使用完整 NATS action 的 <code>sse.tenants</code>。固定 <code>browser-a</code>、<code>browser-b</code> 适合演示，不代替鉴权。</p>
+<p>浏览器可靠订阅示例 <code>examples/nats-events/browser-client.js</code> 默认在订阅 URL 上 ACK，无需再传 <code>ackURL</code>；原有独立 ACK URL 仍受支持。</p>
+<p>复杂的动态 subject、独立 stream/consumer 绑定或其他高级 NATS 功能仍使用完整 <code>action: {type: nats, ...}</code>。从完整配置迁移时，自动生成的名称可能不同，不会自动迁移旧 consumer 进度；应保留原绑定配置，或规划切换并同步当前业务状态。自动 stream 的 subject 不得与已有其他 stream 重叠。</p>
+<h2 id="7-路由选择与执行顺序">7. 路由选择与执行顺序</h2>
+<p>先选中站点，再在站点内选择路由，最后执行该路由的治理和动作。</p>
+<pre><code class="language-yaml">site: example.com
+/orders: localhost:8080
+/orders/export: localhost:8081
+respond: unknown route
+</code></pre>
+<p><code>/orders/export/report</code> 选择更具体的 <code>/orders/export</code>。更具体的路径不需要排在文件前面。站点根部的动作作为兜底处理。</p>
+<p>复杂匹配还会考虑显式 <code>priority</code> 和匹配条件的具体程度；不要依靠把宽泛路由挪到前面来改变选择。同等条件需要关注声明顺序，但完全重复的路由可能直接被校验拒绝。详细规则见 <a href="../02-concepts/routing-priority.html">路由优先级</a>。</p>
+<p><strong>路由匹配和动作执行是两件事。</strong> 命中 API 代理后，后端的 404 不会让请求再去执行 SPA 兜底。<code>strip_prefix</code> 改的是转发路径，也不会重新选择路由。</p>
+<p>治理字段在 YAML 中的先后顺序不是运行时中间件顺序。流水线按阶段和优先级执行，见 <a href="../05-middleware/pipeline.html">Middleware Pipeline</a>。</p>
+<h2 id="8-配置作用域与继承">8. 配置作用域与继承</h2>
+<h3 id="81-站点级继承">8.1 站点级继承</h3>
+<pre><code class="language-yaml">site: example.com
+request_headers:
+  X-Gateway: LiteGate
+response_headers:
+  X-Frame-Options: DENY
+/api:
+  proxy: localhost:8080
+  response_headers:
+    X-Service: api
+spa: ./www
+</code></pre>
+<p>站点 <code>request_headers</code> 用于代理请求；站点 <code>response_headers</code> 用于全部动作。路由的同名头覆盖站点值。站点 <code>use</code> 可为各路由绑定公共中间件。</p>
+<h3 id="82-根路由治理与站点继承不同">8.2 根路由治理与站点继承不同</h3>
+<p>只有一个根动作时，可以直接给它配置治理字段：</p>
+<pre><code class="language-yaml">site: example.com
+compress: true
+spa: ./www
+</code></pre>
+<p>有子路由时，根动作的治理需要放到显式 <code>/</code> 路由中：</p>
+<pre><code class="language-yaml">site: example.com
+/api: localhost:8080
+/:
+  compress: true
+  spa: ./www
+</code></pre>
+<p>这里的压缩只绑定到 <code>/</code> 路由。要为所有路由绑定公共能力，使用站点 <code>use</code>，不要把根部的 <code>auth</code>、<code>cors</code>、<code>rate_limit</code> 理解为自动继承字段。</p>
+<h3 id="83-路由治理策略属性全览-cors鉴权限流缓存改写等">8.3 路由治理策略属性全览 (CORS、鉴权、限流、缓存、改写等)</h3>
+<p>在 V2 中，每条路由（包括路径键 <code>/api:</code> 以及 <code>routes:</code> 列表项）不仅可以声明终结动作，还可以直接就地声明流量治理策略。这些治理字段由统一中间件流水线按阶段高效执行。</p>
+<h4 id="831-跨域资源共享-cors">8.3.1 跨域资源共享 (<code>cors</code>)</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>默认值</th>
+<th>作用与说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allowed_origins</code></td>
+<td>字符串列表</td>
+<td>必需</td>
+<td>允许访问的 Origin 列表。如 <code>[&quot;*&quot;]</code>（全通配）或 <code>[&quot;https://app.example.com&quot;, &quot;https://admin.example.com&quot;]</code>。</td>
+</tr>
+<tr>
+<td><code>allowed_methods</code></td>
+<td>字符串列表</td>
+<td>必需</td>
+<td>允许的 HTTP 方法列表。如 <code>[GET, POST, PUT, DELETE, OPTIONS]</code>。</td>
+</tr>
+<tr>
+<td><code>allowed_headers</code></td>
+<td>字符串列表</td>
+<td>必需</td>
+<td>允许客户端请求携带的自定义请求头。如 <code>[&quot;*&quot;]</code> 或 <code>[Authorization, Content-Type, X-Requested-With]</code>。</td>
+</tr>
+<tr>
+<td><code>exposed_headers</code></td>
+<td>字符串列表</td>
+<td>无</td>
+<td>允许浏览器端 JavaScript 访问的安全响应头列表，如 <code>[X-Total-Count, X-Trace-Id]</code>。</td>
+</tr>
+<tr>
+<td><code>allow_credentials</code></td>
+<td>布尔值</td>
+<td><code>false</code></td>
+<td>是否允许请求携带凭证（Cookie/Token）。若设为 <code>true</code>，<code>allowed_origins</code> 严禁配置为通配符 <code>*</code>。</td>
+</tr>
+<tr>
+<td><code>max_age</code></td>
+<td>整数 (秒)</td>
+<td><code>0</code></td>
+<td>OPTIONS 预检请求在客户端浏览器的最大缓存时长（单位：秒）。例如 <code>86400</code> (24小时)。</td>
+</tr>
+<tr>
+<td><code>enabled</code></td>
+<td>布尔值</td>
+<td><code>true</code></td>
+<td>显式启用或关闭开关。声明了 <code>cors:</code> 时可省略。</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-yaml">cors:
+  allowed_origins: [&quot;https://web.example.com&quot;]
+  allowed_methods: [GET, POST, PUT, DELETE, OPTIONS]
+  allowed_headers: [&quot;Authorization&quot;, &quot;Content-Type&quot;, &quot;X-Trace-Id&quot;]
+  exposed_headers: [&quot;X-Total-Count&quot;]
+  allow_credentials: true
+  max_age: 7200
+</code></pre>
+<h4 id="832-认证鉴权-auth">8.3.2 认证鉴权 (<code>auth</code>)</h4>
+<p>支持 Basic Auth（用户名/密码）、JWT（令牌校验）与 SSO（统一会话登录）：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>适用类型</th>
+<th>类型</th>
+<th>默认值</th>
+<th>作用与说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td>全部</td>
+<td>字符串</td>
+<td>必需</td>
+<td>认证机制类型。可选值：<code>basic</code>、<code>jwt</code>、<code>sso</code>。</td>
+</tr>
+<tr>
+<td><code>realm</code></td>
+<td>basic</td>
+<td>字符串</td>
+<td><code>&quot;Restricted&quot;</code></td>
+<td>HTTP Basic 认证提示域。</td>
+</tr>
+<tr>
+<td><code>users</code></td>
+<td>basic</td>
+<td>键值映射</td>
+<td>无</td>
+<td>用户名到 SHA-256 密码哈希的映射字典。格式为 <code>{username: sha256_hash}</code>（明文密码不会被保存）。</td>
+</tr>
+<tr>
+<td><code>permissions</code></td>
+<td>basic</td>
+<td>键值映射</td>
+<td>无</td>
+<td>用户细粒度权限映射。键为用户名，值为 <code>&quot;rw&quot;</code> (读写) 或 <code>&quot;ro&quot;</code> (只读)。</td>
+</tr>
+<tr>
+<td><code>jwks_url</code></td>
+<td>jwt</td>
+<td>字符串</td>
+<td>无</td>
+<td>远程 JWKS 公钥端点 URL（网关自动拉取公钥并验证签名）。</td>
+</tr>
+<tr>
+<td><code>issuer</code></td>
+<td>jwt</td>
+<td>字符串</td>
+<td>无</td>
+<td>期望匹配的 JWT <code>iss</code> 签发者字段（校验不匹配则拒绝）。</td>
+</tr>
+<tr>
+<td><code>audience</code></td>
+<td>jwt</td>
+<td>字符串列表</td>
+<td>无</td>
+<td>期望匹配的 JWT <code>aud</code> 受众标识列表。</td>
+</tr>
+<tr>
+<td><code>secret</code></td>
+<td>sso</td>
+<td>字符串</td>
+<td>无</td>
+<td>SSO 会话 Cookie 签名与加密密钥。</td>
+</tr>
+<tr>
+<td><code>template</code></td>
+<td>sso</td>
+<td>字符串</td>
+<td>无</td>
+<td>自定义 SSO 登录页面的 HTML 模板文件路径。</td>
+</tr>
+<tr>
+<td><code>session_ttl</code></td>
+<td>sso</td>
+<td>整数 (秒)</td>
+<td><code>86400</code></td>
+<td>SSO 登录成功后会话 Cookie 的有效期（秒）。</td>
+</tr>
+<tr>
+<td><code>cookie_same_site</code></td>
+<td>sso</td>
+<td>字符串</td>
+<td><code>lax</code></td>
+<td>SSO Cookie 的 SameSite 模式：<code>lax</code>、<code>strict</code>、<code>none</code>。</td>
+</tr>
+<tr>
+<td><code>cookie_secure</code></td>
+<td>sso</td>
+<td>布尔值</td>
+<td><code>true</code></td>
+<td>是否限定 Cookie 仅在 HTTPS 传输。</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-yaml"># Basic Auth 示例
+auth:
+  type: basic
+  realm: &quot;Admin Area&quot;
+  users:
+    admin: &quot;8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918&quot;  # sha256(&quot;admin&quot;)
+  permissions:
+    admin: rw
+
+# JWT 示例
+auth:
+  type: jwt
+  jwks_url: &quot;https://auth.example.com/.well-known/jwks.json&quot;
+  issuer: &quot;https://auth.example.com&quot;
+  audience: [&quot;api.example.com&quot;]
+</code></pre>
+<h4 id="833-速率与连接限制-rate_limit--limit_conn">8.3.3 速率与连接限制 (<code>rate_limit</code> / <code>limit_conn</code>)</h4>
+<p>防止上游被突发脉冲压垮，保障可用性：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>默认值</th>
+<th>作用与说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rate_limit</code></td>
+<td>浮点数 / 整数 / 对象</td>
+<td>无</td>
+<td>允许的最高请求速率 QPS。简写支持单数字（如 <code>rate_limit: 100</code>）；对象支持 <code>{rate: 100, key: '{client_ip}'}</code>。</td>
+</tr>
+<tr>
+<td><code>rate_limit_policy</code></td>
+<td>字符串</td>
+<td><code>static</code></td>
+<td>限流算法。<code>static</code> 为固定速率令牌桶；<code>adaptive</code> 为根据后端实例健康状况自适应调节。</td>
+</tr>
+<tr>
+<td><code>rate_limit_key</code></td>
+<td>字符串</td>
+<td><code>route</code></td>
+<td><code>route</code> 按站点和路由共享额度，<code>ip</code> 按客户端 IP 分桶；也可写 <code>rate_limit: {rate: 10, key: ip}</code>。不支持请求头或租户表达式。</td>
+</tr>
+<tr>
+<td><code>limit_conn</code></td>
+<td>整数</td>
+<td>无</td>
+<td>最大并发连接数限制（如 <code>limit_conn: 20</code>）。单 key 超过最大并发直接返回 429。</td>
+</tr>
+<tr>
+<td><code>limit_conn_key</code></td>
+<td>字符串</td>
+<td><code>{client_ip}</code></td>
+<td>并发限制的区分维度键。</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-yaml"># 每秒最多 50 次请求，按请求头中的 API Key 区分
+rate_limit:
+  rate: 50
+  key: &quot;{header.X-API-Key}&quot;
+rate_limit_policy: static
+
+# 单客户端 IP 最大限制 10 个并发连接
+limit_conn: 10
+limit_conn_key: &quot;{client_ip}&quot;
+</code></pre>
+<h4 id="834-响应缓存-cache">8.3.4 响应缓存 (<code>cache</code>)</h4>
+<p>对后端代理响应执行高性能网关级缓存（仅对 <code>proxy</code> 动作生效）：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>默认值</th>
+<th>作用与说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cache</code></td>
+<td>布尔值 / 对象</td>
+<td>无</td>
+<td>缓存开关。标量 <code>cache: true</code> 使用默认 60s；对象形式自定义缓存策略。</td>
+</tr>
+<tr>
+<td><code>enabled</code></td>
+<td>布尔值</td>
+<td><code>true</code></td>
+<td>显式启用/关闭缓存。</td>
+</tr>
+<tr>
+<td><code>ttl</code></td>
+<td>字符串 / 整数</td>
+<td>必需</td>
+<td>缓存保留时长。支持整秒带单位字符串（如 <code>30s</code>, <code>10m</code>, <code>1h</code>）或整数秒数。必须为正数整秒。</td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td>字符串</td>
+<td>默认键</td>
+<td>自定义缓存键生成表达式，如 <code>&quot;{method}:{host}:{uri}&quot;</code>。</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-yaml">/api/products:
+  proxy: localhost:8080
+  cache:
+    enabled: true
+    ttl: 5m
+    key: &quot;{host}:{uri}&quot;
+</code></pre>
+<h4 id="835-路径修剪与拼接-strip_prefix--prepend_prefix">8.3.5 路径修剪与拼接 (<code>strip_prefix</code> / <code>prepend_prefix</code>)</h4>
+<p>控制转发到后端上游时的 URL 路径变换：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>适用场景</th>
+<th>作用与说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>strip_prefix</code></td>
+<td>布尔值 / 字符串</td>
+<td>路径键或前缀匹配</td>
+<td><code>true</code> 自动剥离当前路由匹配到的前缀段（要求当前路由必须是前缀匹配）；字符串显式指定要移除的前缀（如 <code>/api</code>）。精确匹配不能直接搭配 <code>true</code>。</td>
+</tr>
+<tr>
+<td><code>prepend_prefix</code></td>
+<td>字符串</td>
+<td>代理动作</td>
+<td>向上游转发前，在 URL 路径头部拼接指定的前缀字符串。例如将外部请求 <code>/users</code> 转换为后端期望的 <code>/api/v1/users</code>。</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-yaml"># 请求 /goapi/orders -&gt; 转发为 /orders
+/goapi:
+  proxy: localhost:8080
+  strip_prefix: true
+
+# 请求 /search -&gt; 转发为 /internal/v2/search
+/search:
+  proxy: localhost:8080
+  prepend_prefix: /internal/v2
+</code></pre>
+<h4 id="836-url-路径与查询参数重写-rewrite">8.3.6 URL 路径与查询参数重写 (<code>rewrite</code>)</h4>
+<p>精细化改写请求路径和 URL Query 参数：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>作用与语法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>path</code></td>
+<td>对象</td>
+<td>路径正则重写。包含 <code>pattern: &quot;^/old/(.*)$&quot;</code>（正则表达式）与 <code>target: &quot;/new/$1&quot;</code>（替换目标）。兼容顶层 <code>pattern</code> 与 <code>target</code> 别名。</td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td>对象</td>
+<td>查询参数重写操作集合。支持以下子操作：<br>• <code>set: {key: val}</code>：强制设置或覆盖参数值<br>• <code>add: {key: val}</code>：仅当参数不存在时追加<br>• <code>rename: {oldKey: newKey}</code>：重命名已有参数名<br>• <code>remove: [p1, p2]</code>：剔除指定的敏感或冗余查询参数</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-yaml">rewrite:
+  path:
+    pattern: &quot;^/v1/user/(.*)$&quot;
+    target: &quot;/v2/profile/$1&quot;
+  query:
+    set:
+      client: &quot;litegate&quot;
+    rename:
+      old_token: &quot;token&quot;
+    remove:
+      - &quot;internal_debug&quot;
+</code></pre>
+<h4 id="837-响应压缩-compress">8.3.7 响应压缩 (<code>compress</code>)</h4>
+<p><code>compress: true</code>：开启后网关根据客户端请求的 <code>Accept-Encoding</code> 头自动进行高效压缩（支持 gzip、brotli、zstd）。</p>
+<h4 id="838-路由级-ip-黑白名单-ip_restriction">8.3.8 路由级 IP 黑白名单 (<code>ip_restriction</code>)</h4>
+<p>覆盖站点级限制，专门对特定路由进行严格 IP 控制：</p>
+<pre><code class="language-yaml">/admin:
+  proxy: localhost:8080
+  ip_restriction:
+    allow_ips:
+      - 10.0.0.0/8
+      - 192.168.1.50
+    deny_ips:
+      - 10.0.1.99
+</code></pre>
+<h4 id="839-应用防火墙-waf">8.3.9 应用防火墙 (<code>waf</code>)</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>默认值</th>
+<th>作用与说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td>布尔值</td>
+<td><code>true</code></td>
+<td>是否启用 WAF 规则检测引擎。</td>
+</tr>
+<tr>
+<td><code>block_mode</code></td>
+<td>布尔值</td>
+<td><code>true</code></td>
+<td>是否阻断。<code>true</code> 命中恶意规则直接返回 403 阻断；<code>false</code> 仅旁路告警并记录指标，不中断请求。</td>
+</tr>
+<tr>
+<td><code>sensitivity</code></td>
+<td>字符串</td>
+<td><code>medium</code></td>
+<td>规则敏感度等级。可选：<code>low</code>（极低误报）、<code>medium</code>（平衡等级）、<code>high</code>（严格模式）。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="8310-ids-provider-与-oidc-外部认证-ids--remote_auth">8.3.10 IDS Provider 与 OIDC 外部认证 (<code>ids</code> / <code>remote_auth</code>)</h4>
+<p><code>ids</code> 仍然有效，但当前含义是 <strong>IDS Provider 插件的请求决策入口</strong>。“大一统控制引擎”是旧称，不表示内核内置 MD5 验签、Redis 会话或登录选路。</p>
+<table>
+<thead>
+<tr>
+<th>配置</th>
+<th>当前职责</th>
+<th><code>provider</code> 引用什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ids</code></td>
+<td>路由匹配后、动作执行前调用插件，决定放行、直接响应、可信 Header 注入、按主体限流和发现实例筛选</td>
+<td>通过 <code>RegisterIDSProvider</code> 注册的插件名称</td>
+</tr>
+<tr>
+<td><code>remote_auth</code></td>
+<td>OIDC / OAuth2 登录、回调和 Claims 注入</td>
+<td>全局 <code>auth_providers</code> 中的名称</td>
+</tr>
+</tbody>
+</table>
+<p>两者是独立配置，不是别名。MD5、Token 查询、Redis 会话等业务规则由 IDS 插件实现；网关负责调用、超时、并发上限、熔断和应用决策。IDS 只能筛选路由已选定 Service 的实例，不能替换 Service。</p>
+<p>例如，仅让 <code>open.example.com/api</code> 及子路径经过 MD5 插件：</p>
+<pre><code class="language-yaml">site: open.example.com
+https: true
+/api:
+  proxy: 127.0.0.1:8080
+  ids:
+    provider: openapi-md5
+    fail_policy: deny
+    options:
+      secret_env_prefix: OPENAPI_SECRET_
+      max_clock_skew: 5m
+      max_body_size: 1MiB
+</code></pre>
+<p><strong><code>openapi-md5</code> 已在默认入口内置注册，使用更新后编译的 LiteGate 即可。</strong> 后端地址为示例；options 由该插件解释，不是所有 IDS 插件的通用参数。配置与协议见 <a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS 插件</a>。</p>
+<p>请求流程：匹配站点 → 匹配 <code>/api</code> 路由 → Provider <code>Evaluate</code> → 放行后执行 proxy，或直接返回拒绝响应。默认保留 <code>/api</code> 前缀。其他路由不会自动继承这里的 IDS；Hybrid 中的动态路由也不会获得文件 <code>/api</code> 的 IDS 配置。</p>
+<p><code>ids</code> 支持 <code>provider</code>、<code>fail_policy</code>、<code>selector_merge_policy</code>、<code>runtime</code>、<code>options</code>、<code>header_projection</code>。插件明确拒绝不会被 <code>fail_policy: allow</code> 放行。字段与开发契约见 <a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a>。不要继续使用旧示例中的 <code>ids.enabled</code>、<code>ids.url</code>、<code>ids.sign_method</code>、<code>ids.static_secret</code> 或 <code>ids.lookup</code>；它们不属于当前 <code>IDSConfig</code>。</p>
+<p><code>remote_auth</code> 支持 <code>enabled</code>、<code>provider</code>、<code>callback_path</code>、<code>enforce</code>、<code>inject_claims</code>、<code>default_redirect_back</code>、<code>fail_policy</code>。类型中保留的 <code>sign_method</code> 字段不意味着提供 MD5 IDS 插件。</p>
+<h4 id="8311-流量镜像-mirror">8.3.11 流量镜像 (<code>mirror</code>)</h4>
+<p>异步将生产环境接收到的请求实时复制一份并发送给影子后端（用于灰度回归、压测、安全审计），不影响主流程响应：</p>
+<pre><code class="language-yaml">mirror:
+  service_name: payment-shadow       # 目标服务名
+  service_port: 8080                 # 目标端口
+  namespace: default
+  percent: 20                        # 采样百分比 (1-100)，此处为 20%
+</code></pre>
+<h4 id="8312-可观测性与生命周期钩子">8.3.12 可观测性与生命周期钩子</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>upstream_client</code></td>
+<td>字符串</td>
+<td>路由级上游客户端覆盖。可选 <code>fast</code>（超高性能同步 HTTP/1.1 客户端）或 <code>standard</code>（标准 Go 客户端）。</td>
+</tr>
+<tr>
+<td><code>log_level</code></td>
+<td>字符串</td>
+<td>路由专属日志级别。可选 <code>debug</code>, <code>info</code>, <code>warn</code>, <code>error</code>。</td>
+</tr>
+<tr>
+<td><code>tracing</code></td>
+<td>布尔值</td>
+<td>是否对该路由开启 OpenTelemetry 分布式链路跟踪（采集 Span 数据）。</td>
+</tr>
+<tr>
+<td><code>flush_interval</code></td>
+<td>整数 (秒)</td>
+<td>流式响应刷新周期（单位：秒）。<code>-1</code> 表示无缓冲立即 Flush 推送，适用于 SSE、大文件上传下载或实时数据流。</td>
+</tr>
+<tr>
+<td><code>on_success</code></td>
+<td>对象</td>
+<td>代理成功 (2xx) 后的网关清理操作。属性包括：<br>• <code>invalidate_cache: [tag1, tag2]</code>：主动使匹配标签的缓存失效<br>• <code>htmx_trigger: [refreshEvent]</code>：注入 HTMX 响应触发器<br>• <code>discard_body: bool</code>：丢弃后端返回的正文（仅保留响应头）</td>
+</tr>
+<tr>
+<td><code>on_error</code></td>
+<td>对象</td>
+<td>后端发生故障时的兜底降级响应。包含 <code>status: 503</code>、<code>body: &quot;Service Degradation&quot;</code>、<code>content_type: text/plain</code>。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="8313-头部治理与引用绑定">8.3.13 头部治理与引用绑定</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>作用与说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>request_headers</code></td>
+<td>键值映射</td>
+<td>向上游转发的请求头字典。仅对代理动作生效。键前缀加 <code>-</code>（如 <code>-Cookie</code>）表示移除该请求头。支持占位符。</td>
+</tr>
+<tr>
+<td><code>response_headers</code></td>
+<td>键值映射</td>
+<td>返回给客户端的响应头字典。对所有动作生效。键前缀加 <code>-</code> 表示移除该响应头。</td>
+</tr>
+<tr>
+<td><code>use</code></td>
+<td>字符串 / 列表</td>
+<td>引用在站点 <code>middlewares:</code> 中预定义的中间件（如 <code>use: [cors-policy, zip]</code>）。</td>
+</tr>
+<tr>
+<td><code>import</code></td>
+<td>字符串 / 列表</td>
+<td>引用在站点 <code>snippets:</code> 中预定义的配置片段（如 <code>import: [api-governance]</code>）。</td>
+</tr>
+</tbody>
+</table>
+<p><code>@</code> 表示按名引用。只有字段同时接受字面值时才必须写（<code>match: '@name'</code> 对比 <code>match: /api</code>）；<code>import</code>、<code>use</code> 只接受名称，<code>import: base</code> 与 <code>import: '@base'</code> 等价。</p>
+<p><strong>路由治理综合配置实战：</strong></p>
+<pre><code class="language-yaml">site: api.example.com
+/v1/orders:
+  proxy: localhost:8080
+  # 路径修剪与改写
+  strip_prefix: true
+  rewrite:
+    query:
+      remove: [debug, mock]
+  # 跨域策略
+  cors:
+    allowed_origins: [&quot;https://app.example.com&quot;]
+    allowed_methods: [GET, POST, OPTIONS]
+    allowed_headers: [&quot;*&quot;]
+    allow_credentials: true
+  # 速率与并发防护
+  rate_limit:
+    rate: 100
+    key: &quot;{header.X-User-Id}&quot;
+  limit_conn: 15
+  # 响应缓存
+  cache:
+    enabled: true
+    ttl: 30s
+    key: &quot;{path}:{query.page}&quot;
+  # 头部治理
+  request_headers:
+    X-Gateway: LiteGate
+    -X-Internal-Token: &quot;&quot; # 向上游剔除私有 Token
+  response_headers:
+    X-Content-Type-Options: nosniff
+  # 故障降级兜底
+  on_error:
+    status: 503
+    body: '{&quot;error&quot;:&quot;Orders service temporarily unavailable&quot;}'
+    content_type: application/json
+</code></pre>
+<h2 id="9-占位符与动态值">9. 占位符与动态值</h2>
+<p>某些字段支持按请求替换占位符：</p>
+<pre><code class="language-yaml">site: www.example.com
+redirect:
+  location: https://example.com{uri}
+  status: 301
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>含义</th>
+<th>示例用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{uri}</code></td>
+<td>路径与查询参数</td>
+<td>跨域跳转保留请求地址</td>
+</tr>
+<tr>
+<td><code>{path}</code></td>
+<td>请求路径</td>
+<td>路径相关的动态值</td>
+</tr>
+<tr>
+<td><code>{host}</code></td>
+<td>请求主机</td>
+<td>生成与请求域名相关的值</td>
+</tr>
+<tr>
+<td><code>{header.X-Tenant}</code></td>
+<td>指定请求头的值</td>
+<td>向后端传递请求上下文</td>
+</tr>
+</tbody>
+</table>
+<p>占位符由支持它的功能在请求处理中替换，不是 YAML 对整个文件进行变量插值。不能假设 <code>site</code>、文件目录或所有后端字段都支持任意占位符。</p>
+<p>模板动作使用的 <code>{{ ... }}</code> 是另一套模板语法，见 <a href="../04-actions/template.html">Template</a>。</p>
+<h2 id="10-片段与共享定义">10. 片段与共享定义</h2>
+<h3 id="101-snippets-与-import">10.1 snippets 与 import</h3>
+<pre><code class="language-yaml">site: example.com
+snippets:
+  api-common:
+    response_headers:
+      X-API-Version: v1
+    strip_prefix: true
+/users:
+  import: api-common
+  proxy: localhost:8080
+/orders:
+  import: api-common
+  proxy: localhost:8081
+</code></pre>
+<p>片段在编译配置时展开，用于复用治理字段。<code>import</code> 接受一个名称或名称列表；可引用其他片段，但循环和未知引用会报错。</p>
+<p>片段不能定义站点地址、匹配条件、路由、终结动作或 Service 等资源。它也没有参数，不用于导入任意文件。</p>
+<p>合并规则：普通治理字段重复时报错，不进行对象深层合并；请求头和响应头按头名合并，本地值优先；同级导入片段的同名头冲突时报错；<code>use</code> 按引用顺序合并并去重。</p>
+<p><strong>用片段还是命名中间件？</strong> 片段在编译时复制进每条路由，每条路由各有一份实例和运行时状态；<code>use: name</code> 引用同一个命名中间件定义。对 <code>rate_limit</code>、<code>limit_conn</code> 这一点有实际差别：片段（或内联）里的限流按路由各自计数，命名中间件则由站点内所有引用它的路由共用一份计数。</p>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>同一策略、每条路由各自的额度（每个接口 100 req/s）</td>
+<td>片段里写 <code>rate_limit</code></td>
+</tr>
+<tr>
+<td>多条路由共用一个额度（整个站点 100 req/s）</td>
+<td>命名 <code>rate_limit</code> 中间件，<code>use</code> 引用</td>
+</tr>
+<tr>
+<td>把响应头、CORS、鉴权等字段打包复用</td>
+<td>片段</td>
+</tr>
+</tbody>
+</table>
+<h3 id="102-跨站点共享">10.2 跨站点共享</h3>
+<p>公共匹配器和片段可以放在 <code>sites/_shared.yaml</code>：</p>
+<pre><code class="language-yaml">matchers:
+  api:
+    prefix: /api
+snippets:
+  security:
+    response_headers:
+      X-Frame-Options: DENY
+</code></pre>
+<p>站点文件按名称引用：</p>
+<pre><code class="language-yaml">site: example.com
+routes:
+  - match: '@api'
+    import: security
+    proxy: localhost:8080
+spa: ./www
+</code></pre>
+<p>共享文件用于定义公共配置，不是一个可访问的站点。共享配置的展开也不意味着不同站点自动共享限流计数等运行时状态。名称冲突、引用和作用域规则见 <a href="site-config.html">站点配置参考</a>。</p>
+<h3 id="103-片段内支持的治理字段清单">10.3 片段内支持的治理字段清单</h3>
+<p>片段设计宗旨是<strong>提取公共路由治理策略</strong>，其属性与路由治理字段完全对齐。</p>
+<p><strong>片段内允许定义的属性：</strong></p>
+<ul>
+<li><strong>全部路由级治理字段</strong>：<code>cors</code>、<code>auth</code>、<code>rate_limit</code>、<code>rate_limit_policy</code>、<code>rate_limit_key</code>、<code>limit_conn</code>、<code>limit_conn_key</code>、<code>cache</code>、<code>strip_prefix</code>、<code>prepend_prefix</code>、<code>rewrite</code>、<code>compress</code>、<code>ip_restriction</code>、<code>waf</code>、<code>remote_auth</code>、<code>ids</code>、<code>mirror</code>、<code>upstream_client</code>、<code>log_level</code>、<code>tracing</code>、<code>on_success</code>、<code>on_error</code>、<code>flush_interval</code>。</li>
+<li><strong>请求与响应头</strong>：<code>request_headers</code>、<code>response_headers</code>。</li>
+<li><strong>引用关系</strong>：<code>use</code>（可引用命名中间件）、<code>import</code>（片段可嵌套导入其他片段，严禁循环引用）。</li>
+</ul>
+<p><strong>片段内严禁定义的属性：</strong></p>
+<ul>
+<li><strong>站点地址与入口</strong>：<code>site</code>、<code>https</code>、<code>port</code>、<code>entrypoints</code> 等。</li>
+<li><strong>路由拓扑与匹配</strong>：<code>routes</code> 列表、路径键（如 <code>/api:</code>）、<code>match</code> 条件。</li>
+<li><strong>终结动作</strong>：<code>proxy</code>、<code>serve</code>、<code>spa</code>、<code>respond</code>、<code>redirect</code>、<code>php</code> 等（终结动作必须由具体路由决定）。</li>
+<li><strong>资源声明</strong>：<code>services</code>、<code>transports</code>、<code>middlewares</code>、<code>matchers</code>（命名资源必须在站点或共享文件的顶层声明）。</li>
+</ul>
+<h2 id="11-中间件service-与-transport">11. 中间件、Service 与 Transport</h2>
+<p>这些资源解决不同问题：</p>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>问题</th>
+<th>引用方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Matcher</td>
+<td>哪些请求命中？</td>
+<td><code>match: '@name'</code></td>
+</tr>
+<tr>
+<td>Snippet</td>
+<td>哪些配置可以复用？</td>
+<td><code>import: name</code></td>
+</tr>
+<tr>
+<td>Middleware</td>
+<td>请求或响应要经过什么处理？</td>
+<td><code>use: name</code> 或名称列表</td>
+</tr>
+<tr>
+<td>Service</td>
+<td>如何选择、连接和治理后端？</td>
+<td><code>service: name</code></td>
+</tr>
+<tr>
+<td>Transport</td>
+<td>上游连接使用什么传输设置？</td>
+<td><code>loadbalancer.serverstransport</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="111-命名中间件-middlewares">11.1 命名中间件 (<code>middlewares</code>)</h3>
+<p>默认构建的 Forward Auth 插件支持站点和路由内联简写：<code>forward_auth: http://127.0.0.1:9091/api/authz/forward-auth</code>。完整对象支持 <code>address</code>、<code>uri</code>、<code>copy_headers</code> 等参数；它被编译成同一中间件，不需要额外命名和 <code>use</code>。站点级配置继承到各路由，路由级配置完整替换继承值。参见 <a href="../05-middleware/forward-auth.html">Authelia / Forward Auth 接入文章</a>。</p>
+<p>在 <code>middlewares:</code> 字典下定义可复用的中间件资源。定义本身不会产生运行时开销，只有在站点或路由中通过 <code>use:</code> 引用时才会被挂载执行。</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>必需</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td>字符串</td>
+<td>是</td>
+<td>中间件类型。支持内置类型：<code>compress</code>、<code>headers</code>、<code>ip_restriction</code>、<code>rate_limit</code>、<code>limit_conn</code>、<code>cors</code>、<code>waf</code>、<code>basic_auth</code>、<code>jwt</code>、<code>circuit_breaker</code>、<code>remote_auth</code>、<code>rewrite</code>、<code>trace</code> 等。</td>
+</tr>
+<tr>
+<td><code>config</code></td>
+<td>键值映射</td>
+<td>否</td>
+<td>该中间件的特定配置参数字典。例如 headers 类型的 <code>response.X-Custom: value</code>。</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-yaml">site: example.com
+middlewares:
+  # 响应压缩中间件
+  zip:
+    type: compress
+  # 统一安全响应头中间件
+  secure-headers:
+    type: headers
+    config:
+      response.X-Content-Type-Options: nosniff
+      response.X-Frame-Options: SAMEORIGIN
+middlewares: [zip, secure-headers]
+/api: localhost:8080
+spa: ./www
+</code></pre>
+<h3 id="112-命名后端-services">11.2 命名后端 (<code>services</code>)</h3>
+<p><code>services:</code> 字典用于集中定义后端服务拓扑、服务发现、连接超时、重试、负载均衡及存活检查。路由通过 <code>service: name</code> 按名引用，实现路由与后端的职责解耦。</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>简写形式</th>
+<th>默认值</th>
+<th>作用与说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>to</code> / <code>servers</code></td>
+<td>字符串列表</td>
+<td>-</td>
+<td>无</td>
+<td>静态后端上游地址列表（如 <code>[&quot;10.0.1.10:8080&quot;, &quot;10.0.1.11:8080&quot;]</code>）。与 <code>discovery</code> 互斥。<code>to</code> 与 <code>servers</code> 为同义词。</td>
+</tr>
+<tr>
+<td><code>discovery</code></td>
+<td>字符串 / 对象</td>
+<td><code>discovery: orders</code></td>
+<td>无</td>
+<td>动态服务发现。标量为服务名；对象支持 <code>name: orders</code> 以及 <code>selector: {match: {...}, meta: {...}}</code> 实例标签选择器。</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>字符串</td>
+<td>-</td>
+<td>全局默认 (30s)</td>
+<td>后端响应超时时间。支持带单位字符串，如 <code>5s</code>, <code>500ms</code>, <code>2m</code>。</td>
+</tr>
+<tr>
+<td><code>retry</code></td>
+<td>整数 / 对象</td>
+<td><code>retry: 2</code></td>
+<td><code>0</code> (不重试)</td>
+<td>请求失败时重试其他实例的次数。对象形式为 <code>retry: {attempts: 2}</code>。</td>
+</tr>
+<tr>
+<td><code>lb</code> / <code>loadbalancer</code></td>
+<td>字符串 / 对象</td>
+<td><code>lb: least_conn</code></td>
+<td><code>round_robin</code></td>
+<td>负载均衡算法与传输绑定。可选：<code>round_robin</code>, <code>least_conn</code>, <code>ip_hash</code>, <code>p2c_least_conn</code>。对象形式：<code>{strategy: least_conn, serverstransport: backend-tls}</code>。</td>
+</tr>
+<tr>
+<td><code>health</code> / <code>healthcheck</code></td>
+<td>字符串 / 对象</td>
+<td><code>health: /health</code></td>
+<td>无</td>
+<td>主动存活检测探针。标量为健康检查路径；对象形式支持 <code>{path: /health, interval: 10s}</code>。</td>
+</tr>
+<tr>
+<td><code>circuitbreaker</code></td>
+<td>对象</td>
+<td>-</td>
+<td>无</td>
+<td>熔断保护。包含 <code>enabled</code> (bool), <code>timeout</code> (熔断开启时长秒), <code>maxrequests</code> (半开状态放行数), <code>tripthreshold</code> (连续失败触发数)。</td>
+</tr>
+<tr>
+<td><code>resolver</code></td>
+<td>字符串</td>
+<td>-</td>
+<td>全局 DNS</td>
+<td>引用全局配置中定义的上游 DNS 解析器视图名称。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>命名 Service 完整定义与引用示例：</strong></p>
+<pre><code class="language-yaml">site: example.com
+transports:
+  backend-tls:
+    tls:
+      enabled: true
+services:
+  # 静态集群服务（带健康检查、最少连接与熔断）
+  user-backend:
+    to:
+      - 10.0.1.20:8080
+      - 10.0.1.21:8080
+    timeout: 3s
+    retry: 2
+    lb: least_conn
+    health:
+      path: /healthz
+      interval: 10s
+    circuitbreaker:
+      enabled: true
+      timeout: 60
+      tripthreshold: 5
+  # 动态服务发现服务（带实例选择器）
+  order-backend:
+    discovery:
+      name: orders
+      selector:
+        match: {env: production}
+        meta: {version: v2}
+    timeout: 5s
+    loadbalancer:
+      strategy: round_robin
+      serverstransport: backend-tls
+# 路由按名引用
+/api/users:
+  service: user-backend
+  strip_prefix: true
+/api/orders:
+  service: order-backend
+  strip_prefix: true
+</code></pre>
+<h3 id="113-传输配置-transports">11.3 传输配置 (<code>transports</code>)</h3>
+<p>在 <code>transports:</code> 字典下定义网关与后端上游通信时的传输通道特性（例如后端 TLS 加密或双向 mTLS 认证）。后端通过 <code>loadbalancer.serverstransport</code> 按名称引用：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>必需</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tls.enabled</code></td>
+<td>布尔值</td>
+<td>是</td>
+<td>是否在此上游传输通道中启用 TLS 加密。</td>
+</tr>
+<tr>
+<td><code>tls.insecureskipverify</code></td>
+<td>布尔值</td>
+<td>否</td>
+<td>是否跳过后端 TLS 证书与主机名验证（测试环境或自签名后端可用）。默认 false。</td>
+</tr>
+<tr>
+<td><code>tls.clientcertificate</code></td>
+<td>字符串</td>
+<td>否</td>
+<td>客户端身份名称，目前仅支持 <code>litemesh</code>，使用 LiteMesh 身份向上游执行 mTLS 认证；不支持证书文件路径。使用时不得启用 <code>insecureskipverify</code>。</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-yaml">site: example.com
+transports:
+  # 用于连接后端微服务的安全 TLS 通道
+  backend-tls:
+    tls:
+      enabled: true
+      insecureskipverify: false
+      clientcertificate: litemesh
+services:
+  secure-orders:
+    to: https://internal.order-service.local:8443
+    loadbalancer:
+      strategy: least_conn
+      serverstransport: backend-tls
+/orders:
+  service: secure-orders
+</code></pre>
+<p>上述 mTLS 示例需要网关已配置可用的 LiteMesh 身份。仅需单向 TLS 时，省略 <code>clientcertificate</code>。</p>
+<h2 id="12-注释环境变量与路径">12. 注释、环境变量与路径</h2>
+<h3 id="121-注释">12.1 注释</h3>
+<p><code>#</code> 开始 YAML 注释，可独立一行，也可放在值后：</p>
+<pre><code class="language-yaml">site: :9090 # 开发入口
+~/goapi: localhost:8080 # 后端保留 /goapi 前缀
+spa: ./www # 前端构建目录
+</code></pre>
+<p>若文本本身含有 <code> #</code>，用引号包住。注释用于记录部署前提和配置目的，不参与路由选择。</p>
+<h3 id="122-环境变量与密钥引用">12.2 环境变量与密钥引用</h3>
+<p>启动参数中的 <code>LITEGATE_CONFIG</code> 用于指定全局配置文件。部分凭据字段通过密钥解析器支持 <code>env://NAME</code>、<code>${NAME}</code> 等引用；OIDC 的特定字段还支持 <code>env:NAME</code>。</p>
+<p>这些是相应字段的能力，不应把环境变量语法当成所有 V2 字段的通用替换机制。需要动态生成站点地址或后端地址时，先生成完整 YAML，再进行校验。密钥引用方式见 <a href="../06-certificates/credkeeper.html">CredKeeper</a>，OIDC 字段见 <a href="../05-middleware/oidc.html">OIDC</a>。</p>
+<h3 id="123-相对路径">12.3 相对路径</h3>
+<p><code>./www</code> 等相对路径应结合启动工作目录和具体功能的路径处理规则确认。不要仅因站点文件放在 <code>sites/</code> 中，就假定目录一定相对于该文件。部署时固定工作目录，或使用明确的绝对路径；容器中的路径要指向容器可见目录。</p>
+<h2 id="13-校验热加载与常见错误">13. 校验、热加载与常见错误</h2>
+<h3 id="131-保存前校验">13.1 保存前校验</h3>
+<pre><code class="language-shell">litegate -t -config config.yaml
+</code></pre>
+<p>该命令通过统一 Loader 检查配置；既检查 YAML，也检查字段、引用和业务约束。仅 YAML 语法正确不代表站点配置有效。</p>
+<p>站点目录的变更支持热加载。无效的新配置不能替换已加载的有效站点；保存后应查看加载日志，确认更新成功。</p>
+<h3 id="132-错误对照">13.2 错误对照</h3>
+<table>
+<thead>
+<tr>
+<th>现象或写法</th>
+<th>原因与调整方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>site: *:9090</code></td>
+<td>给 <code>*</code> 开头的字符串加引号，或改成 <code>site: :9090</code></td>
+</tr>
+<tr>
+<td>地址带端口又写 <code>port</code> / <code>entrypoints</code></td>
+<td>选择一种入口声明方式</td>
+</tr>
+<tr>
+<td><code>/api</code> 下同时有 <code>proxy</code> 和 <code>spa</code></td>
+<td>每条路由只保留一个动作；SPA 放到站点根部兜底</td>
+</tr>
+<tr>
+<td><code>/api</code> 下再写 <code>match</code></td>
+<td>改成 <code>routes</code> 列表里的匹配条件</td>
+</tr>
+<tr>
+<td><code>/goapi</code> 与 <code>~/goapi</code> 同时存在</td>
+<td>按大小写需求保留其中一个</td>
+</tr>
+<tr>
+<td>精确 <code>path</code> 搭配 <code>strip_prefix: true</code></td>
+<td>使用前缀匹配，或明确填写要删除的前缀字符串</td>
+</tr>
+<tr>
+<td><code>proxy: orders</code> 被当作后端地址</td>
+<td>定义 <code>services.orders</code>，使用 <code>service: orders</code></td>
+</tr>
+<tr>
+<td>有子路由，根部直接写 <code>auth</code> / <code>cors</code></td>
+<td>放到显式 <code>/</code> 路由；全站处理用站点 <code>use</code></td>
+</tr>
+<tr>
+<td><code>import</code> 后治理字段重复</td>
+<td>删除冲突字段；片段不是任意对象覆盖机制</td>
+</tr>
+<tr>
+<td>未定义的中间件、片段或 Service</td>
+<td>先定义对应资源，再引用名称</td>
+</tr>
+<tr>
+<td>后端返回 404，却没有进入 SPA</td>
+<td>已选中代理路由，不会继续执行另一个动作</td>
+</tr>
+<tr>
+<td><code>ech: true</code> 报错未指定公共域名</td>
+<td>全局配置了多个 ECH 组时必须明确指定公共域名（如 <code>ech: ech.example.com</code>）</td>
+</tr>
+<tr>
+<td><code>ech</code> 在通配符或 IP 站点上报错</td>
+<td>ECH 仅支持具体的单域名 HTTPS 站点，不可用于通配符、纯 IP 或 L4 透传站点</td>
+</tr>
+<tr>
+<td><code>ech</code> 站点提示未覆盖</td>
+<td>站点域名未包含在该 ECH 组关联的 DNS 提供商 <code>domains</code> 列表中</td>
+</tr>
+</tbody>
+</table>
+<p>更多可复制配置见 <a href="../cookbook/README.html">常用场景案例</a>，具体字段见 <a href="site-config.html">站点配置参考</a>，常见报错见 <a href="../cookbook/04-pitfalls.html">错误对照</a>。</p>
+<h2 id="14-服务发现源标签与-v2-的整合">14. 服务发现源、标签与 V2 的整合</h2>
+<h3 id="141-三个概念先分清">14.1 三个概念先分清</h3>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>提供什么</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>服务发现源</td>
+<td>服务名、实例地址、健康状态、标签和元数据</td>
+<td>Litemesh、Docker、Consul</td>
+</tr>
+<tr>
+<td>服务标签</td>
+<td>将注册服务发布为路由，并声明后端和治理策略</td>
+<td><code>litegate.http.routers.orders.*</code></td>
+</tr>
+<tr>
+<td>V2 站点文件</td>
+<td>人工维护的路由、前端页面、站点设置和资源</td>
+<td><code>sites/app.yaml</code></td>
+</tr>
+</tbody>
+</table>
+<p>发现到一个实例，不等于它一定产生公开路由。路由可以由标签生成，也可以在 V2 中手写；实例地址仍由发现源更新。标签里的 Router 名称、本地 <code>services</code> 名称、注册中心服务名也不是同一个名字空间。</p>
+<pre class="mermaid">flowchart TD
+    Sources[发现源：服务、实例、健康、标签、元数据] --&gt; Catalog[标签解析与动态路由]
+    Sources --&gt; Instances[动态后端实例集合]
+    File[sites 中的 V2 文件] --&gt; Static[文件路由与站点设置]
+    Catalog --&gt; Merge[同站点键合并为 Hybrid]
+    Static --&gt; Merge
+    Merge --&gt; Match[按入口与请求条件选择路由]
+    Match --&gt; Proxy[代理动作]
+    Match --&gt; Local[SPA、静态文件、响应等动作]
+    Instances --&gt; Proxy
+</pre>
+<h3 id="142-发现源在哪里配置">14.2 发现源在哪里配置</h3>
+<p>发现源在全局 <code>config.yaml</code> 中配置。当前实现包含以下接入方式，也支持通过发现 Provider 插件扩展：</p>
+<table>
+<thead>
+<tr>
+<th>Catalog <code>provider</code></th>
+<th>来源</th>
+<th>常见标签载体</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>litemesh</code></td>
+<td>Litemesh Agent</td>
+<td>服务 Tags / Metadata</td>
+</tr>
+<tr>
+<td><code>litedeploy</code></td>
+<td>LiteDeploy Agent</td>
+<td>发布服务的标签与元数据</td>
+</tr>
+<tr>
+<td><code>docker</code></td>
+<td>Docker Daemon / Swarm</td>
+<td>容器或服务 Labels</td>
+</tr>
+<tr>
+<td><code>consul</code></td>
+<td>Consul Catalog / Agent</td>
+<td>服务 Tags / Meta</td>
+</tr>
+<tr>
+<td><code>discovery</code></td>
+<td>外部发现聚合 Agent</td>
+<td>Agent 返回的标签与元数据</td>
+</tr>
+<tr>
+<td><code>k8s</code></td>
+<td>Kubernetes 服务与端点</td>
+<td>接入规则见 Kubernetes 文档</td>
+</tr>
+</tbody>
+</table>
+<p><code>provider: discovery</code> 对应后端的 external 发现客户端，可以接入 <code>camodns_discovery</code> 这类聚合层。Docker、Litemesh 等标签在进入网关后使用统一的资源语义；具体凭据、实例地址选择和更新机制仍由 Provider 决定。</p>
+<p>例如使用外部聚合 Agent：</p>
+<pre><code class="language-yaml"># config.yaml 中的配置段
+service_discovery:
+  catalogs:
+    - name: primary
+      enabled: true
+      provider: discovery
+      url: http://127.0.0.1:55500
+      namespace: default
+</code></pre>
+<p><code>catalogs</code> 可以声明多个源。配置源以后，再根据谁负责路由选择下面的接入方式。具体连接参数见 <a href="../07-discovery/overview.html">服务发现源总览</a> 和各 Provider 文档；Kubernetes 原生 Ingress / Gateway 接入见 <a href="../../litegate_k8s_usage_guide.html">Kubernetes 使用指南</a>。</p>
+<h3 id="143-方式一标签负责路由v2-负责前端">14.3 方式一：标签负责路由，V2 负责前端</h3>
+<p>这是前后端同域部署的常见组合。假设发现源中注册了 <code>orders</code> 服务，并附带以下标签：</p>
+<pre><code class="language-properties">litegate.http.routers.orders.match.hosts=app.example.com
+litegate.http.routers.orders.match.path_prefix=/api
+litegate.http.routers.orders.service=orders-backend
+litegate.http.services.orders-backend.timeout=5s
+litegate.http.services.orders-backend.retry.attempts=2
+</code></pre>
+<p><code>orders</code> 是 Router 名；<code>orders-backend</code> 是标签声明的 Service 资源名；实际注册服务叫 <code>orders</code>。标签 Service 描述注册这些标签的服务本身，不能通过修改 <code>discovery.name</code> 转向另一个注册服务。</p>
+<p>在 <code>sites/app.yaml</code> 中只维护前端：</p>
+<pre><code class="language-yaml">site: app.example.com
+spa: ./www
+</code></pre>
+<p>合并后，请求表现如下：</p>
+<table>
+<thead>
+<tr>
+<th>请求</th>
+<th>处理者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/api</code>、<code>/api/orders</code></td>
+<td>标签生成的动态 Router，转发到 <code>orders</code> 实例</td>
+</tr>
+<tr>
+<td><code>/dashboard</code>、<code>/settings/profile</code></td>
+<td>文件中的 SPA 兜底</td>
+</tr>
+<tr>
+<td><code>/apix</code></td>
+<td>SPA 兜底，未命中 <code>/api</code> 路径段</td>
+</tr>
+</tbody>
+</table>
+<p>标签未声明 <code>entrypoints</code> 时默认使用 <code>web</code> 与 <code>websecure</code>。示例需要这些入口可用；是否启用 HTTPS 和如何提供证书还需相应配置。此例保留 <code>/api</code> 前缀，要删除它请在标签中定义并绑定去前缀中间件。</p>
+<p>只有简单的 Host / 路径发布时，也可以采用快捷标签：</p>
+<pre><code class="language-properties">litegate.http.host=app.example.com
+litegate.http.path_prefix=/api
+litegate.http.strip_path=true
+</code></pre>
+<p>快捷模式与命名资源不能在同一服务上混用。需要策略时使用完整命名资源写法，见 <a href="tag-dsl.html">服务标签使用指南</a>。</p>
+<h3 id="144-方式二v2-负责路由发现源只提供后端">14.4 方式二：V2 负责路由，发现源只提供后端</h3>
+<p>如果 API 路径、鉴权和响应头由网关统一维护，可以在 V2 中声明发现后端：</p>
+<pre><code class="language-yaml">site: app.example.com
+services:
+  orders-backend:
+    discovery: orders
+    timeout: 5s
+    retry: 2
+/api:
+  service: orders-backend
+  strip_prefix: true
+spa: ./www
+</code></pre>
+<p>这里的本地 <code>services.orders-backend</code> 是文件自己的资源，<code>discovery: orders</code> 才是注册中心服务名。实例变化时，网关更新后端集合，不需要将实例 IP 写进站点文件。该文件路由无需再由标签声明同样的公开路径。</p>
+<p><code>service: orders-backend</code> 不会在标签资源中查找同名 Service，也不会自动读取标签中的 timeout、retry 或 Middleware。文件路由的策略来自这份 V2 配置。</p>
+<p>发现源接入仍是前提。<code>discovery</code> 简写不指定 Provider；后端按网关已配置的默认发现方式解析，多源运行时使用相应发现客户端。当前 V2 的 <code>discovery</code> 对象支持 <code>name</code> 和 <code>selector</code>，不能在其中随意添加 <code>provider</code>、<code>namespace</code>。需要显式指定底层发现类型和命名空间时，使用高级动作：</p>
+<pre><code class="language-yaml">site: app.example.com
+/api:
+  action:
+    type: proxy
+    service_name: orders
+    upstream_type: litemesh
+    namespace: default
+  strip_prefix: true
+spa: ./www
+</code></pre>
+<p>这同样需要该发现客户端已配置并可用。它不与本地 <code>service:</code> 引用并用。</p>
+<h3 id="145-什么条件下会合并成-hybrid">14.5 什么条件下会合并成 Hybrid</h3>
+<p>合并按<strong>运行时站点键</strong>进行，不按文件名、注册服务名或 Router 名进行：</p>
+<ul>
+<li>普通站点以域名为键；80、443 按通用域名键处理。</li>
+<li>独立非标准端口以 <code>域名:端口</code> 为键。</li>
+<li>同一个键同时有文件配置和 Catalog 配置，形成 Hybrid。</li>
+<li>只有文件配置为 Static；只有发现生成的配置为 Mesh。这里的分类名称并不表示发现源一定是 Litemesh。</li>
+</ul>
+<p>例如 <code>site: app.example.com</code> 与标签 Host <code>app.example.com</code> 可以合并。<code>site: app.example.com:9090</code> 与默认发布到 80/443 的标签不是同一个站点键。</p>
+<p><code>site: :9090</code> 是 <code>*:9090</code> 通配站点键，也不等于 <code>app.example.com:9090</code>。具体域名站点和通配站点是不同候选，不能依靠通配 SPA 文件自动补充某个具体域名的动态站点。要让前端与 API 合并，确保 Host 和端口组织一致。</p>
+<p>标签需要自建 9090 入口时，还必须满足 <code>service_discovery.tag_entrypoints.allowed_ports</code> 的允许规则；也可以按名称引用已配置入口。具体入口规则见 <a href="tag-dsl.html">服务标签使用指南</a>。</p>
+<h3 id="146-合并的是路由集合不是给同一路由逐字段打补丁">14.6 合并的是路由集合，不是给同一路由逐字段打补丁</h3>
+<p>文件路由和动态路由保留各自的匹配、动作及策略，然后组成一个路由集合。两个来源声明 <code>/api</code>，不会变成“文件的鉴权 + 标签的后端”这一条新路由。</p>
+<table>
+<thead>
+<tr>
+<th>合并内容</th>
+<th>当前规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>路由</td>
+<td>两边加入同一个集合，重新排序</td>
+</tr>
+<tr>
+<td>同一层级的非根路由</td>
+<td>先比较 <code>priority</code>，再比较匹配类别和路径具体程度；仍相同时文件来源优先</td>
+</tr>
+<tr>
+<td><code>/</code> 前缀路由</td>
+<td>作为兜底；文件与动态的根路由同等条件下，文件优先</td>
+</tr>
+<tr>
+<td>Middleware 定义</td>
+<td>合并名称表；文件与动态同名但配置不同时，保留文件定义并记录冲突</td>
+</tr>
+<tr>
+<td>端口、站点入口、TLS 配置、站点 IP 限制</td>
+<td>Hybrid 中保留文件侧设置</td>
+</tr>
+<tr>
+<td><code>https</code> / 禁用 Trace ID</td>
+<td>合并后的布尔值采用两边的逻辑或</td>
+</tr>
+<tr>
+<td>请求体上限、自定义错误页</td>
+<td>文件有配置时优先，否则采用动态侧值</td>
+</tr>
+<tr>
+<td>标签声明的入口资源</td>
+<td>保留到合并视图，继续参与监听器管理</td>
+</tr>
+</tbody>
+</table>
+<p>根前缀 <code>/</code> 在请求执行时是兜底，不要尝试仅靠给它提高 <code>priority</code> 覆盖所有更具体的 API 路由。复杂条件应明确建成相应的匹配路由。</p>
+<p><strong>文件来源优先只发生在排序条件相同的时候。</strong> 更具体的动态 <code>/api/orders</code> 可以排在文件 <code>/api</code> 前面；相同具体程度时，较高 <code>priority</code> 的动态路由也可以排在文件路由前面。</p>
+<p>中间件名称冲突还分两种情况：文件与动态冲突时文件定义优先；不同动态服务在同站点中声明同名但不同配置的中间件时，该动态定义会被判为失效。推荐使用 <code>orders-limit</code>、<code>users-limit</code> 等明确名称。</p>
+<h3 id="147-文件站点的继承不会自动扩展到动态路由">14.7 文件站点的继承不会自动扩展到动态路由</h3>
+<p>V2 的站点 <code>use</code>、<code>request_headers</code>、<code>response_headers</code> 在编译时绑定到<strong>这份文件的路由</strong>。动态路由随后才参与 Hybrid 合并，所以它们不会自动获得这些绑定。</p>
+<p>例如文件中写 <code>response_headers: {X-Policy: file}</code>，可以影响文件 SPA；不能据此推断标签生成的 <code>/api</code> 也一定带这个响应头。需要对标签 API 设置治理时，在标签 Router 上声明并绑定相应 Middleware；需要完全由文件统一管理时，采用方式二。</p>
+<p>另一方面，真正保存在合并站点上的设置，例如站点 IP 限制、TLS 和请求体上限，会对该站点的请求处理产生作用。区分“编译到文件路由的字段”和“保留在站点上的字段”，比只看 YAML 的缩进位置更准确。</p>
+<p>文件片段、命名匹配器和 Service 引用在文件编译时解析，标签资源也在标签解析时校验；不要依靠 Hybrid 合并进行跨来源的未定义引用。</p>
+<h3 id="148-服务消失时如何避免-api-被-spa-接管">14.8 服务消失时，如何避免 API 被 SPA 接管</h3>
+<p>仅保留 SPA 文件、API 路由完全来自标签时，如果一次有效 Catalog 更新移除了这个 API 路由，原来的 API 路径可能落入 SPA。需要保留 API 边界时，在文件中加低优先级占位路由：</p>
+<pre><code class="language-yaml">site: app.example.com
+/api:
+  priority: -1
+  respond:
+    status: 503
+    body: API unavailable
+spa: ./www
+</code></pre>
+<p>配合方式一中默认优先级为 0 的标签 <code>/api</code> 路由：</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th><code>/api/orders</code></th>
+<th><code>/dashboard</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>标签路由存在</td>
+<td>动态 API 后端</td>
+<td>SPA</td>
+</tr>
+<tr>
+<td>标签路由被移除</td>
+<td>文件占位路由返回 503</td>
+<td>SPA</td>
+</tr>
+<tr>
+<td>标签路由恢复</td>
+<td>动态 API 后端</td>
+<td>SPA</td>
+</tr>
+</tbody>
+</table>
+<p>“路由被移除”和“路由存在但没有可用实例”不同。后者已经命中代理，代理失败不会继续尝试 SPA。发现源查询失败也不等于有效的空目录更新：已有实现会在相应失败路径保留上一份有效配置，不应把所有故障都理解为立即删除动态路由。</p>
+<h3 id="149-实例标签与路由标签的边界">14.9 实例标签与路由标签的边界</h3>
+<p>同一注册服务的路由和资源标签应在各实例上一致，避免同一个逻辑路由生成不同策略。实例身份则可以不同，例如 <code>sid</code>、<code>version</code>、区域等元数据。</p>
+<p>V2 可以用发现 Selector 选择实例：</p>
+<pre><code class="language-yaml">site: app.example.com
+services:
+  orders-v2:
+    discovery:
+      name: orders
+      selector:
+        match: {sid: tenant-a}
+        meta: {version: v2}
+/api:
+  service: orders-v2
+</code></pre>
+<p><code>selector.match</code> 是硬边界；<code>selector.meta</code> 是软偏好，在硬匹配集合内优先选择命中的实例，无软匹配时回退到硬匹配集合。标签 Service 使用对应的 <code>discovery.selector.match.*</code> 与 <code>discovery.selector.meta.*</code> 字段。</p>
+<h3 id="1410-选择配置分工">14.10 选择配置分工</h3>
+<table>
+<thead>
+<tr>
+<th>目标</th>
+<th>配置方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>服务发布时自动开通 API</td>
+<td>标签声明 Router / Service</td>
+</tr>
+<tr>
+<td>同域前端由运维维护，API 随服务发布</td>
+<td>V2 SPA + 标签 API，形成 Hybrid</td>
+</tr>
+<tr>
+<td>API 下线仍要明确返回 503</td>
+<td>Hybrid 中增加低优先级文件占位路由</td>
+</tr>
+<tr>
+<td>路径、鉴权和策略由网关集中管理</td>
+<td>V2 路由 + <code>services.discovery</code></td>
+</tr>
+<tr>
+<td>同路径临时人工接管</td>
+<td>明确比较匹配条件与 <code>priority</code>，不要逐字段混合两条路由</td>
+</tr>
+</tbody>
+</table>
+<p>部署后同时检查发现源连接、标签校验日志、运行时站点分类和最终路由。<code>litegate -t</code> 可以校验文件，却不能替代检查未来从注册中心上报的每一份动态标签。</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/03-configuration/site-yaml-v2-concepts.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs";
+mermaid.initialize({ startOnLoad: true, theme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default" });
+</script>
+</body>
+</html>

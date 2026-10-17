@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto-Cert (Automated Certificate Management) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/06-certificates/auto-cert.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details open><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html" class="current" aria-current="page">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="auto-cert-automated-certificate-management">Auto-Cert (Automated Certificate Management)</h1>
+<p>LiteGate features an integrated high-performance ACME client that orchestrates the automated acquisition, deployment, and renewal of SSL/TLS certificates from trusted certificate authorities (such as Let's Encrypt or ZeroSSL). It serves as the primary component for enforcing secure HTTPS connections across all ingress routes.</p>
+<hr>
+<h2 id="1-core-capabilities">1. Core Capabilities</h2>
+<ul>
+<li><strong>Zero-Touch Renewals</strong>: Certificates are checked daily and renewed when their remaining lifetime is at most <code>min(renew_days, total certificate lifetime / 3)</code> (<code>renew_days</code> defaults to 10), so short-lived certificates do not enter the renewal window immediately.</li>
+<li><strong>Multi-CA Support</strong>: Beyond Let's Encrypt, LiteGate supports ZeroSSL, Google Trust Services, and any custom ACME service.</li>
+<li><strong>Cluster-Wide Sharing</strong>: When operating under Litemesh grid configurations, certificates are persisted centrally in the distributed KV store rather than local drives. All gateway instances share the same certificate pool, preventing duplicate certificate acquisition that could trigger CA rate limits.</li>
+<li><strong>Flexible Verification Modes</strong>: Supports straightforward <strong>HTTP-01</strong> challenges (requiring port 80 access), <strong>TLS-ALPN-01</strong> challenges (port 443, no port 80 or DNS credentials needed), and <strong>DNS-01</strong> challenges (enabling wildcard certificate acquisition).</li>
+</ul>
+<hr>
+<h2 id="2-configuration-options">2. Configuration Options</h2>
+<h3 id="http-01-challenge-single-hostnames">HTTP-01 Challenge (Single Hostnames)</h3>
+<p>Best suited for deployments where port 80 is exposed publicly on the internet.</p>
+<pre><code class="language-yaml">site: example.com
+https: true # Activating HTTPS forcing implicitly activates Auto-Cert
+routes:
+  - name: my-app
+    match: {path_prefix: &quot;/&quot;}
+    proxy: [&quot;localhost:8080&quot;]
+</code></pre>
+<h3 id="tls-alpn-01-challenge-port-443-no-port-80-or-dns-needed">TLS-ALPN-01 Challenge (Port 443, No Port 80 or DNS Needed)</h3>
+<p>Best suited when inbound port 80 is blocked by ISPs or cloud firewalls, or when you operate a pure HTTPS gateway and do not want to configure DNS provider API credentials. The ACME CA connects directly to port 443 and negotiates the <code>acme-tls/1</code> protocol.</p>
+<pre><code class="language-yaml"># config.yaml
+auto_cert:
+  enabled: true
+  email: &quot;admin@example.com&quot;
+  default_challenge: &quot;tls-alpn&quot;  # Set default challenge for non-DNS domains: &quot;http&quot; (default) or &quot;tls-alpn&quot;
+</code></pre>
+<p>The challenge is chosen per domain as follows: a domain matched by an enabled <code>dns_providers</code> entry always uses DNS-01; every other domain uses <code>default_challenge</code>. There is no per-domain override between HTTP-01 and TLS-ALPN-01.</p>
+<blockquote>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>Port 443 on the public host must route directly to LiteGate's HTTPS listener.</li>
+<li>Per RFC 8737, TLS-ALPN does <strong>not</strong> support wildcard certificates (<code>*.example.com</code>). Use DNS-01 for wildcards.</li>
+</ul>
+</blockquote>
+<h3 id="dns-01-challenge-wildcards">DNS-01 Challenge (Wildcards)</h3>
+<p>Best suited for securing wildcard domain subtrees (e.g. <code>*.example.com</code>) or environments lacking inbound port 80 routing.</p>
+<p>First, register your DNS Provider globally in your <code>config.yaml</code>:</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: &quot;admin@example.com&quot;
+  dns_providers:
+    - name: &quot;aliyun&quot;
+      type: &quot;aliyun&quot;
+      enabled: true
+      config:
+        access_key_id: &quot;LTAI...&quot;
+        access_key_secret: &quot;...&quot;
+</code></pre>
+<p>The domain-to-provider mapping lives in <code>config.yaml</code> under <code>dns_providers</code>:</p>
+<pre><code class="language-yaml"># config.yaml
+auto_cert:
+  enabled: true
+  email: &quot;you@example.com&quot;
+  dns_providers:
+    - name: &quot;aliyun-main&quot;
+      type: &quot;aliyun&quot;
+      enabled: true
+      domains: [&quot;*.example.com&quot;, &quot;example.com&quot;]
+</code></pre>
+<hr>
+<h2 id="3-choosing-a-certificate-authority-ca">3. Choosing a Certificate Authority (CA)</h2>
+<p>Let's Encrypt is used by default. Set <code>ca_provider</code> to switch to another authority; LiteGate automatically selects the matching ACME directory URL and stores a separate account key per CA (fully isolated from one another).</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: &quot;you@example.com&quot;
+  ca_provider: &quot;zerossl&quot;   # letsencrypt(default) / zerossl / google / custom
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><code>ca_provider</code></th>
+<th style="text-align:left">Built-in ACME URL</th>
+<th style="text-align:left">EAB Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>letsencrypt</code> (default)</td>
+<td style="text-align:left"><code>https://acme-v02.api.letsencrypt.org/directory</code></td>
+<td style="text-align:left">No</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>zerossl</code></td>
+<td style="text-align:left"><code>https://acme.zerossl.com/v2/DV90</code></td>
+<td style="text-align:left"><strong>Yes</strong></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>google</code></td>
+<td style="text-align:left"><code>https://dv.acme-v02.api.pki.goog/directory</code></td>
+<td style="text-align:left"><strong>Yes</strong></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>custom</code></td>
+<td style="text-align:left">Defined by <code>acme_url</code></td>
+<td style="text-align:left">Depends on the service</td>
+</tr>
+</tbody>
+</table>
+<h3 id="eab-external-account-binding">EAB (External Account Binding)</h3>
+<p>ZeroSSL and Google Trust Services <strong>require</strong> EAB credentials. Obtain <code>eab_kid</code> / <code>eab_hmac</code> from the respective console and provide them together:</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: &quot;you@example.com&quot;
+  ca_provider: &quot;zerossl&quot;
+  eab_kid: &quot;your-key-id&quot;
+  eab_hmac: &quot;your-hmac-key&quot;
+</code></pre>
+<blockquote>
+<p>Note: Selecting zerossl/google/gts without EAB credentials will cause a configuration validation error at startup (missing eab_kid or eab_hmac).</p>
+</blockquote>
+<h3 id="custom-acme-services">Custom ACME Services</h3>
+<p>For a private CA or step-ca, use <code>custom</code> together with <code>acme_url</code> (required):</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  ca_provider: &quot;custom&quot;
+  acme_url: &quot;https://ca.internal.example.com/acme/acme/directory&quot;
+  acme_ca_cert: &quot;/etc/litegate/private-acme-root.pem&quot;
+  acme_headers:
+    X-Lito-Token: &quot;your-private-ca-token&quot;
+</code></pre>
+<blockquote class="alert alert-tip"><p><strong>Custom CA Upgrade Migration Hint</strong></p>
+<ul>
+<li>In newer versions, <code>custom</code> mode uses a SHA256 hash of the <code>acme_url</code> as a unique suffix (e.g., <code>custom_xxxx</code>) for CA metadata and account key isolation.</li>
+<li>Upgrading a cluster from an older version (which used the literal <code>&quot;custom&quot;</code> identity) will trigger a CA provider mismatch error (<code>_cluster_ca_provider</code> mismatch) on startup.</li>
+<li><strong>Solution</strong>: Before upgrading, manually delete the <code>_cluster_ca_provider</code> key/file from your storage (Consul/Litemesh or the <code>_cluster_ca_provider.pem</code>/<code>_cluster_ca_provider.key</code> files inside <code>certs_dir</code>). The new version will then rebuild the metadata cleanly on start.</li>
+<li><strong>Existing Certificate Re-issuance</strong>: Changing only the <code>acme_url</code> will not automatically trigger a forced renewal of existing valid certificates. If you want to force re-issuing all existing certificates under the new custom ACME endpoint, simply delete their old certificate files (e.g., the <code>example.com.pem</code> and <code>example.com.key</code> files inside <code>certs_dir</code> on local disk, or the corresponding domain bundle key in Consul / Litemesh KV) manually while updating the configuration. The gateway will request new certificates on the next run.</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="4-storage-security--private-key-encryption">4. Storage Security &amp; Private Key Encryption</h2>
+<p>By default, locally stored certificates and ACME accounts are written to the directory specified by <code>certs_dir</code>:</p>
+<pre><code class="language-text">certs/
+├── example.com.pem     # Standard fullchain certificate bundle
+└── example.com.key     # Private key file
+</code></pre>
+<h3 id="security-encryption-for-acme-accounts">Security Encryption for ACME Accounts</h3>
+<p>To prevent ACME registration account credentials from being stored in plaintext or unencrypted format inside shared Consul/Litemesh KV registries, it is highly recommended to configure a symmetric encryption key <code>storage_secret</code> in the <code>auto_cert</code> block of <code>config.yaml</code>:</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  certs_dir: &quot;./certs&quot;
+  storage_secret: &quot;a-secure-32-character-long-secret-key-here!&quot; # Must be at least 32 bytes
+</code></pre>
+<ul>
+<li><strong>Persistent Layer Encryption</strong>: Once <code>storage_secret</code> is enabled, the global ACME account registration private key (stored under the key <code>_acme_account</code> for Let's Encrypt, or <code>_acme_account_&lt;provider&gt;</code> for other CAs such as <code>_acme_account_zerossl</code>, isolated per CA) as well as <strong>individual domain certificate private keys</strong> are automatically encrypted using the AES-256-GCM algorithm before being written to shared persistent storage (such as Consul or Litemesh KV registries). The encrypted binary payload starts with a magic header prefix: <code>LG_ENC_001</code>.</li>
+<li><strong>Fail-Closed Protection</strong>: If <code>storage_secret</code> is defined but the encryption fails (e.g., due to an inadequate key length), LiteGate enforces a Fail-Closed policy, throwing an error and aborting the save operation rather than falling back to plain storage.</li>
+<li><strong>Seamless Plaintext Migrations</strong>: If your gateway environment already stores older plaintext ACME keys or domain private keys, configuring <code>storage_secret</code> later triggers an automated migration. When LiteGate loads a plaintext file from storage, it encrypts the key immediately in memory and overwrites it in the storage.</li>
+<li><strong>Local Disk Mirroring and Sync Encryption</strong>: Local disk certificate private key files (<code>example.com.key</code>) will remain in plaintext and be protected by strict <code>0600</code> permissions (to satisfy TLS handshake performance constraints). However, during certificate sync and push operations (such as <code>SyncCertificatesToLitemesh</code>), private keys are automatically encrypted with <code>storage_secret</code> before being uploaded to Litemesh KV storage, preventing plaintext private key leakage in the shared KV registry.</li>
+</ul>
+<hr>
+<h2 id="5-troubleshooting--faq">5. Troubleshooting &amp; FAQ</h2>
+<h3 id="acme-challenge-status-is-stuck-at-pending">ACME challenge status is stuck at &quot;Pending&quot;?</h3>
+<ol>
+<li><strong>Verify Inbound Access (HTTP-01)</strong>: Confirm that the public DNS A-record maps correctly to your gateway and that port 80 is publicly reachable from Let's Encrypt's servers.</li>
+<li><strong>DNS Propagation (DNS-01)</strong>: Wait for DNS records to propagate. Some cloud DNS systems require additional latency before TXT records become visible.</li>
+<li><strong>CA Rate Limiting</strong>: Let's Encrypt enforces strict weekly limits on duplicate certificate requests. Check server logs to see if a rate limit exception was raised.</li>
+</ol>
+<h3 id="how-do-i-force-an-immediate-certificate-renewal">How do I force an immediate certificate renewal?</h3>
+<p>To force a renewal, physically delete the target domain's certificate files (e.g., <code>example.com.pem</code> and <code>example.com.key</code> inside <code>certs_dir</code> on local disk, or the corresponding domain bundle key in Consul / Litemesh KV) and restart the LiteGate process. The gateway will immediately trigger a new ACME handshake on startup.</p>
+<hr>
+<h2 id="further-reading">Further Reading</h2>
+<ul>
+<li><a href="../03-configuration/global-config.html">Configuring Global Auto-Cert Parameters</a></li>
+<li><a href="../10-deployment/production.html">Production Deployment Recommendations</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/06-certificates/auto-cert.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate 服务标签架构 · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/02-concepts/tag-architecture.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details open><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html" class="current" aria-current="page">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: internal/configdocs/docs/zh/tag-architecture.md (package internal/configdocs)
+     Regenerate: go generate ./internal/configdocs/...
+     Edit the source instead; a drift test fails if this copy is edited directly. -->
+<h1 id="litegate-服务标签架构">LiteGate 服务标签架构</h1>
+<p>本文说明服务标签为什么这样设计、网关如何把标签变成路由，以及标签与站点 YAML 的分工。怎么写见《服务标签使用指南》，每个标签的说明见《服务标签参考》。</p>
+<h2 id="1-为什么用标签">1. 为什么用标签</h2>
+<p>站点 YAML 由网关管理员维护；服务标签由服务自己在注册时携带。服务上线、扩容、下线时，路由随注册信息自动出现和消失，不需要改网关配置。标签适合&quot;这个服务通过哪个域名、哪个路径对外&quot;这类由服务自己决定的事；网关级的事(证书、监听端口、全局安全策略)仍由 config.yaml 与站点 YAML 决定。</p>
+<h2 id="2-设计原则">2. 设计原则</h2>
+<ol>
+<li><strong>两种写法，互不混用。</strong> 快捷模式(4 个键)覆盖最常见的&quot;一个域名转发到本服务&quot;；命名资源覆盖其余一切。</li>
+<li><strong>能推导的就不用写。</strong> 入口默认 <code>web</code> + <code>websecure</code>，Service 默认是注册服务本身，Host 不写匹配任意 Host。</li>
+<li><strong>写错就拒绝，而不是静默忽略。</strong> 未知属性、无效引用、冲突配置会让该实例整体被拒绝(fail closed)，并给出&quot;did you mean&quot;建议。这是为了避免 Traefik 式&quot;标签拼错、行为诡异、查半天&quot;的问题。</li>
+<li><strong>只有一个判定来源。</strong> 运行时、dashboard 的标签分类、MCP 的 <code>explain_tag</code> / <code>preview_service_tags</code> 调用同一个解析器；标签参考也从解析器的属性表生成。三者不会给出不同结论。</li>
+</ol>
+<h2 id="3-资源模型">3. 资源模型</h2>
+<pre><code class="language-text">EntryPoint                    listener address and protocol (config.yaml, or a restricted tag definition)
+  ├── HTTP Router             matches Host / path / method / header / query, references the resources below
+  │     ├── Middlewares       request and response processing (rate limit, CORS, strip prefix, ...)
+  │     ├── IDS               identity and tenant decisions, returns an instance selector
+  │     └── HTTP Service      the registering service: instance selection, load balancing, timeout, retry, circuit breaker, health checks
+  │           └── ServersTransport   TLS / mTLS to the upstream
+  └── L4 Stream               TCP / UDP proxy: port binding, optional TLS termination, direct stream forwarding
+</code></pre>
+<ul>
+<li><strong>EntryPoint</strong> 是监听地址与协议，来自 config.yaml，或受限的标签定义。</li>
+<li><strong>Router</strong> 匹配 Host / 路径 / 方法 / 头 / 参数，并引用中间件、IDS 与 Service。</li>
+<li><strong>Middlewares</strong> 处理请求与响应(限流、CORS、剥离前缀……)；<strong>IDS</strong> 做身份与租户决策并返回实例 selector。</li>
+<li><strong>Service</strong> 是注册服务本身：选实例、负载均衡、超时、重试、熔断、健康检查；<strong>ServersTransport</strong> 是到上游的 TLS / mTLS。</li>
+<li><strong>Router 负责&quot;哪些请求&quot;，Service 负责&quot;怎么转发&quot;。</strong> Host 属于 Router，超时与重试属于 Service。</li>
+<li><strong>Service 永远是注册服务本身。</strong> 标签不能把流量转给别的服务；<code>discovery.name</code> 只能等于注册服务名。</li>
+<li><strong>IDS 只能缩小范围。</strong> IDS 返回的 selector 只在该 Service 的实例中继续筛选，与 Service 硬 selector 冲突时请求被拒绝。</li>
+<li><strong>L4 Stream</strong> 处理非 HTTP 的四层 TCP/UDP 流量：通过标签声明监听端口与可选 TLS 设置，直接转发至注册服务实例，不经过七层 HTTP 路由与中间件。</li>
+</ul>
+<h2 id="4-标签如何变成路由">4. 标签如何变成路由</h2>
+<pre><code class="language-text">instance tags / metadata
+  → instance tags (litegate.instance.*, plain metadata) are set aside; they never define routes
+  → shortcut: compiled to a Router named main
+    named resources: parsed and validated by ParseTagResources
+  → CompileTagResources: one route per Router × entrypoint (e.g. orders@web, orders@websecure)
+  → L4 stream tags (litegate[.&lt;group&gt;].tcp/udp.*): compiled to dynamic StreamConfig
+  → entrypoint policy: config.yaml entrypoints by name; new ports only within allowed_ports
+  → merged into catalog sites by domain, and with a site YAML of the same domain
+</code></pre>
+<p>也就是：实例标签先被分出去，不参与路由定义；快捷模式编译成名为 <code>main</code> 的 Router，命名资源由解析器校验；每个 Router 在每个入口上生成一条路由(如 <code>orders@web</code>、<code>orders@websecure</code>)；四层 Stream 标签按协议与端口聚合成动态 StreamConfig 并注册实例；入口只能引用 config.yaml 中的入口，新开端口须在 <code>allowed_ports</code> 内；最后按域名合并到站点，并与同名的 YAML 站点合并。</p>
+<p>同一服务的所有实例必须携带相同的路由与资源标签。实例之间不一致时，dashboard 会高亮漂移的键，网关只采用其中一份声明，直到实例标签收敛。</p>
+<h2 id="5-路由标签与实例标签">5. 路由标签与实例标签</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"></th>
+<th style="text-align:left">路由与资源标签</th>
+<th style="text-align:left">实例标签</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">键</td>
+<td style="text-align:left">快捷模式 4 键、<code>litegate.entrypoints.*</code>、<code>litegate.http.*</code>、<code>litegate[.&lt;group&gt;].tcp/udp.*</code></td>
+<td style="text-align:left"><code>litegate.instance.*</code>、普通 metadata(如 <code>sid=c1</code>)</td>
+</tr>
+<tr>
+<td style="text-align:left">描述</td>
+<td style="text-align:left">这个服务怎么对外(七层路由或四层流)</td>
+<td style="text-align:left">这个实例是谁</td>
+</tr>
+<tr>
+<td style="text-align:left">各实例之间</td>
+<td style="text-align:left">必须一致</td>
+<td style="text-align:left">可以不同</td>
+</tr>
+<tr>
+<td style="text-align:left">被谁使用</td>
+<td style="text-align:left">编译成路由或流代理</td>
+<td style="text-align:left">请求时被 selector / IDS 匹配</td>
+</tr>
+</tbody>
+</table>
+<p>Service 的 <code>discovery.selector.match.&lt;key&gt;</code> 与实例的 <code>&lt;key&gt;=&lt;value&gt;</code>(或 <code>litegate.instance.labels.&lt;key&gt;</code>)配对；<code>selector.meta.&lt;key&gt;</code> 与 <code>litegate.instance.meta.&lt;key&gt;</code> 配对。</p>
+<h2 id="6-请求链路">6. 请求链路</h2>
+<pre><code class="language-text">request → entrypoint (web / websecure / ...)
+        → site by Host
+        → route within the site: higher priority first, then the more specific path; a route only accepts requests from its own entrypoints
+        → Middlewares → IDS
+        → Service: hard selector gives the base set; the meta preference's matches if any, otherwise the base set
+        → load balancer picks an instance → forward (timeout / retry / circuit breaker)
+</code></pre>
+<p>即：先按入口与 Host 找到站点；站点内 priority 高者优先，其次路径越具体越优先，且路由只接受从自己入口进来的请求；依次经过中间件与 IDS；Service 用硬 selector 得到基础集合，meta 偏好有命中就用命中集，否则用基础集合；最后负载均衡选出实例并转发。</p>
+<h2 id="7-四层-l4-stream-代理">7. 四层 (L4) Stream 代理</h2>
+<p>对于数据库（MySQL、PostgreSQL）、缓存（Redis）、IoT 等非 HTTP 协议，服务不需要定义七层 HTTP Router 与中间件，而是直接使用四层 Stream 标签。</p>
+<h3 id="71-标签语法与分组">7.1 标签语法与分组</h3>
+<pre><code class="language-properties"># 单端口最小写法
+litegate.tcp.port=3306
+
+# 多端口与 TLS 终止
+litegate.mysql.tcp.port=3306
+litegate.mysql.tcp.tls.enabled=true
+litegate.mysql.tcp.tls.domains=db.example.com
+litegate.dns.udp.port=5353
+</code></pre>
+<ul>
+<li><strong>协议与端口</strong>：<code>litegate[.&lt;group&gt;].tcp.port</code> 与 <code>litegate[.&lt;group&gt;].udp.port</code> 在指定端口监听并将原始连接转发到注册服务实例。</li>
+<li><strong>多端口分组</strong>：当同一个服务需要暴露多个四层端口（例如同时暴露业务端口与管理/探针端口）时，通过可选的 <code>&lt;group&gt;</code> 区分（如 <code>mysql</code>、<code>dns</code>）。</li>
+<li><strong>TLS 终止</strong>：支持配置 <code>litegate[.&lt;group&gt;].tcp.tls.enabled=true</code>，可选 <code>auto_cert</code>、<code>domains</code>、<code>cert_file</code>、<code>key_file</code>、<code>min_version</code>。UDP 协议不支持 TLS 终止。</li>
+</ul>
+<h3 id="72-编译与生命周期">7.2 编译与生命周期</h3>
+<pre><code class="language-text">L4 connection → listener (dedicated port or shared 443 SNI)
+              → StreamConfig by protocol and port
+              → optional TLS termination (auto_cert / cert_file)
+              → stream connection pool → forward to service endpoint
+</code></pre>
+<ul>
+<li><strong>聚合为 StreamConfig</strong>：解析器按 <code>协议 + 端口</code> 聚合同一服务的所有实例，生成命名为 <code>auto-&lt;服务名&gt;-&lt;协议&gt;-&lt;端口&gt;</code> 的动态流配置。</li>
+<li><strong>服务发现隔离</strong>：实例端点注册到以 <code>stream:&lt;协议&gt;:&lt;端口&gt;</code> 为标识的发现缓存中，与 HTTP 站点的连接池相互隔离。</li>
+<li><strong>冲突 Fail-Closed</strong>：同一端口上不同实例声明了不一致的 TLS 配置时，网关会记录错误并直接跳过该端口流（Fail-Closed），避免出现未预期的明文暴露或安全降级。</li>
+<li><strong>端口共享</strong>：除独立端口监听外，在已配置 SNI Mux 的全局入口（如 <code>websecure</code> 443 端口）上，支持根据 TLS ClientHello 中的 SNI 域名将流量分流到对应 Stream，与七层 HTTPS 共享公网入口。</li>
+</ul>
+<h2 id="8-标签与站点-yaml">8. 标签与站点 YAML</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">能力</th>
+<th style="text-align:left">服务标签</th>
+<th style="text-align:left">站点 YAML</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">转发到注册服务</td>
+<td style="text-align:left">支持</td>
+<td style="text-align:left">支持</td>
+</tr>
+<tr>
+<td style="text-align:left">转发到其他服务、静态文件、重定向、模板等其他动作</td>
+<td style="text-align:left">不支持</td>
+<td style="text-align:left">支持</td>
+</tr>
+<tr>
+<td style="text-align:left">Host / 路径 / 方法 / 头 / 参数匹配</td>
+<td style="text-align:left">支持</td>
+<td style="text-align:left">支持</td>
+</tr>
+<tr>
+<td style="text-align:left">中间件</td>
+<td style="text-align:left">支持，须在标签内定义</td>
+<td style="text-align:left">支持</td>
+</tr>
+<tr>
+<td style="text-align:left">超时、重试、熔断、健康检查、负载均衡</td>
+<td style="text-align:left">支持(Service 属性)</td>
+<td style="text-align:left">支持</td>
+</tr>
+<tr>
+<td style="text-align:left">站点证书、IP 限制、强制 HTTPS 等站点级设置</td>
+<td style="text-align:left">不支持</td>
+<td style="text-align:left">支持</td>
+</tr>
+<tr>
+<td style="text-align:left">新开监听端口</td>
+<td style="text-align:left">仅限 allowed_ports</td>
+<td style="text-align:left">由 config.yaml 定义</td>
+</tr>
+<tr>
+<td style="text-align:left">四层 TCP/UDP 流代理</td>
+<td style="text-align:left">支持 (tcp.port / udp.port)</td>
+<td style="text-align:left">支持 (streams/*.yaml)</td>
+</tr>
+</tbody>
+</table>
+<p>同一个域名同时有站点 YAML 和标签路由时，两者合并为一个站点：</p>
+<ul>
+<li>路由合并后统一排序：priority 高者优先，其次路径越具体越优先。所以 YAML 的 <code>/</code> 不会遮住标签的 <code>/api</code>。</li>
+<li>站点级设置(证书、IP 限制、标题等)以 YAML 为准。</li>
+<li>中间件同名但配置不同时以 YAML 为准，标签中的定义被忽略并记录错误日志。</li>
+</ul>
+<h2 id="9-常见问题">9. 常见问题</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">现象</th>
+<th style="text-align:left">原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">实例在 dashboard 显示诊断，没有生成路由</td>
+<td style="text-align:left">有未知属性、无效引用或冲突配置，整个实例被拒绝。按&quot;did you mean&quot;修正</td>
+</tr>
+<tr>
+<td style="text-align:left">443 上没有路由</td>
+<td style="text-align:left">显式写了 <code>entrypoints=web</code>；去掉即可同时挂 <code>web</code> 和 <code>websecure</code></td>
+</tr>
+<tr>
+<td style="text-align:left">中间件时有时无</td>
+<td style="text-align:left">同一域名下两个服务用了同名、配置不同的中间件。中间件名按域名共享，请加服务前缀</td>
+</tr>
+<tr>
+<td style="text-align:left">部分请求走到另一个服务</td>
+<td style="text-align:left">两个服务声明了相同的匹配条件；priority 高者生效，相同时按服务名确定一个</td>
+</tr>
+<tr>
+<td style="text-align:left">没写路径却只匹配 <code>/&lt;服务名&gt;</code></td>
+<td style="text-align:left">Host、路径、rule 都没写时，路径前缀默认 <code>/&lt;服务名&gt;</code>。要接管根路径写 <code>match.path_prefix=/</code></td>
+</tr>
+<tr>
+<td style="text-align:left">新端口没监听</td>
+<td style="text-align:left">端口不在 <code>service_discovery.tag_entrypoints.allowed_ports</code> 中</td>
+</tr>
+<tr>
+<td style="text-align:left">四层端口未监听或被拒绝</td>
+<td style="text-align:left">实例间 TLS 配置冲突、auto_cert 缺少 domains，或端口已被系统占用</td>
+</tr>
+</tbody>
+</table>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/02-concepts/tag-architecture.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

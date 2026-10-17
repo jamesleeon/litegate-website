@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plugin Usage and Configuration Reference · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/12-plugins/configuration.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details open><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html" class="current" aria-current="page">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="plugin-usage-and-configuration-reference">Plugin Usage and Configuration Reference</h1>
+<p>Plugins compiled into LiteGate are used <strong>exactly like built-in features</strong>. Declare the plugin name in the global <code>config.yaml</code> or in <code>sites/*.yaml</code>, and the configuration loader recognizes it, parses it and runs pure configuration validation.</p>
+<hr>
+<h2 id="quick-reference">Quick reference</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Extension point</th>
+<th style="text-align:left">Where it is configured</th>
+<th style="text-align:left">Key fields</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Action</strong></td>
+<td style="text-align:left">Route definitions in <code>sites/*.yaml</code></td>
+<td style="text-align:left"><code>action.type: &quot;&lt;plugin_name&gt;&quot;</code>, with private parameters inline</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Middleware</strong></td>
+<td style="text-align:left">Site or route in <code>sites/*.yaml</code></td>
+<td style="text-align:left"><code>middlewares: { &lt;instance&gt;: { type: &quot;&lt;plugin_name&gt;&quot;, config: {...} } }</code>, referenced from the site or a route with <code>use: [&lt;instance&gt;]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>LoadBalancer</strong></td>
+<td style="text-align:left">Route definitions in <code>sites/*.yaml</code></td>
+<td style="text-align:left"><code>action.lb_policy: &quot;&lt;plugin_name&gt;&quot;</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>KV Provider</strong></td>
+<td style="text-align:left">Route definitions in <code>sites/*.yaml</code></td>
+<td style="text-align:left"><code>action.kv_provider: &quot;&lt;plugin_name&gt;&quot;</code>, <code>action.kv_key: &quot;...&quot;</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Ingress</strong></td>
+<td style="text-align:left">Global <code>config.yaml</code></td>
+<td style="text-align:left"><code>ingress_plugins: [{ name: &quot;...&quot;, type: &quot;&lt;plugin_name&gt;&quot;, ... }]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Discovery</strong></td>
+<td style="text-align:left">Global <code>config.yaml</code></td>
+<td style="text-align:left"><code>service_discovery.catalogs: [{ provider: &quot;&lt;plugin_name&gt;&quot;, ... }]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>DNS Provider</strong></td>
+<td style="text-align:left">Global <code>config.yaml</code></td>
+<td style="text-align:left"><code>auto_cert.dns_providers: [{ name, type: &quot;&lt;plugin_name&gt;&quot;, domains, config, ddns }]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>IDS Provider</strong></td>
+<td style="text-align:left">Site or route in <code>sites/*.yaml</code></td>
+<td style="text-align:left"><code>ids: { provider: &quot;&lt;plugin_name&gt;&quot;, options: {...} }</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Template Func</strong></td>
+<td style="text-align:left">HTML template sources</td>
+<td style="text-align:left">Call the registered function by name, such as <code>{{ maskPhone .User.Phone }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Extension plugins</strong> (Stream, Response Filter, exporters, cert issuer, upstream transport, config source)</td>
+<td style="text-align:left">Global <code>config.yaml</code></td>
+<td style="text-align:left"><code>extension_plugins: [{ kind, name, type, config }]</code>, see section 8</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="1-action-plugins">1. Action plugins</h2>
+<p>Action plugins terminate the request and produce the response. Reference the plugin name with <code>action.type</code> in a route; other non-core fields are passed to the plugin's <code>ActionConfig</code> as private parameters:</p>
+<pre><code class="language-yaml"># sites/api-site.yaml
+site: api.example.com
+
+routes:
+  # Case A: the NATS Action plugin compiled in by default
+  - name: publish-order-event
+    match:
+      path: /v1/events/order
+      method: [POST]
+    action:
+      type: nats                     # registered plugin name
+      mode: jetstream_publish        # plugin-private parameters
+      connection: default            # connections are defined in the plugin config file under plugins.nats.connections
+      subject: orders.created
+
+  # Case B: a custom AI gateway proxy plugin
+  - name: llm-chat-proxy
+    match:
+      path_prefix: /v1/chat/completions
+    action:
+      type: llm_proxy                # custom Action plugin name
+      model: &quot;gpt-4o&quot;
+      token_budget_per_min: 100000
+      upstream_endpoint: &quot;https://api.openai.com&quot;
+</code></pre>
+<p>For all NATS Action fields see the <a href="../../nats_capability_matrix.html">NATS capability matrix</a>.</p>
+<blockquote class="alert alert-tip"><p>Action plugins should provide a <code>Validate</code> function. A missing required field or a wrong type in YAML is then rejected by <code>litegate -t</code> or at hot reload, instead of surfacing only when a request arrives.</p>
+</blockquote>
+<hr>
+<h2 id="2-middleware-plugins">2. Middleware plugins</h2>
+<p>Middleware plugins process the HTTP request chain. Define named middleware at site level, then reference them from the site or individual routes with <code>use</code>; a definition alone is not applied to every route:</p>
+<pre><code class="language-yaml"># sites/app.yaml
+site: app.example.com
+
+# 1. Site-level middleware definitions (for routes to reference)
+middlewares:
+  enterprise_trace:
+    type: custom_trace_id
+    config:
+      header_name: &quot;X-Enterprise-Trace-ID&quot;
+      generate_uuid: true
+  finance_auth:
+    type: custom_jwt_validator
+    config:
+      issuer: &quot;https://auth.company.internal&quot;
+      audience: &quot;finance-api&quot;
+
+routes:
+  - name: sensitive-data
+    match:
+      path_prefix: /api/finance/
+    # 2. Route-level middleware (only for this route)
+    use: [enterprise_trace, finance_auth]
+    proxy: [&quot;10.0.10.50:8080&quot;]
+</code></pre>
+<p>Middleware are inserted into the pipeline by the Descriptor the plugin declared at registration (Phase such as <code>Security</code>, <code>TrafficControl</code>, <code>RequestTransform</code>, plus Order); their order in YAML doesn't decide runtime order. See <a href="../05-middleware/pipeline.html">Middleware pipeline</a>.</p>
+<hr>
+<h2 id="3-ingress-plugins">3. Ingress plugins</h2>
+<p>Ingress plugins work at the shared-port entrypoint layer and can take over connections and requests <strong>before site domain routing and URL normalization</strong>. Typical uses are HTTP CONNECT forward proxies and special protocol multiplexing.</p>
+<p>Declare them in the global <code>config.yaml</code>:</p>
+<pre><code class="language-yaml"># config.yaml
+entrypoints:
+  web:
+    address: &quot;:80&quot;
+  websecure:
+    address: &quot;:443&quot;
+
+ingress_plugins:
+  - name: enterprise-forward-proxy
+    type: forward_proxy            # plugin type (e.g. LiteGate's built-in forward proxy)
+    entrypoints: [websecure]       # bound to these entrypoints
+    config:
+      probe_resistance: true       # anti-probing protection
+      allowed_ports: [80, 443, 8443]
+      allowed_destinations:
+        - &quot;*.internal.corp&quot;
+        - &quot;api.github.com&quot;
+      username: ops_user
+      password_env: LITEGATE_PROXY_PASSWORD  # proxy password from an environment variable
+</code></pre>
+<hr>
+<h2 id="4-discovery-providers">4. Discovery providers</h2>
+<p>If your services are registered in Nacos, Eureka, Zookeeper or an in-house CMDB, write a Discovery plugin and mount it under <code>service_discovery.catalogs</code> in <code>config.yaml</code>:</p>
+<pre><code class="language-yaml"># config.yaml
+service_discovery:
+  catalogs:
+    - name: nacos-prod
+      enabled: true
+      provider: custom_nacos       # registered Discovery name
+      config:
+        sync_interval: &quot;15s&quot;       # polling interval implemented and parsed by the plugin
+        server_addr: &quot;10.0.1.10:8848&quot;
+        namespace_id: &quot;production&quot;
+        group: &quot;DEFAULT_GROUP&quot;
+</code></pre>
+<p>Once mounted, LiteGate's dynamic routing and upstream health pools consume the discovered services and endpoints just as with the native Consul/Litemesh support.</p>
+<hr>
+<h2 id="5-dns-provider-plugins-certificate-dns-01-and-ddns">5. DNS provider plugins (certificate DNS-01 and DDNS)</h2>
+<p>DNS provider plugins are referenced by <code>type</code> in <code>auto_cert.dns_providers</code>; <code>domains</code> decides which domains they handle. With <code>ddns</code> enabled on the same entry, the same plugin also handles DDNS synchronization (the plugin must declare the matching capability):</p>
+<pre><code class="language-yaml"># config.yaml
+auto_cert:
+  enabled: true
+  email: &quot;admin@example.com&quot;
+  dns_providers:
+    - name: internal-dns
+      type: my_internal_dns        # registered DNS provider name
+      enabled: true
+      domains: [&quot;*.office.corp&quot;, &quot;office.corp&quot;]
+      config:
+        api_key: &quot;env://INTERNAL_DNS_API_KEY&quot;
+        nameserver: &quot;192.168.1.1&quot;
+      ddns:
+        enabled: true
+        sync_a: true
+</code></pre>
+<p>For developing and building DNS plugins see the <a href="../../dns-provider-plugin-guide.html">DNS provider plugin development guide</a>; for DDNS fields see <a href="../06-certificates/ddns.html">DDNS</a>.</p>
+<hr>
+<h2 id="6-ids-provider-plugins">6. IDS provider plugins</h2>
+<p>IDS plugins run a unified security decision after route matching and before the Action (enterprise signature checks, risk scoring, canary routing labels, ...):</p>
+<pre><code class="language-yaml"># sites/payment.yaml
+site: payment.example.com
+
+routes:
+  - name: charge
+    match:
+      path: /v1/charge
+    proxy: [&quot;payment-backend:8080&quot;]
+    ids:
+      provider: openapi-md5      # registered IDS name
+      fail_policy: deny          # failure policy: deny (block) or allow (degrade and pass)
+      options:
+        secret_ref: orders       # the secret lives in plugin config providers.openapi-md5.secrets
+        max_clock_skew: 5m
+</code></pre>
+<hr>
+<h2 id="7-loadbalancer-and-kv-provider-plugins">7. LoadBalancer and KV provider plugins</h2>
+<h3 id="a-loadbalancer-algorithms">A. LoadBalancer algorithms</h3>
+<pre><code class="language-yaml">site: api.example.com
+routes:
+  - name: dynamic-lb-route
+    match:
+      path_prefix: /api
+    action:
+      type: proxy
+      service_name: order-service
+      lb_policy: least_latency   # registered custom LoadBalancer plugin name
+</code></pre>
+<h3 id="b-kv-provider-dynamic-content">B. KV provider dynamic content</h3>
+<pre><code class="language-yaml">site: www.example.com
+routes:
+  - name: dynamic-template-page
+    match:
+      path: /dashboard
+    action:
+      type: template
+      kv_provider: redis_kv        # registered KV provider plugin name
+      kv_key: &quot;cms:pages:dashboard.html&quot;
+</code></pre>
+<hr>
+<h2 id="8-global-extension-plugin-bindings-extension_plugins">8. Global extension plugin bindings (extension_plugins)</h2>
+<p>LiteGate binds extension instances through one <code>extension_plugins</code> array in the global <code>config.yaml</code>. There are 8 <code>kind</code>s: <code>stream</code> (including Stream Filter and UDP Datagram), <code>response_filter</code>, <code>access_log_exporter</code>, <code>trace_exporter</code>, <code>metrics_exporter</code>, <code>cert_issuer</code>, <code>upstream_transport</code> and <code>config_source</code>. Adding, removing or changing a <code>config_source</code> requires a process restart; the others follow configuration reloads. The example shows several of them:</p>
+<pre><code class="language-yaml"># config.yaml
+extension_plugins:
+  # 1. L4 TCP/UDP transport plugin
+  - kind: stream
+    name: redis_guard
+    type: redis_readonly          # registered plugin name (RegisterStream)
+    config:
+      allowed_commands: [GET, MGET, PING]
+
+  # 2. Response stream / body transform (masking, injection)
+  - kind: response_filter
+    name: pii_masker
+    type: pii_filter              # registered plugin name (RegisterResponseFilter)
+    config:
+      mask_idcard: true
+
+  # 3. Asynchronous log/trace export (to Kafka/Loki/OTLP)
+  - kind: access_log_exporter
+    name: kafka_audit
+    type: kafka_producer          # registered plugin name (RegisterAccessLogExporter)
+    config:
+      brokers: [&quot;10.0.0.1:9092&quot;]
+      topic: &quot;gateway-access-log&quot;
+
+  # 4. Private CA issuance (Vault / private PKI)
+  - kind: cert_issuer
+    name: internal_vault
+    type: vault_ca                # registered plugin name (RegisterCertIssuer)
+    config:
+      vault_addr: &quot;https://vault.internal:8200&quot;
+
+  # 5. Custom upstream transport (mutual TLS / connection pools)
+  - kind: upstream_transport
+    name: enterprise_mtls
+    type: mtls_transport          # registered plugin name (RegisterUpstreamTransport)
+    config:
+      client_cert: &quot;/certs/client.pem&quot;
+      client_key: &quot;/certs/client.key&quot;
+</code></pre>
+<h3 id="referencing-extensions-from-routes-and-streams">Referencing extensions from routes and Streams</h3>
+<pre><code class="language-yaml"># sites/secure-api.yaml
+# 1. A site route referencing a Response Filter and an Upstream Transport:
+site: api.example.com
+routes:
+  - name: secure-api
+    match: { path_prefix: /api/ }
+    action:
+      type: proxy
+      upstream: [&quot;internal-service:8080&quot;]
+      upstream_transport: enterprise_mtls  # name from extension_plugins
+      response_filters: [pii_masker]       # name from extension_plugins
+</code></pre>
+<p><strong>L4 Stream configuration</strong>:</p>
+<pre><code class="language-yaml"># streams/redis-proxy.yaml
+# 2. An L4 Stream referencing a Stream plugin:
+name: redis-proxy
+port: 6379
+protocol: tcp
+plugin_handler: redis_guard                # name from extension_plugins
+# plugin_filters: [conn_audit]             # optional: Stream Filters, run before the handler
+</code></pre>
+<p><strong>Global certificate configuration</strong>:</p>
+<pre><code class="language-yaml"># config.yaml
+# 3. Auto cert issued through a private CA:
+auto_cert:
+  issuer: internal_vault                   # name from extension_plugins
+</code></pre>
+<hr>
+<h2 id="common-configuration-errors">Common configuration errors</h2>
+<ol>
+<li><strong><code>has unknown action type: xxx</code></strong> (for Ingress plugins <code>ingress plugin &quot;xxx&quot; is not compiled into this binary</code>, for IDS <code>ids.provider &quot;xxx&quot; is not registered</code>)
+<ul>
+<li><strong>Cause</strong>: the plugin name referenced in YAML isn't compiled into this binary, or the spelling/case differs.</li>
+<li><strong>Check</strong>: run <code>litegate plugins list</code> to see supported names; check <code>cmd/litegate/plugins.go</code> or your <code>litegate build</code> options.</li>
+</ul>
+</li>
+<li><strong><code>unsupported plugin manifest kind &quot;xxx&quot;</code></strong>
+<ul>
+<li><strong>Cause</strong>: the Kind in the plugin's Manifest is invalid. Valid kinds: <code>action</code>, <code>middleware</code>, <code>load_balancer</code>, <code>kv</code>, <code>dns</code>, <code>ids</code>, <code>discovery</code>, <code>ingress</code>, <code>template_func</code>, <code>stream</code>, <code>response_filter</code>, <code>access_log_exporter</code>, <code>trace_exporter</code>, <code>metrics_exporter</code>, <code>cert_issuer</code>, <code>upstream_transport</code>, <code>config_source</code>.</li>
+</ul>
+</li>
+<li><strong>Load-time validation error: <code>config validation failed</code></strong>
+<ul>
+<li><strong>Cause</strong>: the plugin's <code>Validate</code> found a missing required field, an out-of-range value or invalid configuration. Fix the YAML from the specific error printed in the terminal.</li>
+</ul>
+</li>
+</ol>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/12-plugins/configuration.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

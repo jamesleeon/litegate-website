@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Template Action (Server-Side Templates) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/04-actions/template.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details open><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html" class="current" aria-current="page">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="template-action-server-side-templates">Template Action (Server-Side Templates)</h1>
+<h2 id="template-extensions-error-pages-and-login-layouts">Template extensions, error pages and login layouts</h2>
+<p>Third-party Go packages can use <code>pkg/plugin.RegisterTemplateFunc</code> to register helpers. Registration validates names, signatures, duplicates and reserved built-in names, returning an error on failure. Helpers are trusted code called concurrently: they must be thread-safe and bounded. A changed registry version causes templates to compile against the updated functions. See the <a href="../12-plugins/authoring-guide.html">plugin manual</a>.</p>
+<p>Global and site <code>error_pages</code> map status codes to HTML templates. Selection is site mapping, then global mapping, then the built-in page. Requests without a matching site can use a global 404 mapping. Once response headers are committed, the body is not replaced. WebSocket upgrades and SSE bypass interception to preserve streaming semantics.</p>
+<pre><code class="language-yaml">error_pages:
+  - status: [404]
+    template: ./templates/errors/site-not-found.html
+</code></pre>
+<pre><code class="language-yaml">site: myapp.example.com
+error_pages:
+  - status: [404]
+    template: ./templates/errors/404.html
+  - status: [500, 502, 503, 504]
+    template: ./templates/errors/5xx.html
+routes:
+  - name: my-service
+    match: {path_prefix: /}
+    action: {type: proxy, service_name: backend-app}
+</code></pre>
+<p>Error templates receive <code>.Status</code>, <code>.StatusText</code>, <code>.Error</code> and <code>.RequestID</code>. <code>.Error</code> can contain diagnostic details; choose what is appropriate to expose to visitors.</p>
+<p>Local SSO uses <code>auth.template</code> for a custom login page. Its placeholders are <code>{{ERROR}}</code>, <code>{{NEXT}}</code> and <code>{{CLIENT_IP}}</code>; include a hidden form field named <code>next</code> with <code>{{NEXT}}</code>, plus username/password inputs. These placeholders belong to the SSO renderer, not ordinary Go template data. Protect the whole login/logout route scope and configure real bcrypt users and a separate signing secret as shown in <a href="../05-middleware/authentication.html">authentication</a>.</p>
+<p>A <code>status</code> Action exposes an application availability page, separate from the management Dashboard. It can return JSON with <code>?format=json</code> or <code>Accept: application/json</code>. Configure its access policy deliberately; see <a href="status.html">Status</a>.</p>
+<p>The <code>template</code> action renders dynamic HTML on the server using Go's <code>html/template</code>. Output is HTML-escaped by default (XSS-safe), the request context (headers / query / cookies / client IP …) is injected, and multi-file <strong>partial reuse</strong> (header / footer / nav) is supported.</p>
+<blockquote>
+<p>Use cases: error/status pages, lightweight pages with a bit of dynamic data, or multi-page sites that share one layout. Equivalent to Caddy's <code>templates</code>.</p>
+</blockquote>
+<hr>
+<h2 id="1-minimal-configuration-inline-template">1. Minimal Configuration (Inline Template)</h2>
+<pre><code class="language-yaml">site: status.example.com
+routes:
+  - name: hello
+    match:
+      path_prefix: /
+    action:
+      type: template
+      body: &quot;&lt;h1&gt;Hello {{ .Host }}&lt;/h1&gt;&lt;p&gt;Your IP: {{ .ClientIP }}&lt;/p&gt;&quot;
+</code></pre>
+<p><code>body</code> is best for short inline templates.</p>
+<hr>
+<h2 id="2-file-template">2. File Template</h2>
+<pre><code class="language-yaml">site: example.com
+template:
+  template: &quot;./templates/index.html&quot; # Path to the main template file
+</code></pre>
+<pre><code class="language-html">&lt;!-- ./templates/index.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;h1&gt;{{ .Host }}{{ .Path }}&lt;/h1&gt;
+    &lt;p&gt;Method: {{ .Method }} Time: {{ .Time }}&lt;/p&gt;
+    &lt;p&gt;UA: {{ header &quot;User-Agent&quot; }}&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<hr>
+<h2 id="3-multi-file-composition-partial-reuse">3. Multi-File Composition (Partial Reuse)</h2>
+<p>When <code>template_root</code> is set, LiteGate scans the directory for every <code>.html</code> / <code>.tmpl</code> file and <strong>compiles them together</strong>, so the main template can reference others via <code>{{ template &quot;relative/path&quot; . }}</code> and reuse shared layout such as header / footer.</p>
+<pre><code class="language-yaml">site: example.com
+template:
+  template: &quot;./site/pages/index.html&quot; # Main template
+  template_root: &quot;./site&quot; # Root scanned for partials
+</code></pre>
+<pre><code class="language-html">&lt;!-- ./site/pages/index.html (main) --&gt;
+{{ template &quot;partials/header.html&quot; . }}
+&lt;main&gt;Welcome to {{ .Host }}&lt;/main&gt;
+{{ template &quot;partials/footer.html&quot; . }}
+</code></pre>
+<pre><code class="language-html">&lt;!-- ./site/partials/header.html --&gt;
+&lt;header&gt;&lt;nav&gt;Site Nav&lt;/nav&gt;&lt;/header&gt;
+</code></pre>
+<blockquote>
+<p>A partial's template name is its path relative to <code>template_root</code> (slash-separated), e.g. <code>partials/header.html</code>.</p>
+</blockquote>
+<h3 id="-distributed-loading-from-litemesh--consul-kv-template_kv_mode">📦 Distributed Loading from litemesh / Consul KV (<code>template_kv_mode</code>)</h3>
+<p>Instead of reading from local disk, templates can be <strong>stored directly in litemesh / Consul KV</strong> and compiled in memory by the gateway. A clustered deployment then needs no per-node file distribution — update the KV once and it takes effect fleet-wide. This mirrors the existing <a href="../../serve_kv_mode.html">Serve KV mode</a>.</p>
+<pre><code class="language-yaml">site: example.com
+template:
+  template_kv_mode: true
+  template_kv_provider: &quot;litemesh&quot; # litemesh or consul
+  template_kv_prefix: &quot;litegate/tmpl/site-a/&quot; # KV prefix the partials live under
+  template_kv_namespace: &quot;tenant-a&quot; # optional, multi-tenant isolation; empty = client default namespace
+  template: &quot;pages/index.html&quot; # main template: key suffix relative to the prefix
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>The gateway calls <code>ListKV(prefix)</code> to fetch every partial under the prefix (each KV key, with the prefix stripped, becomes the template name usable via <code>{{ template &quot;...&quot; }}</code>); the main template is named by the <code>template</code> field.</li>
+<li><strong>Pure in-memory compilation, zero local files</strong> — no filesystem, hence no symlink / path-traversal surface.</li>
+<li><strong>Hot reload</strong>: the gateway watches the prefix for changes (litemesh SSE / KV <code>ModifyIndex</code>), recompiles in the background on any change, and atomically swaps — in-flight requests are unaffected.</li>
+<li><strong>Fail-safe</strong>: if a KV fetch fails, the gateway falls back to the last successfully compiled template instead of breaking the page.</li>
+</ul>
+<h4 id="-resource--security-boundaries">⚖️ Resource &amp; Security Boundaries</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Boundary</th>
+<th style="text-align:left">Limit</th>
+<th style="text-align:left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Number of partials</td>
+<td style="text-align:left">≤ 100</td>
+<td style="text-align:left">Exceeding returns an error (memory-abuse guard)</td>
+</tr>
+<tr>
+<td style="text-align:left">Single partial size</td>
+<td style="text-align:left">≤ 1 MB</td>
+<td style="text-align:left">Exceeding returns an error</td>
+</tr>
+<tr>
+<td style="text-align:left">Total size of all partials</td>
+<td style="text-align:left">≤ 10 MB</td>
+<td style="text-align:left">Exceeding returns an error</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ <strong>Security note</strong>: write access to this KV prefix equals the ability to inject arbitrary template code into the gateway (templates can call <code>safeHTML</code> etc. to bypass escaping). Treat KV template write access as a <strong>code-deploy privilege</strong> and lock down the corresponding namespace and access token.</p>
+</blockquote>
+<blockquote>
+<p>ℹ️ <strong>Limitation</strong>: in KV mode there is no local root directory, so the <strong>file-loading form of <code>{{ markdown &quot;x.md&quot; }}</code> is unavailable</strong> (only inline strings such as <code>{{ markdown &quot;# Title&quot; }}</code> work). All other context variables and built-in functions (see the next section) work normally.</p>
+</blockquote>
+<hr>
+<h2 id="4-variables-and-methods-available-in-templates">4. Variables and Methods Available in Templates</h2>
+<p>The render context (<code>.</code>) exposes:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field / Function</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>{{ .Host }}</code></td>
+<td style="text-align:left">Request Host</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ .Path }}</code></td>
+<td style="text-align:left">Request path</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ .Method }}</code></td>
+<td style="text-align:left">HTTP method</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ .ClientIP }}</code></td>
+<td style="text-align:left">Real client IP</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ .Time }}</code></td>
+<td style="text-align:left">Current time (RFC3339)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ header &quot;Key&quot; }}</code></td>
+<td style="text-align:left">A specific request header</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ query &quot;key&quot; }}</code></td>
+<td style="text-align:left">A specific query parameter</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ cookie &quot;name&quot; }}</code></td>
+<td style="text-align:left">A specific cookie value</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ .Req }}</code></td>
+<td style="text-align:left">Raw <code>*http.Request</code> (advanced; fields only)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ .Data.&lt;key&gt; }}</code></td>
+<td style="text-align:left">Parsed JSON for a <code>fetch_json</code> entry (see §10)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ .Errors.&lt;key&gt; }}</code></td>
+<td style="text-align:left">Error message for a failed <code>fetch_json</code> entry (<code>ignore</code> policy)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{{ .Nonce }}</code></td>
+<td style="text-align:left">Per-request cryptographically secure nonce for CSP</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Templates call registered functions only, never methods on the data (such as <code>{{ .Req.FormValue &quot;x&quot; }}</code>): calling methods by name through reflection makes the linker keep every method of every dependency (about 4MB). <code>header</code> / <code>query</code> / <code>cookie</code> are functions too; the old <code>{{ .Header &quot;X&quot; }}</code> form fails when the template loads, and the error shows the replacement.</p>
+</blockquote>
+<h3 id="-built-in-template-helper-functions">🛠️ Built-in Template Helper Functions</h3>
+<p>In addition to Go's standard built-ins, LiteGate registers the following helpers in the render context:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Function</th>
+<th style="text-align:left">Description</th>
+<th style="text-align:left">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>formatTime</code> / <code>formatDateTime</code></td>
+<td style="text-align:left">Format a <code>time.Time</code> or a common time string (RFC3339, <code>2006-01-02 15:04:05</code>)</td>
+<td style="text-align:left"><code>{{ formatTime .Time &quot;2006-01-02&quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>markdown</code></td>
+<td style="text-align:left">Render a Markdown string into safe HTML (no double-escaping)</td>
+<td style="text-align:left"><code>{{ markdown &quot;# Title&quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>htmx</code></td>
+<td style="text-align:left">Inject the built-in HTMX 4.0.0 <code>&lt;script&gt;</code> tag (no CDN needed)</td>
+<td style="text-align:left"><code>{{ htmx }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>safeHTML</code></td>
+<td style="text-align:left">Mark a trusted HTML fragment to bypass auto-escaping</td>
+<td style="text-align:left"><code>{{ safeHTML &quot;&lt;div&gt;&quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>lower</code> / <code>upper</code></td>
+<td style="text-align:left">Lowercase / uppercase a string</td>
+<td style="text-align:left"><code>{{ upper &quot;xyz&quot; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>contains</code> / <code>replace</code> / <code>substr</code></td>
+<td style="text-align:left">Substring match, replace-all, rune-safe slicing</td>
+<td style="text-align:left"><code>{{ substr &quot;abcdef&quot; 1 4 }}</code> → <code>bcd</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>env</code></td>
+<td style="text-align:left">Read an allow-listed environment variable</td>
+<td style="text-align:left"><code>{{ env &quot;APP_ENV&quot; }}</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="5-field-reference">5. Field Reference</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Default</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>template</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">Main template file path (mutually exclusive with <code>body</code>; <code>template</code> takes priority)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_root</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">dir of main template</td>
+<td style="text-align:left">Root directory scanned for partials (multi-file composition)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>markdown_template</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">Path to the layout template used when rendering Markdown files in <code>serve</code> mode</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>body</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">Inline template string</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>status</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left"><code>200</code></td>
+<td style="text-align:left">Response status code</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>content_type</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left"><code>text/html; charset=utf-8</code></td>
+<td style="text-align:left">Response <code>Content-Type</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>headers</code></td>
+<td style="text-align:left">map</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">Extra response headers</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_production</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left">Enable production cache. Templates (including layouts) are precompiled at startup with zero disk I/O on hot paths.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_debug</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left">Enable visual dark-mode error screen (Vite/Gin style) with line numbers and 11 lines of code context. Forces hot-reload.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>on_error</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">Degradation rules when template execution or compilation fails (contains <code>status</code>, <code>content_type</code>, <code>body</code>, and <code>template</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fetch_json</code></td>
+<td style="text-align:left">list</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">Server-side JSON data sources fetched before render and exposed as <code>.Data.&lt;key&gt;</code> (see §10).</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="6-performance--caching">6. Performance &amp; Caching</h2>
+<ul>
+<li><strong>Development Mode</strong>: By default, compiled templates are cached and only recompiled when a template file changes (detected by modification time <code>os.Stat</code> calls) — avoiding full per-request disk reads.</li>
+<li><strong>Production Mode (<code>template_production: true</code>)</strong>: All templates and layouts are precompiled at gateway startup and stored in memory. Request processing serves directly from memory cache, <strong>completely eliminating disk I/O</strong> (zero <code>os.Stat</code> / <code>os.ReadFile</code> syscalls).</li>
+<li><strong>Buffer Safety</strong>: Rendering goes to an in-memory buffer first, so a render failure never emits a half-written 200 response to the client.</li>
+</ul>
+<hr>
+<h2 id="7-security-notes">7. Security Notes</h2>
+<ul>
+<li><strong>XSS-safe by default</strong>: built on <code>html/template</code>, variables are context-escaped automatically.</li>
+<li><strong>Traversal protection</strong>: the main template and every partial are symlink-resolved (<code>EvalSymlinks</code>) and checked for escaping <code>template_root</code>; anything outside is rejected.</li>
+<li><strong>TOCTOU protection</strong>: the file handle is opened before stat/read. Ensure the <code>template_root</code> tree is <strong>writable only by trusted users</strong> (see <a href="https://github.com/jamesleeon/LiteGate/blob/master/SECURITY.md">SECURITY.md</a>).</li>
+<li><strong>fetch_json SSRF protection</strong>: target hosts are resolved and checked <strong>at dial time</strong>; private / loopback / link-local / multicast / CGNAT (<code>100.64.0.0/10</code>) / reserved ranges are blocked unless <code>allow_private: true</code>. Redirects are re-validated through the same secure transport, only <code>http</code>/<code>https</code> schemes are allowed, and response size / timeout are enforced. See §10.</li>
+<li><strong>forward_headers credential leak</strong> ⚠️: <code>forward_headers</code> forwards the named request headers (e.g. <code>Authorization</code>, <code>Cookie</code>) to the fetch target. The target URL is <strong>not allow-list restricted</strong>, so only forward credential headers to URLs you fully control — a misconfigured or injected URL template could exfiltrate credentials to an external host. Hardcode the host portion of <code>url</code>; never build it from user input.</li>
+<li><strong>HTMX script &amp; CSP</strong>: <code>{{ htmx }}</code> emits the bundled script <strong>with the per-request nonce baked in</strong> — e.g. <code>&lt;script src=&quot;/_litegate/assets/htmx-4.0.0.min.js&quot; nonce=&quot;…&quot;&gt;&lt;/script&gt;</code> — and always points at the current embedded version, so an htmx upgrade never leaves a hardcoded versioned URL 404ing. Prefer <code>{{ htmx }}</code> over hand-writing the tag. For the nonce to actually enforce anything you must also emit a matching CSP header: set <strong><code>template_csp</code></strong> on the action (see below). Hardcode the versioned URL only if you cannot use the helper, and remember to update it on every htmx bump.</li>
+<li><strong>Content-Security-Policy (<code>template_csp</code>)</strong>: the <code>{{ .Nonce }}</code> / <code>{{ htmx }}</code> nonce is body-only until a <code>Content-Security-Policy</code> response header carries the <em>same</em> value. <code>template_csp</code> closes that loop:
+<ul>
+<li><code>template_csp: &quot;auto&quot;</code> emits a strict baseline: <code>default-src 'self'; script-src 'self' 'nonce-&lt;request-nonce&gt;'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'</code>. Only <code>{{ htmx }}</code> and <code>{{ .Nonce }}</code>-tagged inline scripts run; all other scripts are blocked. (Inline <code>&lt;style&gt;</code> is still allowed via <code>'unsafe-inline'</code>; tighten it yourself if needed.)</li>
+<li>Any other value is treated as a literal policy where the token <code>{nonce}</code> is replaced by the request nonce, e.g. <code>template_csp: &quot;default-src 'self'; script-src 'nonce-{nonce}'&quot;</code>.</li>
+<li>If <code>action.headers</code> already sets <code>Content-Security-Policy</code>, that explicit value wins and <code>template_csp</code> is skipped.</li>
+</ul>
+</li>
+<li><strong>HTMX 4 migration</strong>: LiteGate embeds 4.0.0. Parent-level htmx attributes are no longer inherited implicitly; add the <code>:inherited</code> suffix where descendants rely on them. Event names use the new phase form (for example, <code>htmx:after:request</code> instead of <code>htmx:afterRequest</code>), and request/response event data now lives under <code>event.detail.ctx</code>. HTTP 4xx/5xx bodies are swapped by default in v4. The legacy unversioned asset URL <code>/_litegate/assets/htmx.min.js</code> returns 410 Gone and logs migration guidance; templates should use <code>{{ htmx }}</code> or the versioned URL.</li>
+</ul>
+<hr>
+<h2 id="8-markdown-template-layout-serve-mode-integration">8. Markdown Template Layout (Serve Mode integration)</h2>
+<p>In <code>serve</code> mode, if <code>render_markdown</code> is enabled, you can specify <code>markdown_template</code> to wrap the rendered markdown document in a custom HTML layout.</p>
+<pre><code class="language-yaml">site: example.com
+action:
+  type: serve
+  root: &quot;./docs&quot;
+  render_markdown: true
+  markdown_template: &quot;./templates/layouts/doc.html&quot;
+</code></pre>
+<p>In the layout template <code>doc.html</code>, the following Go template variables are exposed:</p>
+<ul>
+<li><code>{{ .Title }}</code>: The resolved title from the filename or the first H1 header in the document.</li>
+<li><code>{{ .Content }}</code>: The rendered HTML content of the Markdown document (of type <code>template.HTML</code> to prevent escaping).</li>
+<li><code>{{ .Sidebar }}</code>: The tree navigation structure of sibling files. Render with <code>{{ range .Sidebar }}</code>.</li>
+<li><code>{{ .Host }}</code>, <code>{{ .Path }}</code>: Standard request context values.</li>
+<li><code>{{ .Nonce }}</code>: Random cryptographically secure nonce generated per request for Content Security Policy.</li>
+</ul>
+<h3 id="-example-layout-template">📝 Example Layout Template</h3>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;{{ .Title }} - Docs&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;aside class=&quot;sidebar&quot;&gt;
+        &lt;h3&gt;Menu&lt;/h3&gt;
+        {{ range .Sidebar }}
+            &lt;div&gt;&lt;a href=&quot;{{ .Href }}&quot;&gt;{{ if .IsDir }}Folder{{ else }}File{{ end }} {{ .Name }}&lt;/a&gt;&lt;/div&gt;
+        {{ end }}
+    &lt;/aside&gt;
+    &lt;main&gt;{{ .Content }}&lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<hr>
+<h2 id="9-advanced-settings-production-debug--onerror">9. Advanced Settings: Production, Debug &amp; OnError</h2>
+<p>LiteGate provides robust settings for performance pre-compilation, visual diagnostics, and fallback degradation.</p>
+<h3 id="-yaml-configuration-example">⚙️ YAML Configuration Example</h3>
+<pre><code class="language-yaml">site: example.com
+on_error:
+  status: 502
+  content_type: &quot;text/html; charset=utf-8&quot;
+  body: &quot;&lt;h1&gt;Site Maintenance&lt;/h1&gt;&quot; # Inline HTML string
+  # template: &quot;./site/fallback.html&quot;   # Or local HTML file fallback
+template:
+  template: &quot;./site/pages/index.html&quot;
+  template_root: &quot;./site&quot;
+  # 1. Production Mode
+  # Precompiles all templates (including markdown layout templates) at gateway startup.
+  # Keeps them in memory to eliminate cold starts and bypasses disk syscalls (zero os.Stat / os.ReadFile) during request handling.
+  template_production: true
+  # 2. Debug Mode
+  # If compile or execution fails, renders a detailed Glassmorphism-style diagnostics screen in the browser
+  # highlighting the exact error location and showing 11 lines of surrounding code.
+  # Automatically invalidates and hot-reloads templates on Mtime changes of files inside template_root.
+  template_debug: true
+</code></pre>
+<h3 id="-environment-mode-guide">🧠 Environment Mode Guide</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Environment</th>
+<th style="text-align:left">Recommendations</th>
+<th style="text-align:left">Core Benefits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Development</strong></td>
+<td style="text-align:left"><code>template_debug: true</code><br><code>template_production: false</code></td>
+<td style="text-align:left">1. <strong>Hot reload</strong>: Auto-detects modifications on main file or nested partials inside <code>template_root</code>. <br>2. <strong>Visual diagnostics</strong>: Beautiful Vite-like screens highlighting error line numbers and context.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Production</strong></td>
+<td style="text-align:left"><code>template_debug: false</code><br><code>template_production: true</code></td>
+<td style="text-align:left">1. <strong>Zero I/O overhead</strong>: Eliminates stat and file syscalls, boosting concurrency QPS.<br>2. <strong>Precompilation</strong>: Warm up the caches at startup.<br>3. <strong>Degradation</strong>: Gracefully handles errors using <code>on_error</code> settings to hide backend paths and debug info.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="10-partial-dynamic-refresh-with-htmx--fetch_json-">10. Partial Dynamic Refresh with HTMX + fetch_json 🌟</h2>
+<p>By combining <code>fetch_json</code> (server-side data fetching) with the built-in <code>{{ htmx }}</code> helper, you can build modern, no-reload partial-update pages entirely at the gateway layer — no Vue/SPA backend required.</p>
+<p>The example below: a <code>respond</code> action plays the role of a monitoring JSON API, <code>/stats-partial</code> returns an HTML fragment, and the home page uses the embedded HTMX to swap that fragment in-place on button click.</p>
+<h3 id="-yaml-example-sitesdemoyaml">⚙️ YAML Example (<code>sites/demo.yaml</code>)</h3>
+<pre><code class="language-yaml">site: &quot;cool-dashboard.local&quot;
+https: false
+routes:
+  # 1. Mock backend JSON API
+  - name: mock-json-api
+    match:
+      path: &quot;/api/stats&quot;
+    respond:
+      status: 200
+      content_type: &quot;application/json; charset=utf-8&quot;
+      body: '{&quot;status&quot;:&quot;healthy&quot;,&quot;qps&quot;:342,&quot;cpu&quot;:14.8,&quot;time&quot;:&quot;{{.Time}}&quot;}'
+  # 2. Called by HTMX: fetch the API and return an HTML fragment to swap in
+  - name: stats-fragment
+    match:
+      path: &quot;/stats-partial&quot;
+    action:
+      type: &quot;template&quot;
+      body: '&lt;div id=&quot;stats-data&quot;&gt;&lt;p&gt;Status: &lt;strong style=&quot;color:#22c55e;&quot;&gt;{{.Data.monitor.status}}&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;QPS: &lt;strong&gt;{{.Data.monitor.qps}}&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;CPU: &lt;strong&gt;{{.Data.monitor.cpu}}%&lt;/strong&gt;&lt;/p&gt;&lt;p style=&quot;color:#94a3b8;&quot;&gt;Updated: {{formatTime .Data.monitor.time &quot;15:04:05&quot;}}&lt;/p&gt;&lt;/div&gt;'
+      fetch_json:
+        - key: &quot;monitor&quot;
+          url: &quot;http://127.0.0.1:8080/api/stats&quot;
+          allow_private: true
+  # 3. The dashboard home page
+  - name: main-dashboard
+    match:
+      path: &quot;/&quot;
+    template:
+      template: &quot;./templates/dashboard.html&quot;
+      fetch_json:
+        - key: &quot;monitor&quot;
+          url: &quot;http://127.0.0.1:8080/api/stats&quot;
+          allow_private: true
+</code></pre>
+<h3 id="-templatesdashboardhtml">📝 ./templates/dashboard.html</h3>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;System Health Dashboard&lt;/title&gt;
+    &lt;!-- Auto-load the embedded HTMX script --&gt;
+    {{ htmx }}
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Dashboard - {{ .Host }}&lt;/h1&gt;
+    &lt;div class=&quot;card&quot;&gt;
+        &lt;h3&gt;Live Metrics&lt;/h3&gt;
+        &lt;!-- First paint: rendered server-side via fetch_json for instant load --&gt;
+        &lt;div id=&quot;stats-data&quot;&gt;
+            &lt;p&gt;Status: &lt;strong style=&quot;color:#22c55e;&quot;&gt;{{.Data.monitor.status}}&lt;/strong&gt;&lt;/p&gt;
+            &lt;p&gt;QPS: &lt;strong&gt;{{.Data.monitor.qps}}&lt;/strong&gt;&lt;/p&gt;
+            &lt;p&gt;CPU: &lt;strong&gt;{{.Data.monitor.cpu}}%&lt;/strong&gt;&lt;/p&gt;
+            &lt;p style=&quot;color:#94a3b8;&quot;&gt;Updated: {{formatTime .Data.monitor.time &quot;15:04:05&quot;}}&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;!-- On click, HTMX fetches /stats-partial and swaps #stats-data with no reload --&gt;
+        &lt;button hx-get=&quot;/stats-partial&quot; hx-target=&quot;#stats-data&quot; hx-swap=&quot;outerHTML&quot;&gt;
+            Refresh
+        &lt;/button&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h3 id="-fetch_json-field-reference">📋 <code>fetch_json</code> Field Reference</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Default</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>key</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">Template variable name; parsed JSON is exposed as <code>{{ .Data.&lt;key&gt; }}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">Fetch URL; supports <code>{{ }}</code> templating against the request context (<code>.Query</code>/<code>.Header</code>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ttl</code></td>
+<td style="text-align:left">int (sec)</td>
+<td style="text-align:left"><code>0</code></td>
+<td style="text-align:left">Result cache duration; <code>0</code> disables caching. Non-2xx and network errors get a short negative cache to prevent stampedes</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>timeout</code></td>
+<td style="text-align:left">int (sec)</td>
+<td style="text-align:left"><code>5</code></td>
+<td style="text-align:left">Per-request timeout</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>allow_private</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left">Allow the target to resolve to private/loopback IPs (needed for internal services)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>max_body_size</code></td>
+<td style="text-align:left">int (bytes)</td>
+<td style="text-align:left"><code>2MB</code></td>
+<td style="text-align:left">Response body cap; exceeding it aborts the fetch</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fail_policy</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left"><code>ignore</code></td>
+<td style="text-align:left"><code>ignore</code>: record into <code>{{ .Errors.&lt;key&gt; }}</code> and keep rendering; <code>error</code>: abort render and trigger <code>on_error</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>forward_headers</code></td>
+<td style="text-align:left">[]string</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">Request headers forwarded to the target; also isolate the cache key so different identities don't share a cached result</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cache_tags</code></td>
+<td style="text-align:left">[]string</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">Tags attached to the cached result; a proxied response can invalidate them with <code>LiteGate-Invalidate: tag-a,tag-b</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>lb_policy</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left"><code>round_robin</code></td>
+<td style="text-align:left">Load-balancing policy used by a <code>service://</code> data source</td>
+</tr>
+</tbody>
+</table>
+<p>In addition to <code>http://</code> and <code>https://</code>, <code>url</code> accepts a gateway-native service address:</p>
+<pre><code class="language-yaml">template_fragment: &quot;stats-cards&quot; # render this named template for HX-Request:true
+fetch_json:
+  - key: stats
+    url: &quot;service://orders/api/stats&quot;
+    ttl: 10
+    cache_tags: [&quot;orders:{{ header \&quot;X-Tenant-Id\&quot; }}&quot;]
+    forward_headers: [&quot;X-Tenant-Id&quot;]
+</code></pre>
+<p><code>service://</code> reuses LiteGate service discovery, IDS selector/meta, healthy-instance filtering, load balancing, and the mTLS-aware proxy transport. Its cache key includes the discovery query dimensions. Identity-dependent headers must still be listed in <code>forward_headers</code> so they are both forwarded and included in cache isolation.</p>
+<p>With <code>template_fragment</code>, a normal request executes the full main template while <code>HX-Request: true</code> executes the named <code>{{ define &quot;...&quot; }}</code> template and returns <code>Vary: HX-Request</code>. One URL can therefore serve both the full page and HTMX refreshes.</p>
+<p>Prefer keeping a JSON API unaware of gateway protocols by declaring the behavior on its write proxy route:</p>
+<pre><code class="language-yaml">site: example.com
+on_success:
+  invalidate_cache: [&quot;orders:tenant-a&quot;]
+  htmx_trigger: [&quot;orders-changed&quot;]
+  discard_body: true
+proxy: [&quot;127.0.0.1:9000&quot;]
+</code></pre>
+<p>After an upstream <code>2xx</code>, LiteGate invalidates the cache, emits <code>HX-Trigger</code>, and optionally withholds the JSON response body. This works identically whether templates are loaded from <code>template_root</code> files or KV through <code>template_kv_mode</code>.</p>
+<p>For compatibility, an existing mutating backend may instead return:</p>
+<pre><code class="language-http">LiteGate-Invalidate: orders:tenant-a
+HX-Trigger: orders-changed
+</code></pre>
+<p>LiteGate consumes the first header internally to invalidate matching <code>fetch_json</code> entries and passes the second through to HTMX. New systems should prefer <code>on_success</code> so the API is not coupled to either header.</p>
+<blockquote>
+<p><strong>Security</strong>: see §7 — <code>fetch_json</code> blocks SSRF by default, <code>forward_headers</code> can leak credentials to non-allow-listed hosts, and <code>{{ htmx }}</code> needs a nonce under a strict CSP.</p>
+</blockquote>
+<h3 id="-gateway-htmx-awareness-proxy-backend-setups">🔌 Gateway HTMX-awareness (proxy-backend setups)</h3>
+<p>When you run the <strong>HTMX + backend (<code>type: proxy</code>)</strong> architecture (gateway at the edge, backend rendering fragments with <code>html/template</code>), LiteGate detects the <code>HX-Request: true</code> header and adjusts two behaviors so it never breaks HTMX's in-place swapping:</p>
+<ul>
+<li><strong>Error pages skip HTMX requests</strong>: on normal full-page requests <code>error_pages</code> replaces 404/5xx with a full error page, but for HTMX requests (including <code>hx-boost</code> requests that send <code>Accept: text/html</code>) interception is <strong>bypassed</strong>, letting the backend's HTML fragment and status code pass through — otherwise a full error page would be swapped into a <code>&lt;div&gt;</code>.</li>
+<li><strong>SSO uses <code>HX-Redirect</code> when unauthenticated</strong>: on routes protected by <code>auth.type: sso</code>, an unauthenticated normal request gets a <code>302</code> to the login page, while an HTMX request gets <code>401 + HX-Redirect: /_auth/login?next=...</code> so htmx performs a real full-page navigation instead of swapping the login page into a fragment target.</li>
+</ul>
+<blockquote>
+<p>All <code>HX-*</code> request/response headers (<code>HX-Trigger</code>, <code>HX-Redirect</code>, <code>HX-Push-Url</code>, <code>HX-Retarget</code>, <code>HX-Reswap</code>, …) are passed through unchanged by the reverse proxy (only RFC 7230 hop-by-hop headers are stripped), and HTMX's SSE / WebSocket extensions are supported. The OIDC middleware's auth redirect is not yet HTMX-aware.</p>
+</blockquote>
+<hr>
+<h2 id="further-reading">Further Reading</h2>
+<ul>
+<li><a href="./markdown.html">Markdown Rendering Service</a></li>
+<li><a href="./serve.html">Serving Static Assets</a></li>
+<li><a href="./respond.html">Respond Action</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/04-actions/template.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

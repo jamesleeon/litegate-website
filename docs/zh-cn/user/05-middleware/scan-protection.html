@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scan Protection (扫描防护 / 治理规则引擎) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/05-middleware/scan-protection.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details open><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html" class="current" aria-current="page">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="scan-protection-扫描防护--治理规则引擎">Scan Protection (扫描防护 / 治理规则引擎)</h1>
+<p><code>scan_protection</code> 是 LiteGate 内置的<strong>白盒流量风险检测与自动处置</strong>模块。它复用网关本就要做的判断（Host 是否命中站点、请求是否 404、UA 特征、路径特征等），把这些信号聚合成「按来源 IP 的风险画像」，并在风险累积到阈值时自动执行 <strong>限速 / tarpit（拖延）/ 临时封禁</strong>。</p>
+<p>本文档覆盖 <code>scan_protection</code> 的<strong>全部配置项</strong>，包括新版的<strong>治理规则引擎</strong>（<code>global_rules</code> / <code>site_policies</code> / <code>tech_profiles</code>）。</p>
+<blockquote>
+<p>它<strong>不是</strong> WAF，也不是 DDoS/CC 防护。它是<strong>单机内存状态、基于来源 IP</strong> 的机会型缓解。分布式扫描、走 CDN、伪造来源等场景可以绕过。风险状态与封禁在每个进程内独立维护，多副本之间不共享（当前没有基于 Redis 的共享封禁）。处置依赖 <code>real_ip.trusted_proxies</code> 解析出的真实客户端 IP，请务必正确配置可信代理，否则封禁可能落在错误 IP 上。</p>
+</blockquote>
+<hr>
+<h2 id="1-快速开始">1. 快速开始</h2>
+<p>模块<strong>默认关闭</strong>。在配置文件顶层加入 <code>scan_protection</code> 段即可启用：</p>
+<pre><code class="language-yaml">scan_protection:
+  enabled: true                  # 总开关
+  block_duration: &quot;1h&quot;           # 长封禁时长
+  max_404_attempts: 5            # 观察窗口内允许的最大 404 次数
+  observation_period: &quot;1m&quot;       # 404 滑动观察窗口（也是风险分衰减基准）
+  block_direct_ip: false         # 是否拦截「直接用 IP 当 Host 且无站点匹配」的访问
+  forbidden_paths:               # 自定义敏感路径关键字（仅在 404 时计分）
+    - &quot;.env&quot;
+    - &quot;/wp-admin&quot;
+    - &quot;/phpmyadmin&quot;
+</code></pre>
+<blockquote>
+<p>首次上线建议 <code>block_direct_ip: false</code>，先在看板观察风险数据，确认无误伤后再收紧。</p>
+</blockquote>
+<hr>
+<h2 id="2-基础配置项">2. 基础配置项</h2>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td>bool</td>
+<td><code>false</code></td>
+<td>总开关。可在启动后通过看板/API 热切换。</td>
+</tr>
+<tr>
+<td><code>block_duration</code></td>
+<td>duration 字符串</td>
+<td><code>&quot;1h&quot;</code></td>
+<td>长封禁时长。短封禁为本值的 1/6（最小 1 分钟）。非法值回退到 <code>1h</code>。</td>
+</tr>
+<tr>
+<td><code>max_404_attempts</code></td>
+<td>int</td>
+<td><code>5</code></td>
+<td>在 <code>observation_period</code> 窗口内，同一 IP 的 404 次数达到此值即额外 <code>+5</code> 分。≤0 回退到 <code>5</code>。</td>
+</tr>
+<tr>
+<td><code>observation_period</code></td>
+<td>duration 字符串</td>
+<td><code>&quot;1m&quot;</code></td>
+<td>404 滑动窗口长度。非法值回退到 <code>1m</code>。</td>
+</tr>
+<tr>
+<td><code>forbidden_paths</code></td>
+<td>string 列表</td>
+<td>空</td>
+<td>自定义敏感路径关键字，<strong>只在请求 404 时</strong>做子串匹配。以 <code>/</code> 开头的项视为 <code>deny</code>（+30）；否则视为扩展名类，仅计分（+6）。</td>
+</tr>
+<tr>
+<td><code>block_direct_ip</code></td>
+<td>bool</td>
+<td><code>false</code></td>
+<td>开启后，「Host 是裸 IP 且无任何站点匹配」的请求直接判 <code>deny</code>（+8 分）并返回 403。</td>
+</tr>
+<tr>
+<td><code>global_rules</code></td>
+<td>列表</td>
+<td>空</td>
+<td>全局治理规则，见第 4 节。</td>
+</tr>
+<tr>
+<td><code>site_policies</code></td>
+<td>map</td>
+<td>空</td>
+<td>按站点的技术栈封禁策略，见第 5 节。</td>
+</tr>
+<tr>
+<td><code>tech_profiles</code></td>
+<td>map</td>
+<td>空</td>
+<td>技术栈路径指纹库，配合 <code>site_policies</code> 使用，见第 5 节。</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>duration 字符串遵循 Go 格式：<code>&quot;30s&quot;</code>、<code>&quot;5m&quot;</code>、<code>&quot;2h&quot;</code>。</p>
+</blockquote>
+<hr>
+<h2 id="3-治理流水线执行阶段">3. 治理流水线（执行阶段）</h2>
+<p>每个请求按以下钩子顺序流经治理引擎；任一阶段产生的决策会被合并（取最高优先级动作：<code>deny &gt; tarpit &gt; rate_limit &gt; score &gt; observe &gt; allow</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>时机</th>
+<th>本模块做的事</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OnIngress</strong></td>
+<td>入口最前（路由解析之前）</td>
+<td>检查来源 IP 是否已在封禁/tarpit/限速状态</td>
+</tr>
+<tr>
+<td><strong>OnRouteResolved</strong></td>
+<td>Host 命中站点之后、路由匹配之前</td>
+<td>复检 IP 黑名单；<code>block_direct_ip</code>；<code>site_policies</code> 技术栈封禁；<code>global_rules</code> 中的<strong>终止类动作</strong>（deny/tarpit/rate_limit）</td>
+</tr>
+<tr>
+<td><strong>OnRouteMiss</strong></td>
+<td>请求 404 时</td>
+<td>完整 404 评分（<code>global_rules</code> 的 <code>score</code>/<code>observe</code>、敏感路径、UA、未知 Host、频繁 404、多路径扫描等）</td>
+</tr>
+<tr>
+<td><strong>OnDecisionCommit</strong></td>
+<td>终止决策被路由真正执行时</td>
+<td>落账：写入看板事件与规则命中统计，更新 IP 风险状态</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>要点</strong>：终止类动作（deny/tarpit/rate_limit）在路由解析阶段命中时<strong>不会立即落账</strong>，而是延迟到 <code>OnDecisionCommit</code>（确认真正拦截后）才记录，避免被 magic 路由兜底放行的请求产生误记录。<code>score</code>/<code>observe</code> 这类非终止动作则在命中时立即记录。</p>
+</blockquote>
+<hr>
+<h2 id="4-全局规则-global_rules">4. 全局规则 <code>global_rules</code></h2>
+<p><code>global_rules</code> 是新版规则引擎的核心，对<strong>所有站点</strong>生效（无论 Host 是否命中）。</p>
+<pre><code class="language-yaml">scan_protection:
+  enabled: true
+  global_rules:
+    - name: &quot;block_vcs&quot;                 # 规则名（用于看板统计）
+      match:
+        path_exact: [&quot;/.git&quot;, &quot;/.svn&quot;]  # 精确/段匹配
+        path_prefix: [&quot;/.git/&quot;]         # 前缀匹配
+        path_contains: [&quot;/id_rsa&quot;]      # 子串匹配
+      action: &quot;deny&quot;                    # deny|tarpit|rate_limit|score|observe|allow
+      score: 30                         # 该规则贡献的风险分
+      reason: &quot;vcs_probe&quot;               # 命中原因标签（看板展示）
+
+    - name: &quot;soft_watch_admin&quot;
+      match:
+        path_prefix: [&quot;/admin&quot;]
+      action: &quot;observe&quot;                 # 只记录、不加分、不拦截
+      score: 0
+      reason: &quot;admin_probe&quot;
+</code></pre>
+<h3 id="41-字段说明">4.1 字段说明</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>规则标识，出现在看板「规则命中统计」。</td>
+</tr>
+<tr>
+<td><code>match.path_exact</code></td>
+<td>命中条件：<code>路径 == 项</code> <strong>或</strong> 路径以该项结尾 <strong>或</strong> 路径包含 <code>项 + &quot;/&quot;</code>（即把它当作路径段）。</td>
+</tr>
+<tr>
+<td><code>match.path_prefix</code></td>
+<td>路径前缀匹配。</td>
+</tr>
+<tr>
+<td><code>match.path_contains</code></td>
+<td>路径子串匹配。</td>
+</tr>
+<tr>
+<td><code>action</code></td>
+<td>见下方动作语义。大小写不敏感，未知动作回退为 <code>allow</code> 并打告警。</td>
+</tr>
+<tr>
+<td><code>score</code></td>
+<td>命中后累加到该 IP 的风险分。</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td>自定义原因标签。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-动作语义">4.2 动作语义</h3>
+<table>
+<thead>
+<tr>
+<th>动作（同义词）</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>deny</code> / <code>block</code> / <code>ban</code></td>
+<td>直接拒绝（403），并按 <code>score</code> 落账。</td>
+</tr>
+<tr>
+<td><code>tarpit</code></td>
+<td>拖延：命中请求 <code>sleep</code> 后再放行（每请求一次，约 3 秒）。</td>
+</tr>
+<tr>
+<td><code>rate_limit</code> / <code>ratelimit</code></td>
+<td>返回 429，限速 1 分钟。</td>
+</tr>
+<tr>
+<td><code>score</code> / <code>suspicious</code></td>
+<td>仅累加风险分，不直接拦截（由累计分阈值决定后续动作）。</td>
+</tr>
+<tr>
+<td><code>observe</code></td>
+<td>仅记录到看板，不加分、不拦截。</td>
+</tr>
+<tr>
+<td><code>allow</code> / 空</td>
+<td>显式放行（白名单），命中后<strong>不计分、不记录</strong>。可用于给敏感路径开口子。</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>终止类动作（deny/tarpit/rate_limit）即便 <code>score: 0</code> 也会<strong>立即执行</strong>——动作本身是强制的，分数只影响「累计画像」。</p>
+</blockquote>
+<h3 id="43-内置legacy规则">4.3 内置（legacy）规则</h3>
+<p>无论是否配置 <code>global_rules</code>，以下内置规则始终生效（你的规则会<strong>追加</strong>在前面优先匹配）：</p>
+<ul>
+<li><strong>关键路径直封</strong>（<code>deny</code>, +30）：<code>/.git</code>、<code>/.svn</code>、<code>/.hg</code>、<code>/.bzr</code>、<code>/.env</code>、<code>/wp-config.php</code>、<code>/etc/passwd</code>、<code>/proc/self/environ</code>、<code>/.aws/credentials</code>、<code>/.docker/config.json</code>，以及包含 <code>/.git/</code>、<code>/.env.</code>、<code>/id_rsa</code>、<code>/wp-json/gravitysmtp/</code>、<code>/wp-json/gravityforms/</code> 等。</li>
+<li><strong><code>forbidden_paths</code></strong> 中以 <code>/</code> 开头的项 → <code>deny</code> +30；其余（如 <code>.php</code>）→ <code>score</code> +6。</li>
+<li><strong>特殊探测路径</strong>（仅 404 时，+10）：<code>/mcp</code>、<code>/sse</code>、<code>/actuator</code>、<code>/debug</code>、<code>/server-status</code> 前缀。</li>
+<li><strong><code>/wp-admin</code>、<code>/phpmyadmin</code></strong>（仅 404 时，+10）。</li>
+</ul>
+<hr>
+<h2 id="5-站点级技术栈封禁-site_policies--tech_profiles">5. 站点级技术栈封禁 <code>site_policies</code> + <code>tech_profiles</code></h2>
+<p>用于「某站点不应该出现某种技术栈的路径」场景。例如一个纯 API 站点不该被探测 WordPress 路径。</p>
+<pre><code class="language-yaml">scan_protection:
+  enabled: true
+
+  # 技术栈路径指纹库（可复用）
+  tech_profiles:
+    wordpress:
+      path_prefix: [&quot;/wp-admin&quot;, &quot;/wp-content&quot;, &quot;/wp-json/&quot;]
+      path_exact:  [&quot;/xmlrpc.php&quot;]
+    phpmyadmin:
+      path_prefix: [&quot;/phpmyadmin&quot;, &quot;/pma&quot;]
+
+  # 按站点声明要封禁的技术栈
+  site_policies:
+    api.example.com:
+      deny_tech: [&quot;wordpress&quot;, &quot;phpmyadmin&quot;]
+      critical_action: &quot;deny&quot;     # 命中后的动作：deny|tarpit|rate_limit|score|observe|allow
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tech_profiles.&lt;name&gt;.path_prefix</code> / <code>path_exact</code></td>
+<td>该技术栈的特征路径。</td>
+</tr>
+<tr>
+<td><code>site_policies.&lt;host&gt;.deny_tech</code></td>
+<td>该站点禁止出现的技术栈名（引用 <code>tech_profiles</code> 的 key）。</td>
+</tr>
+<tr>
+<td><code>site_policies.&lt;host&gt;.critical_action</code></td>
+<td>命中后的动作。<code>deny</code>=30 分、<code>tarpit</code>=15、<code>rate_limit</code>=10、<code>score</code>=5、<code>observe</code>=0、<code>allow</code>=放行。</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>site_policies</code> 的 key 是 <strong>Host（站点域名）</strong>，大小写不敏感。命中发生在 <strong>OnRouteResolved</strong> 阶段（站点已匹配、路由未匹配前），可在请求真正到达后端前拦截。</p>
+</blockquote>
+<hr>
+<h2 id="6-评分与处置阈值">6. 评分与处置阈值</h2>
+<p>每个来源 IP 维护一个累计风险分 <code>score</code>，由「决策引擎」按累计分决定动作：</p>
+<table>
+<thead>
+<tr>
+<th>累计分</th>
+<th>动作</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>≥ 30</td>
+<td><code>temp_ban_long</code></td>
+<td>封禁 <code>block_duration</code>，返回 403</td>
+</tr>
+<tr>
+<td>≥ 20</td>
+<td><code>temp_ban_short</code></td>
+<td>短封禁 <code>block_duration/6</code>（最小 1 分钟），返回 403</td>
+</tr>
+<tr>
+<td>≥ 15</td>
+<td><code>tarpit</code></td>
+<td>拖延：每请求 <code>sleep</code> 约 3 秒，持续 1 分钟</td>
+</tr>
+<tr>
+<td>≥ 10</td>
+<td><code>rate_limit</code></td>
+<td>返回 429，持续 1 分钟</td>
+</tr>
+<tr>
+<td>≥ 5</td>
+<td><code>suspicious</code></td>
+<td>仅标记观察</td>
+</tr>
+<tr>
+<td>&lt; 5</td>
+<td><code>observe</code></td>
+<td>正常放行</td>
+</tr>
+</tbody>
+</table>
+<h3 id="61-404-评分信号onroutemiss">6.1 404 评分信号（OnRouteMiss）</h3>
+<table>
+<thead>
+<tr>
+<th>信号</th>
+<th>加分</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>not_found</code></td>
+<td>+1</td>
+<td>每次 404</td>
+</tr>
+<tr>
+<td><code>post_unknown_path</code></td>
+<td>+6</td>
+<td>404 且方法为 POST</td>
+</tr>
+<tr>
+<td><code>unknown_host</code></td>
+<td>+5</td>
+<td>请求未命中任何站点（同一 Host 在窗口内只计一次）</td>
+</tr>
+<tr>
+<td><code>direct_ip_access</code></td>
+<td>+3</td>
+<td>未命中站点且 Host 是裸 IP</td>
+</tr>
+<tr>
+<td><code>bad_user_agent</code></td>
+<td>+2</td>
+<td>未命中站点且 UA 缺失/含扫描器特征</td>
+</tr>
+<tr>
+<td><code>sensitive_path</code></td>
+<td>+10</td>
+<td>命中特殊探测前缀（<code>/mcp</code> 等）或 <code>/wp-admin</code>、<code>/phpmyadmin</code></td>
+</tr>
+<tr>
+<td><code>frequent_404</code></td>
+<td>+5</td>
+<td>窗口内<strong>不同路径</strong>的 404 数 ≥ <code>max_404_attempts</code></td>
+</tr>
+<tr>
+<td><code>scan_multiple_paths</code></td>
+<td>+8</td>
+<td>同一 IP 访问 ≥ 3 个不同路径（一次性计分）</td>
+</tr>
+<tr>
+<td><code>robots_txt</code></td>
+<td>+1</td>
+<td>404 访问 <code>/robots.txt</code></td>
+</tr>
+<tr>
+<td><code>global_rules</code> 命中</td>
+<td>规则 <code>score</code></td>
+<td>见第 4 节</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>防误报设计</strong>：<code>bad_user_agent</code>、<code>unknown_host</code>、<code>direct_ip_access</code> 这类弱信号<strong>只在请求未命中任何站点时</strong>才计分。合法客户端（<code>curl</code>、<code>Go-http-client</code>、<code>python-requests</code>、监控探针）访问<strong>已配置站点</strong>时不会因 UA 累积风险分。</p>
+<p>扫描器 UA 特征关键字：<code>curl</code>、<code>wget</code>、<code>python</code>、<code>go-http-client</code>、<code>nmap</code>、<code>sqlmap</code>、<code>scan</code>、<code>headless</code>、<code>nikto</code>、<code>masscan</code>、<code>zgrab</code>。</p>
+</blockquote>
+<blockquote>
+<p><strong>重复请求去重</strong>：同一 IP 在 <code>observation_period</code> 窗口内对同一 <code>方法 + Host + 路径</code> 的重复 404 <strong>只计一次分</strong>（SSE 重连、前端轮询、刷新、表单重复提交不会累积）。扫描器不会重复打同一个路径，所以去重不影响检出。</p>
+<p><strong>强/弱信号与封顶</strong>：<code>not_found</code>、<code>post_unknown_path</code>、<code>unknown_host</code>、<code>frequent_404</code>、<code>scan_multiple_paths</code> 属于<strong>弱信号</strong>，真实浏览器在站点未部署完或接口配错时也会产生。一个 IP 如果只有弱信号，分数照常累积，但处置<strong>最多是 <code>suspicious</code></strong>；只有窗口内不同路径 404 数达到 <code>max_404_attempts</code> 时才会升到 <code>rate_limit</code>，<strong>永远不会 tarpit 或封禁</strong>。出现<strong>强信号</strong>后（<code>direct_ip_access</code>、<code>bad_user_agent</code>、<code>sensitive_path</code>、带分数的 <code>global_rules</code>/<code>deny_tech</code> 命中），按上表正常升级，之前累积的弱信号分数也一并计入。</p>
+</blockquote>
+<h3 id="62-新-ip-门槛与风险分衰减">6.2 新 IP 门槛与风险分衰减</h3>
+<ul>
+<li><strong>新 IP 门槛</strong>：一个从未见过的 IP，只有当首次违规分 ≥ 5 时才会被分配跟踪状态；低于 5 的一次性 404 直接放行、不占内存。</li>
+<li><strong>风险分自愈</strong>：当 IP 当前不处于封禁/tarpit/限速状态时，每空闲约 2 分钟自动 <code>-3</code> 分（下限 0）。偶发探测会随时间衰减归零；被误标记的客户端只要停止异常行为，分数会自动回落。</li>
+</ul>
+<hr>
+<h2 id="7-运行时开关与配置热重载">7. 运行时开关与配置热重载</h2>
+<ul>
+<li><code>enabled</code> 在<strong>进程启动时</strong>作为初始值。</li>
+<li>运行时可通过看板顶部 <strong>「Scan Protection (Runtime)」</strong> 开关，或 API 热切换：
+<pre><code>POST /api/scan-protection/toggle?enabled=true     # 开启
+POST /api/scan-protection/toggle?enabled=false    # 关闭
+</code></pre>
+需通过看板鉴权与 CSRF 校验，内存级生效。</li>
+<li>其余配置项（<code>block_duration</code>、<code>global_rules</code>、<code>site_policies</code> 等）支持<strong>热重载</strong>，reload 后重新编译策略并立即生效。</li>
+</ul>
+<blockquote>
+<p>✅ <strong>运行时开关是权威来源</strong>：配置热重载（reload）<strong>不会覆盖</strong>你通过看板/API 设置的运行时开关。<code>UpdateConfig</code> 会保留当前 <code>enabled</code> 状态、只更新其余字段并以当前状态重新编译策略。因此「压力大时临时关闭、且保证保持关闭」的场景是成立的——即使期间发生 reload，也不会被配置文件里的 <code>enabled: true</code> 重新打开。配置文件里的 <code>enabled</code> 仅在<strong>进程启动</strong>时作为初始值。</p>
+</blockquote>
+<hr>
+<h2 id="8-性能与资源约束">8. 性能与资源约束</h2>
+<p>模块对自身资源做了硬约束，避免被针对扫描时成为资源放大点：</p>
+<ul>
+<li><strong>分片状态表</strong>：32 个分片，每片上限 1560 条（合计约 5 万 IP）。达到上限优先驱逐过期条目，仍满则拒绝跟踪新 IP。</li>
+<li><strong>后台清理</strong>：每 10 秒一次，移除超过 1 小时无活动且未封禁的 IP。</li>
+<li><strong>每 IP 404 时间戳上限 64</strong>；<strong>多路径集合</strong>在触发「多路径扫描」后立即释放。</li>
+<li><strong>看板事件队列上限 100</strong>；跟踪路径截断 256 字节、看板路径截断 512 字节。</li>
+<li><strong>热路径开销</strong>：正常请求做「一次原子读总开关 + 一次分片读锁查 IP 状态 + 一次全局规则线性扫描」。<code>global_rules</code> 越多、路径模式越多，OnRouteResolved 的线性扫描成本越高——建议规则集保持精简。命中合法路由的请求不做 404 评分。</li>
+</ul>
+<hr>
+<h2 id="9-调优与排错">9. 调优与排错</h2>
+<ul>
+<li><strong>先观察、再拦截</strong>：上线初期把高风险规则设为 <code>observe</code>/<code>score</code>，在看板确认无误伤后改 <code>deny</code>。</li>
+<li><strong>自家前端 bug 会污染评分</strong>：前端反复请求不存在路径（如 URL 拼进 <code>undefined</code>）会让该真实用户 IP 累积分。应修前端，而非靠本模块兜底。可对这些路径配 <code>allow</code> 规则临时止血。</li>
+<li><strong>给敏感路径开白名单</strong>：用 <code>action: &quot;allow&quot;</code> 的 <code>global_rules</code> 精确放行。</li>
+<li><strong>更激进</strong>：调小 <code>max_404_attempts</code>、调短 <code>observation_period</code>，或增加 <code>deny</code> 规则。</li>
+<li><strong>更宽松</strong>：调大 <code>max_404_attempts</code>，精简规则集。</li>
+</ul>
+<hr>
+<h2 id="10-faq">10. FAQ</h2>
+<p><strong>Q：合法的 <code>curl</code> / Python / Go SDK 客户端会被封吗？</strong>
+A：不会——只要它们访问<strong>已配置的站点</strong>。弱信号（UA、未知 Host）只在请求未命中站点时计分。</p>
+<p><strong>Q：合法的 <code>.php</code> 站点会因 <code>forbidden_paths</code> 含 <code>.php</code> 被误杀吗？</strong>
+A：不会。<code>forbidden_paths</code> 只在请求 <strong>404</strong> 时匹配；合法 <code>.php</code> 站点正常响应、不产生 404。</p>
+<p><strong>Q：它能防 DDoS / CC 吗？</strong>
+A：不能。它是基于来源 IP 的白盒检测与机会型缓解，不替代专业 DDoS/CC 防护或前置 WAF。</p>
+<hr>
+<h2 id="相关文档">相关文档</h2>
+<ul>
+<li>实现：<a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/middleware/scan_protection.go">scan_protection.go</a></li>
+<li>多副本状态：<a href="../10-deployment/ha-state.html">ha-state.md</a></li>
+<li>看板与可观测：<a href="../08-observability/dashboard.html">dashboard.md</a></li>
+<li>IP 限制：<a href="ip-restriction.html">ip-restriction.md</a></li>
+<li>限速：<a href="rate-limit.html">rate-limit.md</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/05-middleware/scan-protection.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

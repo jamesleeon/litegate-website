@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IDS Provider 插件开发与配置 · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html">首页</a>
+      <a href="../../guide.html">场景指南</a>
+      <a href="../../features.html">功能列表</a>
+      <a href="../../ecosystem.html">生态</a>
+      <a href="README.html" aria-current="page">文档</a>
+      <a href="../en/ids-provider-plugin-guide.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="README.html">文档首页</a></li><li><details><summary>用户手册</summary><ul><li><a href="user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="user/01-getting-started/build.html">源码构建指南</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="user/01-getting-started/installation.html">安装指南</a></li><li><a href="user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="user/03-configuration/api.html">管理接口概览</a></li><li><a href="user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>使用专题</summary><ul><li><a href="database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="ids-provider-plugin-guide.html" class="current" aria-current="page">IDS Provider 插件开发与配置</a></li><li><a href="ids-recipes.html">IDS 配方</a></li><li><a href="ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="ids-provider-插件开发与配置">IDS Provider 插件开发与配置</h1>
+<p>定位与 IDS vs middleware 见 <a href="ids-overview.html">IDS 概览</a>；避坑指南见 <a href="ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a>；端到端场景见 <a href="ids-recipes.html">IDS 配方</a>。</p>
+<p>需要评估 Rust 等语言和独立热发布时，参见 <a href="ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a>；该能力当前为实验性且默认不编译。</p>
+<h2 id="从开发到上线四个环节">从开发到上线：四个环节</h2>
+<p>当前 Go IDS 插件采用编译注册。Sites 和 Litemesh 标签只引用插件，不能上传、安装或编译插件。<code>openapi-md5</code> 已在默认入口内置注册，下文用它串联配置与验收。第三方插件的 options 仍由各插件定义。V2 目前支持的是 <code>provider</code>，<code>plugin</code> 只是命名改进建议，尚不可直接配置。</p>
+<h3 id="1-开发与发布">1. 开发与发布</h3>
+<p>实现 <code>plugin.IDSProvider.Evaluate(ctx, input)</code>，从不可变 <code>input.Request</code> 读取请求，从 <code>input.Options</code> 读取路由参数。MD5 插件读取 appid、method、timestamp、signature 和原始 Body，再解析密钥和验签。协议见 <a href="openapi-md5-ids-plugin.html">MD5 插件</a>。</p>
+<ul>
+<li>业务验证通过：返回 <code>ActionForward</code>；只做验签时省略 <code>Discovery</code>。</li>
+<li>业务验证失败：返回 <code>ActionRespond</code> 和 401/403，不返回系统 error。</li>
+<li>密钥系统不可用等基础设施失败：返回 error，交给宿主执行 fail_policy。</li>
+</ul>
+<p>通过 <code>RegisterIDSProvider(&quot;openapi-md5&quot;, registration)</code> 发布 Factory、Description、Options 描述和 Validate。另用 <code>RegisterManifest</code> 发布 <code>Kind: &quot;ids&quot;</code>、同名 Name、Version、<code>APIVersion: plugin.APIVersion</code>、Description 与 ConfigExample，使 CLI 能显示版本、用途和示例。IDS Description 与通用 Manifest 是两份元数据，目前 CLI inspect 读取 Manifest，并不会自动展示 IDS Options Schema。</p>
+<p>在最终网关入口空导入插件包，再 <code>go build ./cmd/litegate</code>。Go 插件代码或注册发生变化需要重新编译并替换网关；仅修改路由参数则走配置热加载。不要将 Go Provider 单例的共享状态当成单请求变量。</p>
+<h3 id="2-绑定到-sites-yaml">2. 绑定到 Sites YAML</h3>
+<pre><code class="language-yaml">site: open.example.com
+https: true
+/api:
+  proxy: 127.0.0.1:8080
+  ids:
+    provider: openapi-md5
+    fail_policy: deny
+    options:
+      secret_env_prefix: OPENAPI_SECRET_
+      max_clock_skew: 5m
+      max_body_size: 1MiB
+</code></pre>
+<p>后端地址为示例。<code>provider</code> 必须与注册名一致；options 由插件定义。密钥注入运行 LiteGate 的进程，不是仅注入业务服务。保存前用 <code>litegate -t -config config.yaml</code> 检查文件；保存后检查运行实例实际加载的配置。<code>-t</code> 不能证明后端连通或业务验签成功。</p>
+<p>如果后端实例来自 Litemesh，也可以由文件维护路由，在本地 services 中写 <code>discovery: orders</code> 并使用 <code>service: orders-backend</code>，替代固定 proxy 地址。需要先配置发现客户端；发现源接入与 IDS 插件注册是两个独立前提。</p>
+<h3 id="3-服务注册-litemesh由标签发布路由">3. 服务注册 Litemesh，由标签发布路由</h3>
+<p>假设注册服务名为 <code>orders</code>，在服务注册信息中附加以下 Tags（每行是一个 <code>key=value</code> 标签）：</p>
+<pre><code class="language-properties">litegate.http.routers.api.match.hosts=open.example.com
+litegate.http.routers.api.match.path_prefix=/api
+litegate.http.routers.api.service=orders-backend
+litegate.http.routers.api.ids.provider=openapi-md5
+litegate.http.routers.api.ids.failpolicy=deny
+litegate.http.routers.api.ids.options.secret_env_prefix=OPENAPI_SECRET_
+litegate.http.routers.api.ids.options.max_clock_skew=5m
+litegate.http.routers.api.ids.options.max_body_size=1MiB
+litegate.http.services.orders-backend.timeout=5s
+</code></pre>
+<p><code>api</code> 是 Router 资源名称，<code>orders-backend</code> 是标签 Service 资源名称，实际后端是注册这些标签的 <code>orders</code> 服务。插件运行在 LiteGate 中，业务服务注册标签不会让网关自动获得插件代码。网关必须已接入 Litemesh Catalog，并具备对应入口与 HTTPS 证书配置。</p>
+<p>标签使用 <code>ids.failpolicy</code>，YAML 使用 <code>fail_policy</code>；标签 Header 白名单使用 <code>ids.allowedheaders</code>，YAML 使用 <code>header_projection.allowed_headers</code>。<code>ids.options.&lt;key&gt;</code> 保留参数键大小写。<code>ids.operation</code> 是传给插件的 operation 参数，内核不实现 login/resolve 等业务模式。当前命名标签 IDS 属性没有 YAML runtime 的完整配置入口，不要推断所有 YAML 字段都能直接写成标签。</p>
+<p>同一注册服务的路由标签应在各实例上一致。采用标签管理 API 时，不要再在文件声明相同 <code>/api</code> 期待逐字段合并：Hybrid 合并路由集合，不会自动组合“文件 IDS + 标签后端”。</p>
+<h3 id="4-确认注册绑定初始化与实际执行">4. 确认注册、绑定、初始化与实际执行</h3>
+<table>
+<thead>
+<tr>
+<th>要确认什么</th>
+<th>当前检查方式</th>
+<th>不能据此推断什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>当前二进制有插件</td>
+<td><code>litegate plugins list</code>、<code>litegate plugins inspect ids/openapi-md5</code></td>
+<td>不代表运行进程已用该二进制，也不代表路由绑定</td>
+</tr>
+<tr>
+<td>Manifest 完整与兼容</td>
+<td><code>litegate plugins doctor</code></td>
+<td>不证明密钥、网络或验签正常</td>
+</tr>
+<tr>
+<td>配置被接受并绑定</td>
+<td>文件校验、加载日志、运行时最终路由；标签还要检查 Catalog 与标签校验</td>
+<td>文件 -t 不验证未来动态标签</td>
+</tr>
+<tr>
+<td>实例已创建</td>
+<td>Dashboard <code>/status/json</code> 的 <code>ids_providers</code>：provider、instantiated、health、inflight、circuit_open</td>
+<td>没实现 Health 时的 healthy 不证明外部依赖可用</td>
+</tr>
+<tr>
+<td>Evaluate 被调用</td>
+<td>开启 metrics 后观察 <code>litegate_ids_evaluate_total{provider=&quot;openapi-md5&quot;}</code> 增量</td>
+<td><code>result=&quot;success&quot;</code> 是调用没报错，正常返回 401 也计入 success</td>
+</tr>
+<tr>
+<td>业务规则真实生效</td>
+<td>正确签名可达后端；错误、缺失、过期签名被拒绝且不访问后端</td>
+<td>单次 HTTP 200 或 401 不能单独证明 IDS 执行</td>
+</tr>
+</tbody>
+</table>
+<p>Dashboard 端点使用网关现有认证和监听设置；<code>ids_providers</code> 已有 JSON 数据，当前 HTML 尚没有专门展示这些状态的 IDS 面板。Health 可能是 pending、未实现或尚未实例化，必须结合 instantiated 和 Message 判断。慢调用、超时、panic、熔断与并发拒绝可用宿主日志和指标定位。</p>
+<p>上线验收应发送一组可控请求，并同时核对调用计数、插件拒绝原因及后端访问记录。只有正确签名进入后端，缺失/错误/过期签名均被插件拒绝，才证明整条链路生效。关闭指标时不能依靠 Prometheus 判断执行。</p>
+<p>建议后续补齐用户可见的闭环：插件参数 Schema 查询；运行面板显示插件与路由绑定、实例及健康状态；宿主单独统计 Forward/Respond 决策；以 trace_id 关联插件名称、拒绝原因和路由。以上为改进建议，当前未实现，不应写成现成功能。拒绝原因使用固定枚举，日志不要记录密钥、完整签名或原始 Body。</p>
+<h2 id="实现与注册">实现与注册</h2>
+<pre><code class="language-go">type Provider struct {
+    // 并发安全、可复用的 HTTP/Redis/DB 客户端和缓存
+}
+
+func (p *Provider) Evaluate(ctx context.Context, input plugin.IDSInput) (*plugin.IDSDecision, error) {
+    token := first(input.Request.Header(input.Options.Get(&quot;token_header&quot;)))
+    if token == &quot;&quot; {
+        return &amp;plugin.IDSDecision{
+            Action: plugin.ActionRespond,
+            Response: &amp;plugin.DirectResponse{Status: http.StatusUnauthorized},
+        }, nil
+    }
+
+    session, err := p.lookupSession(ctx, token)
+    if err != nil { return nil, err }
+    if session == nil {
+        return &amp;plugin.IDSDecision{Action: plugin.ActionRespond,
+            Response: &amp;plugin.DirectResponse{Status: http.StatusUnauthorized}}, nil
+    }
+
+    return &amp;plugin.IDSDecision{
+        Action: plugin.ActionForward,
+        Headers: http.Header{
+            &quot;X-Tenant-Ref&quot;: {session.TenantRef},
+            &quot;X-Database-Ref&quot;: {session.DatabaseRef},
+        },
+        Discovery: &amp;plugin.DiscoveryDecision{
+            Selector: &amp;plugin.DiscoverySelector{
+                Match: map[string]string{&quot;cluster&quot;: session.Cluster},
+                Meta: map[string]string{&quot;version&quot;: session.PreferredVersion},
+            },
+        },
+        RateLimit: &amp;plugin.RateLimitDecision{
+            Key: session.SubjectRef,
+            RequestsPerSecond: session.QPS,
+        },
+    }, nil
+}
+
+func init() {
+    err := plugin.RegisterIDSProvider(&quot;saas-session&quot;, plugin.IDSProviderRegistration{
+        Description: plugin.IDSProviderDescription{
+            Summary: &quot;SaaS session identity provider&quot;,
+            Version: &quot;1&quot;,
+            Options: []plugin.IDSOptionDescriptor{
+                {Name: &quot;token_header&quot;, Type: plugin.IDSOptionString, Required: true},
+                {Name: &quot;policy_ref&quot;, Type: plugin.IDSOptionString},
+            },
+        },
+        Validate: func(options plugin.IDSOptions) error {
+            // 站点加载时执行，不创建 Provider 实例。
+            return nil
+        },
+        Factory: func(deps *plugin.Dependencies) (plugin.IDSProvider, error) {
+            return newProvider(deps.Logger, deps.Config), nil
+        },
+    })
+    if err != nil { panic(err) }
+}
+</code></pre>
+<p>若只做验证和 Header 注入，Forward 时省略 <code>Discovery</code>。插件包必须被最终网关二进制导入，通常在自定义入口中空导入：</p>
+<pre><code class="language-go">import _ &quot;example.com/company/litegate-tenant-ids&quot;
+</code></pre>
+<p>Provider 按名称作为单例复用。网关启动及配置更新时会初始化当前路由引用的 Provider；运行时也保留按需创建路径。重复注册会报错；确需覆盖时使用 <code>ReplaceIDSProvider</code>。</p>
+<p>Provider 不会接收到 <code>*http.Request</code>。<code>IDSInput.Request</code> 只提供 Method、Scheme、Host、Path、Query、Header、RemoteAddress 和 <code>Body()</code>；Body 的物化上限由宿主固定为 8 MiB，Provider 不能自行扩大。Provider 配置的更小限额属于读后业务策略：宿主可能先读取到 8 MiB，再由 Provider 复查并拒绝。返回的 Header、Query、Body 均为副本，插件不能修改网关原始请求。路由 options 通过不可变的 <code>IDSOptions</code> 读取。</p>
+<h2 id="生命周期">生命周期</h2>
+<p>注册信息中的 Description/Schema 与 Validate 在站点加载时使用，不会提前创建运行实例。Provider 由 Factory 创建为长生命周期单例（启动与配置更新时初始化已引用插件），并可选择实现：</p>
+<pre><code class="language-go">type IDSHealthChecker interface {
+    Health(ctx context.Context) plugin.IDSHealthStatus
+}
+
+type IDSConfigReloader interface {
+    ReloadConfig(ctx context.Context, cfg plugin.ConfigProvider, version uint64) error
+}
+
+type IDSCloser interface {
+    Close(ctx context.Context) error
+}
+</code></pre>
+<p>共享 <code>plugin-config.yaml</code> 发布新快照后，已实例化 Provider 会收到 ReloadConfig；没有实现该接口的 Provider 仍可通过长期持有的 <code>deps.Config</code> 实时读取。配置成功重载后，已不再被任何路由引用的 Provider 会退出运行表、清空治理状态并调用 <code>Close</code>；LiteGate 退出时也会关闭其余实例。若新配置初始化失败，旧 Provider 保持运行，不会被提前回收。</p>
+<h2 id="路由配置">路由配置</h2>
+<p><code>ids</code> 可配置在任意 Action 上，不限于 <code>proxy</code>。它会在 Action 执行前统一完成身份裁决、可信 Header/Query/Body 变更和动态限流；对 <code>respond</code>、<code>serve</code>、<code>template</code>、WebDAV 与第三方 Action 同样生效。只有 proxy 会消费 IDS 返回的 Selector/Meta 进行实例选路。</p>
+<pre><code class="language-yaml">action:
+  type: proxy
+  service_name: shared-saas-service
+  ids:
+    provider: saas-session
+    fail_policy: deny
+    selector_merge_policy: intersect
+    runtime:
+      timeout: 500ms
+      slow_threshold: 100ms
+      max_concurrency: 100
+      circuit_breaker:
+        enabled: true
+        minimum_requests: 20
+        failure_ratio: 0.5
+        open_duration: 30s
+    options:
+      token_header: Authorization
+      policy_ref: order-read
+    header_projection:
+      allowed_headers: [X-Tenant-Ref, X-Database-Ref]
+</code></pre>
+<ul>
+<li><code>provider</code> 必填，必须与注册名一致。</li>
+<li><code>fail_policy</code> 默认 <code>deny</code>；<code>allow</code> 只处理插件 error，不改变插件明确返回的 Respond。</li>
+<li><code>selector_merge_policy</code> 默认 <code>intersect</code>；IDS 与路由静态 Selector 同名不同值时拒绝。只有明确需要覆盖静态边界时才用 <code>override</code>。</li>
+<li><code>options</code> 是热更新的路由参数，每次调用收到当前值的副本。</li>
+<li><code>runtime</code> 完全由 LiteGate 宿主执行，第三方 Provider 不能覆盖。默认超时 500ms、慢调用阈值 100ms、最大并发 100；熔断默认启用。</li>
+<li><code>allowed_headers</code> 是向下游注入 Header 的白名单。</li>
+</ul>
+<p>Go Provider 的超时是协作式取消：LiteGate 会按时结束当前 HTTP 等待，但无法强杀忽略 Context 的 Go goroutine。此类调用会继续占用 Provider 的并发槽，直至真实返回；达到上限后新调用由宿主立即拒绝，避免无限堆积。连续失败或超时达到熔断条件后，宿主暂停调用该 Provider。宿主超时和 Provider panic 始终 fail-closed，即使配置了 <code>fail_policy: allow</code> 也不会转发；<code>allow</code> 只覆盖 Provider 正常返回的 error 和宿主熔断/并发拒绝。客户端取消不计入熔断成功或失败样本。</p>
+<h2 id="性能归因与监控">性能归因与监控</h2>
+<p>指标由 LiteGate 在 <code>Evaluate</code> 外部采集，不依赖第三方插件主动上报。Prometheus <code>/metrics</code> 提供：</p>
+<ul>
+<li><code>litegate_ids_evaluate_duration_seconds{provider}</code>：宿主观测的执行耗时直方图，可计算 P50/P95/P99。</li>
+<li><code>litegate_ids_evaluate_total{provider,result}</code>：<code>success</code>、<code>error</code>、<code>timeout</code>、<code>panic</code> 结果计数。</li>
+<li><code>litegate_ids_inflight{provider}</code>：尚未真实退出的调用数，包含请求已经超时但插件仍卡住的调用。</li>
+<li><code>litegate_ids_slow_total{provider}</code>：超过 <code>slow_threshold</code> 的调用数。</li>
+<li><code>litegate_ids_circuit_state{provider}</code>：0 为关闭、2 为打开。</li>
+<li><code>litegate_ids_rejected_total{provider,reason}</code>：因 <code>concurrency_limit</code> 或 <code>circuit_open</code> 被宿主拒绝的调用。</li>
+</ul>
+<p>慢调用同时产生 <code>ids_slow_evaluation</code> 结构化日志，包含 Provider、耗时、阈值、超时、实际在途数和结果，不记录请求 Body、密钥或配置值。运行状态可通过内核的 <code>GetIDSRuntimeStatus()</code> 快照接入 Dashboard。</p>
+<h2 id="已知限制与后续优化">已知限制与后续优化</h2>
+<ul>
+<li>Go Provider 超时后无法被强杀。若插件忽略 Context 并在 handler 返回后才调用 <code>Body()</code>，仍存在与 <code>net/http</code> 清理原始 Body 的窄竞态；彻底解决需要重新设计 Body 所有权或调用前物化策略。</li>
+<li>为了对不响应 Context 的 Go 代码实施宿主超时，每次 Evaluate 当前会创建一个 goroutine 和结果 channel；极高 QPS 场景需要以 profile 数据决定是否引入执行池。</li>
+<li>WASM 当前为实验性：合成模块测试已覆盖宿主 ABI，但真实 Rust 编译产物尚未进入发布流水线的端到端测试。</li>
+</ul>
+<p>以下审查项已经关闭，不再作为遗留：客户端取消不进入熔断分母；OpenAPI <code>max_body_size</code> 在加载期拒绝超过 8 MiB；完整 Body 读取不会被底层 Close 错误覆盖。</p>
+<p>不同路径可选择不同 Provider，也可共用一个 Provider 并以 <code>options.operation</code> 区分。内核不建模 login、api、refresh、logout。</p>
+<h2 id="插件日志注入与可开关的调试日志">插件日志注入与可开关的调试日志</h2>
+<p>宿主通过 <code>plugin.Dependencies.Logger</code> 注入 <code>*zerolog.Logger</code>。当前 IDS Factory 收到的是网关系统 <code>log.Logger</code>，不是独立日志文件或自动带插件名的专属 Logger。插件应附加 <code>plugin</code> / <code>provider</code> 字段，不修改共享 Logger。路由 <code>log_level</code> 主要控制访问日志，不是自动控制插件 Evaluate 日志的开关。</p>
+<p>调试期间可以在共享配置中打开插件自己的开关：</p>
+<pre><code class="language-yaml"># plugin.yaml
+providers:
+  openapi-md5:
+    debug_log: true
+</code></pre>
+<p>测试结束改为 <code>false</code>。启用 <code>plugin_config.watch</code> 后，插件每次 Evaluate 从实时配置视图读取开关，便可随文件更新生效。内置 openapi-md5 已实现 <code>debug_log</code>；第三方插件需要自行实现，宿主不会自动识别它。</p>
+<p>下面片段假设 Provider 已保存 Factory 注入的 <code>logger *zerolog.Logger</code> 和 <code>config plugin.ConfigProvider</code>。在 Evaluate 的开头添加：</p>
+<pre><code class="language-go">started := time.Now()
+debugLog := false
+if raw, ok := p.config.Scope(&quot;providers.openapi-md5&quot;).Lookup(&quot;debug_log&quot;); ok {
+    debugLog, _ = strconv.ParseBool(raw)
+}
+if debugLog &amp;&amp; p.logger != nil {
+    p.logger.Info().Str(&quot;plugin&quot;, &quot;openapi-md5&quot;).
+        Str(&quot;method&quot;, input.Request.Method()).
+        Msg(&quot;ids_evaluate_started&quot;)
+}
+</code></pre>
+<p>在最终决策处记录固定枚举，如 <code>decision=forward/respond</code>、<code>reason=valid_signature/invalid_signature/expired_timestamp</code>、<code>duration_ms</code>。添加宿主请求追踪关联时应核对当前 Trace ID 接口，不直接信任客户端提供的身份或追踪字段。初始化日志只能证明 Factory 执行；Evaluate 进入和最终决策日志才证明这次请求经过插件。</p>
+<p>示例用受 debug_log 控制的 Info 事件，便于系统日志级别为 info 时可见；若选用 Debug 事件，还要将系统日志级别设为 debug。系统级别为 warn/error 时，Info 事件也会被过滤。关闭 debug_log 只关闭插件的详细请求日志，建议保留初始化失败、配置失败和依赖故障日志，以及宿主指标。</p>
+<p>长期运行时，不要把 debug_log 只读一次存成普通 bool，否则文件更新不会生效。也不要为了插件调试直接把共享 Logger 改成 DebugLevel。保存 Logger 指针并在调用时附加字段，可以跟随当前宿主 Logger；长期保存一个派生 Logger 副本时则要考虑宿主日志级别更新的同步。</p>
+<p>不要记录 Secret、原始 Token、完整签名或 Body。高流量时可在插件内实现采样，固定原因枚举便于统计。调试日志与“放行/拒绝”决策计数相互补充；日志开关不改变验签行为。</p>
+<h2 id="插件配置文件环境变量与路由参数的分工">插件配置文件、环境变量与路由参数的分工</h2>
+<p>LiteGate 已支持独立共享插件配置文件，并把实时只读配置视图传给插件。文件名由主配置指定，不固定为 <code>plugin.yaml</code>：</p>
+<pre><code class="language-yaml"># config.yaml
+plugin_config:
+  path: plugin.yaml
+  watch: true
+</code></pre>
+<pre><code class="language-yaml"># plugin.yaml（使用 plugin-config.yaml 作为文件名也可以）
+shared:
+  redis:
+    url: '${LITEGATE_REDIS_URL}'
+providers:
+  openapi-md5:
+    secrets:
+      orders: '${ORDERS_OPENAPI_SECRET}'
+</code></pre>
+<p>环境变量必须存在于 <strong>LiteGate 进程环境</strong> 中。宿主加载文件时展开 <code>${NAME}</code>；未设置且没有默认值会使加载失败。<code>${NAME:-default}</code> 仅在变量不存在时使用默认值；变量存在但为空时保留空值，不采用 shell 中“空值也回退”的语义。<code>${…}</code> 写在 YAML 单引号里也会展开，因为这是宿主解析后的处理。</p>
+<p>嵌套映射被展开为点分键，如 <code>providers.openapi-md5.secrets.orders</code>。配置接受标量和映射，不接受 YAML 列表；标量最终作为字符串读取。命名空间 shared/providers 是组织约定，并非宿主强制或权限隔离，插件不会自动只看到自己的配置。</p>
+<table>
+<thead>
+<tr>
+<th>配置来源</th>
+<th>谁处理</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiteGate 进程环境变量</td>
+<td>部署环境注入；宿主或插件读取</td>
+<td>密钥和部署地址</td>
+</tr>
+<tr>
+<td>plugin.yaml</td>
+<td>宿主展开环境变量并发布配置视图；插件解释字段</td>
+<td>插件私有配置、跨路由共享密钥和共享基础设施</td>
+</tr>
+<tr>
+<td>Sites 的 ids.options</td>
+<td>宿主按路由传入；插件解释字段</td>
+<td>选择策略、密钥引用、操作类型</td>
+</tr>
+<tr>
+<td>Litemesh 的 ids.options.<key></td>
+<td>编译为同一种路由 options</td>
+<td>与 Sites 参数相同的职责</td>
+</tr>
+</tbody>
+</table>
+<p>内置 openapi-md5 已实现 <code>secret_ref</code>，可以这样引用上面的密钥：</p>
+<pre><code class="language-yaml">site: open.example.com
+/api:
+  proxy: 127.0.0.1:8080
+  ids:
+    provider: openapi-md5
+    options:
+      secret_ref: orders
+</code></pre>
+<p>对应标签为 <code>litegate.http.routers.api.ids.options.secret_ref=orders</code>。内置 openapi-md5 通过 secret_ref 解析 plugin.yaml 密钥，并禁止同时设置 secret_env / secret_env_prefix。第三方插件仍需自行定义参数含义与优先级。</p>
+<p>插件在 Factory 中通过 <code>deps.Config</code> 保存配置视图，也可在 Evaluate 中使用 <code>input.Config</code>。二者当前均由 <code>plugin.SharedConfig()</code> 提供。读取示例：</p>
+<pre><code class="language-go">ref := input.Options.Get(&quot;secret_ref&quot;)
+if ref == &quot;&quot; {
+    return nil, fmt.Errorf(&quot;secret_ref is required&quot;)
+}
+secret, ok := input.Config.Scope(&quot;providers.openapi-md5.secrets&quot;).Lookup(ref)
+if !ok || secret == &quot;&quot; {
+    return nil, fmt.Errorf(&quot;secret configuration is unavailable&quot;)
+}
+// 用 secret 验签；不要记录 secret。
+</code></pre>
+<p>推荐插件契约明确区分“路由选择密钥引用”和“共享配置保存密钥”；如同时支持路由参数和插件默认值，应在插件文档明确优先级，并在 Validate/Evaluate 中校验。</p>
+<p><code>watch: true</code> 监控文件变化。有效更新原子发布新快照，持有的 ConfigProvider 视图继续读取最新值；已实例化 IDS 插件若实现 <code>ReloadConfig</code> 会收到通知。直接在 Factory 里读取并保存的字符串不会自动更新；连接池、Redis/DB 客户端与插件缓存也要由插件重建或失效。环境变量本身不是监控对象，外部修改环境也不会更新现有进程环境。</p>
+<p>首次加载失败会使网关启动失败；文件热更新失败保留上一份有效快照。日志 <code>Shared plugin configuration loaded</code>、<code>Plugin configuration reloaded</code> 带配置版本；<code>Plugin configuration reload rejected; keeping previous snapshot</code> 表示宿主拒绝更新。宿主接受新快照不等于插件重建资源成功：插件 ReloadConfig 失败会另记日志，插件旧资源可能继续使用。这些状态需要分别检查。</p>
+<h2 id="动态配置密钥和缓存">动态配置、密钥和缓存</h2>
+<p>跨 Provider 共享且需要运行时更新的配置，可使用独立的插件配置文件：</p>
+<pre><code class="language-yaml"># config.yaml
+plugin_config:
+  path: plugin-config.yaml
+  watch: true
+</code></pre>
+<pre><code class="language-yaml"># plugin-config.yaml
+shared:
+  redis:
+    url: ${LITEGATE_REDIS_URL}
+  rabbitmq:
+    url: ${LITEGATE_RABBITMQ_URL}
+providers:
+  saas-session:
+    key_prefix: &quot;ids:session:&quot;
+</code></pre>
+<p>LiteGate 监听文件并在完整解析成功后原子发布新快照；格式错误或缺少环境变量时继续保留旧版本。Provider 可以长期保存配置视图，并在每次使用时读取最新值：</p>
+<p>共享插件 YAML 当前只接受标量和映射；列表会被拒绝。需要列表时可使用逗号分隔字符串或 JSON 字符串，并由插件自行解析。</p>
+<pre><code class="language-go">cfg := deps.Config.Scope(&quot;providers.saas-session&quot;)
+prefix, ok := cfg.Lookup(&quot;key_prefix&quot;)
+version := cfg.Version()
+</code></pre>
+<p>共享基础设施可以从 <code>deps.Config.Scope(&quot;shared&quot;)</code> 读取。YAML 适合组织共享和私有命名空间；<code>${ENV_VAR}</code> 适合注入 Secret。配置读取是实时的，但 Redis、RabbitMQ 或数据库连接是否以及如何重建由插件负责。</p>
+<p>Provider 工厂不接收主配置，所以修改路由 options 不要求重启。options 应放策略或引用，而不是明文秘密：</p>
+<pre><code class="language-yaml">options:
+  tenant_source: primary
+  redis_ref: tenant-session-prod
+</code></pre>
+<p>插件用引用向自己的配置中心解析地址和凭据。连接池保存在 Provider 单例中；引用变化时可按引用或配置指纹懒加载新客户端。</p>
+<p>推荐查询顺序是进程内短缓存 → Redis → 租户系统 → 回填。缓存键必须包含所有影响校验和选路的维度；不存在的数据使用较短负缓存；登录、刷新、注销时主动失效。</p>
+<h3 id="缓存与并发回源官方工具包-idskit">缓存与并发回源（官方工具包 idskit）</h3>
+<p>Provider 是<strong>长生命周期单例、被并发调用</strong>（见<a href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">生命周期</a>），所以缓存和回源合并都应放在 Provider 结构体里，<code>Evaluate</code> 进来先查缓存、未命中再回源。冷缓存下最容易踩的坑是<strong>惊群</strong>：同一身份的成百上千个请求同时未命中、同时打后端。</p>
+<p>为了避免开发者重复手写复杂的 SingleFlight、Context 隔离与负缓存逻辑，LiteGate 提供了官方运行时电池包 <strong><code>pkg/plugin/idskit</code></strong>（可选加速器），将高并发回源的最佳实践全部封装在泛型 <code>idskit.IdentityLoader[V]</code> 中。</p>
+<h4 id="推荐做法使用-idskitidentityloader">推荐做法：使用 <code>idskit.IdentityLoader</code></h4>
+<pre><code class="language-go">import (
+    &quot;context&quot;
+    &quot;errors&quot;
+    &quot;net/http&quot;
+    &quot;time&quot;
+
+    &quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+    &quot;github.com/jamesleeon/LiteGate/pkg/plugin/idskit&quot;
+)
+
+type provider struct {
+    loader *idskit.IdentityLoader[*Claims]
+}
+
+func newProvider(deps *plugin.Dependencies) *provider {
+    return &amp;provider{
+        loader: idskit.NewIdentityLoader(func(ctx context.Context, token string) (*Claims, error) {
+            // 纯粹的后端回源逻辑（已自动切断 caller 取消链路并带有 FetchTimeout 保护）
+            // 这里的 token 是原始凭据，已与内部内存缓存的哈希指纹解耦
+            claims, err := queryAuthBackend(ctx, token)
+            if err != nil {
+                return nil, err // 基础设施错误：绝不进负缓存，且自动触发 Forget 供下次重试
+            }
+            if claims == nil {
+                return nil, idskit.ErrNotFound // 业务未找到/凭据非法：自动触发短命负缓存
+            }
+            return claims, nil
+        }, idskit.LoaderOptions{
+            KeyFunc:      idskit.TokenFingerprint,  // 自动将长 Token 映射为 128 位安全指纹，内存中绝不存明文长 Key
+            TTL:          30 * time.Second,        // 正向缓存生命周期
+            NegativeTTL:  2 * time.Second,         // 负缓存生命周期（防穿透）
+            FetchTimeout: 800 * time.Millisecond,  // 单次回源上限
+            MaxEntries:   10000,                  // LRU 容量上限（防 OOM）
+        }),
+    }
+}
+
+func (p *provider) Evaluate(ctx context.Context, in plugin.IDSInput) (*plugin.IDSDecision, error) {
+    token := idskit.FirstHeader(in.Request, &quot;Authorization&quot;)
+    if token == &quot;&quot; {
+        return idskit.RespondUnauthorized(), nil
+    }
+
+    // 查缓存/自动 SingleFlight 并发回源（传入原始 token，内部自动通过 KeyFunc 计算指纹进行缓存和收敛）
+    claims, err := p.loader.Get(ctx, token)
+    if err != nil {
+        if errors.Is(err, idskit.ErrNotFound) {
+            return idskit.RespondUnauthorized(&quot;Invalid token&quot;), nil
+        }
+        return nil, err // 基础设施故障返回 error
+    }
+
+    return idskit.ForwardWithHeaders(http.Header{
+        &quot;X-Tenant-Ref&quot;:   {claims.TenantRef},
+        &quot;X-Database-Ref&quot;: {claims.DatabaseRef},
+    }), nil
+}
+
+// 当发生用户注销/刷新事件时，主动失效：
+// p.loader.Invalidate(token) // 内部原子删除缓存 + 标记在途任务失效 + Forget SingleFlight，彻底防旧值复活
+</code></pre>
+<hr>
+<h4 id="新手容易写错的关键点与-idskit-的底层防护机制">新手容易写错的关键点与 <code>idskit</code> 的底层防护机制</h4>
+<p>如果选择手写底层 SingleFlight 与 Cache，必须严格遵守以下 6 点（<code>idskit</code> 已在内部自动兜底）：</p>
+<ul>
+<li><strong>① 缓存键取身份指纹并加进程随机密钥</strong>：
+<ul>
+<li>缓存键必须是身份指纹，不能直接用全量请求或长原始 Token 作为 Key。</li>
+<li><code>idskit.Fingerprint</code> 采用长度前缀编码与 128 位截断 HMAC-SHA-256（带进程随机密钥），保证组件边界严格保留且彻底防预计算碰撞。</li>
+</ul>
+</li>
+<li><strong>② 必须用 <code>DoChan</code> + <code>select ctx.Done()</code>，不要用 <code>sf.Do</code></strong>：
+<ul>
+<li><code>sf.Do</code> 会<strong>忽略调用者的 ctx</strong>：leader 那次回源一旦卡住，所有等待的请求全被拖死，直到宿主超时。<code>DoChan</code> 才能在 caller 超时/取消时先脱身。</li>
+</ul>
+</li>
+<li><strong>③ 回源闭包使用 <code>context.WithoutCancel</code> 隔离超时</strong>：
+<ul>
+<li>切勿把某个 caller 的 ctx 直接传给回源闭包——它一取消会连带取消其他共享者的回源。<code>idskit</code> 使用 <code>context.WithTimeout(context.WithoutCancel(callerCtx), timeout)</code>，既切断取消链，又完整保留链路 trace/baggage 上下文。</li>
+</ul>
+</li>
+<li><strong>④ 严格的负缓存边界</strong>：
+<ul>
+<li>鉴权失败（<code>idskit.ErrNotFound</code>）才进短 TTL 负缓存，防止黑客用假 Token 打穿后端。</li>
+<li><strong>网络抖动、DB 超时等基础设施错误绝不进负缓存</strong>，并立即调用 <code>sf.Forget(key)</code>，确保下一个请求可以立即重试。</li>
+</ul>
+</li>
+<li><strong>⑤ 失效防复活（原子在途状态锁）</strong>：
+<ul>
+<li>注销/刷新时调用 <code>cache.Remove(key)</code> + <code>sf.Forget(key)</code>。<code>idskit</code> 在同一互斥锁下管理在途状态（In-flight State），回源结束写回缓存前原子校验失效标志，彻底杜绝慢回源落后完成导致的“旧值复活”。</li>
+</ul>
+</li>
+<li><strong>⑥ 并发安全与容量淘汰</strong>：
+<ul>
+<li>内存缓存必须具备容量上限（<code>golang-lru/v2</code>），避免使用无淘汰机制的 <code>sync.Map</code> 导致内存暴涨（OOM）。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>Selector 应表达真实的硬隔离维度。高基数 Selector 会增加逐请求实例过滤成本；对于仍启用查询缓存的自定义发现类型，还应评估缓存基数。LiteGate 内置的实时发现类型（LiteMesh、Consul、K8s 等）不会按每个 Selector 值长期缓存过滤结果。</p>
+</blockquote>
+<h2 id="实现约束">实现约束</h2>
+<ul>
+<li>Evaluate 会被并发调用，共享字段必须线程安全；冷缓存回源用 singleflight 合并，见<a href="#%E7%BC%93%E5%AD%98%E4%B8%8E%E5%B9%B6%E5%8F%91%E5%9B%9E%E6%BA%90%E5%AE%98%E6%96%B9%E5%B7%A5%E5%85%B7%E5%8C%85-idskit">缓存与并发回源（官方工具包 idskit）</a>。</li>
+<li>req 只在当前调用有效；读取 Body 后恢复 Body。</li>
+<li>业务拒绝返回 Respond，基础设施故障返回 error。</li>
+<li>外部访问继承 ctx 并配置超时。</li>
+<li>不记录原始 token、密码或 Secret。</li>
+<li>Selector 是硬边界；Meta 只是边界内可回退的偏好。</li>
+<li>RateLimit Key 是不透明业务主体，QPS 必须大于 0；超限请求在 Action 执行前返回 429（proxy 因而不会进入服务发现）。</li>
+<li>不回传客户端伪造的内部 Header，必须生成新值并配置投影白名单。</li>
+</ul>
+<h2 id="可选的事件通知与状态同步">可选的事件通知与状态同步</h2>
+<p>IDS 不强制使用缓存，也不强制订阅 notify。例如仅做 MD5 验签的 Provider 可以只实现 <code>Evaluate</code>，无需通知接口或 <code>shared.notify</code> 配置。只有实现 <code>NotifySubscriber</code> 并声明非空 subject 的实例才建立订阅。</p>
+<p>插件为了性能可以把租户、凭据等缓存在进程内。缓存什么、怎么删由插件自己决定，宿主不做假设；宿主提供的是<strong>可选的通知投递</strong>：Provider 实现可选接口 <code>plugin.NotifySubscriber</code>，声明自己关心的 subject，外部系统（如租户系统）状态变化后向这个 subject 发一个信号，宿主就把它投递给该 Provider。</p>
+<pre><code class="language-go">func (p *Provider) NotifySubjects() []string { return []string{&quot;notify.tenant&quot;} }
+
+func (p *Provider) HandleNotify(ctx context.Context, n plugin.Notification) error {
+	if n.Resync { // 订阅刚生效、断线重连或之前处理失败：可能漏了消息
+		p.tenants.InvalidateAll()
+		return nil
+	}
+	var signal struct {
+		TenantID string `json:&quot;tenant_id&quot;`
+	}
+	if json.Unmarshal(n.Data, &amp;signal) == nil &amp;&amp; signal.TenantID != &quot;&quot; {
+		p.tenants.Invalidate(signal.TenantID)
+	}
+	return nil
+}
+</code></pre>
+<p>声明 subject 的 Provider 实例创建时宿主才订阅，退役或关闭前退订；同一实例的回调串行执行。消息不持久化、不重投，宿主改为保证 <code>Resync</code>：订阅生效后、断线重连或丢消息后、回调返回错误或 panic 之后。<code>idskit.IdentityLoader.InvalidateAll</code> 同时隔离在途回源，旧结果不会写回缓存。租户停用后 <code>Evaluate</code> 仍须返回明确的拒绝，缓存失效只负责让它尽快读到新状态。配置方式、发布方法和 Redis 等共享缓存的处理见 <a href="user/09-advanced/event-notification.html#9-%E6%8F%92%E4%BB%B6%E8%AE%A2%E9%98%85%E9%80%9A%E7%9F%A5%E6%8F%92%E4%BB%B6%E8%87%AA%E5%B7%B1%E5%AE%9A%E4%B9%89-subject">插件订阅通知</a>。</p>
+<p><code>Resync</code> 表示可能漏过通知，需要按插件自身语义重新校准状态，不等同于“必须清缓存”。有缓存可以失效缓存，持有快照可以重新读取配置源，无本地状态则可直接成功返回。回调必须尊重 context 的取消和期限；宿主等待旧回调退出后才启用新订阅，保证跨连接切换也串行。</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/ids-provider-plugin-guide.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

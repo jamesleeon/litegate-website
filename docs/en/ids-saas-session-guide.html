@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaaS login and cluster routing with IDS · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../en/index.html">Home</a>
+      <a href="../../en/guide.html">Guide</a>
+      <a href="../../en/features.html">Features</a>
+      <a href="../../en/ecosystem.html">Ecosystem</a>
+      <a href="README.html" aria-current="page">Docs</a>
+      <a href="../zh-cn/ids-saas-session-guide.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="README.html">Docs home</a></li><li><details><summary>User guide</summary><ul><li><a href="user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="user/01-getting-started/build.html">Build from source</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="user/08-observability/access-log.html">Access Log</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>Topics</summary><ul><li><a href="database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="ids-recipes.html">IDS Recipes</a></li><li><a href="ids-saas-session-guide.html" class="current" aria-current="page">SaaS login and cluster routing with IDS</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="release_control_guide.html">Configuration Release Control</a></li><li><a href="serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="saas-login-and-cluster-routing-with-ids">SaaS login and cluster routing with IDS</h1>
+<p>The SaaS example implements login, API, logout and refresh as business IDS
+providers. Applications remain responsible for authentication and tenant database
+selection. The gateway selects the tenant's application cluster and preserves the
+Router's Service boundary.</p>
+<h2 id="four-request-paths">Four request paths</h2>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Evaluate</th>
+<th>Optional OnResponse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>login</td>
+<td>Look up tenant cluster, generate correlation header and private State</td>
+<td>Validate returned correlation/token and create session mapping</td>
+</tr>
+<tr>
+<td>api</td>
+<td>Read token mapping, produce Match/Meta</td>
+<td>Not required</td>
+</tr>
+<tr>
+<td>logout</td>
+<td>Select using existing mapping, retain session key</td>
+<td>Remove mapping after successful application logout</td>
+</tr>
+<tr>
+<td>refresh</td>
+<td>Route with old mapping and generate fresh correlation</td>
+<td>Atomically replace old token mapping</td>
+</tr>
+</tbody>
+</table>
+<p>Providers share a private storage protocol, not necessarily one Provider instance.
+The API provider does not implement OnResponse or return State.</p>
+<h2 id="correlation-and-trust">Correlation and trust</h2>
+<p>Login projects a random <code>X-IDS-Correlation</code> header and saves its original value,
+tenant ID, cluster code and tenant generation in request-local State. The backend
+must return that exact value and one <code>X-Access-Token</code> on success. Compare against
+the original State, then store a token digest mapping and remove the internal
+correlation response header. At least 128 bits of cryptographic randomness are
+recommended. State is neither shared session storage nor an application header.</p>
+<p>Tenant hints locate a login cluster; they are not authentication credentials.
+Arbitrary client headers are not trusted tenant identities. Application token
+authenticity and expiry still need validation. Trusted projection only has meaning
+on a trusted gateway-to-application connection.</p>
+<h2 id="configuration-and-tags">Configuration and tags</h2>
+<p>Plugin configuration comes through <code>plugin_config.path</code>. The SaaS plugin owns
+<code>providers.saas_session.stores</code>; each named store supplies mode, prefix and TTL.
+Redis settings include address, database and a password environment reference.
+Do not put passwords in route labels. Memory mode supports a bounded local store;
+Redis shares authoritative state across gateways. <code>memory_redis</code> is rejected until
+cross-instance invalidation and recovery are implemented. Store configuration
+changes require restart; ordinary route reload does not clear session mappings.</p>
+<p>A login Router selects <code>saas_login</code>, uses deny, enables response_hook with timeout
+and max_concurrency, allows <code>X-IDS-Correlation</code> projection, and supplies store_ref,
+tenant_directory_url, correlation_header, response_token_header and success_status
+through options. API selects <code>saas_api</code> without a hook. Logout and refresh use their
+own paths and Providers with a hook. See the runnable example's current
+<a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/ids-saas-session/site.yaml">site configuration</a> and
+<a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/ids-saas-session/plugins.yaml">plugin configuration</a>.</p>
+<p>Catalog Router tags support the same hook validation:</p>
+<pre><code class="language-text">litegate.http.routers.login.entrypoints=web
+litegate.http.routers.login.match.hosts=saas.example.com
+litegate.http.routers.login.match.path=/login
+litegate.http.routers.login.ids.provider=saas_login
+litegate.http.routers.login.ids.allowedheaders=X-IDS-Correlation
+litegate.http.routers.login.ids.response_hook.enabled=true
+litegate.http.routers.login.ids.response_hook.timeout=500ms
+litegate.http.routers.login.ids.response_hook.max_concurrency=100
+litegate.http.routers.login.ids.response_hook.fail_policy=deny
+litegate.http.routers.login.ids.options.store_ref=saas-session
+</code></pre>
+<p>Compile the plugin before using its tags. Keep route labels consistent across
+same-name instances; put cluster/version differences in instance metadata.
+<code>ids.selector_merge_policy</code> defaults to intersect; explicit override remains
+subject to the documented IDS boundary. Tags do not provision Redis storage.</p>
+<h2 id="response-behavior">Response behavior</h2>
+<p>The original Provider and configuration snapshot handle the final backend response
+once after retry completion, before client response processing. Normal application
+401/403 responses enter the hook; direct IDS rejection, rate limiting, discovery
+failure and transport failure without a backend response do not. Every path
+releases State.</p>
+<p>Deny prevents delivery of an unbound success token on storage errors. Callback
+panic, timeout, overload and invalid header removal are controlled. Explicit allow
+can permit an ordinary callback error; timeout/panic/invalid decisions still reject.
+Late callbacks cannot modify responses and keep their lease/concurrency slot until
+they actually exit. The first hook implementation only removes permitted business
+headers: no body modification, response cache, Upgrade, gRPC or WASM response hook.</p>
+<p>Metrics are <code>litegate_ids_response_duration_seconds</code>,
+<code>litegate_ids_response_total{provider,result}</code> and <code>litegate_ids_response_inflight</code>.
+Tokens, State and business keys are not metric labels.</p>
+<h2 id="session-storage">Session storage</h2>
+<p>The private implementation is in the example's <code>ids/sessionstore</code> package.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Contract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Get</td>
+<td>Read an unexpired session with valid tenant generation</td>
+</tr>
+<tr>
+<td>Put</td>
+<td>Atomically write session/index after generation check; idempotency does not extend TTL</td>
+</tr>
+<tr>
+<td>Replace</td>
+<td>Create new token and remove old valid token atomically; reject refresh replay</td>
+</tr>
+<tr>
+<td>Delete</td>
+<td>Idempotently remove session and index member</td>
+</tr>
+<tr>
+<td>GroupState</td>
+<td>Read tenant generation and disable state</td>
+</tr>
+<tr>
+<td>ChangeGroup</td>
+<td>Accept only newer authoritative generations</td>
+</tr>
+<tr>
+<td>PurgeGroup</td>
+<td>Batch-clean old/disabled mappings and index members</td>
+</tr>
+</tbody>
+</table>
+<p>Values include tenant ID, cluster code and preferred version. Keys use token
+digests; Redis further hashes logical keys/groups and indexes expiry in sorted
+sets. API traffic does not renew TTL. Memory defaults to 100000 entries. Values
+are limited to 64 KiB; positive monotonic generations are bounded by 2^53.</p>
+<p>Redis uses atomic Lua operations. Tenant generation state survives session TTL to
+prevent old sessions from reviving. Redis server TTL is authoritative; client
+ExpiresAt is informational. Gateways must share store name, prefix, Redis address
+and database. This is a single Redis service implementation, not Redis Cluster HA
+or performance certification. Successful commit followed by failed HTTP delivery
+may leave a mapping until TTL; commit and delivery are not one transaction.</p>
+<h2 id="tenant-disable-and-notifications">Tenant disable and notifications</h2>
+<p>First persist tenant disable and advance its generation, then broadcast tenant ID,
+version and disabled state. ChangeGroup makes old sessions immediately unreadable;
+PurgeGroup removes them physically. Late login/refresh cannot commit an old
+generation. Re-enabling requires a higher generation and does not restore old tokens.</p>
+<p>Optional NotifySubscriber receives <code>notify.saas.tenant</code>. Core NATS is not durable:
+initial subscription, reconnect, overflow and handler error trigger Resync. Recheck
+authoritative tenant state instead of merely clearing local cache and reloading
+old Redis data. The example also checks tenant state on API requests. Production
+caches need explicit TTL and recovery rules; notification publication does not
+guarantee instant rejection on every gateway.</p>
+<p>The standard distribution includes NATS. Custom builds can link
+<code>github.com/jamesleeon/LiteGate/pkg/plugins/nats</code>. Restrict notification publishers
+to trusted business actors and do not publish raw tokens. Every relevant gateway
+must receive invalidation, rather than competing for one broadcast message.</p>
+<h2 id="runnable-example-and-verification">Runnable example and verification</h2>
+<p>See <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/ids-saas-session/README.md">examples/ids-saas-session</a>.</p>
+<pre><code class="language-powershell">powershell -NoProfile -File examples/ids-saas-session/build.ps1
+python examples/ids-saas-session/verify.py
+python examples/ids-saas-session/verify.py --catalog-tags
+</code></pre>
+<p>The loopback lab starts/stops its own processes: two application clusters, tenant
+directory, two gateways, NATS and a miniredis test fixture. It does not change
+existing LAN services. Coverage includes cross-gateway login/API, tenant isolation,
+refresh races, logout, TTL, concurrent login, invalid correlation/token headers,
+application rejection, notification disable and in-flight login races. Core tests
+cover timeout/panic, snapshot/lifecycle handling, final retry responses, illegal
+header removal and batched reverse-index cleanup.</p>
+<p>Evidence is saved under <code>artifacts/ids-saas-session</code>, without raw tokens.
+Gateway duties remain Evaluate, request State, forwarding and optional OnResponse.
+The plugin manages pools and shared storage lifetime; closing one business
+Provider must not destroy storage still used by the other Providers.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/ids-saas-session-guide.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

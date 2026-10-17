@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenAPI MD5 IDS Provider: Configuration and Protocol · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../en/index.html">Home</a>
+      <a href="../../en/guide.html">Guide</a>
+      <a href="../../en/features.html">Features</a>
+      <a href="../../en/ecosystem.html">Ecosystem</a>
+      <a href="README.html" aria-current="page">Docs</a>
+      <a href="../zh-cn/openapi-md5-ids-plugin.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="README.html">Docs home</a></li><li><details><summary>User guide</summary><ul><li><a href="user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="user/01-getting-started/build.html">Build from source</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="user/08-observability/access-log.html">Access Log</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>Topics</summary><ul><li><a href="database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="ids-recipes.html">IDS Recipes</a></li><li><a href="ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="openapi-md5-ids-plugin.html" class="current" aria-current="page">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="release_control_guide.html">Configuration Release Control</a></li><li><a href="serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="openapi-md5-ids-provider-configuration-and-protocol">OpenAPI MD5 IDS Provider: Configuration and Protocol</h1>
+<p><code>openapi-md5</code> is an IDS Provider registered in the default LiteGate binary, blank-imported by the default entrypoint like NATS. It takes part in request verification only on routes bound to it. It verifies an MD5 signature over the raw body; on success it returns <code>ActionForward</code> without setting <code>Discovery</code>, and the route's action continues.</p>
+<blockquote>
+<p>MD5 exists only for compatibility with existing clients. New protocols should prefer HMAC-SHA256.</p>
+</blockquote>
+<h2 id="signature-protocol">Signature protocol</h2>
+<p>Request headers:</p>
+<pre><code class="language-text">_appid      application ID
+_method     HTTP method; must equal the actual request method
+_timestamp  Unix timestamp in seconds
+_sign       32 hexadecimal digit MD5
+</code></pre>
+<p>Legacy clients sort the fields <code>_appid</code>, <code>_method</code>, <code>_timestamp</code> by name and concatenate only the values. The equivalent formula:</p>
+<pre><code class="language-text">sign = hex(md5(
+    secret
+    + appid
+    + method
+    + timestamp
+    + raw_request_body
+    + secret
+))
+</code></pre>
+<p>The body is the raw bytes received, with no JSON reformatting, charset conversion or newline handling. Signatures are compared in constant time; the host reads and restores the body so downstream can still read it in full.</p>
+<h2 id="pluginyaml-configuration-and-debug-logging">plugin.yaml configuration and debug logging</h2>
+<pre><code class="language-yaml"># config.yaml
+plugin_config:
+  path: plugin.yaml
+  watch: true
+</code></pre>
+<pre><code class="language-yaml"># plugin.yaml
+providers:
+  openapi-md5:
+    debug_log: true
+    secrets:
+      orders: '${ORDERS_OPENAPI_SECRET}'
+</code></pre>
+<pre><code class="language-yaml"># sites/open.example.com.yaml
+site: open.example.com
+https: true
+/api:
+  proxy: 127.0.0.1:8080
+  ids:
+    provider: openapi-md5
+    fail_policy: deny
+    options:
+      secret_ref: orders
+</code></pre>
+<p><code>secret_ref</code> takes the secret from <code>providers.openapi-md5.secrets.&lt;ref&gt;</code> and cannot be combined with <code>secret_env</code> / <code>secret_env_prefix</code>. The secret and debug_log are read from the latest configuration view on every request, so file hot reloads need no restart. Set debug_log to false to turn logging off. Logs use Info level and contain the plugin name, start/end events, the decision, a fixed reason and the duration; a system log level of warn/error filters them out.</p>
+<p>Litemesh tags use <code>litegate.http.routers.api.ids.provider=openapi-md5</code>, <code>litegate.http.routers.api.ids.failpolicy=deny</code> and <code>litegate.http.routers.api.ids.options.secret_ref=orders</code>; for a complete routing example see the <a href="ids-provider-plugin-guide.html">IDS Provider guide</a>. Secrets and plugin configuration stay on the gateway process side.</p>
+<h2 id="secret-configuration">Secret configuration</h2>
+<p>Secrets don't go in route options. A single-secret route reads by default:</p>
+<pre><code class="language-text">LITEGATE_OPENAPI_MD5_SECRET
+</code></pre>
+<p>You can reference another environment variable:</p>
+<pre><code class="language-yaml">options:
+  secret_env: ORDERS_OPENAPI_SECRET
+</code></pre>
+<p>When several apps share a route, use a prefix:</p>
+<pre><code class="language-yaml">options:
+  secret_env_prefix: OPENAPI_SECRET_
+</code></pre>
+<p>The App ID becomes an upper-case environment variable suffix, with non-alphanumerics replaced by underscores. For example <code>app-42</code> reads:</p>
+<pre><code class="language-text">OPENAPI_SECRET_APP_42
+</code></pre>
+<p>To fetch secrets dynamically from Redis, a database or a tenant system, implement your own Provider with cached business lookups.</p>
+<h2 id="route-configuration">Route configuration</h2>
+<pre><code class="language-yaml">site: open.example.com
+services:
+  orders:
+    discovery: {name: orders}
+routes:
+  - name: open-orders
+    match:
+      path_prefix: /openapi/orders
+    service: orders
+    ids:
+      provider: openapi-md5
+      fail_policy: deny
+      options:
+        secret_env_prefix: OPENAPI_SECRET_
+        max_clock_skew: 5m
+        max_body_size: 1MiB
+</code></pre>
+<p>Optional parameters:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>app_id_header</code></td>
+<td><code>_appid</code></td>
+<td>App ID header</td>
+</tr>
+<tr>
+<td><code>method_header</code></td>
+<td><code>_method</code></td>
+<td>Method header</td>
+</tr>
+<tr>
+<td><code>timestamp_header</code></td>
+<td><code>_timestamp</code></td>
+<td>Unix-seconds timestamp header</td>
+</tr>
+<tr>
+<td><code>signature_header</code></td>
+<td><code>_sign</code></td>
+<td>Signature header</td>
+</tr>
+<tr>
+<td><code>secret_ref</code></td>
+<td>empty</td>
+<td>Reference into plugin.yaml secrets; mutually exclusive with the environment variable options</td>
+</tr>
+<tr>
+<td><code>secret_env</code></td>
+<td><code>LITEGATE_OPENAPI_MD5_SECRET</code></td>
+<td>Environment variable for a single secret</td>
+</tr>
+<tr>
+<td><code>secret_env_prefix</code></td>
+<td>empty</td>
+<td>Resolve the environment variable by App ID; takes precedence over <code>secret_env</code></td>
+</tr>
+<tr>
+<td><code>max_clock_skew</code></td>
+<td><code>5m</code></td>
+<td>Allowed client clock skew</td>
+</tr>
+<tr>
+<td><code>max_body_size</code></td>
+<td><code>1MiB</code></td>
+<td>Largest body included in the signature; cannot exceed the host's 8 MiB limit</td>
+</tr>
+</tbody>
+</table>
+<h2 id="decisions">Decisions</h2>
+<ul>
+<li>Valid signature: <code>ActionForward</code>, no Discovery, to the default downstream.</li>
+<li>Missing fields, method mismatch, expired timestamp or wrong signature: direct 401.</li>
+<li>Body over the limit: direct 413.</li>
+<li>Missing secret environment variable or invalid parameters: an error, handled by <code>fail_policy</code>.</li>
+</ul>
+<p>Failure responses are JSON with <code>Cache-Control: no-store</code>:</p>
+<pre><code class="language-json">{&quot;code&quot;:&quot;invalid_signature&quot;}
+</code></pre>
+<h2 id="go-client">Go client</h2>
+<p><code>pkg/apiclient</code> in the repository implements the same algorithm:</p>
+<pre><code class="language-go">client := apiclient.NewClient(
+    &quot;app-42&quot;,
+    os.Getenv(&quot;OPENAPI_SECRET_APP_42&quot;),
+    &quot;https://api.example.com&quot;,
+)
+
+resp, err := client.PostJSON(&quot;/openapi/orders&quot;, []byte(`{&quot;sku&quot;:&quot;A-1&quot;}`))
+</code></pre>
+<p>The implementation is in <code>internal/plugins/openapi_md5/provider.go</code> and is registered by default through <code>cmd/litegate/plugins.go</code>. After rebuilding the gateway, query it with <code>litegate plugins inspect ids/openapi-md5</code>. For the development contract see the <a href="ids-provider-plugin-guide.html">IDS Provider guide</a>.</p>
+<p>The MD5 protocol doesn't cover the host, path or query, and the timestamp window is not one-time replay protection; interfaces sharing a secret share the same signature boundary, and protocol extensions require changing both client and server.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/openapi-md5-ids-plugin.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Path Rewrite and Redirect Middleware · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/05-middleware/path-and-redirect.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details open><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html" class="current" aria-current="page">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="path-rewrite-and-redirect-middleware">Path Rewrite and Redirect Middleware</h1>
+<p>These named middleware all run in the <strong>RequestTransform</strong> phase — <strong>before</strong> WAF, authentication and rate limiting — so security components see the final normalized path.</p>
+<p>Keep the two kinds apart:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Kind</th>
+<th style="text-align:left">Middleware</th>
+<th style="text-align:left">Behavior</th>
+<th style="text-align:left">Visible to the client?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Internal rewrite</strong></td>
+<td style="text-align:left"><code>strip_prefix</code>, <code>rewrite</code>, <code>replace_path_regex</code></td>
+<td style="text-align:left">Changes the path/query sent upstream; the client URL stays the same</td>
+<td style="text-align:left">No</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>External redirect</strong></td>
+<td style="text-align:left"><code>redirect_scheme</code>, <code>redirect_regex</code></td>
+<td style="text-align:left">Returns a <code>3xx</code> to the client so the browser goes to the new address</td>
+<td style="text-align:left">Yes</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="1-strip_prefix--remove-a-path-prefix">1. <code>strip_prefix</code> — remove a path prefix</h2>
+<p>Remove a prefix such as <code>/api</code> before proxying — the most common gateway need.</p>
+<pre><code class="language-yaml">site: api.example.com
+middlewares:
+  strip-api:
+    type: strip_prefix
+    config:
+      prefixes: &quot;/api,/v1&quot;   # comma-separated, each must start with /
+
+/api:
+  use: [strip-api]
+  proxy: 127.0.0.1:8080      # /api/users -&gt; /users
+</code></pre>
+<ul>
+<li>The <strong>first</strong> matching prefix is stripped and matching stops; an empty result falls back to <code>/</code>.</li>
+<li>Every prefix must start with <code>/</code>, or loading fails.</li>
+</ul>
+<hr>
+<h2 id="2-rewrite--regex-path-rewrite--query-editing">2. <code>rewrite</code> — regex path rewrite + query editing</h2>
+<p><code>rewrite</code> is the most complete internal rewriter: one middleware handles both path and query.</p>
+<p>For the full inline configuration, execution order, query semantics and examples of migrating from Nginx <code>last</code>, see <a href="../03-configuration/rewrite.html">Rewrite: path and query rewriting</a>.</p>
+<pre><code class="language-yaml">middlewares:
+  api-rewrite:
+    type: rewrite
+    config:
+      path_pattern: &quot;^/api/(.*)$&quot;       # regex
+      path_target: &quot;/$1&quot;                # target path, must start with /
+      query_set.version: &quot;v2&quot;           # set ?version=v2 (overwrite)
+      query_add.trace: &quot;1&quot;              # append ?trace=1
+      query_rename.uid: &quot;user_id&quot;       # rename ?uid= to ?user_id=
+      query_remove: &quot;debug,internal&quot;    # remove these query parameters (comma-separated)
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>path_pattern</code> / <code>path_target</code></td>
+<td style="text-align:left">Used as a pair. <code>path_pattern</code> is a regex; <code>path_target</code> supports <code>$1</code>, <code>$2</code> back-references and must start with <code>/</code>.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>query_set.&lt;name&gt;</code></td>
+<td style="text-align:left">Set a query parameter (replacing an existing one).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>query_add.&lt;name&gt;</code></td>
+<td style="text-align:left">Append a query parameter (may coexist with existing values of the same name).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>query_rename.&lt;name&gt;</code></td>
+<td style="text-align:left">Rename parameter <code>&lt;name&gt;</code> to the target name given as its value.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>query_remove</code></td>
+<td style="text-align:left">Comma-separated names of parameters to remove.</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>At least one path or query operation is required, or loading fails.</li>
+<li>When <code>path_pattern</code> doesn't match the current path, the whole rewrite (query operations included) is skipped, keeping it atomic.</li>
+<li><code>rewrite</code> has <code>AllowMultiple = false</code>: a route has at most one active rewrite, and <strong>inline <code>rewrite</code> and named <code>rewrite</code> cannot be combined</strong>; that is a load error.</li>
+</ul>
+<blockquote>
+<p>When you only need a regex path replacement without query changes, <code>replace_path_regex</code> is lighter.</p>
+</blockquote>
+<hr>
+<h2 id="3-replace_path_regex--regex-path-replacement-only">3. <code>replace_path_regex</code> — regex path replacement only</h2>
+<pre><code class="language-yaml">middlewares:
+  legacy-path:
+    type: replace_path_regex
+    config:
+      regex: &quot;^/old/(.*)$&quot;
+      replacement: &quot;/new/$1&quot;   # must start with /
+</code></pre>
+<ul>
+<li>Affects only <code>req.URL.Path</code>, not the query string.</li>
+<li>After rewriting, the original path is written to the <code>X-Replaced-Path</code> header, and the original URI is kept for logging.</li>
+<li><code>AllowMultiple = true</code>: several can be stacked and run in declaration order.</li>
+</ul>
+<hr>
+<h2 id="4-redirect_scheme--schemeport-redirect">4. <code>redirect_scheme</code> — scheme/port redirect</h2>
+<p>The standard way to force HTTP to HTTPS.</p>
+<pre><code class="language-yaml">middlewares:
+  force-https:
+    type: redirect_scheme
+    config:
+      scheme: &quot;https&quot;        # http or https
+      permanent: &quot;true&quot;      # true = 301, false/omitted = 302
+      # port: &quot;8443&quot;         # optional target port
+</code></pre>
+<ul>
+<li>When the current scheme (and optional port) already equals the target, there is no redirect and the request passes.</li>
+<li>The scheme is determined from <code>req.TLS</code> and <code>X-Forwarded-Proto</code>, so it works behind reverse proxies and load balancers.</li>
+</ul>
+<hr>
+<h2 id="5-redirect_regex--regex-redirect-on-the-full-url">5. <code>redirect_regex</code> — regex redirect on the full URL</h2>
+<blockquote>
+<p><strong>Important</strong>: the <code>regex</code> of <code>redirect_regex</code> matches the <strong>full absolute URL</strong> (<code>scheme://host/path?query</code>), <strong>not just the path</strong>.</p>
+</blockquote>
+<pre><code class="language-yaml">middlewares:
+  redirect-old-domain:
+    type: redirect_regex
+    config:
+      regex: &quot;^https?://old\\.example\\.com/(.*)$&quot;
+      replacement: &quot;https://new.example.com/$1&quot;
+      permanent: &quot;true&quot;
+</code></pre>
+<ul>
+<li><code>replacement</code> supports <code>$1</code> back-references.</li>
+<li>Targets containing newlines or other control characters return 500 (injection protection).</li>
+<li><code>permanent: true</code> → 301, otherwise 302.</li>
+<li><code>AllowMultiple = true</code>: several rules can be configured.</li>
+</ul>
+<hr>
+<h2 id="6-execution-order-summary">6. Execution order summary</h2>
+<p>Within RequestTransform, middleware run from outside in by their registered <code>Order</code>; equal <code>Order</code> follows declaration order on the route. MCP's <code>lookup_route</code> shows the <code>Effective Pipeline (outer → inner)</code> after chains expand, confirming the final order.</p>
+<p>Because the whole group runs <strong>before security checks</strong>, WAF and authentication always see the final rewritten path — important for path allow lists and signature policies.</p>
+<p>Rewrites only affect the request sent to the current upstream and <strong>never re-select the route</strong>: the route was chosen from the original path before rewriting. All regexes use Go <code>regexp</code> syntax.</p>
+<hr>
+<h2 id="further-reading">Further reading</h2>
+<ul>
+<li><a href="../03-configuration/rewrite.html">Rewrite: path and query rewriting</a></li>
+<li><a href="../04-actions/redirect.html">Redirect action</a></li>
+<li><a href="./pipeline.html">Middleware pipeline and chain</a></li>
+<li><a href="../04-actions/proxy.html">Reverse proxy action</a></li>
+<li><a href="./rate-limit.html">Rate limiting and concurrent connection limits</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/05-middleware/path-and-redirect.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

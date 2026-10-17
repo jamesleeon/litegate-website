@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate FastCGI Configuration Guide · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../en/index.html">Home</a>
+      <a href="../../en/guide.html">Guide</a>
+      <a href="../../en/features.html">Features</a>
+      <a href="../../en/ecosystem.html">Ecosystem</a>
+      <a href="README.html" aria-current="page">Docs</a>
+      <a href="../zh-cn/fastcgi_config.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="README.html">Docs home</a></li><li><details><summary>User guide</summary><ul><li><a href="user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="user/01-getting-started/build.html">Build from source</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="user/08-observability/access-log.html">Access Log</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>Topics</summary><ul><li><a href="database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="fastcgi_config.html" class="current" aria-current="page">LiteGate FastCGI Configuration Guide</a></li><li><a href="forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="ids-recipes.html">IDS Recipes</a></li><li><a href="ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="release_control_guide.html">Configuration Release Control</a></li><li><a href="serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="litegate-fastcgi-configuration-guide">LiteGate FastCGI Configuration Guide</h1>
+<p>This document explains how to reverse-proxy requests to a <strong>FastCGI</strong> backend (most commonly <strong>PHP-FPM</strong>) from a LiteGate YAML site config, so LiteGate can serve PHP / WordPress / Laravel and similar environments directly.</p>
+<p>For ordinary PHP websites, prefer the <a href="user/03-configuration/site-config.html#php-websites-wordpress--laravel">site-level <code>php</code> shorthand</a>: configure the website root and PHP-FPM address to automatically handle static files, directory indexes and front-controller fallback. The lower-level configuration below remains available for custom routing.</p>
+<blockquote>
+<p>Use case: replace the Nginx role in a typical &quot;Nginx + php-fpm&quot; stack — LiteGate talks to php-fpm directly over a TCP port or a Unix socket.</p>
+</blockquote>
+<hr>
+<h2 id="1-minimal-config-tcp">1. Minimal config (TCP)</h2>
+<p>Assuming php-fpm listens on <code>127.0.0.1:9000</code> and the site code lives at <code>/var/www/html</code> on the backend:</p>
+<pre><code class="language-yaml">site: example.com
+routes:
+  - name: php-route
+    match:
+      path: /index.php
+    action:
+      type: proxy
+      proto: fastcgi # Required: declare the FastCGI protocol
+      fastcgi_root: /var/www/html # Required: backend Document Root (base for SCRIPT_FILENAME)
+      upstream:
+        - &quot;fastcgi://127.0.0.1:9000&quot; # FastCGI backend address
+</code></pre>
+<p>Only three fields are required: <strong><code>proto: fastcgi</code></strong> + <strong><code>fastcgi_root</code></strong> + <strong><code>upstream</code></strong>.</p>
+<hr>
+<h2 id="2-using-a-unix-socket">2. Using a Unix socket</h2>
+<p>When php-fpm uses a Unix socket (better performance, no TCP overhead), set <code>upstream</code> to <code>unix://</code> followed by the absolute socket path:</p>
+<pre><code class="language-yaml">site: example.com
+action:
+  type: proxy
+  proto: fastcgi
+  fastcgi_root: /var/www/html
+  upstream:
+    - &quot;unix:///var/run/php/php8.2-fpm.sock&quot; # Note the three slashes: unix:// + /absolute/path
+</code></pre>
+<blockquote>
+<p>Unix sockets require Unix Domain Socket support on both the LiteGate and PHP-FPM hosts. On Windows, prefer <code>fastcgi://127.0.0.1:9000</code>. A Windows Named Pipe is not a Unix socket and is not currently accepted as a FastCGI upstream.</p>
+</blockquote>
+<hr>
+<h2 id="3-supported-upstream-forms">3. Supported upstream forms</h2>
+<table>
+<thead>
+<tr>
+<th>Form</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fastcgi://127.0.0.1:9000</code></td>
+<td>TCP, <strong>port required</strong></td>
+</tr>
+<tr>
+<td><code>fastcgi://[::1]:9000</code></td>
+<td>IPv6 + port</td>
+</tr>
+<tr>
+<td><code>unix:///var/run/php-fpm.sock</code></td>
+<td>Unix socket, <strong>three slashes</strong> + absolute socket path</td>
+</tr>
+<tr>
+<td><code>127.0.0.1:9000</code></td>
+<td>Bare TCP address (equivalent to <code>fastcgi://</code>), port still required</td>
+</tr>
+</tbody>
+</table>
+<p>A FastCGI route's <code>upstream</code> <strong>only accepts</strong> <code>fastcgi://</code> / <code>unix://</code> / bare <code>host:port</code>. Schemes such as <code>http://</code> or <code>ftp://</code> are rejected at load time.</p>
+<hr>
+<h2 id="4-full-field-reference">4. Full field reference</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>proto</code></td>
+<td>string</td>
+<td>—</td>
+<td><strong>Required</strong>, must be <code>fastcgi</code> to enable FastCGI. If any <code>fastcgi_*</code> field is set while <code>proto</code> is not <code>fastcgi</code>, loading fails</td>
+</tr>
+<tr>
+<td><code>fastcgi_root</code></td>
+<td>string</td>
+<td>—</td>
+<td><strong>Required</strong>, backend Document Root; joined with the script path to form <code>SCRIPT_FILENAME</code></td>
+</tr>
+<tr>
+<td><code>upstream</code></td>
+<td>list</td>
+<td>—</td>
+<td><strong>Required</strong>, list of backend addresses (see table above); multiple entries are load-balanced</td>
+</tr>
+<tr>
+<td><code>index</code></td>
+<td>string</td>
+<td><code>index.php</code></td>
+<td>Entry file appended when the request path ends with <code>/</code></td>
+</tr>
+<tr>
+<td><code>fastcgi_split_path</code></td>
+<td>string</td>
+<td><code>.php</code></td>
+<td>PATH_INFO split point, must contain <code>.</code>; splits <code>/a.php/b</code> into script <code>/a.php</code> + PATH_INFO <code>/b</code></td>
+</tr>
+<tr>
+<td><code>fastcgi_extensions</code></td>
+<td>list</td>
+<td><code>[&quot;.php&quot;]</code></td>
+<td><strong>Allowlist of executable extensions</strong>; each entry must start with <code>.</code> (e.g. <code>.php</code>), or use <code>*</code> to allow all</td>
+</tr>
+<tr>
+<td><code>fastcgi_params</code></td>
+<td>map</td>
+<td><code>{}</code></td>
+<td>Additional safe CGI variables such as <code>APP_ENV</code> and <code>REDIRECT_STATUS</code>; built-in variables such as <code>SCRIPT_FILENAME</code>, <code>REQUEST_URI</code>, and <code>HTTP_*</code> cannot be overridden</td>
+</tr>
+<tr>
+<td><code>fastcgi_keep_conn</code></td>
+<td>bool</td>
+<td><code>false</code></td>
+<td>Enable <strong>connection pooling / reuse</strong> to the backend (like Nginx <code>fastcgi_keep_conn</code>)</td>
+</tr>
+<tr>
+<td><code>fastcgi_max_idle_conns</code></td>
+<td>int</td>
+<td><code>2</code></td>
+<td>Max idle connections kept in the pool; cannot be negative</td>
+</tr>
+<tr>
+<td><code>fastcgi_idle_timeout</code></td>
+<td>int</td>
+<td><code>0</code></td>
+<td>Idle connection reclaim time (seconds); <code>0</code> means never reclaim on idle; cannot be negative</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>int</td>
+<td><code>0</code></td>
+<td>Hard timeout for the whole request/response (seconds); <code>0</code> means no hard timeout</td>
+</tr>
+<tr>
+<td><code>host</code></td>
+<td>string</td>
+<td>—</td>
+<td>Override <code>HTTP_HOST</code> / <code>SERVER_NAME</code> sent to the backend</td>
+</tr>
+<tr>
+<td><code>strip_prefix</code> / <code>prepend_prefix</code></td>
+<td>string</td>
+<td>—</td>
+<td>Path rewriting; also affects <code>SCRIPT_NAME</code> and <code>SCRIPT_FILENAME</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="5-enabling-the-connection-pool-keep-alive">5. Enabling the connection pool (keep-alive)</h2>
+<p>By default each request opens a fresh connection to the backend and closes it afterward. For high-concurrency PHP workloads, enabling connection reuse cuts connection-setup overhead significantly:</p>
+<pre><code class="language-yaml">site: example.com
+action:
+  type: proxy
+  proto: fastcgi
+  fastcgi_root: /var/www/html
+  upstream:
+    - &quot;unix:///var/run/php/php8.2-fpm.sock&quot;
+  fastcgi_keep_conn: true # enable connection pooling
+  fastcgi_max_idle_conns: 16 # keep up to 16 idle connections
+  fastcgi_idle_timeout: 60 # reclaim after 60s idle
+  timeout: 30 # max 30s per request
+</code></pre>
+<blockquote>
+<p>A connection is returned to the pool only after the response has been <strong>fully and cleanly read</strong>. Connections from early client disconnects or interrupted uploads are closed outright, so they never corrupt the next request. Before reuse, a lightweight liveness probe discards stale connections that the backend already closed.</p>
+</blockquote>
+<hr>
+<h2 id="6-path_info-and-sub-paths">6. PATH_INFO and sub-paths</h2>
+<p><code>fastcgi_split_path</code> (default <code>.php</code>) splits the path into &quot;script + PATH_INFO&quot;. For example, a request to <code>/app.php/user/42</code>:</p>
+<ul>
+<li><code>SCRIPT_NAME</code> = <code>/app.php</code></li>
+<li><code>PATH_INFO</code> = <code>/user/42</code></li>
+<li><code>SCRIPT_FILENAME</code> = <code>&lt;fastcgi_root&gt;/app.php</code></li>
+</ul>
+<p>The split uses a greedy &quot;last match followed by <code>/</code> or end-of-path&quot; rule, matching Nginx's <code>fastcgi_split_path_info ^(.+\.php)(/.+)$</code> behavior.</p>
+<hr>
+<h2 id="7-auto-injected-cgi-environment-variables">7. Auto-injected CGI environment variables</h2>
+<p>LiteGate builds and passes these variables to the backend automatically — <strong>no manual config needed</strong>:</p>
+<p><code>REQUEST_METHOD</code>, <code>REQUEST_URI</code>, <code>QUERY_STRING</code>, <code>CONTENT_TYPE</code>, <code>CONTENT_LENGTH</code>, <code>GATEWAY_INTERFACE</code>, <code>SERVER_PROTOCOL</code>, <code>SCRIPT_FILENAME</code>, <code>SCRIPT_NAME</code>, <code>PATH_INFO</code>, <code>PATH_TRANSLATED</code>, <code>DOCUMENT_ROOT</code>, <code>DOCUMENT_URI</code>, <code>REMOTE_ADDR</code>, <code>REMOTE_PORT</code>, <code>SERVER_ADDR</code>, <code>SERVER_PORT</code>, <code>SERVER_NAME</code>, <code>HTTP_HOST</code>, plus all <code>HTTP_*</code> request headers. When the client uses HTTPS, <code>HTTPS=on</code> is also set.</p>
+<p>Add application variables with <code>fastcgi_params</code>:</p>
+<p>For TLS termination at a load balancer, configure its actual address in global <code>real_ip.trusted_proxies</code>. A trusted direct peer supplying a single <code>X-Forwarded-Proto: https</code> sets <code>HTTPS=on</code> and, when Host omits a port, <code>SERVER_PORT=443</code>. Untrusted sources, repeated values and comma-separated protocol chains are not accepted.</p>
+<pre><code class="language-yaml">fastcgi_params:
+  APP_ENV: production
+  REDIRECT_STATUS: &quot;200&quot;
+</code></pre>
+<p>Names may contain uppercase letters, digits, and underscores, and cannot start with a digit. Built-in CGI and <code>HTTP_*</code> variables cannot be overridden, preserving script-path and request safety checks.</p>
+<hr>
+<h2 id="8-security-notes">8. Security notes</h2>
+<ul>
+<li><strong>Extension allowlist</strong>: by default only <code>.php</code> is treated as an executable script. A request like <code>/uploads/avatar.jpg</code> (non-allowlisted extension) is rejected by the gateway, preventing uploaded files from being executed by mistake. <strong>Avoid</strong> setting <code>fastcgi_extensions</code> to <code>*</code> carelessly.</li>
+<li><strong>Path traversal protection</strong>: requests containing <code>..</code> segments, or that would escape <code>fastcgi_root</code> after joining, are blocked.</li>
+<li><strong>httpoxy protection</strong>: the <code>Proxy</code> request header is never passed through as <code>HTTP_PROXY</code>.</li>
+</ul>
+<hr>
+<h2 id="9-limitations">9. Limitations</h2>
+<p>LiteGate does not embed a PHP runtime or start/manage PHP-FPM. PHP scripts are executed by a separate PHP-FPM service.</p>
+<p>Front-controller applications such as WordPress and Laravel can use the <code>serve</code> action's <code>try_files</code> fallback to internally redirect missing clean URLs to <code>/index.php</code>. The redirect preserves the client-visible <code>REQUEST_URI</code> and query string. <code>try_files</code> is not accepted on a <code>proxy</code> action; invalid configurations fail during loading.</p>
+<p>Because <code>serve</code> checks LiteGate's local filesystem, LiteGate and a remote PHP-FPM service must share the site tree, or static assets must be deployed to a directory visible to LiteGate.</p>
+<hr>
+<h2 id="10-complete-example">10. Complete example</h2>
+<pre><code class="language-yaml">site: php.example.com
+routes:
+  # Execute PHP scripts and PATH_INFO requests with PHP-FPM.
+  - name: php-scripts
+    priority: 100
+    match:
+      rule: 'PathRegex(&quot;(?i)^/.*\.php(?:/.*)?$&quot;)'
+    action:
+      type: proxy
+      proto: fastcgi
+      fastcgi_root: /var/www/html
+      index: index.php
+      fastcgi_split_path: &quot;.php&quot;
+      fastcgi_extensions: [&quot;.php&quot;]
+      fastcgi_params:
+        APP_ENV: production
+        REDIRECT_STATUS: &quot;200&quot;
+      upstream:
+        - &quot;unix:///var/run/php/php8.2-fpm.sock&quot;
+      fastcgi_keep_conn: true
+      fastcgi_max_idle_conns: 16
+      fastcgi_idle_timeout: 60
+      timeout: 30
+  # Serve static files and route missing clean URLs to the front controller.
+  - name: php-static-and-front-controller
+    match:
+      path_prefix: /
+    serve:
+      root: /var/www/html
+      try_files:
+        - &quot;{path}&quot;
+        - &quot;/index.php&quot;
+</code></pre>
+<hr>
+<p>Related docs: <a href="user/03-configuration/site-config.html">Site Config</a> · <a href="user/04-actions/proxy.html">proxy action</a></p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/fastcgi_config.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

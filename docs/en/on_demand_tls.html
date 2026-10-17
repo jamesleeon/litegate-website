@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>On-Demand TLS (SaaS certificate issuance on demand) · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../en/index.html">Home</a>
+      <a href="../../en/guide.html">Guide</a>
+      <a href="../../en/features.html">Features</a>
+      <a href="../../en/ecosystem.html">Ecosystem</a>
+      <a href="README.html" aria-current="page">Docs</a>
+      <a href="../zh-cn/on_demand_tls.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="README.html">Docs home</a></li><li><details><summary>User guide</summary><ul><li><a href="user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="user/01-getting-started/build.html">Build from source</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="user/08-observability/access-log.html">Access Log</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>Topics</summary><ul><li><a href="database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="ids-recipes.html">IDS Recipes</a></li><li><a href="ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="on_demand_tls.html" class="current" aria-current="page">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="release_control_guide.html">Configuration Release Control</a></li><li><a href="serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: internal/configdocs/docs/en/on-demand-tls.md (package internal/configdocs)
+     Regenerate: go generate ./internal/configdocs/...
+     Edit the source instead; a drift test fails if this copy is edited directly. -->
+<h1 id="on-demand-tls-saas-certificate-issuance-on-demand">On-Demand TLS (SaaS certificate issuance on demand)</h1>
+<p>LiteGate supports Caddy-style <strong>On-Demand TLS</strong>, issuing certificates during the TLS handshake. This matters for SaaS platforms: your customers can point their own custom domains at your platform without you configuring a certificate for each one or restarting the service.</p>
+<h2 id="1-how-it-works">1. How it works</h2>
+<p>When LiteGate receives a TLS handshake for a domain it has no certificate for — neither locally nor in distributed storage — it runs the following:</p>
+<ol>
+<li><strong>Authorization</strong>: LiteGate asks your backend (through the <code>ask</code> endpoint) or checks KV storage to confirm the domain is allowed to obtain a certificate.</li>
+<li><strong>Binding</strong>: On success, LiteGate dynamically binds the domain to a designated <em>SaaS template site</em>.</li>
+<li><strong>Issuance (ACME)</strong>: LiteGate requests a certificate over ACME (HTTP-01 challenge by default) from Let's Encrypt or another CA.</li>
+<li><strong>Caching and sync</strong>: The issued certificate is written to distributed storage (Litemesh/Consul) and cached, so later requests use it directly.</li>
+</ol>
+<h2 id="2-configuration">2. Configuration</h2>
+<p>Configure <code>auto_cert.on_demand</code> in <code>config.yaml</code>:</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: &quot;admin@example.com&quot;
+  certs_dir: &quot;./certs&quot;
+  on_demand:
+    enabled: true
+    # Option A: external authorization endpoint (recommended)
+    ask: &quot;https://api.mysaas.com/v1/verify-domain&quot;
+    # Option B: authorization from Litemesh KV
+    kv_prefix: &quot;saas/domains/&quot;
+    # default SaaS template site domain (the domain field of a site under sites/)
+    saas_template_site: &quot;template.mysaas.com&quot;
+</code></pre>
+<h3 id="parameters">Parameters</h3>
+<ul>
+<li><strong><code>ask</code></strong>: LiteGate sends a GET request to this URL with a <code>domain</code> parameter, for example <code>https://api.mysaas.com/v1/verify-domain?domain=customer1.com</code>.</li>
+<li><strong><code>saas_template_site</code></strong>: The <code>site</code> hostname of a site you have already defined in LiteGate — the key the Loader indexes that site under. Every authorized dynamic domain reuses that site's backend configuration.</li>
+</ul>
+<h2 id="3-integrating-your-saas-backend">3. Integrating your SaaS backend</h2>
+<h3 id="implementing-the-ask-endpoint">Implementing the <code>ask</code> endpoint</h3>
+<p>Your backend needs to expose an endpoint returning JSON:</p>
+<pre><code class="language-json">{
+  &quot;authorized&quot;: true,
+  &quot;template&quot;: &quot;premium-template.mysaas.com&quot;
+}
+</code></pre>
+<ul>
+<li><code>authorized</code>: must be <strong>explicitly <code>true</code></strong> for issuance to proceed.</li>
+<li><code>template</code> (optional): when returned, overrides the globally configured <code>saas_template_site</code>.</li>
+</ul>
+<h3 id="request-and-response-contract">Request and response contract</h3>
+<p>LiteGate sends <code>GET {ask}?domain=shop.customer.com</code>. Existing query parameters are retained and domain is set to the hostname requesting a certificate. There is no JSON request body or automatically added business authorization header. The request timeout is 5 seconds.</p>
+<p>Allow requires <strong>HTTP 200</strong> and a JSON object such as <code>{&quot;authorized&quot;: true}</code>. An optional template selects an existing template site's hostname; omitted or empty uses saas_template_site. Return Content-Type: application/json. Deny with HTTP 403 and <code>{&quot;authorized&quot;: false}</code>, or HTTP 200 with that same JSON. Missing authorized, false, empty or invalid JSON, non-200 status, network errors and timeouts deny authorization.</p>
+<p>HTTPS with certificate verification is required by default. Internal HTTP requires allow_insecure_ask: true; private HTTPS CA certificates use ask_ca. allow_insecure_ask does not disable HTTPS certificate verification. The endpoint must already be reachable before the customer certificate is issued; avoid a hostname depending on that same issuance.</p>
+<h3 id="customer-cname-domains">Customer CNAME domains</h3>
+<p>If a customer sets <code>shop.customer.com CNAME edge.mysaas.com</code> and visits <code>https://shop.customer.com</code>, both TLS SNI and the ask domain are shop.customer.com, and the certificate covers that customer hostname. The CNAME target's certificate does not automatically cover it. Authorize verified, active tenant-domain bindings rather than accepting any domain whose CNAME points at the platform.</p>
+<p>The CNAME chain must resolve to a gateway capable of serving validation. HTTP-01 requires the customer hostname's public port 80 and <code>/.well-known/acme-challenge/</code> to reach the challenge handler, including through proxies or CDNs. DNS-01 <code>_acme-challenge</code> CNAME delegation is separate; a normal application CNAME does not configure DNS-01. See <a href="https://letsencrypt.org/docs/challenge-types/">Let's Encrypt challenge types</a>.</p>
+<h3 id="minimal-go-ask-service">Minimal Go ask service</h3>
+<pre><code class="language-go">package main
+
+import (
+    &quot;encoding/json&quot;
+    &quot;log&quot;
+    &quot;net/http&quot;
+    &quot;strings&quot;
+)
+
+func main() {
+    // Replace with verified, active tenant-domain bindings from your database.
+    bindings := map[string]string{
+        &quot;shop.customer.com&quot;: &quot;template.mysaas.com&quot;,
+    }
+    http.HandleFunc(&quot;/v1/verify-domain&quot;, func(w http.ResponseWriter, r *http.Request) {
+        if r.Method != http.MethodGet {
+            w.Header().Set(&quot;Allow&quot;, &quot;GET&quot;)
+            http.Error(w, &quot;method not allowed&quot;, http.StatusMethodNotAllowed)
+            return
+        }
+        domain := strings.TrimSuffix(strings.ToLower(strings.TrimSpace(r.URL.Query().Get(&quot;domain&quot;))), &quot;.&quot;)
+        template, allowed := bindings[domain]
+        w.Header().Set(&quot;Content-Type&quot;, &quot;application/json&quot;)
+        if !allowed {
+            w.WriteHeader(http.StatusForbidden)
+        }
+        _ = json.NewEncoder(w).Encode(struct {
+            Authorized bool   `json:&quot;authorized&quot;`
+            Template   string `json:&quot;template,omitempty&quot;`
+        }{allowed, template})
+    })
+    log.Fatal(http.ListenAndServe(&quot;127.0.0.1:9080&quot;, nil))
+}
+</code></pre>
+<p>This example listens on local HTTP only. Put an HTTPS reverse proxy in front for production; for a same-host internal trial set ask: http://127.0.0.1:9080/v1/verify-domain and allow_insecure_ask: true. Replace the static map with verified, active bindings from your database and deny unbound domains.</p>
+<h3 id="authorization-sources-and-caching">Authorization sources and caching</h3>
+<p>An exact configured HTTPS site can authorize directly without calling ask every time. Dynamic SaaS domains first pass allowed_patterns (if configured), then check Litemesh KV, then fall back to ask. A valid KV entry can bypass ask; omit kv_prefix if ask must decide every dynamic domain. Successful authorization is cached for about 10 minutes. Unbinding does not immediately revoke issued certificates or cached authorization; ask is not per-request application access control.</p>
+<h2 id="4-practices-and-caveats">4. Practices and caveats</h2>
+<ol>
+<li><strong>Security</strong>
+<ul>
+<li><strong>Domain validation</strong>: LiteGate applies strict SNI validation and IDNA normalization, automatically rejecting IP addresses and invalid characters.</li>
+<li><strong>Authorization endpoint</strong>: enable <code>ask</code> and validate strictly. LiteGate no longer falls back to accepting a non-JSON 200 OK, which closes that gap.</li>
+</ul>
+</li>
+<li><strong>Lifecycle</strong>
+<ul>
+<li><strong>Caching</strong>: authorization results are cached in memory for a short window (10 minutes by default), after which <code>ask</code> is consulted again.</li>
+<li><strong>Renewal</strong>: renewal <strong>re-authorizes</strong>. If the tenant has been unbound, LiteGate stops renewing that certificate.</li>
+</ul>
+</li>
+<li><strong>Template site</strong>: define the template site under <code>sites/</code>.
+<pre><code class="language-yaml">site: &quot;template.mysaas.com&quot;
+routes:
+  - match:
+      path_prefix: &quot;/&quot;
+    proxy: [&quot;127.0.0.1:8080&quot;]
+</code></pre>
+</li>
+</ol>
+<h2 id="5-implementation-notes-for-developers">5. Implementation notes (for developers)</h2>
+<p>The logic lives in <code>handleOnDemand</code> in <code>internal/certmanager/certmanager.go</code>:</p>
+<ol>
+<li><strong>Validation and normalization</strong>: <code>isValidHostname</code> and IDNA normalize the SNI, in <code>internal/cert/manager.go</code>.</li>
+<li><strong>Authorization (<code>checkAuthorization</code>)</strong>: the <code>ask</code> endpoint is called with safely encoded parameters and its JSON response is validated.</li>
+<li><strong>Loader registration</strong>: once authorized, <code>RegisterSaaSDomain</code> establishes the mapping immediately.</li>
+<li><strong>Distributed issuance</strong>: a distributed lock is acquired before running the ACME challenge. On failure <code>UnregisterSaaSDomain</code> cleans the mapping up, so no dead route is left behind.</li>
+<li><strong>SAN preservation</strong>: renewal extracts every <code>DNSNames</code> entry from the existing certificate, so a multi-domain certificate is not silently downgraded when it renews.</li>
+</ol>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/on_demand_tls.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

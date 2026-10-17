@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CORS Middleware (Cross-Origin Resource Sharing) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/05-middleware/cors.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details open><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html" class="current" aria-current="page">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="cors-middleware-cross-origin-resource-sharing">CORS Middleware (Cross-Origin Resource Sharing)</h1>
+<p>The LiteGate CORS middleware configures cross-origin request policies, so a frontend served from one origin can call APIs on another.</p>
+<hr>
+<h2 id="0-do-you-need-cors-at-all">0. Do You Need CORS at All?</h2>
+<p>Browsers only apply cross-origin checks when the <strong>scheme, host, or port</strong> differs. If the frontend and the API are served from the same domain, no CORS is needed:</p>
+<pre><code class="language-yaml"># app.example.com: the frontend is served by the built-in serve action
+site: app.example.com
+routes:
+  - match: {path_prefix: /}
+    serve: /var/www/app
+</code></pre>
+<p>When backend services registered in service discovery (LiteMesh / Consul) declare an <code>/api</code> route on the same domain through tags, the gateway merges them into the same site. The frontend calls <code>/api/...</code> with relative URLs, and those requests are same-origin.</p>
+<p>You still need CORS when:</p>
+<ul>
+<li>The API lives on a different subdomain (e.g. <code>api.example.com</code>), port, or scheme.</li>
+<li>A local dev server such as <code>http://localhost:5173</code> calls the gateway directly.</li>
+<li>Frontends on other domains (mobile H5, admin consoles, third-party pages) call the same API.</li>
+<li>Fonts or other assets are served from a different (CDN) domain.</li>
+</ul>
+<hr>
+<h2 id="1-quick-start">1. Quick Start</h2>
+<p>The simplest form only turns the switch on:</p>
+<pre><code class="language-yaml">site: example.com
+routes:
+  - match: {path_prefix: /}
+    action:
+      type: proxy
+      service_name: my-backend
+      cors:
+        enabled: true
+</code></pre>
+<p>With <code>enabled: true</code> and nothing else, the defaults are:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allowed_origins</code></td>
+<td><code>*</code> (any origin)</td>
+</tr>
+<tr>
+<td><code>allowed_methods</code></td>
+<td><code>GET, POST, PUT, DELETE, PATCH, OPTIONS</code></td>
+</tr>
+<tr>
+<td><code>allowed_headers</code></td>
+<td><code>*</code> (echoed from the preflight request, including <code>Authorization</code>)</td>
+</tr>
+<tr>
+<td><code>allow_credentials</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>max_age</code></td>
+<td><code>3600</code></td>
+</tr>
+</tbody>
+</table>
+<p>This is <strong>anonymous CORS</strong>: the response carries <code>Access-Control-Allow-Origin: *</code> and browsers do not send cookies. It suits public APIs; endpoints that rely on a login session need the credentialed mode below.</p>
+<hr>
+<h2 id="2-advanced-configuration">2. Advanced Configuration</h2>
+<h3 id="method-a-route-inline-configuration-recommended">Method A: Route-Inline Configuration (Recommended)</h3>
+<pre><code class="language-yaml">site: api.example.com
+routes:
+  - match: {path_prefix: /api}
+    action:
+      type: proxy
+      service_name: backend-svc
+      cors:
+        enabled: true
+        # Credentials require the origins to be listed explicitly
+        allowed_origins: [&quot;https://web.example.com&quot;, &quot;https://admin.example.com&quot;]
+        allowed_methods: [&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;DELETE&quot;]
+        allowed_headers: [&quot;Authorization&quot;, &quot;Content-Type&quot;]
+        # Response headers readable by frontend scripts
+        exposed_headers: [&quot;X-Request-ID&quot;]
+        # Allow credentials (cookies / HTTP authentication)
+        allow_credentials: true
+        max_age: 3600
+</code></pre>
+<h3 id="method-b-named-middleware-reusable">Method B: Named Middleware (Reusable)</h3>
+<p>Define the middleware in the site's <code>middlewares</code> map and reference it by name from routes:</p>
+<pre><code class="language-yaml">site: api.example.com
+middlewares:
+  web-cors:
+    type: cors
+    config:
+      allowed_origins: &quot;https://web.example.com, https://admin.example.com&quot;
+      allow_credentials: &quot;true&quot;
+routes:
+  - match: {path_prefix: /api}
+    action:
+      type: proxy
+      service_name: backend-svc
+    use: [&quot;web-cors&quot;]
+</code></pre>
+<p>As service discovery tags:</p>
+<pre><code class="language-properties">litegate.http.routers.api.middlewares=web-cors
+litegate.http.middlewares.web-cors.cors.allowed_origins=https://web.example.com
+litegate.http.middlewares.web-cors.cors.allow_credentials=true
+</code></pre>
+<h3 id="switch-semantics">Switch Semantics</h3>
+<ul>
+<li><strong><code>enabled: true</code></strong>: Activates the middleware and applies the defaults above to empty fields. Credentials are <strong>never</strong> turned on implicitly.</li>
+<li><strong><code>enabled: false</code></strong>: <strong>Forcefully deactivates the middleware</strong>, even if <code>allowed_origins</code> is set.</li>
+<li><strong>(Omitted <code>enabled</code>)</strong>: Backward compatibility mode. Active when <code>allowed_origins</code> is set; otherwise inactive.</li>
+</ul>
+<h3 id="origin-matching">Origin Matching</h3>
+<ul>
+<li>Origins are matched exactly, ignoring case and a trailing <code>/</code>.</li>
+<li><code>*</code> means any origin.</li>
+</ul>
+<hr>
+<h2 id="3-credentials-cookies-and-safety-rules">3. Credentials (Cookies) and Safety Rules</h2>
+<p><code>allow_credentials: true</code> <strong>must</strong> be combined with an explicit <code>allowed_origins</code> list. This configuration is rejected at load time:</p>
+<pre><code class="language-yaml">cors:
+  allowed_origins: [&quot;*&quot;]      # or enabled: true without allowed_origins
+  allow_credentials: true     # ❌ fails to load
+</code></pre>
+<p>&quot;Any origin plus credentials&quot; would let every website call the API as the logged-in user and read the responses. Browsers also refuse <code>Access-Control-Allow-Origin: *</code> together with credentials.</p>
+<p>Configurations translated from Kubernetes Ingress / Gateway API do not fail to load for this reason: when <code>*</code> and credentials appear together, the gateway serves anonymous CORS (no <code>Access-Control-Allow-Credentials</code>) and logs a warning.</p>
+<p>In credentialed mode, <code>*</code> in <code>allowed_methods</code> / <code>allowed_headers</code> echoes the requested method and headers, and <code>exposed_headers: [&quot;*&quot;]</code> lists the headers the response actually carries, as browsers require for credentialed requests.</p>
+<hr>
+<h2 id="4-preflight-handling">4. Preflight Handling</h2>
+<p>An <code>OPTIONS</code> request carrying <code>Origin</code> and <code>Access-Control-Request-Method</code> is a preflight. The gateway answers it directly with <strong>204 No Content</strong> and does not forward it upstream:</p>
+<ul>
+<li>Allowed origin: the full set of <code>Access-Control-Allow-*</code> headers is returned.</li>
+<li>Disallowed origin: a 204 without CORS headers, so the browser rejects the actual request.</li>
+</ul>
+<p>Plain <code>OPTIONS</code> requests without <code>Access-Control-Request-Method</code> (for example WebDAV <code>OPTIONS</code>) are passed to the route's action as usual.</p>
+<p>Preflights are handled before authentication, so auth middleware never blocks them.</p>
+<hr>
+<h2 id="5-relationship-with-backend-cors-headers">5. Relationship With Backend CORS Headers</h2>
+<p>Once CORS is configured on a route, <strong>the gateway owns the CORS response headers</strong>:</p>
+<ul>
+<li><code>Access-Control-*</code> headers returned by the backend are replaced by the gateway's policy, so there are no duplicate <code>Access-Control-Allow-Origin</code> values and a permissive backend cannot bypass the gateway.</li>
+<li>CORS headers are written when the response header is finally sent, so same-named backend headers cannot overwrite them.</li>
+<li><code>Vary: Origin</code> is merged with the backend's <code>Vary</code> (e.g. <code>Accept-Encoding</code>) instead of being replaced, so CDNs and browser caches never serve one origin's response to another.</li>
+</ul>
+<p>Leaving CORS enabled in the backend therefore causes no conflict. If you want the backend to own CORS entirely, do not configure it on the gateway.</p>
+<p>To rewrite other response headers, use <code>response.*</code> in the <code>headers</code> middleware; it likewise overrides same-named backend headers:</p>
+<pre><code class="language-properties">litegate.http.routers.api.middlewares=security-headers
+litegate.http.middlewares.security-headers.headers.response.X-Frame-Options=DENY
+</code></pre>
+<hr>
+<h2 id="6-troubleshooting--faq">6. Troubleshooting &amp; FAQ</h2>
+<h3 id="cors-errors-persist-after-configuring">CORS errors persist after configuring?</h3>
+<ol>
+<li><strong>Check the origin exactly</strong>, including scheme and port: <code>http://localhost:5173</code> and <code>http://127.0.0.1:5173</code> are different origins.</li>
+<li><strong>Cookies are not sent</strong>: make sure <code>allow_credentials: true</code> is set with explicit <code>allowed_origins</code>, and that the frontend uses <code>credentials: &quot;include&quot;</code> / <code>withCredentials: true</code>.</li>
+<li><strong>A custom request header is rejected</strong>: when <code>allowed_headers</code> is an explicit list, it must include every header the frontend sends (such as <code>Authorization</code> and <code>Content-Type</code>); use <code>*</code> if unsure.</li>
+</ol>
+<hr>
+<h2 id="further-reading">Further Reading</h2>
+<ul>
+<li><a href="../04-actions/proxy.html">Configuring Reverse Proxy Actions</a></li>
+<li><a href="./authentication.html">Enforcing Authentication Filters</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/05-middleware/cors.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

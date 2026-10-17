@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Named Matchers: Give Request Conditions a Name · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/cookbook/06-matchers.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details open><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html" class="current" aria-current="page">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="named-matchers-give-request-conditions-a-name">Named Matchers: Give Request Conditions a Name</h1>
+<p>Once route conditions grow, <code>match: {path: [...], method: [...], header: {...}}</code> crowds into one line and you have to parse it in your head to know what the route handles. Named matchers define the condition separately under a name, and routes write only <code>match: &quot;@name&quot;</code>:</p>
+<pre><code class="language-text">matchers:
+  blocked: {path: [/xmlrpc.php, &quot;*.sql&quot;]}   # definition: what kind of request this is
+routes:
+  - match: &quot;@blocked&quot;                       # use: how to handle it
+    respond: {status: 403}
+</code></pre>
+<p>Remember three things:</p>
+<ol>
+<li><strong>It is only a name.</strong> <code>match: &quot;@blocked&quot;</code> is exactly equivalent to writing the definition inline under <code>match:</code>. It is expanded at load time; there is no runtime difference.</li>
+<li><strong>Order and position don't matter.</strong> Priority is decided by the condition itself; see <a href="#3-which-route-matches-first-priority-rules">section 3</a>.</li>
+<li><strong><code>@name</code> must be quoted.</strong> <code>@</code> is reserved in YAML; without quotes you get a parse error.</li>
+</ol>
+<hr>
+<h2 id="1-block-scanners-split-writes-from-reads">1. Block scanners, split writes from reads</h2>
+<p>The typical use: block common scanner paths, send <code>POST</code> to a separate write service, and send everything else to the default backend.</p>
+<!-- case: matchers-basic -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  blocked: {path: [/xmlrpc.php, /.env, &quot;*.sql&quot;]}
+  post: {method: POST}
+routes:
+  - match: &quot;@blocked&quot;
+    respond: {status: 403, body: forbidden}
+  - match: &quot;@post&quot;
+    proxy: localhost:8081
+proxy: localhost:8080
+</code></pre>
+<pre><code class="language-check">GET  http://example.com/xmlrpc.php          =&gt; 403 &quot;forbidden&quot;
+GET  http://example.com/.env                =&gt; 403 &quot;forbidden&quot;
+# * matches any characters including /, so .sql files in subdirectories are blocked too
+GET  http://example.com/backup/db.sql       =&gt; 403 &quot;forbidden&quot;
+# The wildcard matches the whole path: db.sql.txt does not end in .sql
+GET  http://example.com/db.sql.txt          =&gt; 8080 /db.sql.txt
+POST http://example.com/orders              =&gt; 8081 /orders
+GET  http://example.com/orders              =&gt; 8080 /orders
+</code></pre>
+<hr>
+<h2 id="2-writing-conditions">2. Writing conditions</h2>
+<p>A named matcher accepts the same fields as an inline <code>match</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>path</code></td>
+<td>A string: exact match; a list: any entry matches, <code>*</code> wildcards allowed</td>
+<td><code>/login</code>, <code>[/a, &quot;/b/*&quot;]</code></td>
+</tr>
+<tr>
+<td><code>prefix</code></td>
+<td>Prefix match by path segment</td>
+<td><code>/api</code></td>
+</tr>
+<tr>
+<td><code>method</code></td>
+<td>One or a list</td>
+<td><code>POST</code>, <code>[PUT, DELETE]</code></td>
+</tr>
+<tr>
+<td><code>header</code></td>
+<td>Request header equals a value</td>
+<td><code>{X-Canary: &quot;1&quot;}</code></td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td>Query parameter equals a value</td>
+<td><code>{debug: &quot;1&quot;}</code></td>
+</tr>
+<tr>
+<td><code>rule</code></td>
+<td>Rule expression for complex cases</td>
+<td><code>PathRegexp(`(?i)^/admin`)</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Different fields are combined with AND; entries in a <code>path</code> list with OR.</strong> Below, <code>api-write</code> means &quot;<code>POST</code>/<code>PUT</code>/<code>DELETE</code> requests under <code>/api</code>&quot;, and <code>canary</code> means &quot;requests with header <code>X-Canary: 1</code>&quot;:</p>
+<!-- case: matchers-combine -->
+<pre><code class="language-yaml">site: api.example.com
+matchers:
+  api-write: {prefix: /api, method: [POST, PUT, DELETE]}
+  canary: {header: {X-Canary: &quot;1&quot;}}
+routes:
+  - match: &quot;@canary&quot;
+    proxy: localhost:8082           # canary: every request with the header goes to the new version
+  - match: &quot;@api-write&quot;
+    proxy: localhost:8081           # writes go to the primary service
+/api:
+  proxy: localhost:8080             # other /api requests go to the read-only service
+respond: {status: 404, body: not found}
+</code></pre>
+<pre><code class="language-check">PUT  http://api.example.com/api/orders/7             =&gt; 8081 /api/orders/7
+GET  http://api.example.com/api/orders/7             =&gt; 8080 /api/orders/7
+GET  http://api.example.com/api/orders/7 X-Canary: 1 =&gt; 8082 /api/orders/7
+# POST but not under /api: only one of api-write's two conditions holds
+POST http://api.example.com/upload                   =&gt; 404 &quot;not found&quot;
+</code></pre>
+<p><code>path</code> wildcard details:</p>
+<ul>
+<li>Only <code>*</code> is a wildcard, matching zero or more characters (including <code>/</code>); <code>?</code> and <code>[]</code> are ordinary characters.</li>
+<li>It matches the <strong>whole path</strong> (without the query), so <code>&quot;*.sql&quot;</code> means &quot;ends in <code>.sql</code>&quot; and <code>&quot;/admin/*&quot;</code> means &quot;anything under <code>/admin/</code>&quot;.</li>
+<li>Strings starting with <code>*</code> must be quoted in YAML.</li>
+<li><strong>Case-sensitive</strong>: <code>/xmlrpc.php</code> does not block <code>/XMLRPC.PHP</code>. For security blocking, prefer <code>rule</code> with <code>(?i)</code>:</li>
+</ul>
+<!-- case: matchers-ignore-case -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  blocked:
+    rule: &quot;PathRegexp(`(?i)^/xmlrpc\\.php$`) || PathRegexp(`(?i)\\.sql$`)&quot;
+routes:
+  - match: &quot;@blocked&quot;
+    respond: {status: 403}
+proxy: localhost:8080
+</code></pre>
+<pre><code class="language-check">GET http://example.com/xmlrpc.php      =&gt; 403
+GET http://example.com/XMLRPC.PHP      =&gt; 403
+GET http://example.com/dump/DB.SQL     =&gt; 403
+GET http://example.com/index.php       =&gt; 8080 /index.php
+</code></pre>
+<hr>
+<h2 id="3-which-route-matches-first-priority-rules">3. Which route matches first: priority rules</h2>
+<p>As in Caddy, <strong>routes with conditions are more specific than routes that only look at a path prefix</strong>. Within a site, routes are tried in this order and the first match wins:</p>
+<table>
+<thead>
+<tr>
+<th>Order</th>
+<th>Route kind</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Routes with a higher explicit <code>priority</code></td>
+<td><code>priority: 100</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Exact paths</td>
+<td><code>path: /login</code>, <code>path: [/login]</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Condition routes without <code>path</code> / <code>prefix</code></td>
+<td><code>@blocked</code> (wildcard path), <code>@post</code>, <code>@canary</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Prefix routes, longest first</td>
+<td><code>/api/v2</code> before <code>/api</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Site-level action (fallback)</td>
+<td>top-level <code>proxy</code>, <code>spa</code></td>
+</tr>
+</tbody>
+</table>
+<p>So a blocking rule is not taken over by a prefix route such as <code>/api</code>:</p>
+<!-- case: matchers-order -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  blocked: {path: [&quot;*.sql&quot;]}
+routes:
+  - match: &quot;@blocked&quot;
+    respond: {status: 403}
+  - match: {path: /export/report.sql}   # exact paths come before condition routes
+    proxy: localhost:8081
+/api:
+  proxy: localhost:8080
+spa: ./dist
+</code></pre>
+<pre><code class="language-check"># The /api prefix route ranks after @blocked
+GET http://example.com/api/backup.sql        =&gt; 403
+GET http://example.com/api/orders            =&gt; 8080 /api/orders
+# The exact path ranks before @blocked
+GET http://example.com/export/report.sql     =&gt; 8081 /export/report.sql
+GET http://example.com/settings              =&gt; 200 &quot;&lt;h1&gt;dist&lt;/h1&gt;&quot;
+</code></pre>
+<p>Two things to note:</p>
+<ul>
+<li><strong>A method-only condition such as <code>@post</code> takes every request with that method on the site</strong>, including those under <code>/api</code>. To limit it to a path, put <code>prefix</code> in the condition (see <code>api-write</code> in section 2).</li>
+<li>To make a condition route beat an exact path, give it a higher <code>priority</code>.</li>
+</ul>
+<hr>
+<h2 id="4-adding-conditions-to-a-named-matcher">4. Adding conditions to a named matcher</h2>
+<p><code>match</code> can also be a list whose items must <strong>all</strong> hold: each item is <code>&quot;@name&quot;</code>, an inline condition, or a <code>/prefix</code> shorthand. One named matcher can then be reused by several routes, each adding its own condition:</p>
+<!-- case: matchers-compose -->
+<pre><code class="language-yaml">site: api.example.com
+matchers:
+  api: {prefix: /api, header: {X-Tenant: acme}}
+  api-write: [&quot;@api&quot;, {method: [POST, PUT, DELETE]}]   # definitions can compose too
+routes:
+  - match: &quot;@api-write&quot;
+    proxy: localhost:8081
+  - match: [&quot;@api&quot;, {query: {debug: &quot;1&quot;}}]
+    proxy: localhost:8082
+  - match: &quot;@api&quot;
+    proxy: localhost:8080
+respond: {status: 404, body: not found}
+</code></pre>
+<pre><code class="language-check">PUT  http://api.example.com/api/orders/7 X-Tenant: acme          =&gt; 8081 /api/orders/7
+GET  http://api.example.com/api/orders/7?debug=1 X-Tenant: acme  =&gt; 8082 /api/orders/7?debug=1
+GET  http://api.example.com/api/orders/7 X-Tenant: acme          =&gt; 8080 /api/orders/7
+# Missing X-Tenant: all three routes require @api, so none matches
+PUT  http://api.example.com/api/orders/7                         =&gt; 404 &quot;not found&quot;
+</code></pre>
+<p>Merge rules:</p>
+<ul>
+<li><code>rule</code> values are joined with AND; <code>header</code> and <code>query</code> are merged, but the same key cannot appear twice (<code>header</code> is case-insensitive).</li>
+<li><code>prefix</code>, <code>path</code>, <code>method</code> and the other fields may come from only one item. The same value in two items is fine; different values are an error rather than silently picking one.</li>
+<li>Lists cannot be nested. For layering, define matchers under <code>matchers</code> and reference them by name. Matchers may reference each other; cycles are an error.</li>
+</ul>
+<!-- expect-error: composed matchers set conflicting prefix -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  api: {prefix: /api}
+routes:
+  - match: [&quot;@api&quot;, {prefix: /admin}]
+    respond: ok
+proxy: localhost:8080
+</code></pre>
+<hr>
+<h2 id="5-when-not-to-use-named-matchers">5. When not to use named matchers</h2>
+<ul>
+<li><strong>A single path prefix</strong>: write the path key <code>/api:</code> directly; it is shorter than <code>matchers</code>.</li>
+<li><strong>Several routes sharing auth, rate limits and other policies</strong>: that is governance; use <a href="03-governance.html#5-share-one-policy-across-apis-snippets">snippets</a>, not matchers.</li>
+<li><strong>Security policy that must run before every route</strong>: <code>@blocked</code> is an ordinary rejecting route and only protects while it ranks first. If you use <code>priority</code> to rank other routes ahead of it, those routes are not protected. Blocking that must cover the whole site belongs in a <code>use</code> middleware.</li>
+</ul>
+<hr>
+<h2 id="6-common-errors">6. Common errors</h2>
+<h3 id="missing-quotes">Missing quotes</h3>
+<!-- expect-error: found character that cannot start any token -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  post: {method: POST}
+routes:
+  - match: @post
+    proxy: localhost:8081
+proxy: localhost:8080
+</code></pre>
+<p><code>@</code> cannot start an unquoted YAML string; write <code>match: &quot;@post&quot;</code>.</p>
+<h3 id="reference-to-a-name-that-doesnt-exist">Reference to a name that doesn't exist</h3>
+<!-- expect-error: undefined matcher reference -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  post: {method: POST}
+routes:
+  - match: &quot;@posts&quot;
+    proxy: localhost:8081
+proxy: localhost:8080
+</code></pre>
+<p>Names are case-sensitive. References look in this site's <code>matchers</code> first, then in shared definitions in <code>sites/_shared.yaml</code>; definitions in other site files are not visible.</p>
+<h3 id="empty-definition-or-misspelled-field">Empty definition or misspelled field</h3>
+<!-- expect-error: at least one match criterion is required -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  empty: {}
+proxy: localhost:8080
+</code></pre>
+<p>Definitions are validated even when no route references them; a misspelled field (such as <code>methods</code>) is also an error.</p>
+<h3 id="wildcard-path-not-starting-with--or-">Wildcard path not starting with <code>/</code> or <code>*</code></h3>
+<!-- expect-error: path must start with / -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  blocked: {path: [xmlrpc.php]}
+routes:
+  - match: &quot;@blocked&quot;
+    respond: {status: 403}
+proxy: localhost:8080
+</code></pre>
+<h3 id="the-same-condition-on-two-routes">The same condition on two routes</h3>
+<!-- expect-error: duplicate normalized match -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  post: {method: POST}
+routes:
+  - match: &quot;@post&quot;
+    proxy: localhost:8081
+  - match: {method: post}      # expands to the same as @post (methods are case-insensitive)
+    proxy: localhost:8082
+proxy: localhost:8080
+</code></pre>
+<p>When two routes have identical conditions, the second can never match, so it is an error. To reuse one named matcher, add a different condition per route with a list (see <a href="#4-adding-conditions-to-a-named-matcher">section 4</a>).</p>
+<p>For every field, see the <a href="../03-configuration/site-config.html#named-request-matchers">site configuration reference</a>.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/cookbook/06-matchers.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录） · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html">首页</a>
+      <a href="../../guide.html">场景指南</a>
+      <a href="../../features.html">功能列表</a>
+      <a href="../../ecosystem.html">生态</a>
+      <a href="README.html" aria-current="page">文档</a>
+      <a href="../en/dns-provider-plugin-guide.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="README.html">文档首页</a></li><li><details><summary>用户手册</summary><ul><li><a href="user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="user/01-getting-started/build.html">源码构建指南</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="user/01-getting-started/installation.html">安装指南</a></li><li><a href="user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="user/03-configuration/api.html">管理接口概览</a></li><li><a href="user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>使用专题</summary><ul><li><a href="database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="dns-provider-plugin-guide.html" class="current" aria-current="page">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="ids-recipes.html">IDS 配方</a></li><li><a href="ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="dns-provider-插件开发指南证书-dns-01ddns-与-ech-https-记录">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</h1>
+<p>如果你只是使用另一家 DNS 服务商，请先看 <a href="user/06-certificates/dns-providers.html">添加 DNS 服务商</a>，按步骤选择、编译、配置和验证 libdns 实现，无需先学习插件开发。</p>
+<p>默认程序内置阿里云（<code>aliyun</code>）、腾讯云（<code>tencent</code> / <code>tencentcloud</code>）和 Cloudflare（<code>cloudflare</code>）。内置服务商全部是自研的轻量 HTTP 客户端，<strong>不引用任何云厂商 SDK</strong>；lego 只作为 ACME 协议引擎。华为云、Route 53 等其它服务商按需编译进<strong>你自己的构建</strong>，不影响官方发行版体积：</p>
+<pre><code class="language-bash">litegate build --dns huaweicloud --dns route53 -o litegate-custom
+</code></pre>
+<p><code>--dns</code> 走 <a href="https://github.com/libdns/libdns">libdns</a> 生态，不用写代码，同时获得 DNS-01、DDNS 与 ECH HTTPS 记录能力（见下文「捷径一」）。内置名称（<code>aliyun</code>、<code>tencent</code>、<code>tencentcloud</code>、<code>cloudflare</code>）保留给内置服务商。</p>
+<h2 id="扩展-ech插件只负责-dns-服务商-api">扩展 ECH：插件只负责 DNS 服务商 API</h2>
+<p>ECH 密钥生成、TLS 安装、轮换、旧密钥保留、文件/KV 加密持久化、Consul/LiteMesh 同步、发布租约、站点选组、重试和发布状态都由 LiteGate 内部负责。DNS 插件只读取并提交服务商的 HTTPS（类型 65）记录，不需要实现 KV，也不会收到 ECH 私钥或存储密钥。</p>
+<p>实现公共接口并通过 <code>RegisterDNSProviderV2</code> 声明 <code>DNSCapabilityHTTPS</code>（字符串 <code>https_records</code>）：</p>
+<pre><code class="language-go">type HTTPSDNSProvider interface {
+    DNSProvider // GetName() string
+    PublishHTTPS(ctx context.Context, name, value string, owned []string) error
+}
+</code></pre>
+<p><code>name</code> 为隐藏网站的 DNS owner；<code>value</code> 为公开记录值，如 <code>1 . alpn=&quot;h2,h3&quot; ech=&quot;...&quot;</code>，不包含 owner/type/TTL，TTL 使用 600 秒。<code>owned</code> 是 LiteGate 根据当前/保留密钥及发布状态计算的可管理记录值列表。插件需要先读取现有 RRset，按 DNS 语义比较（不能只比较引号或参数顺序），拒绝覆盖不属于 owned 的记录；提交非空 value 时替换已拥有的记录，不能盲目覆盖整个 RRset。value 为空时只撤回 owned 中匹配的记录，保留其他记录；记录不存在时返回成功。不得改动 A/AAAA。尊重 ctx，保持幂等，返回 API 错误供核心重试；支持关闭资源时可实现 DNSCloser。</p>
+<p>HTTPS 能力独立于 DDNS，无需实现 Sync。若希望同一个插件还负责公共名称/网站的 DNS-01 证书申请，应另实现 CertDNSProviderV2 并声明 DNSCapabilityCertDNS01；否则配置覆盖这些名称的其他证书提供商。<code>--dns</code> 编入的 libdns 服务商只要实现了 <code>RecordGetter</code> 就自动具备 HTTPS 发布能力；lego 示例桥接不具备。</p>
+<p>只声明 <code>https_records</code> 的插件，其 <code>domains</code> 用于 ECH 发布范围；核心会在证书运行时副本中移除这些选择器，避免误当成 DNS-01 证书提供商。原始配置保持不变。每组 public_name 必须有证书覆盖：可使用另一个已启用的 DNS-01 证书提供商、旧版 <code>auto_cert.provider</code> + <code>auto_cert.domains</code>，或在 <code>tls.certs_dir</code> 中放入有效且覆盖该名称的 <code>.pem</code>/<code>.crt</code> 与同名 <code>.key</code> 文件。否则配置校验（包括 <code>-t</code>）直接失败。手动证书需要自行更新；校验与启动环境必须能读取它。使用独立证书提供商的示例：</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  dns_providers:
+    - name: records
+      type: mydns
+      enabled: true
+      domains: [&quot;*.example.com&quot;]
+      config: {api_token: &quot;env://MYDNS_TOKEN&quot;}
+    - name: certificates
+      type: cloudflare
+      enabled: true
+      domains: [&quot;*.example.com&quot;]
+      config: {api_token: &quot;env://CF_API_TOKEN&quot;}
+ech:
+  enabled: true
+  public_name: ech.example.com
+  dns_provider: records
+  domains: [app.example.com]
+</code></pre>
+<p><code>mydns</code> 必须已注册并编译进二进制。两个提供商操作同一权威 DNS 区域：前者管理 HTTPS，后者管理 ACME TXT；证书提供商也可以是自己实现的插件。</p>
+<p>撤回时遇到其他记录应保留并返回成功，不应将所有权冲突作为撤回错误。新 value 不要求出现在 owned 中，owned 只决定哪些已有记录允许删除或替换。配置校验调用插件 Validate 前会解析 secret，并按 provider、auto_cert 的顺序补齐 secret_token；校验环境需能够读取对应 secret。</p>
+<p>注册示意（factory 返回实现该接口的服务商对象，Validate 不应执行网络写操作）：</p>
+<pre><code class="language-go">plugin.RegisterDNSProviderV2(&quot;mydns&quot;, plugin.DNSProviderRegistration{
+    Factory: factory,
+    Validate: validateConfig,
+    Info: plugin.DNSProviderInfo{
+        Capabilities: []plugin.DNSProviderCapability{plugin.DNSCapabilityHTTPS},
+    },
+})
+</code></pre>
+<p>通过 <code>litegate build --with your-module/mydns -o litegate</code> 编入插件后，<code>auto_cert.dns_providers[].type</code> 填注册名（如 mydns），ECH 的 dns_provider 填该配置项的 name。沿用普通 ECH 配置，KV/storage 仍配置在主 ech 块，不传给插件。未声明能力或声明后未实现接口都会被拒绝。</p>
+<p>可编译示例见 <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/memory/memory.go">memory DNS 插件</a>，展示所有权检查、更新与撤回；该示例仅内存存储，不会修改权威 DNS，不适用于生产发布。部署与客户端验证见 <a href="user/06-certificates/ech.html">ECH 配置指南</a>。</p>
+<blockquote>
+<p>本文教你如何为 LiteGate 编写自定义 <strong>DNS Provider</strong> 插件——接管两件事：<strong>ACME 证书签发的 DNS-01 质询</strong>（增删 TXT 记录）与 <strong>动态 DNS（DDNS）同步</strong>（把本机 IP 写到 A/AAAA 记录）。</p>
+<p>适合场景：你用的 DNS 服务商不在内置清单里（内置：阿里云 / 腾讯云 / Cloudflare），或你想用自己的 DNS API / 内部 IPAM / 私有 DNS 服务来完成证书校验与 DDNS。</p>
+<p>契约已开放到公共包 <a href="https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin"><code>github.com/jamesleeon/LiteGate/pkg/plugin</code></a>，<strong>第三方可在独立仓库编写并编译进去</strong>。通用插件（Action / Middleware / LoadBalancer）见 <a href="user/12-plugins/authoring-guide.html">plugin-authoring-guide.md</a>；IDS 鉴权插件见 <a href="ids-provider-plugin-guide.html">ids-provider-plugin-guide.md</a>；DDNS 本身的使用见 <a href="user/06-certificates/ddns.html">user/06-certificates/ddns.md</a>。</p>
+</blockquote>
+<hr>
+<h2 id="一核心思想一个名字两种能力">一、核心思想：一个名字、两种能力</h2>
+<p>LiteGate 把 DNS 操作抽象成一个<strong>带名字的 Provider</strong>。你的插件注册一个名字（如 <code>&quot;mydns&quot;</code>），用户在 <code>auto_cert.dns_providers[].type</code> 里引用它。一个 Provider 可以提供两种能力，<strong>按需各自实现，互不强制</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>接口</th>
+<th>干什么</th>
+<th>何时被调用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>证书 DNS-01</strong>（读写 TXT）</td>
+<td><code>plugin.CertDNSProviderV2</code></td>
+<td>ACME 质询时增删已经由宿主计算好的 TXT 记录</td>
+<td>证书签发 / 续期时</td>
+</tr>
+<tr>
+<td><strong>DDNS 同步</strong>（写 A/AAAA）</td>
+<td><code>plugin.DDNSProvider</code></td>
+<td>确保最新 IP 存在于域名的 A / AAAA RRset</td>
+<td>DDNS 周期同步 / IP 变化时</td>
+</tr>
+</tbody>
+</table>
+<p>两者都建立在一个 <strong>marker 接口</strong> <code>plugin.DNSProvider</code>（只有 <code>GetName()</code>）之上。新证书插件应实现 <code>CertDNSProviderV2</code>；旧的 <code>CertDNSProvider</code> 保持兼容。核心会在配置加载期根据 V2 注册元数据检查用途与能力。</p>
+<blockquote>
+<p>DNS Provider 解决的是“如何调用不同域名服务商的 DNS API”。证书签发仍由 LiteGate 的 ACME 客户端负责。Let's Encrypt、ZeroSSL、Google 或其它标准 ACME CA 可通过内置选项或 <code>ca_provider: custom + acme_url</code> 使用；非 ACME 的私有签发 API 不属于 DNS Provider，当前也没有开放 Certificate Issuer 插件接口。</p>
+</blockquote>
+<blockquote>
+<p>内置 provider 使用内部注册表，第三方插件使用公共注册表；两者最终汇入相同的证书/DDNS 能力适配路径，名称冲突会被统一阻止。</p>
+</blockquote>
+<hr>
+<h2 id="二接口契约pkgplugindnsgo">二、接口契约（<code>pkg/plugin/dns.go</code>）</h2>
+<p>全部定义在 <a href="https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin/dns.go">pkg/plugin/dns.go</a>：</p>
+<pre><code class="language-go">// marker：所有 DNS 插件的基接口
+type DNSProvider interface {
+	GetName() string // provider 的唯一标识
+}
+
+// 推荐的 ACME DNS-01 V2 契约。FQDN 和 Value 已由宿主按 ACME 标准推导；
+// 插件只负责调用服务商 API，不能把 KeyAuthorization 原文写进 TXT。
+type CertDNSProviderV2 interface {
+	DNSProvider
+	PresentDNS01(ctx context.Context, challenge DNS01Challenge) error
+	CleanupDNS01(ctx context.Context, challenge DNS01Challenge) error
+}
+
+type DNS01Challenge struct {
+	Domain           string
+	FQDN             string // 如 _acme-challenge.example.com.
+	Value            string // 应写入 TXT 的 SHA-256/Base64URL 结果
+	Token            string
+	KeyAuthorization string // 仅供少数高级场景，不要直接写入 TXT
+}
+
+// 能力二：动态 DNS（A/AAAA 同步）
+type DDNSProvider interface {
+	DNSProvider
+	Sync(ctx context.Context, domain string, ip string) error // 幂等追加 RRset 成员，不覆盖其它节点
+}
+</code></pre>
+<p>外加三个<strong>可选接口</strong>（实现才生效，核心用类型断言探测）：</p>
+<pre><code class="language-go">// 自定义 DNS-01 传播等待逻辑（不实现则用 lego 默认的权威 NS 轮询）
+type DNSPropagationChecker interface {
+	WaitForPropagation(ctx context.Context, domain, value string) error
+}
+
+// 自定义 DNS-01 传播超时（不实现则默认 总时长 2min / 轮询间隔 10s）
+type DNSOptionalTimeout interface {
+	GetTimeout() (totalTime, checkInterval time.Duration)
+}
+
+// 自定义记录同步路由（DDNS 写记录时优先于 DDNSProvider.Sync 被调用，可直接控制 recordType）
+type DNSSyncRecordRouter interface {
+	SyncRecord(ctx context.Context, domain, recordType, value string) error
+}
+
+// 提前校验 provider 自定义配置；老插件可以不实现
+type DNSConfigValidator interface {
+	ValidateConfig(config map[string]string) error
+}
+
+// 描述能力和配置字段，供文档、Dashboard、预检工具使用
+type DNSProviderDescriptor interface {
+	Describe() DNSProviderInfo
+}
+
+// 可选的 API 连通性 / 凭证健康检查；当前由显式预检工具调用，
+// 普通启动校验不会主动联网
+type DNSHealthChecker interface {
+	CheckHealth(ctx context.Context) error
+}
+
+// 释放 SDK Client、Transport、后台任务等长生命周期资源
+type DNSCloser interface {
+	Close(ctx context.Context) error
+}
+</code></pre>
+<p><strong>推荐的 V2 注册函数</strong>：</p>
+<pre><code class="language-go">func RegisterDNSProviderV2(name string, registration DNSProviderRegistration) error
+
+type DNSProviderRegistration struct {
+	Factory  DNSProviderFactoryWithDependencies
+	Validate func(config map[string]string) error // 加载期纯校验，不创建运行实例
+	Info     DNSProviderInfo                      // 必须声明支持的能力
+}
+</code></pre>
+<p><code>RegisterDNSProvider</code> 和 <code>RegisterDNSProviderWithDependencies</code> 继续兼容。旧注册无法在不创建临时实例的情况下判断能力，宿主会在配置预检时创建并随即关闭临时实例；新插件应使用 V2。</p>
+<hr>
+<h2 id="三写一个-dns-provider-插件">三、写一个 DNS Provider 插件</h2>
+<h3 id="捷径一litegate-build---dns推荐零代码">捷径一：<code>litegate build --dns</code>（推荐，零代码）</h3>
+<p><a href="https://github.com/libdns">libdns</a> 为 80 多家 DNS 服务商提供统一接口（华为云、阿里云 alidns、DNSPod、Route 53、GoDaddy、Porkbun……），每家是一个独立的小模块。LiteGate 的 <a href="https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin/libdnsx"><code>pkg/plugin/libdnsx</code></a> 把它们统一适配成 DNS 插件，<code>litegate build</code> 会替你生成注册代码：</p>
+<pre><code class="language-bash"># 短名 = github.com/libdns/&lt;名字&gt;；可带版本
+litegate build --dns huaweicloud --dns route53@v1.6.2 -o litegate
+
+# 完整模块路径也可以；type= 前缀自定义配置里的 type 名
+litegate build --dns hw=github.com/libdns/huaweicloud -o litegate
+
+# 想用 libdns 版的内置服务商，必须改名（内置名称保留）
+litegate build --dns libdns_cloudflare=cloudflare -o litegate
+</code></pre>
+<p>配置时 <code>type</code> 即上面的名字，<code>config</code> 的键就是该 libdns 服务商结构体的 json tag（见其 README / pkg.go.dev）：</p>
+<pre><code class="language-yaml">auto_cert:
+  dns_providers:
+    - name: hw
+      type: huaweicloud
+      domains: [&quot;*.example.com&quot;]
+      config:
+        access_key_id: &quot;${HW_AK}&quot;
+        secret_access_key: &quot;${HW_SK}&quot;
+        region_id: &quot;cn-south-1&quot;
+</code></pre>
+<p>适配规则：</p>
+<table>
+<thead>
+<tr>
+<th>服务商实现的 libdns 接口</th>
+<th>获得的能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RecordAppender</code> + <code>RecordDeleter</code></td>
+<td><code>cert_dns01</code></td>
+</tr>
+<tr>
+<td>再加 <code>RecordGetter</code></td>
+<td>另有 <code>ddns</code>（A/AAAA 追加/撤回）和 <code>https_records</code>（ECH）</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>字符串值按字段类型自动转换（数字、布尔；<code>time.Duration</code> 可写 <code>90s</code> 或秒数；<code>[]string</code> 可逗号分隔；其它复杂类型写内联 JSON）。<strong>未知键直接报错</strong>，<code>litegate -t</code> 就能发现拼写错误。</li>
+<li>保留键由 LiteGate 处理、不传给服务商：<code>zone</code>（托管域，缺省按 SOA 查找）、<code>ttl</code>、<code>timeout</code>（传播超时，默认 2m）、<code>polling_interval</code>（默认 10s）；宿主通用键 <code>secret_token</code>、<code>propagation_wait</code>、<code>skip_propagation_check</code>、<code>disable_complete_propagation</code>、<code>recursive_nameservers</code> 照常生效，同样不会传给服务商。</li>
+<li>只用 Append/Delete，<strong>从不调用 <code>SetRecords</code></strong>——它会整组替换 RRset，冲掉其它节点登记的地址或并行的挑战值。</li>
+<li>只接受面向 <strong>libdns v1 API</strong> 的服务商版本。libdns 升 v1 时没改模块路径，老版本服务商会在编译前被检测出来并给出提示。</li>
+<li>体积只增加该服务商本身（华为云约 +200KB）；某家服务商若包了官方 SDK，膨胀的也只是你自己的构建。<code>litegate plugins list</code> 会列出编入的服务商及模块版本。</li>
+</ul>
+<h3 id="捷径二复用-lego-的服务商示例仅-dns-01">捷径二：复用 lego 的服务商（示例，仅 DNS-01）</h3>
+<p>个别服务商只在 <a href="https://go-acme.github.io/lego/dns/">lego</a> 里有、libdns 里没有时，参照 <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/legodns">examples/plugins/dns/legodns</a>（桥接）与 <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/vegadns">examples/plugins/dns/vegadns</a>（用法），把桥接包复制进你自己的插件模块。它只是示例、不是 LiteGate 的支持接口，也只有 DNS-01 能力。</p>
+<p>服务商两边都没有、或需要更精细的控制时，按下面的步骤直接实现接口。</p>
+<h3 id="第-1-步实现接口--注册">第 1 步：实现接口 + 注册</h3>
+<p>下面是一个<strong>同时实现证书 DNS-01 与 DDNS</strong> 的最小骨架。只需要其中一种能力时，删掉另一组方法即可。</p>
+<pre><code class="language-go">package mydns
+
+import (
+	&quot;context&quot;
+	&quot;fmt&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+	&quot;github.com/rs/zerolog/log&quot;
+)
+
+// providerName 是用户写在 YAML dns_providers[].type 里的名字，不能与内置名重名。
+const providerName = &quot;mydns&quot;
+
+type provider struct {
+	apiKey    string
+	apiSecret string
+}
+
+// GetName 实现 marker 接口 plugin.DNSProvider
+func (p *provider) GetName() string { return providerName }
+
+// --- 能力一：证书 DNS-01（实现 plugin.CertDNSProviderV2）---
+
+func (p *provider) PresentDNS01(ctx context.Context, challenge plugin.DNS01Challenge) error {
+	return p.upsertTXT(ctx, challenge.FQDN, challenge.Value)
+}
+
+func (p *provider) CleanupDNS01(ctx context.Context, challenge plugin.DNS01Challenge) error {
+	return p.removeTXT(ctx, challenge.FQDN, challenge.Value)
+}
+
+// --- 能力二：DDNS（实现 plugin.DDNSProvider）---
+
+func (p *provider) Sync(ctx context.Context, domain string, ip string) error {
+	// 确保 ip 已存在于 domain 的 A/AAAA RRset；不能覆盖其它节点的地址。
+	// 记录类型由 ip 是 IPv4 还是 IPv6 决定，重复调用必须幂等。
+	return p.ensureAddrMember(ctx, domain, ip)
+}
+
+// init：包被导入时自动注册
+func init() {
+	err := plugin.RegisterDNSProviderV2(providerName, plugin.DNSProviderRegistration{
+		Factory: func(config map[string]string, deps *plugin.Dependencies) (plugin.DNSProvider, error) {
+			return &amp;provider{apiKey: config[&quot;api_key&quot;], apiSecret: config[&quot;api_secret&quot;]}, nil
+		},
+		Validate: func(config map[string]string) error {
+			if config[&quot;api_key&quot;] == &quot;&quot; || config[&quot;api_secret&quot;] == &quot;&quot; {
+				return fmt.Errorf(&quot;api_key and api_secret are required&quot;)
+			}
+			return nil
+		},
+		Info: plugin.DNSProviderInfo{
+			DisplayName: &quot;My DNS&quot;,
+			Capabilities: []plugin.DNSProviderCapability{
+				plugin.DNSCapabilityCertDNS01, plugin.DNSCapabilityDDNS,
+			},
+		},
+	})
+	if err != nil {
+		log.Error().Err(err).Str(&quot;plugin&quot;, providerName).Msg(&quot;register DNS provider failed&quot;)
+	}
+}
+
+// 下面是示意，替换成你的 DNS API 调用
+func (p *provider) upsertTXT(ctx context.Context, fqdn, value string) error  { /* ... */ return nil }
+func (p *provider) removeTXT(ctx context.Context, fqdn, value string) error  { /* ... */ return nil }
+func (p *provider) ensureAddrMember(ctx context.Context, domain, ip string) error { /* ... */ return nil }
+</code></pre>
+<h3 id="第-2-步配置--在-auto_certdns_providers-里引用">第 2 步：配置 —— 在 <code>auto_cert.dns_providers</code> 里引用</h3>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: admin@example.com
+  dns_providers:
+    - name: my-cloud              # 逻辑名（被 domains 路由引用，可与 type 不同）
+      type: mydns                 # ← 你注册的插件名 plugin.RegisterDNSProviderV2(&quot;mydns&quot;, …)
+      enabled: true
+      domains: [&quot;*.example.com&quot;]  # 该 provider 负责签发证书的域名（DNS-01）
+      config:                     # ← 整个 map 原样传给工厂的 config 参数
+        api_key: &quot;AKxxxx&quot;
+        api_secret: &quot;yyyy&quot;
+        propagation_wait: &quot;60s&quot;   # 可选：DNS-01 传播等待（见 §四）
+      ddns:                       # 可选：开启 DDNS 同步
+        enabled: true
+        sync_a: true
+        domains: [&quot;home.example.com&quot;]
+</code></pre>
+<ul>
+<li><strong>证书 DNS-01</strong>：当某域名匹配 <code>dns_providers[].domains</code> 时，核心用对应 provider 走 DNS-01 质询（新插件实现 <code>CertDNSProviderV2</code>，V1 仍兼容）。</li>
+<li><strong>DDNS</strong>：当 <code>ddns.enabled: true</code> 时，周期 DDNS 任务会对 <code>ddns.domains</code> 调 <code>Sync</code>（要求实现 <code>DDNSProvider</code>）。<code>DNSSyncRecordRouter</code> 只作用于下文说明的证书管理器记录同步路径。</li>
+<li><code>config</code> 这一整个 <code>map[string]string</code> 原样进你的工厂——所有自定义参数都放这里。</li>
+</ul>
+<hr>
+<h2 id="四可选能力详解">四、可选能力详解</h2>
+<h3 id="41-自定义传播等待--超时证书-dns-01">4.1 自定义传播等待 / 超时（证书 DNS-01）</h3>
+<p>默认行为：lego 会向权威 NS 轮询，确认 TXT 记录已传播后再让 CA 校验；总时长默认 2 分钟、间隔 10 秒。你可以两种方式干预：</p>
+<ul>
+<li><strong>配置级</strong>（无需写代码）：在 <code>config</code> 里设 <code>propagation_wait: &quot;60s&quot;</code>、<code>skip_propagation_check: &quot;true&quot;</code>、<code>disable_complete_propagation: &quot;true&quot;</code>、<code>recursive_nameservers: &quot;1.1.1.1,8.8.8.8&quot;</code>（核心在 <a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/cert/interface.go">internal/cert/interface.go</a> 的 <code>buildDNSChallengeOptions</code> 里解析）。</li>
+<li><strong>代码级</strong>：实现 <code>DNSPropagationChecker</code> 完全接管等待逻辑；实现 <code>DNSOptionalTimeout</code> 改总时长/间隔。</li>
+</ul>
+<blockquote>
+<p>所有方法收到的 <code>ctx</code> 就是这次 ACME 订单的 context：进程关闭或集群里失去证书锁时会被取消，请把它传给服务商 SDK 的 HTTP 调用。删除记录时宿主会换成一个不随订单取消的 context，保证 TXT 记录被清理。</p>
+<p><code>auto_cert.propagation_dns</code> 是进程级的递归解析器（lego v5 起全局共享）；某个 provider 的 <code>recursive_nameservers</code> 由 LiteGate 针对该 provider 单独校验。</p>
+</blockquote>
+<pre><code class="language-go">func (p *provider) GetTimeout() (time.Duration, time.Duration) {
+	return 5 * time.Minute, 15 * time.Second // 慢速 DNS 可调大
+}
+</code></pre>
+<h3 id="42-自定义记录同步路由dnssyncrecordrouter">4.2 自定义记录同步路由（<code>DNSSyncRecordRouter</code>）</h3>
+<p>LiteGate 有两条写 A/AAAA 记录的路径，对你的接口要求不同：</p>
+<ul>
+<li><strong>独立的 DDNS 周期任务</strong>（<code>auto_cert.dns_providers[].ddns</code>）：走 <a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/ddns/provider.go">internal/ddns/provider.go</a> 的 <code>NewProvider</code>，<strong>直接调 <code>DDNSProvider.Sync(ctx, domain, ip)</code></strong>，记录类型由 <code>ip</code> 是 IPv4/IPv6 决定。这条路径只认 <code>DDNSProvider</code>。</li>
+<li><strong>证书管理器的记录同步</strong>（如服务 Host 自动同步等，经 <code>CertificateManager.SyncRecordWithProvider</code>）：经 <code>externalCertProviderAdapter.SyncRecord</code> 桥接，此处<strong>优先</strong>找 <code>DNSSyncRecordRouter.SyncRecord</code>（你能拿到明确的 <code>recordType</code>），找不到再回退到 <code>DDNSProvider.Sync</code>。</li>
+</ul>
+<p>需要在第二条路径上精细控制记录类型时，实现 <code>DNSSyncRecordRouter</code>：</p>
+<pre><code class="language-go">func (p *provider) SyncRecord(ctx context.Context, domain, recordType, value string) error {
+	// recordType 已由核心算好（IPv4→&quot;A&quot;，IPv6→&quot;AAAA&quot;）
+	return p.api.SetRecord(ctx, domain, recordType, value)
+}
+</code></pre>
+<hr>
+<h2 id="五编译进二进制用户拥有-main">五、编译进二进制（用户拥有 main）</h2>
+<p>和其它插件一样，走「用户拥有 main」——在你<strong>自己的仓库</strong>里建一个 <code>main</code>，空导入插件包再调 <code>litegate.Run()</code>：</p>
+<pre><code class="language-go">// main.go
+package main
+
+import (
+	&quot;log&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/litegate&quot;
+
+    _ &quot;your-module/mydns&quot; // ← init() 里 RegisterDNSProviderV2
+)
+
+func main() {
+	if err := litegate.Run(); err != nil {
+		log.Fatalf(&quot;litegate exited: %v&quot;, err)
+	}
+}
+</code></pre>
+<p><code>go build</code> 即得带插件的网关。也可用一键构建：</p>
+<pre><code class="language-bash"># 已发布版本
+litegate build --with your-module/mydns@v1.2.3 -o litegate
+
+# 本地开发；右侧目录是插件 go.mod 所在目录
+litegate build --with your-module/mydns=../your-module -o litegate
+</code></pre>
+<p>最小复制模板见 <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/plugin-template">examples/plugin-template</a>，覆盖 DNS Provider V2 的可编译内存实现见 <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/dns/memory">examples/plugins/dns/memory</a>。内存实现不会修改权威 DNS，只用于学习与测试。</p>
+<blockquote>
+<p>也可以在本仓库内 in-tree 开发（把包放仓库里、在 <a href="https://github.com/jamesleeon/LiteGate/blob/master/cmd/litegate/plugins.go">cmd/litegate/plugins.go</a> 空导入），但<strong>独立仓库 + 用户拥有 main 是推荐方式</strong>。</p>
+</blockquote>
+<hr>
+<h2 id="六必须注意的事踩坑清单">六、必须注意的事（踩坑清单）</h2>
+<ol>
+<li>
+<p><strong>能力按需实现，但必须如实声明</strong>。V2 的 <code>Info.Capabilities</code> 会在加载期与证书/DDNS 用途核对；运行实例仍必须实现相应接口。</p>
+</li>
+<li>
+<p><strong>新插件使用 <code>RegisterDNSProviderV2</code></strong>。工厂拿到配置副本与 <code>*plugin.Dependencies</code>；纯配置检查放 <code>Registration.Validate</code>，不要在校验函数中联网、启动 goroutine 或修改全局状态。</p>
+</li>
+<li>
+<p><strong>不能覆盖内置名</strong>。<code>RegisterDNSProvider(&quot;aliyun&quot;, …)</code> 等会返回 error。内置名：<code>aliyun</code> / <code>tencent</code> / <code>tencentcloud</code> / <code>cloudflare</code>。取个不冲突的名字。</p>
+</li>
+<li>
+<p><strong>尊重 <code>ctx</code> 取消</strong>。<code>AddTXTRecord</code> / <code>DeleteTXTRecord</code> / <code>Sync</code> 拿到的 <code>ctx</code> 会在网关关机或质询超时时取消——你的 HTTP 调用要带上它，别用 <code>context.Background()</code>，否则关机时会卡住或泄露。</p>
+</li>
+<li>
+<p><strong>TXT 必须使用 <code>challenge.Value</code></strong>。它不是 <code>KeyAuthorization</code> 原文。删除时按 FQDN 和 Value 精确清理，避免误删并发质询的其它 TXT。</p>
+</li>
+<li>
+<p><strong>DDNS 周期任务只调 <code>Sync</code></strong>。<code>auto_cert.dns_providers[].ddns</code> 驱动的周期同步只会调 <code>DDNSProvider.Sync(ctx, domain, ip)</code>，记录类型由 <code>ip</code> 是 IPv4/IPv6 决定——这条路径上实现 <code>DNSSyncRecordRouter</code> <strong>不会</strong>被调用。<code>DNSSyncRecordRouter.SyncRecord</code>（拿到现成 <code>recordType</code>）仅作用于证书管理器的记录同步路径（见 §4.2）。</p>
+</li>
+<li>
+<p><strong><code>config</code> 值都是 string，且是副本</strong>。时长写 <code>&quot;60s&quot;</code> 自己 <code>time.ParseDuration</code>，开关写 <code>&quot;true&quot;</code> 自己判断。修改该 map 不会改变宿主配置，但也不应把秘密写入日志。</p>
+</li>
+<li>
+<p><strong>DNS-01 通配符证书必须用 DNS Provider</strong>。<code>*.example.com</code> 这类通配符证书无法用 HTTP-01，必须有一个实现了 <code>CertDNSProviderV2</code>（或兼容 V1）的 provider 负责该域名。</p>
+</li>
+</ol>
+<hr>
+<h2 id="七生命周期与分发机制说明">七、生命周期与分发（机制说明）</h2>
+<pre><code>程序启动
+  └─ 插件包 init() → plugin.RegisterDNSProviderV2(&quot;mydns&quot;, registration)
+     （RegisterDNSProvider / WithDependencies 作为 V1 兼容）
+配置加载
+  └─ 检查逻辑名/域名冲突 → V2 Validate → 校验声明能力
+     （V1 创建并关闭临时实例完成兼容预检；litegate -t 同样执行）
+证书签发/续期（某域名匹配 dns_providers[].domains）
+  └─ cert.GetCertProvider(type, config)
+       ├─ 内置注册表命中？→ 用内置
+       └─ 否 → 公共注册表 factory(config, deps) → 断言 CertDNSProviderV2/V1 → 适配为内部 CertProvider
+            └─ lego 调 AddTXTRecord → 等待传播 → CA 校验 → DeleteTXTRecord
+DDNS 周期同步（ddns.enabled，周期/IP 变化）
+  └─ ddns.NewProvider(type, config) → 断言 DDNSProvider → Sync(ctx, domain, ip)
+证书管理器记录同步（如服务 Host 自动同步，SyncRecordWithProvider）
+  └─ cert.GetSyncProvider → 适配器优先 DNSSyncRecordRouter.SyncRecord，回退 DDNSProvider.Sync
+停止 / 重载退出
+  └─ 等待在途任务 → DNSCloser.Close(ctx)
+</code></pre>
+<ul>
+<li>内置 provider 通过内部 <code>RegisterProvider</code> 注册时，会<strong>先反查公共注册表防重名，再把名字保留进公共注册表</strong>（见 <a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/cert/interface.go">internal/cert/interface.go</a> 与 <a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/ddns/registerprovider.go">internal/ddns/registerprovider.go</a>）。</li>
+<li>第三方 provider 经 <code>externalCertProviderAdapter</code>（<a href="https://github.com/jamesleeon/LiteGate/blob/master/internal/cert/interface.go">internal/cert/interface.go</a>）桥接到内部 <code>CertProvider</code>：<code>WaitForPropagation</code> 探测 <code>DNSPropagationChecker</code>、<code>SyncRecord</code> 优先 <code>DNSSyncRecordRouter</code> 再回退 <code>DDNSProvider.Sync</code>、<code>GetTimeout</code> 探测 <code>DNSOptionalTimeout</code>（缺省 2min/10s）。</li>
+</ul>
+<hr>
+<h2 id="速查表">速查表</h2>
+<table>
+<thead>
+<tr>
+<th>我要…</th>
+<th>做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>用现成服务商（华为云、Route 53……）</td>
+<td><code>litegate build --dns &lt;名字&gt;</code>，零代码，见「捷径一」</td>
+</tr>
+<tr>
+<td>给新 DNS 服务商加证书签发</td>
+<td>实现 <code>plugin.CertDNSProviderV2</code>，用 <code>plugin.RegisterDNSProviderV2</code> 注册，配 <code>dns_providers[].type</code> + <code>domains</code></td>
+</tr>
+<tr>
+<td>给新 DNS 服务商加 DDNS</td>
+<td>实现 <code>plugin.DDNSProvider</code>，用 <code>plugin.RegisterDNSProviderV2</code> 注册并声明 <code>DNSCapabilityDDNS</code></td>
+</tr>
+<tr>
+<td>同时支持证书 + DDNS</td>
+<td>一个 provider 同时实现两组接口，并在 <code>Info.Capabilities</code> 声明两项</td>
+</tr>
+<tr>
+<td>自定义传播等待</td>
+<td>实现 <code>plugin.DNSPropagationChecker</code>，或在 <code>config</code> 配 <code>propagation_wait</code> 等</td>
+</tr>
+<tr>
+<td>自定义传播超时</td>
+<td>实现 <code>plugin.DNSOptionalTimeout</code></td>
+</tr>
+<tr>
+<td>证书管理器记录同步精确控制记录类型</td>
+<td>实现 <code>plugin.DNSSyncRecordRouter</code>（拿到现成 <code>recordType</code>，见 §4.2）</td>
+</tr>
+<tr>
+<td>配置错误提前失败</td>
+<td>在 <code>DNSProviderRegistration.Validate</code> 校验；<code>litegate -t</code> 与启动都会调用</td>
+</tr>
+<tr>
+<td>暴露插件元数据</td>
+<td>实现 <code>plugin.DNSProviderDescriptor</code>，供文档/UI/预检工具使用</td>
+</tr>
+<tr>
+<td>支持资源释放</td>
+<td>实现 <code>plugin.DNSCloser</code></td>
+</tr>
+<tr>
+<td>读插件配置</td>
+<td>工厂参数 <code>config map[string]string</code>（值均为 string）</td>
+</tr>
+<tr>
+<td>编进二进制</td>
+<td>自建 <code>main</code>，空导入插件包 + <code>litegate.Run()</code>，<code>go build</code>，或 <code>litegate build --with</code></td>
+</tr>
+</tbody>
+</table>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/dns-provider-plugin-guide.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>插件开发者说明 (Plugin Authoring Guide) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/12-plugins/authoring-guide.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details open><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html" class="current" aria-current="page">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="插件开发者说明-plugin-authoring-guide">插件开发者说明 (Plugin Authoring Guide)</h1>
+<p>本文档面向需要在<strong>独立代码仓库</strong>中为 LiteGate 开发扩展能力的 Go 研发人员与架构师。
+涵盖 LiteGate 公共契约包 <a href="https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin"><code>pkg/plugin</code></a> 的设计规范、主要扩展点的接口签名与代码骨架、生命周期管理、Panic 容错机制与生产级并发避坑指南。</p>
+<hr>
+<h2 id="一契约与工程脚手架">一、契约与工程脚手架</h2>
+<h3 id="11-独立仓库开发原则">1.1 独立仓库开发原则</h3>
+<ul>
+<li><strong>只依赖公共契约包</strong>：外部插件仅需 <code>go get github.com/jamesleeon/LiteGate</code>，并导入公共包 <code>github.com/jamesleeon/LiteGate/pkg/plugin</code>。</li>
+<li><strong>严禁引用 <code>internal/...</code></strong>：LiteGate 的 <code>internal/</code> 目录属于内部实现，不对外提供稳定性承诺。所有对外能力均已通过 <code>pkg/plugin</code> 封装为轻量、解耦的窄接口。</li>
+<li><strong>自动初始化与注册</strong>：插件包在自身的 <code>init()</code> 函数中调用 <code>plugin.Register*</code> 注册，由使用者在构建入口处空导入（Blank Import <code>_ &quot;your/plugin/path&quot;</code>）触发。</li>
+</ul>
+<h3 id="12-注入宿主能力plugindependencies">1.2 注入宿主能力：<code>plugin.Dependencies</code></h3>
+<p>插件在首次实例化构建时，工厂方法会收到宿主环境注入的依赖对象：</p>
+<pre><code class="language-go">type Dependencies struct {
+    // 实例上下文。Ingress 插件在此 Context 取消时表示网关正在关闭或卸载该实例。
+    Context   context.Context
+
+    // 结构化日志记录器。已预填充网关系统上下文，插件应使用 With().Str(&quot;plugin&quot;, ...) 派生子日志。
+    Logger    *zerolog.Logger
+
+    // 服务发现只读视图。插件可直接根据服务名、命名空间、标签获取健康的后端 IP:Port 端点列表。
+    Discovery DiscoveryClient
+
+    // 共享动态配置只读视图。可读取网关热重载后的全局配置只读镜像。
+    Config    ConfigProvider
+}
+</code></pre>
+<h3 id="13-可选生命周期接口">1.3 可选生命周期接口</h3>
+<p>LiteGate 遵循 <strong>“可选接口 + 类型断言”</strong> 的设计哲学。你的插件如果是无状态纯函数，只需实现核心行为方法；若涉及后台连接、预热或资源回收，可选实现以下接口：</p>
+<pre><code class="language-go">// 1. 全局初始化钩子: 在配置校验通过、实例首次构建时由宿主调度一次
+type Provisioner interface {
+    Provision(deps *Dependencies) error
+}
+
+// 2. 优雅清理钩子: 在网关配置重载（旧代实例延迟回收）或停机关机时由宿主调用
+type CleanerUpper interface {
+    Cleanup() error
+}
+</code></pre>
+<hr>
+<h2 id="二插件扩展点开发实战">二、插件扩展点开发实战</h2>
+<h3 id="1-action-插件-终结型动作">1. Action 插件 (终结型动作)</h3>
+<p>Action 负责终结 HTTP 请求并生成响应。</p>
+<pre><code class="language-go">package myaction
+
+import (
+	&quot;fmt&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+)
+
+type customConfig struct {
+	Greeting string `json:&quot;greeting&quot;`
+	Code     int    `json:&quot;code&quot;`
+}
+
+type actionHandler struct {
+	deps *plugin.Dependencies
+}
+
+// Execute 接收请求上下文 ctx (包含 ctx.Req 和 ctx.W) 以及当次路由配置 cfg
+func (h *actionHandler) Execute(ctx *plugin.Context, cfg plugin.ActionConfig) error {
+	var c customConfig
+	if err := cfg.Decode(&amp;c); err != nil {
+		return fmt.Errorf(&quot;invalid action config: %w&quot;, err)
+	}
+
+	ctx.W.Header().Set(&quot;Content-Type&quot;, &quot;application/json; charset=utf-8&quot;)
+	ctx.W.WriteHeader(c.Code)
+	_, err := ctx.W.Write([]byte(fmt.Sprintf(`{&quot;message&quot;: %q}`, c.Greeting)))
+	return err
+}
+
+func init() {
+	_ = plugin.RegisterAction(&quot;my_greeting&quot;, plugin.ActionRegistration{
+		Factory: func(deps *plugin.Dependencies) plugin.Handler {
+			return &amp;actionHandler{deps: deps}
+		},
+		Validate: func(cfg plugin.ActionConfig) error {
+			var c customConfig
+			if err := cfg.Decode(&amp;c); err != nil {
+				return err
+			}
+			if c.Greeting == &quot;&quot; {
+				return fmt.Errorf(&quot;greeting message cannot be empty&quot;)
+			}
+			return nil
+		},
+	})
+}
+</code></pre>
+<hr>
+<h3 id="2-middleware-v2-插件-中间件流水线">2. Middleware V2 插件 (中间件流水线)</h3>
+<p>中间件按 Phase 编排，注册时在 <code>Descriptor</code> 中声明 Phase 与同阶段内的 Order。阶段顺序固定为：
+<code>Preflight</code> → <code>RequestTransform</code> → <code>Security</code> → <code>TrafficControl</code> → <code>Authentication</code> → <code>PostAuth</code> → <code>Response</code> → <code>Upstream</code>。</p>
+<pre><code class="language-go">package mymiddleware
+
+import (
+	&quot;net/http&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+)
+
+type traceMiddleware struct{}
+
+func (m *traceMiddleware) Wrap(next http.Handler, site plugin.SiteConfig, name string, config plugin.MiddlewareConfig) http.Handler {
+	var settings struct { HeaderName string `json:&quot;header_name&quot;` }
+	if err := config.Decode(&amp;settings); err != nil { panic(err) }
+	headerName := settings.HeaderName
+	if headerName == &quot;&quot; {
+		headerName = &quot;X-Request-Trace&quot;
+	}
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		traceID := r.Header.Get(headerName)
+		if traceID == &quot;&quot; {
+			traceID = &quot;trace-&quot; + r.RemoteAddr
+			r.Header.Set(headerName, traceID)
+		}
+		w.Header().Set(headerName, traceID)
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func init() {
+	_ = plugin.RegisterMiddleware(&quot;my_trace&quot;, plugin.MiddlewareRegistration{
+		Factory: func(deps *plugin.Dependencies) plugin.MiddlewareHandler {
+			return &amp;traceMiddleware{}
+		},
+		Descriptor: plugin.MiddlewareDescriptor{
+			Phase:       plugin.PhasePreflight, // 放入安全阶段前
+			Order:       10,                      // 相对排序权重
+		},
+		Validate: func(config plugin.MiddlewareConfig) error {
+			// 加载期 fail-closed 检查
+			var settings struct { HeaderName string `json:&quot;header_name&quot;` }
+			return config.Decode(&amp;settings)
+		},
+	})
+}
+</code></pre>
+<hr>
+<h3 id="3-loadbalancer-插件-自定义负载均衡算法">3. LoadBalancer 插件 (自定义负载均衡算法)</h3>
+<p>实现自定义上游节点选择逻辑（如一致性哈希、加权最小响应时间等）：</p>
+<pre><code class="language-go">package mybalancer
+
+import (
+	&quot;math/rand&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+)
+
+type randomBalancer struct{}
+
+// Next 从可用端点列表中根据 key 选择一个 Endpoint。
+func (b *randomBalancer) Next(endpoints []plugin.Endpoint, key string) plugin.Endpoint {
+	if len(endpoints) == 0 {
+		return nil
+	}
+	idx := rand.Intn(len(endpoints))
+	return endpoints[idx]
+}
+
+// 可选: 实现 FeedbackBalancer 接收请求完成回调 (用于自适应延迟/最小活跃数算法)
+func (b *randomBalancer) Done(ep plugin.Endpoint, result plugin.UpstreamResult) {
+	// result 包含: Err, StatusCode, Duration, HeaderDuration, Canceled
+}
+
+func init() {
+	_ = plugin.RegisterLoadBalancer(&quot;pure_random&quot;, func() plugin.LoadBalancer {
+		return &amp;randomBalancer{}
+	})
+}
+</code></pre>
+<hr>
+<h3 id="4-ingress-插件-端口入口拦截">4. Ingress 插件 (端口入口拦截)</h3>
+<p>Ingress 插件能够在 Site 路由与规范化之前判定是否接管该连接（如 HTTP CONNECT 正向代理、特定端口协议多路复用等）：</p>
+<pre><code class="language-go">package myingress
+
+import (
+	&quot;context&quot;
+	&quot;net/http&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+)
+
+type ingressConfig struct {
+	MagicToken string `json:&quot;magic_token&quot;`
+}
+
+type ingressHandler struct {
+	expectedToken string
+}
+
+// Claim 在进入常规路由前执行判定。返回非 nil 即表示由该 Handler 全权接管并终结该请求。
+func (h *ingressHandler) Claim(r *http.Request, meta plugin.IngressRequest) http.Handler {
+	if r.Header.Get(&quot;X-Magic-Bypass&quot;) == h.expectedToken {
+		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(&quot;Intercepted by Ingress Plugin on EntryPoint: &quot; + meta.EntryPoint))
+		})
+	}
+	return nil // 返回 nil 表示放弃接管，请求继续流向正常的 Site 路由
+}
+
+// 实现 IngressCloser 接口以支持平滑关机
+func (h *ingressHandler) Close(ctx context.Context) error {
+	return nil
+}
+
+func init() {
+	_ = plugin.RegisterIngress(&quot;magic_bypass&quot;, plugin.IngressRegistration{
+		Validate: func(cfg plugin.IngressConfig) error {
+			var c ingressConfig
+			return cfg.Decode(&amp;c)
+		},
+		Factory: func(cfg plugin.IngressConfig, deps *plugin.Dependencies) (plugin.IngressHandler, error) {
+			var c ingressConfig
+			_ = cfg.Decode(&amp;c)
+			return &amp;ingressHandler{expectedToken: c.MagicToken}, nil
+		},
+	})
+}
+</code></pre>
+<hr>
+<h3 id="5-discovery-provider-插件-服务发现源">5. Discovery Provider 插件 (服务发现源)</h3>
+<p>为动态路由和上游健康池提供外部注册中心发现能力：</p>
+<pre><code class="language-go">package memdiscovery
+
+import (
+	&quot;context&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+)
+
+type memoryDiscovery struct{}
+
+// ListServices 返回当前可发现的服务清单；LiteGate 自己负责过滤与负载均衡。
+func (d *memoryDiscovery) ListServices(ctx context.Context) ([]plugin.DiscoveredService, error) {
+	return []plugin.DiscoveredService{{Name: &quot;order-service&quot;, Namespace: &quot;default&quot;}}, nil
+}
+
+// Resolve 返回某个服务的实例快照。
+func (d *memoryDiscovery) Resolve(ctx context.Context, q plugin.DiscoveryQuery) ([]plugin.DiscoveredEndpoint, error) {
+	if q.ServiceName != &quot;order-service&quot; {
+		return nil, nil
+	}
+	return []plugin.DiscoveredEndpoint{
+		{ID: &quot;order-1&quot;, Address: &quot;10.0.0.1&quot;, Port: 8080, Weight: 10, Healthy: true, Metadata: map[string]string{&quot;env&quot;: &quot;prod&quot;}},
+		{ID: &quot;order-2&quot;, Address: &quot;10.0.0.2&quot;, Port: 8080, Weight: 10, Healthy: true, Metadata: map[string]string{&quot;env&quot;: &quot;prod&quot;}},
+	}, nil
+}
+
+// Watch 可选：阻塞到 ctx 取消，本地快照变化时调用 notify，LiteGate 会合并通知并重新拉取。
+func (d *memoryDiscovery) Watch(ctx context.Context, notify func()) error {
+	&lt;-ctx.Done()
+	return nil
+}
+
+func init() {
+	_ = plugin.RegisterDiscoveryProvider(&quot;in_memory&quot;, plugin.DiscoveryRegistration{
+		Info:     plugin.DiscoveryProviderInfo{Name: &quot;in_memory&quot;, SupportsWatch: true, SupportsMetadata: true},
+		Validate: func(config map[string]string) error { return nil },
+		Factory: func(config map[string]string, deps *plugin.Dependencies) (plugin.DiscoveryProvider, error) {
+			return &amp;memoryDiscovery{}, nil
+		},
+	})
+}
+</code></pre>
+<hr>
+<h3 id="6-dns-provider-插件-dns-01-证书质询与-ddns">6. DNS Provider 插件 (DNS-01 证书质询与 DDNS)</h3>
+<pre><code class="language-go">package mydns
+
+import (
+	&quot;context&quot;
+	&quot;errors&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+)
+
+type customDNS struct {
+	token string
+}
+
+func (d *customDNS) GetName() string { return &quot;my_dns_provider&quot; }
+
+// AddTXTRecord 向权威 DNS API 写入 _acme-challenge TXT 记录。
+func (d *customDNS) AddTXTRecord(ctx context.Context, domain, token, keyAuth string) error {
+	return nil
+}
+
+// DeleteTXTRecord 在验证结束后清理 TXT 记录。
+func (d *customDNS) DeleteTXTRecord(ctx context.Context, domain, token, keyAuth string) error {
+	return nil
+}
+
+func init() {
+	_ = plugin.RegisterDNSProviderV2(&quot;my_dns_provider&quot;, plugin.DNSProviderRegistration{
+		Info: plugin.DNSProviderInfo{
+			Name:         &quot;my_dns_provider&quot;,
+			Capabilities: []plugin.DNSProviderCapability{plugin.DNSCapabilityCertDNS01},
+		},
+		Validate: func(config map[string]string) error {
+			if config[&quot;api_token&quot;] == &quot;&quot; {
+				return errors.New(&quot;api_token is required&quot;)
+			}
+			return nil
+		},
+		Factory: func(config map[string]string, deps *plugin.Dependencies) (plugin.DNSProvider, error) {
+			return &amp;customDNS{token: config[&quot;api_token&quot;]}, nil
+		},
+	})
+}
+</code></pre>
+<hr>
+<h3 id="7-ids-provider-插件-鉴权安全治理">7. IDS Provider 插件 (鉴权安全治理)</h3>
+<p>用于在请求到达 Action 前执行统一鉴权决策，并可动态返回路由金丝雀标签（Selector）：</p>
+<pre><code class="language-go">package pathguard
+
+import (
+	&quot;context&quot;
+	&quot;net/http&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+)
+
+type pathGuardIDS struct{}
+
+func (g *pathGuardIDS) Evaluate(ctx context.Context, in plugin.IDSInput) (*plugin.IDSDecision, error) {
+	if values := in.Request.Header(&quot;X-Block-Me&quot;); len(values) == 1 &amp;&amp; values[0] == &quot;true&quot; {
+		return &amp;plugin.IDSDecision{
+			Action:   plugin.ActionRespond,
+			Response: &amp;plugin.DirectResponse{Status: http.StatusForbidden, Body: []byte(&quot;Forbidden by PathGuard IDS Plugin&quot;)},
+		}, nil
+	}
+	return &amp;plugin.IDSDecision{
+		Action: plugin.ActionForward,
+		// 可选：Meta 是软偏好，未命中时回退到 Match 硬边界内的全部实例（只对 proxy 有意义）
+		Discovery: &amp;plugin.DiscoveryDecision{
+			Selector: &amp;plugin.DiscoverySelector{Meta: map[string]string{&quot;canary&quot;: &quot;true&quot;}},
+		},
+	}, nil
+}
+
+func init() {
+	_ = plugin.RegisterIDSProvider(&quot;path_guard&quot;, plugin.IDSProviderRegistration{
+		Validate: func(options plugin.IDSOptions) error { return nil },
+		Factory: func(deps *plugin.Dependencies) (plugin.IDSProvider, error) {
+			return &amp;pathGuardIDS{}, nil
+		},
+	})
+}
+</code></pre>
+<hr>
+<h3 id="8-kv-provider-插件-动态内容流">8. KV Provider 插件 (动态内容流)</h3>
+<pre><code class="language-go">package statickv
+
+import (
+	&quot;context&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+)
+
+type staticKV struct{}
+
+// Watch 先推送一次当前值，之后每次变化调用 update；阻塞到 ctx 取消后返回。
+func (k *staticKV) Watch(ctx context.Context, key string, update func(payload []byte)) error {
+	update([]byte(&quot;&lt;h1&gt;Hello from KV Provider Plugin&lt;/h1&gt;&quot;))
+	&lt;-ctx.Done()
+	return nil
+}
+
+func init() {
+	_ = plugin.RegisterKVProvider(&quot;static_kv&quot;, &amp;staticKV{})
+}
+</code></pre>
+<hr>
+<h3 id="9-template-func-插件-模板函数扩展">9. Template Func 插件 (模板函数扩展)</h3>
+<pre><code class="language-go">package myfuncs
+
+import (
+	&quot;strings&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+)
+
+func init() {
+	_ = plugin.RegisterTemplateFunc(&quot;maskPhone&quot;, func(phone string) string {
+		if len(phone) &lt; 7 {
+			return phone
+		}
+		return phone[:3] + &quot;****&quot; + phone[len(phone)-4:]
+	})
+	_ = plugin.RegisterTemplateFunc(&quot;toUpper&quot;, strings.ToUpper)
+}
+</code></pre>
+<hr>
+<h3 id="10-其他扩展点">10. 其他扩展点</h3>
+<p>以下扩展点使用统一的 <code>plugin.ExtensionRegistration[T]</code>（<code>Validate</code> + <code>Factory</code>），在全局 <code>extension_plugins</code> 中按 <code>kind</code> 绑定实例，配置写法见 <a href="configuration.html#8-%E5%85%A8%E5%B1%80%E6%89%A9%E5%B1%95%E6%8F%92%E4%BB%B6%E7%BB%91%E5%AE%9A%E9%85%8D%E7%BD%AE-extension_plugins">用户配置指南</a>。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">kind</th>
+<th style="text-align:left">注册函数</th>
+<th style="text-align:left">需要实现的接口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>stream</code></td>
+<td style="text-align:left"><code>RegisterStream</code> / <code>RegisterStreamFilter</code> / <code>RegisterDatagram</code></td>
+<td style="text-align:left"><code>HandleStream(ctx, net.Conn, StreamMetadata)</code>；Filter 返回包装后的连接，必须回放已窥探的字节；Datagram 处理单个 UDP 报文</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>response_filter</code></td>
+<td style="text-align:left"><code>RegisterResponseFilter</code></td>
+<td style="text-align:left"><code>FilterResponse(ctx, *http.Request, *http.Response) (io.ReadCloser, error)</code>；不处理时原样返回 body</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>access_log_exporter</code> / <code>trace_exporter</code> / <code>metrics_exporter</code></td>
+<td style="text-align:left"><code>RegisterAccessLogExporter</code> / <code>RegisterTraceExporter</code> / <code>RegisterMetricsExporter</code></td>
+<td style="text-align:left">分别接收 <code>AccessLogRecord</code>、<code>TraceRecord</code>、<code>MetricsSnapshot</code>，在请求路径之外异步调用</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cert_issuer</code></td>
+<td style="text-align:left"><code>RegisterCertIssuer</code></td>
+<td style="text-align:left"><code>IssueCertificate(ctx, csrDER, CertOptions) (*CertBundle, error)</code>；签发方只接收 CSR，宿主校验证书与 CSR、域名匹配</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>upstream_transport</code></td>
+<td style="text-align:left"><code>RegisterUpstreamTransport</code></td>
+<td style="text-align:left"><code>RoundTripUpstream(req, TransportMetadata, base http.RoundTripper)</code>；可包装宿主提供的 base，或自建传输并自行负责 TLS/DNS/连接池策略</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>config_source</code></td>
+<td style="text-align:left"><code>RegisterConfigSource</code></td>
+<td style="text-align:left"><code>Snapshot(ctx)</code> 返回完整配置快照，<code>Watch(ctx, func(ConfigSnapshot) error)</code> 推送新版本；增删此类绑定需要重启</td>
+</tr>
+</tbody>
+</table>
+<p>插件实现可选的 <code>Close(ctx)</code>（<code>plugin.ExtensionCloser</code>），宿主在活动使用者排空或宽限期到期后调用。Ingress 插件推荐使用泛型的 <code>plugin.RegisterTypedIngress</code>，见 <a href="../../ingress-plugin-guide.html">Ingress 插件</a>；通知通道使用 <code>plugin.RegisterNotifyTransport</code>，见 <a href="../09-advanced/event-notification.html">事件通知</a>。</p>
+<hr>
+<h2 id="三注册统一元数据pluginregistermanifest">三、注册统一元数据：<code>plugin.RegisterManifest</code></h2>
+<p>为使插件能够被 <code>litegate plugins list</code>、<code>inspect</code>、<code>doctor</code> 以及 Web Dashboard 识别，强烈建议每个插件在 <code>init()</code> 中注册元数据：</p>
+<pre><code class="language-go">func init() {
+	_ = plugin.RegisterManifest(plugin.Manifest{
+		Kind:        &quot;action&quot;,         // 支持 action, middleware, load_balancer, kv, dns, ids, discovery, ingress
+		Name:        &quot;my_greeting&quot;,    // 与 Register* 保持完全一致的小写名称
+		Version:     &quot;1.0.0&quot;,          // 语义化版本
+		APIVersion:  plugin.APIVersion,// 当前公共契约规范版本 (即 &quot;v1&quot;)
+		DisplayName: &quot;Greeting Response Action&quot;,
+		Description: &quot;Returns a friendly JSON greeting message with custom HTTP status code.&quot;,
+		License:     &quot;Apache-2.0&quot;,
+		Capabilities: []string{&quot;response&quot;, &quot;json&quot;},
+		ConfigExample: `# Example Route Configuration:
+routes:
+  - name: greeting-route
+    match:
+      path: /hello
+    action:
+      type: my_greeting
+      greeting: &quot;Hello, World!&quot;
+      code: 200`,
+	})
+}
+</code></pre>
+<hr>
+<h2 id="四生产级健壮性与避坑指南">四、生产级健壮性与避坑指南</h2>
+<h3 id="1-单例与高并发状态隔离-thread-safety">1. 单例与高并发状态隔离 (Thread Safety)</h3>
+<blockquote class="alert alert-caution"><p><strong>切勿在 Handler 结构体字段中存储每请求（Per-Request）的状态！</strong>
+LiteGate 中注册的插件 Handler 实例是<strong>全局共享单例</strong>。成千上万个并发 goroutine 会同时调用 <code>Execute</code> 或 <code>Wrap</code>。
+所有随请求变化的数据必须保存在局部变量或 <code>ctx.Req.Context()</code> 中。结构体内部如需维护共享缓存或连接池，必须使用 <code>sync.RWMutex</code> 或原子操作保护。</p>
+</blockquote>
+<h3 id="2-加载期校验必须纯粹无副作用-fail-closed">2. 加载期校验必须纯粹无副作用 (Fail-Closed)</h3>
+<ul>
+<li><code>Validate</code> 函数在网关启动或配置加载阶段执行。</li>
+<li><strong>严禁在 <code>Validate</code> 中发起真实的 TCP/网络连接、耗时 I/O 或开启后台 goroutine</strong>。</li>
+<li><code>Validate</code> 的职责是检查 YAML 字段拼写、非空限制、类型越界等静态语义。如果有问题直接返回 <code>error</code>，确保坏配置在上线前就被阻断。</li>
+</ul>
+<h3 id="3-热重载与资源泄露防范-graceful-resource-lifecycle">3. 热重载与资源泄露防范 (Graceful Resource Lifecycle)</h3>
+<ul>
+<li>若插件在 <code>Provision</code> 中启动了后台心跳或同步 goroutine，必须监听 <code>deps.Context.Done()</code>。</li>
+<li>实现 <code>CleanerUpper</code> 接口并在 <code>Cleanup()</code> 中安全关闭连接池、关闭管道通道。</li>
+<li>LiteGate 在热重载时会给旧实例保留 15 秒（或配置的优雅关机宽限期）的排空时间，超时后会强制调用 <code>Cleanup()</code>。</li>
+</ul>
+<h3 id="4-全链路-panic-自动隔离保护">4. 全链路 Panic 自动隔离保护</h3>
+<p>LiteGate 在所有外部插件交互点（工厂创建、配置校验、请求执行、生命周期销毁）均内置了全方位的 <code>recover()</code> 兜底恢复机制。
+如果第三方插件发生未捕获的 Panic：</p>
+<ul>
+<li>校验期 Panic：自动捕获并转换为配置加载失败，不崩溃整个守护进程。</li>
+<li>请求期 Panic：自动捕获并记录 Error 级别日志，向客户端返回 500 状态码，避免单个异常请求击垮网关集群。</li>
+<li>尽管如此，插件自身仍应遵循防御性编程原则，主动处理空指针与类型断言。</li>
+</ul>
+<hr>
+<h2 id="五单元测试与本地联调">五、单元测试与本地联调</h2>
+<p>在独立仓库中编写单测极为简单，可直接模拟 <code>plugin.Context</code> 或 <code>http.Handler</code> 进行断言：</p>
+<pre><code class="language-go">package myaction
+
+import (
+	&quot;net/http&quot;
+	&quot;net/http/httptest&quot;
+	&quot;testing&quot;
+
+	&quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+)
+
+func TestGreetingAction(t *testing.T) {
+	h := &amp;actionHandler{}
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest(&quot;GET&quot;, &quot;/hello&quot;, nil)
+
+	ctx := &amp;plugin.Context{W: w, Req: r}
+	rawCfg := plugin.NewActionConfig(map[string]any{
+		&quot;greeting&quot;: &quot;Hello Test&quot;,
+		&quot;code&quot;:     200,
+	})
+
+	err := h.Execute(ctx, rawCfg)
+	if err != nil {
+		t.Fatalf(&quot;unexpected error: %v&quot;, err)
+	}
+
+	if w.Code != http.StatusOK {
+		t.Errorf(&quot;expected 200, got %d&quot;, w.Code)
+	}
+	if w.Body.String() != `{&quot;message&quot;: &quot;Hello Test&quot;}` {
+		t.Errorf(&quot;unexpected body: %s&quot;, w.Body.String())
+	}
+}
+</code></pre>
+<p>更多经过实战验证的各类型完整测试范例，可参考 LiteGate 源码目录中的 <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins"><code>examples/plugins</code></a>。</p>
+<h2 id="相关文档">相关文档</h2>
+<ul>
+<li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发与编译接入：Nomad 样例</a></li>
+<li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南</a></li>
+<li><a href="../../ids-provider-plugin-guide.html">IDS Provider 开发与上线</a></li>
+<li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/12-plugins/authoring-guide.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

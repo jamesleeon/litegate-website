@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DDNS (Dynamic DNS) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/06-certificates/ddns.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details open><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html" class="current" aria-current="page">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="ddns-dynamic-dns">DDNS (Dynamic DNS)</h1>
+<h2 id="multiple-nodes-and-internal-dns">Multiple nodes and internal DNS</h2>
+<p>A/AAAA updates preserve the record set: each node ensures its own address is present without replacing other nodes' addresses. Built-in Alibaba, Tencent and Cloudflare providers append records; third-party providers must preserve the same semantics. With Consul/LiteMesh certificate storage, distributed locks coordinate updates by provider, hostname and record type. Identical updates are idempotent and later DNS checks repair manually deleted records.</p>
+<pre><code class="language-yaml">litemesh:
+  enabled: true
+  roles:
+    cert_storage: true
+</code></pre>
+<p>Multiple A/AAAA addresses provide DNS rotation, not active health checking. Resolver/client caches can retain failed addresses. LiteGate persists this node's ownership in <code>ddns-owned.json</code>: after publishing a new address it withdraws its old values, and a completed sweep removes values for domains no longer served. A stopped node cannot withdraw its own records, so clean those up manually. Keep the ownership file across restarts. Renaming a provider with unchanged credentials is supported for new ownership records; if its original DNS account cannot be identified, restore that configuration or remove stale values manually.</p>
+<p><code>ddns.domains</code> wildcards select providers for loaded exact Site/Stream names. They do not create literal wildcard A/AAAA owners; requests containing <code>*</code> are skipped and record writers reject wildcard owners. Configure explicit IPv4/IPv6 values when the node should avoid public-IP probes.</p>
+<p>Internal DNS uses <code>auto_cert.dns_update</code>, publishing the gateway's internal IP into LiteMesh KV for LiteDNS rather than updating a public DNS provider. Enable LiteMesh and align the key prefix with LiteDNS. Omitted ip detects the outbound interface address; omitted node_id uses the hostname. KV TTL is three times heartbeat_interval.</p>
+<pre><code class="language-yaml">auto_cert:
+  dns_update:
+    enabled: true
+    auto_service_host_sync: true
+    ip: ''
+    key_prefix: litedns/v1/records/
+    node_id: ''
+    record_ttl: 30
+    heartbeat_interval: 30s
+</code></pre>
+<p>See <a href="../../dynamic-dns-multi-node.html">internal DNS and multiple nodes</a>.</p>
+<p>For another DNS service, see <a href="dns-providers.html">Add a DNS provider</a>: compatible libdns modules can be compiled in with <code>litegate build --dns</code> without writing plugin code.</p>
+<p>LiteGate features an integrated Dynamic DNS (DDNS) engine that automatically synchronizes the gateway's public WAN IP address with the A and AAAA records of your DNS cloud provider. Default builds include Alibaba Cloud DNS, Tencent Cloud DNSPod, and Cloudflare. Huawei Cloud DNS and other providers require third-party DNS provider plugins compiled on demand.</p>
+<hr>
+<h2 id="1-primary-operational-scenarios">1. Primary Operational Scenarios</h2>
+<ul>
+<li>Gateways deployed in networks with dynamic WAN IPs (such as residential broadband, offices, or NAT VPS).</li>
+<li>Pointing the exact hostnames of loaded Sites/Streams to the active gateway node IP.</li>
+<li>Seamless pairing with Let's Encrypt DNS-01 validation to achieve fully automated DNS updates and certificate renewals.</li>
+</ul>
+<hr>
+<h2 id="2-configuration-settings">2. Configuration Settings</h2>
+<p>DDNS configurations are nested inside individual global <code>dns_providers</code> profiles under the <code>auto_cert</code> block:</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: admin@example.com
+  dns_providers:
+    - name: &quot;aliyun-main&quot;
+      type: &quot;aliyun&quot;
+      enabled: true
+      domains: [&quot;*.example.com&quot;, &quot;example.com&quot;]
+      ddns:
+        enabled: true
+        ipv4: &quot;&quot;               # Omit to auto-probe public WAN IPv4
+        ipv6: &quot;&quot;               # Omit to auto-probe public WAN IPv6
+        sync_a: true           # Synchronizes DNS 'A' records (IPv4)
+        sync_aaaa: true        # Synchronizes DNS 'AAAA' records (IPv6)
+        # domains is optional. When omitted, the parent domains select the provider.
+        # Wildcards only match loaded Sites/Streams; exact discovered hosts are written.
+      config:
+        access_key_id: &quot;LTAI...&quot;
+        access_key_secret: &quot;...&quot;
+</code></pre>
+<hr>
+<h2 id="3-mapped-cloud-dns-providers">3. Mapped Cloud DNS Providers</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">DNS Provider</th>
+<th style="text-align:left"><code>type</code> Identifier</th>
+<th style="text-align:left">Mapped Configuration parameters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Alibaba Cloud DNS</strong></td>
+<td style="text-align:left"><code>aliyun</code></td>
+<td style="text-align:left"><code>access_key_id</code>, <code>access_key_secret</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Tencent Cloud DNSPod</strong></td>
+<td style="text-align:left"><code>tencent</code> / <code>tencentcloud</code></td>
+<td style="text-align:left"><code>secret_id</code>, <code>secret_key</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Cloudflare</strong></td>
+<td style="text-align:left"><code>cloudflare</code></td>
+<td style="text-align:left"><code>api_token</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote class="alert alert-tip"><p>Beyond the built-in providers above, you can integrate <strong>any</strong> DNS service through a <strong>DNS Provider plugin</strong> (with your own <code>type</code> name). The same plugin can also handle ACME certificate DNS-01 challenges. See the <a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide</a>.</p>
+</blockquote>
+<hr>
+<h2 id="4-automated-wan-ip-probing">4. Automated WAN IP Probing</h2>
+<p>When the <code>ipv4</code> or <code>ipv6</code> parameters are left blank, LiteGate executes an automated WAN IP probing pipeline:</p>
+<ol>
+<li>The gateway first scans local interfaces for a public address, excluding private and CGNAT (<code>100.64.0.0/10</code>) addresses. Linux also excludes temporary, deprecated, tentative and DAD-failed IPv6 addresses using <code>/proc/net/if_inet6</code>; stable-privacy addresses remain eligible. An external observation cannot reintroduce an excluded local address. If no usable address exists, it queries <code>https://api.ipify.org</code> over IPv4 or <code>https://api6.ipify.org</code> over IPv6, bypassing HTTP proxies. Each source has a five-second HTTP timeout; results are shared for one minute by address family and source list. Failures are logged and exposed in DDNS status.</li>
+<li>Upon successfully obtaining the IP, it compares the value against active DNS records.</li>
+<li>If a change is detected, LiteGate calls the DNS Provider's API to update the DNS records.</li>
+</ol>
+<blockquote class="alert alert-note"><p>If your environment is provisioned with a static WAN IP, declare it explicitly inside <code>ipv4</code> or <code>ipv6</code> parameter fields to completely bypass external HTTP polling overhead.</p>
+</blockquote>
+<p>Set <code>ddns.ipv4_sources</code> and <code>ddns.ipv6_sources</code> to replace the default reflection endpoints. Each accepts up to eight HTTP(S) URLs returning a plain-text public address; sources are tried in order until one succeeds. Use services reachable from your network, for example:</p>
+<pre><code class="language-yaml">ddns:
+  enabled: true
+  sync_a: true
+  sync_aaaa: true
+  ipv4_sources: [&quot;https://4.ipw.cn&quot;, &quot;https://api.ipify.org&quot;]
+  ipv6_sources: [&quot;https://6.ipw.cn&quot;, &quot;https://api6.ipify.org&quot;]
+</code></pre>
+<p>Persist <code>ddns-identity.key</code> alongside <code>ddns-owned.json</code>. Ownership fingerprints use HMAC-SHA-256 with this random per-node key, so the JSON does not contain an unkeyed hash of credentials. Losing or corrupting the key disables rename recovery; normal cleanup through an unchanged provider name remains available. On Linux without readable IPv6 address metadata, configure <code>ipv6</code> explicitly instead of relying on automatic selection.</p>
+<p>Wildcard entries such as <code>*.example.com</code> select the DNS provider for discovered hosts. LiteGate
+still writes only exact Site/Stream owners such as <code>refund.example.com</code>. A synchronization request
+whose owner itself contains <code>*</code> is skipped, and the low-level record writer rejects wildcard A/AAAA
+owners as a second safety boundary. Certificate wildcard scope never implicitly creates wildcard
+A/AAAA records.</p>
+<hr>
+<h2 id="5-internal-dns-litemesh-kv--litedns">5. Internal DNS (LiteMesh KV → LiteDNS)</h2>
+<p>DDNS publishes the public IP to your DNS provider. <code>dns_update</code> publishes this gateway's internal IP per domain into LiteMesh KV, where LiteDNS answers internal clients, so the same domain and certificate reach the gateway directly on the LAN. Requires litemesh.</p>
+<pre><code class="language-yaml">auto_cert:
+  dns_update:
+    enabled: true
+    auto_service_host_sync: true       # Publish every loaded site/stream domain
+    ip: &quot;&quot;                             # Omit to auto-detect the default-route interface IP
+    key_prefix: &quot;litedns/v1/records/&quot;  # Must match LiteDNS
+    node_id: &quot;&quot;                        # Defaults to the hostname
+    record_ttl: 30
+    heartbeat_interval: 30s            # KV TTL is 3x this value
+</code></pre>
+<p>See <a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a>.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/06-certificates/ddns.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

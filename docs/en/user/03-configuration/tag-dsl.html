@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate Service Tags Guide · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/03-configuration/tag-dsl.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details open><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html" class="current" aria-current="page">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: internal/configdocs/docs/en/tag-dsl.md (package internal/configdocs)
+     Regenerate: go generate ./internal/configdocs/...
+     Edit the source instead; a drift test fails if this copy is edited directly. -->
+<h1 id="litegate-service-tags-guide">LiteGate Service Tags Guide</h1>
+<p>When a service registers with <code>litegate.*</code> tags (Litemesh / Consul metadata, Docker labels, Kubernetes annotations), the gateway builds its routes automatically, with no site YAML. This guide shows how to write them by scenario. Every tag is described in the Service Tag Reference; the design is explained in Service Tag Architecture.</p>
+<h2 id="1-pick-a-form">1. Pick a form</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Need</th>
+<th style="text-align:left">Form</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">One domain (or one path) forwarded to this service, no policy</td>
+<td style="text-align:left">Shortcut: at most 4 tags</td>
+</tr>
+<tr>
+<td style="text-align:left">Several routes, middlewares, IDS, timeout / retry / circuit breaker, a dedicated port</td>
+<td style="text-align:left">Named resources: <code>litegate.http.routers.*</code> and friends</td>
+</tr>
+</tbody>
+</table>
+<p>The two forms cannot be mixed. As soon as you need any policy, rewrite the whole set as named resources.</p>
+<h2 id="2-shortcut">2. Shortcut</h2>
+<pre><code class="language-properties">litegate.http.host=api.example.com
+litegate.http.path_prefix=/api
+litegate.http.strip_path=true
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Tag</th>
+<th style="text-align:left">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>litegate.http.host</code></td>
+<td style="text-align:left">Domain(s), comma separated. Unset: the catalog <code>default_domain</code>, <code>&lt;service&gt;.&lt;default_domain&gt;</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>litegate.http.path</code></td>
+<td style="text-align:left">Exact path</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>litegate.http.path_prefix</code></td>
+<td style="text-align:left">Path prefix; <code>/</code> when neither <code>path</code> nor <code>path_prefix</code> is set</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>litegate.http.strip_path</code></td>
+<td style="text-align:left"><code>true</code> strips the matched path before forwarding; requires <code>path</code> or <code>path_prefix</code></td>
+</tr>
+</tbody>
+</table>
+<p>The shortcut is an ordinary Router named <code>main</code>: attached to <code>web</code> (80) and <code>websecure</code> (443), forwarding to the registering service with the default policy.</p>
+<h2 id="3-named-resources-the-minimum">3. Named resources: the minimum</h2>
+<pre><code class="language-properties">litegate.http.routers.orders.match.hosts=orders.example.com
+litegate.http.routers.orders.match.path_prefix=/api
+</code></pre>
+<p>These two lines are equivalent to the shortcut, except that the Router is named <code>orders</code>. Everything left out has a default:</p>
+<ul>
+<li>No <code>entrypoints</code>: attached to <code>web</code> and <code>websecure</code>.</li>
+<li>No <code>service</code>: the registering service with the default policy when no Service is declared; the Service when exactly one is declared.</li>
+<li>No Host condition: any Host on the entrypoints.</li>
+</ul>
+<p>Resource names use lowercase letters, digits, <code>-</code> and <code>_</code>; property paths are lowercase.</p>
+<h2 id="4-add-policy-to-the-service">4. Add policy to the service</h2>
+<p>Policy lives on the Service. With a single declared Service the Router does not need <code>service</code>:</p>
+<pre><code class="language-properties">litegate.http.routers.orders.match.hosts=orders.example.com
+litegate.http.services.orders.timeout=30s
+litegate.http.services.orders.retry.attempts=2
+litegate.http.services.orders.healthcheck.path=/healthz
+litegate.http.services.orders.healthcheck.interval=10s
+litegate.http.services.orders.circuitbreaker.enabled=true
+litegate.http.services.orders.loadbalancer.strategy=least_conn
+</code></pre>
+<ul>
+<li><code>timeout</code> bounds one request end to end (<code>30s</code>, <code>500ms</code>); for an upgrade request such as WebSocket it bounds only the handshake.</li>
+<li>A Service always describes the service that registers the tags. <code>discovery.name</code> is optional and, when set, must equal that service name.</li>
+</ul>
+<h2 id="5-several-routes">5. Several routes</h2>
+<p>A service may have several Routers, each with its own match and middlewares:</p>
+<pre><code class="language-properties">litegate.http.routers.shop.match.hosts=shop.example.com
+litegate.http.routers.admin.match.hosts=shop.example.com
+litegate.http.routers.admin.match.path_prefix=/admin
+litegate.http.routers.admin.priority=100
+litegate.http.routers.admin.middlewares=shop-admin-limit
+litegate.http.middlewares.shop-admin-limit.ratelimit.qps=20
+</code></pre>
+<p>Higher <code>priority</code> matches first; at equal priority the more specific path matches first.</p>
+<p>With several declared Services every Router must name its <code>service</code>, and the name must be declared: a typo is reported with the closest name instead of silently falling back to the defaults.</p>
+<h2 id="6-router-matching">6. Router matching</h2>
+<p>Use either <code>rule</code> or structured <code>match.*</code>:</p>
+<pre><code class="language-properties"># Structured
+litegate.http.routers.orders.match.hosts=orders.example.com
+litegate.http.routers.orders.match.path_prefix=/api
+litegate.http.routers.orders.match.methods=GET,POST
+litegate.http.routers.orders.match.headers.X-App=console
+litegate.http.routers.orders.match.query.version=v2
+
+# Rule
+litegate.http.routers.orders.rule=Host(`orders.example.com`) &amp;&amp; PathPrefix(`/api`)
+</code></pre>
+<p><code>match.path</code> and <code>match.path_prefix</code> are exclusive. With no Host, no path and no <code>rule</code>, the path prefix defaults to <code>/&lt;service&gt;</code> so services do not fight over the root; write <code>match.path_prefix=/</code> to take the root explicitly.</p>
+<h2 id="7-middlewares">7. Middlewares</h2>
+<p>Written <code>litegate.http.middlewares.&lt;name&gt;.&lt;type&gt;.&lt;property&gt;=&lt;value&gt;</code>; the properties are those of the same middleware type's <code>config</code> in site YAML:</p>
+<pre><code class="language-properties">litegate.http.middlewares.strip-api.strip_prefix.prefixes=/api
+litegate.http.middlewares.limit.ratelimit.qps=150
+litegate.http.middlewares.cors-api.cors.allowed_origins=https://app.example.com
+litegate.http.routers.orders.middlewares=strip-api,limit,cors-api
+</code></pre>
+<ul>
+<li>A middleware must be defined in the tags before a Router references it; middlewares run in the listed order.</li>
+<li>Middleware names are shared per domain: if two services on the same domain use one name with different configurations, that middleware is disabled. Prefix names with the service, e.g. <code>orders-limit</code>.</li>
+</ul>
+<h2 id="8-instance-selection-and-ids">8. Instance selection and IDS</h2>
+<p>The Service selector decides which instances are used:</p>
+<pre><code class="language-properties">litegate.http.services.shared-app.discovery.selector.match.sid=c1
+litegate.http.services.shared-app.discovery.selector.meta.version=v2
+</code></pre>
+<ul>
+<li><code>selector.match.&lt;key&gt;</code> is a hard boundary: only instances whose metadata <code>&lt;key&gt;</code> equals the value.</li>
+<li><code>selector.meta.&lt;key&gt;</code> is a soft preference: matching instances when there are any, otherwise the complete hard-match set.</li>
+</ul>
+<p>Instances declare their identity at registration. When the provider reports metadata, write <code>sid=c1</code>; otherwise <code>litegate.instance.labels.sid=c1</code> (hard match) / <code>litegate.instance.meta.version=v2</code> (soft preference). Instance tags may differ per instance; routing and resource tags must be identical on every instance.</p>
+<p>IDS is a Router property. Several Routers can share one service with different operations:</p>
+<pre><code class="language-properties">litegate.http.routers.login.match.path=/login
+litegate.http.routers.login.ids.provider=session
+litegate.http.routers.login.ids.operation=login
+
+litegate.http.routers.api.match.path_prefix=/api
+litegate.http.routers.api.ids.provider=session
+litegate.http.routers.api.ids.operation=resolve
+</code></pre>
+<p>The selector IDS returns can only narrow the service's instances; a value that conflicts with the Service's hard selector rejects the request. <code>ids.failpolicy</code> defaults to <code>deny</code>.</p>
+<h2 id="9-entrypoints-and-dedicated-ports">9. Entrypoints and dedicated ports</h2>
+<p>A Router may reference any config.yaml entrypoint by name:</p>
+<pre><code class="language-properties">litegate.http.routers.internal.entrypoints=admin
+</code></pre>
+<p>Tags may also open a new HTTP listener, but its port must be listed in the gateway's <code>service_discovery.tag_entrypoints.allowed_ports</code> and must not reuse a config.yaml entrypoint name or port:</p>
+<pre><code class="language-properties">litegate.entrypoints.api-8080.address=:8080
+litegate.http.routers.api.entrypoints=api-8080
+litegate.http.routers.api.match.path_prefix=/
+</code></pre>
+<p>config.yaml needs:</p>
+<pre><code class="language-yaml">service_discovery:
+  tag_entrypoints:
+    allowed_ports: [8080]
+</code></pre>
+<h2 id="10-validation">10. Validation</h2>
+<ul>
+<li>A wrong tag is never silently ignored: unknown properties, invalid references and conflicts reject the whole instance, with a &quot;did you mean&quot; suggestion.</li>
+<li>The dashboard's service tag page lists every tag of every instance with its classification and diagnostics.</li>
+<li>When generating tags over MCP: consult <code>get_tag_reference</code> or <code>explain_tag</code> first; the final tag set must pass <code>preview_service_tags</code> with every error fixed and every warning reviewed before it is applied.</li>
+</ul>
+<h2 id="11-removed-forms">11. Removed forms</h2>
+<p><code>litegate.ingress.*</code>, <code>litegate.route.*</code>, <code>litegate.router.*</code>, <code>litegate.service.*</code>, <code>litegate.upstream.*</code>, <code>litegate.middleware.*</code>, <code>litegate-http-*</code> and the other old forms are removed; an instance carrying them is rejected.</p>
+<h2 id="traffic-protection-on-registered-services">Traffic protection on registered services</h2>
+<p>Register this identical resource tag set on every orders instance. Rate limiting admits at most 100 requests per client IP in a one-minute sliding log window. Circuit breaking tracks completed upstream outcomes independently per backend address over 30 seconds, opening at 20 samples and a failure ratio of 0.5. Rate-limit window accepts a duration (1m) or integer milliseconds; breaker window is integer seconds (30). Deregistration removes an instance after the discovery update reaches the gateway; requests during that propagation interval can still fail. Backend failures remain breaker samples. Do not mix named resources with shortcut tags.</p>
+<pre><code class="language-properties">litegate.http.routers.orders.match.hosts=api.example.com
+litegate.http.routers.orders.match.path_prefix=/orders
+litegate.http.routers.orders.service=orders
+litegate.http.routers.orders.middlewares=orders-limit
+litegate.http.middlewares.orders-limit.ratelimit.qps=100
+litegate.http.middlewares.orders-limit.ratelimit.key=ip
+litegate.http.middlewares.orders-limit.ratelimit.algorithm=sliding_window_log
+litegate.http.middlewares.orders-limit.ratelimit.window=1m
+litegate.http.services.orders.circuitbreaker.enabled=true
+litegate.http.services.orders.circuitbreaker.strategy=failure_rate
+litegate.http.services.orders.circuitbreaker.window=30
+litegate.http.services.orders.circuitbreaker.minimumrequests=20
+litegate.http.services.orders.circuitbreaker.failureratio=0.5
+</code></pre>
+<p>For MCP generation, read <code>get_config_guide(topic=&quot;traffic&quot;)</code>, then run <code>preview_service_tags</code>: errors must be fixed; review warnings before applying. For YAML, run <code>validate_site_config</code> before <code>save_site_config</code>.</p>
+<h2 id="operator-owned-shared-resources">Operator-owned shared resources</h2>
+<p>Define shared resources in the main configuration:</p>
+<pre><code class="language-yaml">resources:
+  middlewares:
+    security:
+      type: headers
+      properties:
+        response.X-Content-Type-Options: nosniff
+  serverstransports:
+    backend:
+      dialtimeout: 2s
+      responseheadertimeout: 10s
+      tls:
+        enabled: true
+        servername: backend.example.com
+  tlsoptions:
+    modern:
+      min_version: &quot;1.3&quot;
+</code></pre>
+<p>Use <code>litegate.http.routers.api.middlewares=security@file</code>, <code>litegate.http.services.app.loadbalancer.serverstransport=backend@file</code>, and <code>litegate.http.routers.api.tls.options=modern@file</code>. Unqualified names resolve only locally; a local definition cannot shadow <code>@file</code>. Other suffixes, missing resources and qualified declaration names are rejected. Local middleware names are isolated by provider instance, namespace and Service, including Services sharing one Host. Shared middlewares use the same types and properties as the label DSL.</p>
+<p>TLS options require an existing TLS entrypoint and govern a Host across all ports. Conflicting effective policies reject the entire candidate. Central options cannot be assigned to catch-all Hosts. Existing legacy catch-all TLS settings remain supported and cannot bypass a concrete Host's client-certificate policy. Custom site certificates and cached identities survive policy updates. Options configure protocol versions, TLS 1.2 ciphers and optional/required client authentication; they do not select a named certificate resolver or change unified ACME configuration.</p>
+<p>Operator transports may use <code>tls.rootca_file</code>; TLS options may use <code>client_ca_file</code> and <code>client_crl_file</code>. Workload transport labels accept PEM content, never gateway file paths. Trust files are captured during preparation and are not reread at Commit. Reload the main configuration to apply changed trust files. Invalid updates, including deletion of a referenced resource, preserve the accepted generation. MCP preview uses the accepted runtime resolver.</p>
+<p>Site YAML can also reference a shared transport from <code>services.&lt;name&gt;.loadbalancer.serverstransport</code>, a shared middleware from a route's <code>middlewares</code> list, and shared TLS options from <code>tls.options</code>.</p>
+<h2 id="docker-and-swarm-failure-behavior">Docker and Swarm failure behavior</h2>
+<p>Swarm Service declarations are independent of running Tasks. Scaling a declared HTTP service to zero keeps its router and publishes an empty backend pool: ordinary and upgrade requests receive <strong>503</strong>. Unhealthy or explicitly pending active-health targets are also unavailable selections. A connection failure after selecting a reachable target remains <strong>502</strong>. Deleting the Swarm Service removes its declaration and router. The standalone Docker provider continues to discover running containers; removing or stopping the last container removes that container's declaration.</p>
+<p>Docker and Swarm publish labels and instances from a complete source snapshot. A service-list, Task-list, or transient container-inspection error keeps the last successful snapshot; it does not publish a partial deletion. A confirmed container-inspection 404 is treated as disappearance. Standalone containers keep their own resource declarations, including conflicting labels during a rolling update. Invalid resource labels reject their routes rather than inventing endpoints.</p>
+<p>In successfully resolved standalone published-port mode, each HTTP Service's <code>loadbalancer.server.port</code> identifies a <strong>container</strong> port. LiteGate resolves that port to its own published host address and port, including IPv6. An absent mapping excludes the endpoint from that Service and produces a diagnostic; another Service's mapping is never reused. If provider host-port discovery falls back entirely to direct container networking, the existing direct-network behavior remains. Published binding provenance stays internal and cannot be supplied through workload metadata.</p>
+<p>Active-health startup remains optimistic by default for compatibility. Set <code>healthcheck.initialready=false</code> together with an enabled active check to prevent traffic until the first successful probe and configured healthy threshold. Diagnostics expose source declarations separately from instances, so a zero-instance service remains inspectable.</p>
+<h1 id="swarm-service-vip">Swarm Service VIP</h1>
+<p>Set the Service label <code>litegate.swarm.lbswarm=true</code> to use its Service VIP. Select the network explicitly with <code>litegate.docker.network</code> or catalog <code>swarm_network</code>; the provider validates the matching network and excludes ingress. Task IP fallback is forbidden when the Service uses DNSRR, lacks a matching VirtualIP, or has an invalid network selection. Diagnostics remain attached to the declaration. Zero running Tasks retain the route with an empty pool and return 503. <code>false</code> keeps the default Task address behavior; standalone containers cannot use Service VIPs.</p>
+<p>VIP mode hides individual Tasks. Static instance selectors, metadata selectors and gray policies reject route compilation. Request-time selectors (including IDS with <code>selector_merge_policy: override</code>), metadata, tag preferences and gray routing fail closed with 503 on ordinary and upgrade requests, even if the Service metadata appears to match. IDS decisions still run before endpoint selection.</p>
+<h2 id="composing-http-services">Composing HTTP Services</h2>
+<p>A named Service can be a leaf, a weighted group, or a failover group. Groups reference other named Services; cycles, missing references, duplicate children, mixed kinds and nonpositive weights reject the configuration. Each weighted slot requires both fields:</p>
+<pre><code class="language-text">litegate.http.routers.graph.match.hosts=graph.example.com
+litegate.http.routers.graph.service=root
+litegate.http.services.root.weighted.services.a.name=one
+litegate.http.services.root.weighted.services.a.weight=1
+litegate.http.services.root.weighted.services.b.name=two
+litegate.http.services.root.weighted.services.b.weight=3
+litegate.http.services.one.loadbalancer.server.port=8080
+litegate.http.services.two.loadbalancer.server.port=8081
+</code></pre>
+<p>Weights choose child groups independently of replica counts. Replace the four weighted fields with <code>root.failover.service=one</code> and <code>root.failover.fallback=two</code> (with the same <code>litegate.http.services.</code> prefix) for failover. An empty or unhealthy primary uses the fallback without consuming an attempt; a dial failure or configured retry status switches branches only within the root retry budget and existing body replay rules. Each leaf has its own port, transport, health checks and balancing pool. A prior connection failure remains 502; no available leaf returns 503.</p>
+<p>Tag leaves always use their registering workload source. Site YAML leaves can use static <code>servers</code>, or an explicit Docker source under <code>discovery: {provider: docker, namespace: default, name: backend}</code>. Optional <code>instance: &quot;0&quot;</code> selects the configured Docker provider instance; ambiguous sources are rejected. Other explicit source providers are currently unsupported. A source not yet discovered keeps the route available with a 503 response until discovery succeeds.</p>
+<p>Group <code>discovery.selector.match</code> values are hard boundaries for every descendant leaf; a leaf adds its own hard conditions. The final IDS selector intersects these boundaries even with override enabled. Primary-only conditions are not inherited by a sibling fallback. Declare a common tenant boundary on the root when both branches must share it. Every variable in a hard condition must resolve to a nonempty value; unknown, missing or malformed placeholders reject the whole request rather than permitting fallback.</p>
+<p>Composition supports ordinary HTTP and HTTPS requests. Upgrade requests return 503; gRPC and gRPC-Web return RPC unavailable (status 14) without contacting an upstream. Sticky cookies and child retry/timeout policies are rejected; configure the single timeout and retry policy on the root. IDS evaluates once, the request body is buffered once when replay is permitted, and the final response hook runs once. Upstream redirects are returned to the client.</p>
+<h1 id="named-tcp-and-udp-resources">Named TCP and UDP resources</h1>
+<p>Named L4 resources compile to the existing stream engine. Resource names are local to the provider, namespace and registering service. A Service references that workload's current endpoints, including an empty declaration or a typed Swarm VIP; it cannot redirect to another workload. Unknown properties and references reject the candidate generation.</p>
+<pre><code class="language-text"># Raw TCP
+litegate.entrypoints.database.address=:8090
+litegate.entrypoints.database.protocols=tcp
+litegate.tcp.routers.database.entrypoints=database
+litegate.tcp.routers.database.service=db
+litegate.tcp.services.db.loadbalancer.server.port=8090
+# UDP
+litegate.entrypoints.datagrams.address=:8091
+litegate.entrypoints.datagrams.protocols=udp
+litegate.udp.routers.datagrams.entrypoints=datagrams
+litegate.udp.routers.datagrams.service=udp
+litegate.udp.services.udp.loadbalancer.server.port=8091
+# TLS passthrough
+litegate.entrypoints.sharedtls.address=:8444
+litegate.entrypoints.sharedtls.protocols=tcp
+litegate.tcp.routers.secure.entrypoints=sharedtls
+litegate.tcp.routers.secure.service=tlsbackend
+litegate.tcp.routers.secure.match.sni=one.acceptance.invalid
+litegate.tcp.routers.secure.tls.enabled=true
+litegate.tcp.routers.secure.tls.passthrough=true
+litegate.tcp.services.tlsbackend.loadbalancer.server.port=8443
+</code></pre>
+<p>The gateway must authorize tag listeners through <code>service_discovery.tag_entrypoints.allowed_ports: [8090, 8091, 8444]</code>. TCP/UDP tag listener addresses are <code>:port</code> or <code>0.0.0.0:port</code>; the backend port is separate and uses the matching TCP/UDP published binding in Docker host mode. Global stream IP restrictions remain effective.</p>
+<p>TLS passthrough routes from multiple registered services can share one TCP listener. Exact SNI wins, followed by the most specific wildcard. Missing or unmatched SNI is rejected without reaching a backend; ClientHello and the subsequent byte stream are forwarded unchanged. Duplicate SNI, mixed plaintext/TLS listener policies, multiple plaintext or UDP routers on one port, and operator/static/HTTP listener conflicts reject publication and retain the previously accepted generation. A deleted declaration removes its route; an empty declaration retains the route and rejects new traffic until endpoints recover.</p>
+<p>UDP endpoint updates and zero-instance transitions close old UDP sessions, including sessions from persistent clients, and recovery selects current endpoints. Established TCP sessions may finish on their previous endpoint; new connections resolve the current pool.</p>
+<p>Removing an allowed tag port or weakening/removing an operator entrypoint while named resources still depend on it rejects the whole main-config candidate and retains the accepted generation. Remove the dependent declarations first. Main configuration changes require the existing explicit reload operation; editing that file alone does not trigger reload.</p>
+<p>Tag-defined TLS termination, certificate file paths, certresolver, L4 middleware/IDS policies and service composition are unsupported and rejected. Operator TLS configuration remains unchanged. An operator entrypoint may be used for TCP passthrough only when its <code>default</code>, <code>on_non_tls</code> and <code>on_no_sni</code> are all <code>reject</code>, its address is a TCP network listener, and its SNI ownership does not overlap an existing HTTP or static stream route. Attachment beside operator regex/catch-all routes is rejected. UDP cannot attach to an operator TCP listener and rejects every TLS or SNI property, even a false value.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/03-configuration/tag-dsl.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

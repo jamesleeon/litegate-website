@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OIDC / OAuth2 认证配置指南 · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/05-middleware/oidc.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details open><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html" class="current" aria-current="page">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="oidc--oauth2-认证配置指南">OIDC / OAuth2 认证配置指南</h1>
+<p>完整接入示例见 <a href="authentik.html">authentik OIDC 配置样例</a>。</p>
+<p>LiteGate 通过路由上的 <code>remote_auth.provider</code> 提供 OIDC / OAuth2 认证能力（<code>ids</code> 是独立的 IDS Provider 插件入口，不用于 OIDC 登录）。它支持标准 OIDC Provider，也支持标准 OAuth2 Provider，并通过 Redis 保存登录状态与会话。</p>
+<hr>
+<h2 id="1-核心设计">1. 核心设计</h2>
+<p>LiteGate 的认证链路采用 <code>Stateless Router + Stateful Session</code> 设计：</p>
+<ul>
+<li>Redis 是强依赖。
+登录发起阶段的 <code>state</code>、PKCE verifier、nonce，以及登录完成后的 session 都保存在 Redis。</li>
+<li>网关本身不保存本地服务端会话。
+浏览器只持有一个 session cookie，真实会话数据在 Redis。</li>
+<li>支持默认回调路径和自定义回调路径。
+默认回调路径是 <code>/_litegate/oauth/callback</code>；也可以通过 provider 级或 route 级 <code>callback_path</code> 自定义。</li>
+</ul>
+<hr>
+<h2 id="2-全局配置">2. 全局配置</h2>
+<h3 id="21-redis">2.1 Redis</h3>
+<p>OIDC / OAuth2 登录闭环必须启用 Redis：</p>
+<pre><code class="language-yaml">redis:
+  enabled: true
+  address: &quot;127.0.0.1:6379&quot;
+  password: &quot;&quot;
+  db: 0
+</code></pre>
+<h3 id="22-定义-auth-providers">2.2 定义 Auth Providers</h3>
+<p>在 <code>config.yaml</code> 中定义一个或多个认证提供商：</p>
+<pre><code class="language-yaml">auth_providers:
+  google-oidc:
+    enabled: true
+    type: &quot;oidc&quot;
+    issuer: &quot;https://accounts.google.com&quot;
+    client_id: &quot;YOUR_CLIENT_ID&quot;
+    client_secret: &quot;YOUR_CLIENT_SECRET&quot;
+    scopes: [&quot;openid&quot;, &quot;profile&quot;, &quot;email&quot;]
+    # 可选：provider 级自定义回调路径
+    # callback_path: &quot;/_auth/google/callback&quot;
+    # 可选：时钟容忍
+    # clock_skew: &quot;5m&quot;
+    # 可选：限制签名算法
+    # allowed_signing_algs: [&quot;RS256&quot;]
+    # 可选：登录成功/失败通知
+    # notify_url: &quot;http://your-app/auth-webhook&quot;
+    # 可选：追加或覆盖授权请求参数；值为空表示去掉默认值
+    # auth_params:
+    #   prompt: login
+
+  github-oauth:
+    enabled: true
+    type: &quot;oauth2&quot;
+    auth_url: &quot;https://github.com/login/oauth/authorize&quot;
+    token_url: &quot;https://github.com/login/oauth/access_token&quot;
+    client_id: &quot;YOUR_CLIENT_ID&quot;
+    client_secret: &quot;YOUR_CLIENT_SECRET&quot;
+    scopes: [&quot;user&quot;, &quot;repo&quot;]
+    # callback_path: &quot;/_auth/github/callback&quot;
+</code></pre>
+<p>说明：</p>
+<ul>
+<li><code>type: oidc</code> 适用于支持 OIDC Discovery 和 <code>id_token</code> 校验的 Provider。</li>
+<li><code>type: oauth2</code> 适用于标准 OAuth2 Provider，例如 GitHub。</li>
+<li>默认回调路径是 <code>/_litegate/oauth/callback</code>。</li>
+<li><code>client_secret</code> 支持 <code>env:XXX</code> 形式的环境变量展开。</li>
+<li>授权请求默认不带 <code>prompt</code>、<code>access_type</code>。Google（issuer 或 auth_url 为 <code>accounts.google.com</code>）自动加上 <code>access_type=offline</code> 和 <code>prompt=consent</code>，否则拿不到 refresh token。其他 IdP 需要特定参数时用 <code>auth_params</code>；<code>state</code>、<code>nonce</code>、<code>scope</code>、<code>redirect_uri</code> 等由登录流程生成的参数不能覆盖。</li>
+<li>Keycloak 默认就会发 refresh token；Authentik、Dex、Azure AD 等通常需要在 <code>scopes</code> 里加 <code>offline_access</code>。</li>
+</ul>
+<h3 id="23-oidc-安全配置">2.3 OIDC 安全配置</h3>
+<pre><code class="language-yaml">oidc_security:
+  cookie_secret: &quot;32_byte_secret_for_aes_encryption&quot;
+  cookie_same_site: &quot;lax&quot;   # lax / strict / none
+  max_concurrent_sessions: 5
+
+  token_allowed_ips: [&quot;127.0.0.1&quot;, &quot;192.168.1.0/24&quot;]
+  me_allowed_ips: [&quot;127.0.0.1&quot;]
+
+  # /_litegate/oauth/token 默认关闭
+  # token_endpoint_enabled: true
+  # 可选：直接用 session ID 调 token 接口时，读取后删除该 session
+  # token_one_shot: true
+  # 允许 redirect_back 跳转的外部主机
+  # allowed_redirect_hosts: [&quot;app.example.com&quot;]
+  # 同一 IP 15 分钟内登录回调失败次数上限，默认 20，负数关闭
+  # login_failure_limit: 20
+</code></pre>
+<p>说明：</p>
+<ul>
+<li><code>cookie_secret</code> 建议至少 32 字节；设置后 session cookie 会加密。</li>
+<li><code>max_concurrent_sessions</code> 会限制同一用户的并发登录数，超出后会淘汰最旧 session。</li>
+<li><code>token_allowed_ips</code> 控制 <code>/_litegate/oauth/token</code>。</li>
+<li><code>me_allowed_ips</code> 控制 <code>/_litegate/oauth/me</code>。</li>
+<li><code>login_failure_limit</code>：同一 IP 登录回调失败（IdP 返回错误、换 token 失败等）达到上限后，15 分钟内不再发起登录，返回 403。state 过期、不是本浏览器发起的回调等情况不计数。NAT 后用户较多时可调大或设为负数关闭。</li>
+</ul>
+<hr>
+<h2 id="3-站点--路由配置">3. 站点 / 路由配置</h2>
+<p>在具体路由上启用认证：</p>
+<pre><code class="language-yaml">site: &quot;app.example.com&quot;
+routes:
+  - name: &quot;protected-api&quot;
+    match:
+      path_prefix: &quot;/api&quot;
+    action:
+      type: &quot;proxy&quot;
+      service_name: &quot;my-backend&quot;
+      remote_auth:
+        enabled: true
+        provider: &quot;google-oidc&quot;
+        enforce: true
+        callback_path: &quot;/_auth/cb&quot;
+        inject_claims:
+          &quot;X-User-Id&quot;: &quot;sub&quot;
+          &quot;X-User-Email&quot;: &quot;email&quot;
+          &quot;X-User-Name&quot;: &quot;name&quot;
+</code></pre>
+<p>说明：</p>
+<ul>
+<li><code>remote_auth.provider</code> 引用全局 <code>auth_providers</code> 里的名称。OIDC 登录属于认证中间件配置，不应写在用于 IDS 流量治理的 <code>ids</code> 节点下。</li>
+<li><code>enforce: true</code> 表示未登录时自动跳转到 Provider 登录页。</li>
+<li><code>callback_path</code> 可以在 route 级覆盖 provider 默认回调路径。</li>
+<li><code>inject_claims</code> 会把认证后的 claims 注入到转发给后端的请求头中。</li>
+<li><code>enforce: true</code> 时，浏览器请求（<code>Accept</code> 含 <code>text/html</code>）跳转登录，API 请求返回 <code>401</code>。</li>
+<li>provider 不可用（未配置、IdP discovery 失败）时，<code>enforce: true</code> 的路由返回 <code>503</code>，不会放行；只有显式 <code>fail_policy: allow</code> 才放行（匿名）。provider 在之后初始化或重载成功后立即生效。</li>
+<li>OIDC provider 总会请求 <code>openid</code> scope，<code>scopes</code> 中可省略。</li>
+<li>会话以 cookie 为准；<code>Authorization: Bearer</code> 只识别网关 session ID（UUID），后端自己的 Bearer Token（如 JWT）原样透传，不影响登录态。</li>
+<li>登录回调要求发起登录的同一浏览器中的 state cookie，防止登录 CSRF。</li>
+<li>access token 在剩余不足其有效期 1/4（最多 5 分钟）时自动刷新；IdP 未返回 <code>expires_in</code> 时，会话有效期以 session 记录（7 天）为准。</li>
+</ul>
+<hr>
+<h2 id="4-回调路径规则">4. 回调路径规则</h2>
+<p>LiteGate 当前支持两类回调入口：</p>
+<ol>
+<li>默认系统回调路径：<code>/_litegate/oauth/callback</code></li>
+<li>自定义回调路径：来自 provider 级或 route 级 <code>callback_path</code></li>
+</ol>
+<p>当前实现下，自定义回调路径已经支持全局识别，不再要求你手工为 callback 单独写一条业务 route。</p>
+<p>但要注意两个边界：</p>
+<ul>
+<li>自定义回调路径应位于当前站点域名下。</li>
+<li>不要与 LiteGate 的高优先级保留路径冲突，例如：
+<ul>
+<li><code>/.well-known/acme-challenge/*</code></li>
+<li><code>/health</code></li>
+<li><code>/_litegate/*</code></li>
+</ul>
+</li>
+</ul>
+<p>推荐做法：</p>
+<ul>
+<li>默认优先使用 <code>/_litegate/oauth/callback</code></li>
+<li>如果业务上需要更自然的 URL，再使用 <code>/_auth/...</code> 之类的自定义回调路径</li>
+</ul>
+<hr>
+<h2 id="5-保留接口">5. 保留接口</h2>
+<h3 id="51-查看当前会话">5.1 查看当前会话</h3>
+<p>访问：</p>
+<pre><code class="language-text">/_litegate/oauth/me
+</code></pre>
+<p>返回当前 session 的 JSON 信息，包含：</p>
+<ul>
+<li><code>id</code></li>
+<li><code>user_id</code></li>
+<li><code>provider</code></li>
+<li><code>claims</code></li>
+<li><code>expiry</code></li>
+<li><code>state</code>（登录时透传的业务 state，可能为空）</li>
+</ul>
+<p>该接口受 <code>oidc_security.me_allowed_ips</code> 控制。</p>
+<h3 id="52-获取-reference-token-对应的-session">5.2 获取 reference token 对应的 session</h3>
+<p>访问：</p>
+<pre><code class="language-text">/_litegate/oauth/token?id=&lt;session-id&gt;
+</code></pre>
+<p>或使用：</p>
+<pre><code class="language-text">Authorization: Bearer &lt;session-id&gt;
+</code></pre>
+<p>该接口受 <code>oidc_security.token_allowed_ips</code> 控制。</p>
+<p>需要先开启 <code>oidc_security.token_endpoint_enabled: true</code>。</p>
+<p><code>id</code> 可以是 session ID，也可以是 <code>redirect_back</code> 拿到的一次性 ticket（见下文）。ticket 首次兑换后立即失效，对应 session 保留，浏览器登录态不受影响；<code>token_one_shot: true</code> 只对直接传 session ID 的调用生效，读取后删除该 session。</p>
+<h3 id="521-redirect_back把登录结果交给其他系统">5.2.1 redirect_back：把登录结果交给其他系统</h3>
+<p>登录时带上 <code>?redirect_back=&lt;url&gt;</code>（或路由配置 <code>default_redirect_back</code>），登录完成后浏览器跳到该地址并附带 <code>token=&lt;ticket&gt;</code>（以及原样透传的 <code>state</code>）。外部地址需要在 <code>allowed_redirect_hosts</code> 中，且必须是 https。</p>
+<p><code>token</code> 是 2 分钟有效、只能用一次的 ticket，不是 session ID：URL 会进入浏览器历史、访问日志和 Referer，所以不直接暴露 7 天有效的会话凭据。接收方应在服务端调用 <code>/_litegate/oauth/token?id=&lt;ticket&gt;</code> 兑换用户信息。</p>
+<blockquote>
+<p>早期版本这里传的是 session ID。如果接收方曾把 <code>token</code> 当作 <code>Authorization: Bearer</code> 使用，需要改为先兑换：兑换结果的 <code>id</code> 字段就是 session ID。</p>
+</blockquote>
+<h3 id="53-手动刷新-token">5.3 手动刷新 token</h3>
+<p>访问：</p>
+<pre><code class="language-text">POST /_litegate/oauth/refresh?id=&lt;session-id&gt;
+</code></pre>
+<p>前提：</p>
+<ul>
+<li>session 仍存在</li>
+<li>provider 支持 refresh</li>
+<li>session 中存在 <code>refresh_token</code></li>
+</ul>
+<h3 id="54-登出">5.4 登出</h3>
+<p>访问：</p>
+<pre><code class="language-text">/_litegate/oauth/logout
+</code></pre>
+<p>当前行为是：</p>
+<ul>
+<li>删除 Redis 中的 session 记录并清除本地 cookie</li>
+<li>如果 provider 声明了 <code>end_session_endpoint</code>，跳转到 IdP 登出页，带上 <code>id_token_hint</code>、<code>client_id</code> 和 <code>post_logout_redirect_uri</code>（站点根地址 <code>/</code>）</li>
+<li>如果 provider 不支持，则跳转回 <code>/</code></li>
+</ul>
+<p>注意：<code>post_logout_redirect_uri</code> 需要在 IdP 的客户端配置里登记（Keycloak 是 Valid post logout redirect URIs），否则 IdP 会拒绝跳回。</p>
+<hr>
+<h2 id="6-实际登录流程">6. 实际登录流程</h2>
+<p>一次典型的 OIDC/OAuth2 登录闭环如下：</p>
+<ol>
+<li>用户访问受保护路由。</li>
+<li>LiteGate 发现没有有效 session。</li>
+<li>LiteGate 生成 <code>state</code>、PKCE verifier、nonce，并写入 Redis。</li>
+<li>浏览器被重定向到认证提供商。</li>
+<li>Provider 登录完成后回调 LiteGate。</li>
+<li>LiteGate 校验 <code>state</code>，并用相同的 redirect URI 交换 token。</li>
+<li>如果是 OIDC Provider，LiteGate 会校验 <code>id_token</code> 和 nonce。</li>
+<li>LiteGate 将 session 写入 Redis，并设置本地 cookie。</li>
+<li>后续请求带上 cookie 后，LiteGate 从 Redis 恢复 session，并把 claims 注入 Header。</li>
+</ol>
+<hr>
+<h2 id="7-常见问题">7. 常见问题</h2>
+<h3 id="为什么回调时报-state-mismatch-或-session-expired-or-invalid-state">为什么回调时报 <code>State mismatch</code> 或 <code>Session expired or invalid state</code>？</h3>
+<p>常见原因：</p>
+<ul>
+<li>Redis 不可用</li>
+<li>Redis 中的 state 已过期</li>
+<li>浏览器回调 URL 与登录发起时记录的 callback path 不一致</li>
+<li>认证提供商后台配置的 redirect URI 与 LiteGate 实际使用的不一致</li>
+</ul>
+<h3 id="自定义-callback_path-需要手工写路由吗">自定义 callback_path 需要手工写路由吗？</h3>
+<p>通常不需要。</p>
+<p>LiteGate 现在会基于回调请求中的 <code>state</code> 去 Redis 识别原始 callback path，并自动接管该请求。</p>
+<p>但仍建议避开保留路径，并保证 callback path 落在当前站点域名下。</p>
+<h3 id="后端如何获取用户信息">后端如何获取用户信息？</h3>
+<p>通过 <code>inject_claims</code> 配置把 claims 注入请求头，后端直接读取 Header 即可。</p>
+<p>例如：</p>
+<pre><code class="language-yaml">inject_claims:
+  &quot;X-User-Id&quot;: &quot;sub&quot;
+  &quot;X-User-Email&quot;: &quot;email&quot;
+</code></pre>
+<p>注意两种写法方向相反：路由里的 <code>inject_claims</code> 映射是 <code>请求头: claim</code>；命名中间件 <code>type: remote_auth</code> 的 <code>config.inject_claims</code> 是逗号分隔的 <code>claim:请求头</code> 字符串（如 <code>sub:X-User-Id,email:X-User-Email</code>）。</p>
+<h3 id="oauth2-provider-和-oidc-provider-有什么区别">OAuth2 Provider 和 OIDC Provider 有什么区别？</h3>
+<ul>
+<li>OIDC Provider 会返回 <code>id_token</code>，LiteGate 会做本地校验。</li>
+<li>OAuth2 Provider 没有标准 <code>id_token</code> 校验流程，LiteGate 主要依赖 code exchange 的结果。</li>
+</ul>
+<hr>
+<h2 id="8-建议">8. 建议</h2>
+<ul>
+<li>生产环境务必启用 Redis。</li>
+<li>生产环境务必配置 <code>cookie_secret</code>。</li>
+<li>优先使用 HTTPS。</li>
+<li>优先使用默认回调路径，除非业务明确需要自定义 callback path。</li>
+<li>对 <code>/_litegate/oauth/token</code> 和 <code>/_litegate/oauth/me</code> 配置严格 IP 白名单。</li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/05-middleware/oidc.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

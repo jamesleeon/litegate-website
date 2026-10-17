@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker and Swarm capability matrix · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../en/index.html">Home</a>
+      <a href="../../en/guide.html">Guide</a>
+      <a href="../../en/features.html">Features</a>
+      <a href="../../en/ecosystem.html">Ecosystem</a>
+      <a href="README.html" aria-current="page">Docs</a>
+      <a href="../zh-cn/docker_swarm_capability_matrix.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="README.html">Docs home</a></li><li><details><summary>User guide</summary><ul><li><a href="user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="user/01-getting-started/build.html">Build from source</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="user/08-observability/access-log.html">Access Log</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>Topics</summary><ul><li><a href="database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="docker_swarm_capability_matrix.html" class="current" aria-current="page">Docker and Swarm capability matrix</a></li><li><a href="dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="ids-recipes.html">IDS Recipes</a></li><li><a href="ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="release_control_guide.html">Configuration Release Control</a></li><li><a href="serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="docker-and-swarm-capability-matrix">Docker and Swarm capability matrix</h1>
+<p>Updated 2026-10-15. Accepted P0/P1/P2 work is implemented within the boundaries below. The final combined gateway passed the scoped three-node Swarm suites, standalone Docker checks and named L4 acceptance. Exact owned-resource cleanup and unchanged business Service specifications/versions were verified. These results do not imply unrestricted feature parity or production HA.</p>
+<p>Only registered DSL fields configure LiteGate; arbitrary Docker labels do not. YAML support does not automatically imply label support. Docker reads container labels; Swarm reads Service <code>deploy.labels</code>. IDS requires a linked/registered provider, its capabilities, configured resources and operator permissions: labels cannot install plugins or grant access. The discovery alias is <code>litegate.http.services.&lt;name&gt;.discovery.name</code>; top-level <code>litegate.discovery.name</code> is not equivalent.</p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>YAML</th>
+<th>Docker labels</th>
+<th>Swarm labels</th>
+<th>Implemented behavior and boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTTP routers/services and matching</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>Known properties, validated references, Host/path/header/query rules</td>
+</tr>
+<tr>
+<td>IDS and response hook</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>Provider/options/failure policy/trusted-header projection/selector merge; capabilities and isolation enforced</td>
+</tr>
+<tr>
+<td>Active upstream health</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>Enable/timeout/protocol/gRPC service/thresholds; enabled checks with <code>initialready=false</code> gate traffic until success</td>
+</tr>
+<tr>
+<td>Retry</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>Extra attempts, status/method gates and bounded body replay; real connection failure remains 502</td>
+</tr>
+<tr>
+<td>Sticky cookie</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>Name/TTL/Secure/HttpOnly/SameSite/path/domain across ordinary and upgrade responses; excluded from graphs</td>
+</tr>
+<tr>
+<td>Router TLS</td>
+<td>Site/listener policy</td>
+<td>Finite options</td>
+<td>Finite options</td>
+<td>Per-host options preserve certificate source; no arbitrary workload certificate paths or named cert-resolver DSL</td>
+</tr>
+<tr>
+<td>Upstream transport</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>SNI/trust/timeouts/pooling; operator central trust references</td>
+</tr>
+<tr>
+<td>Shared resources</td>
+<td>Central/local</td>
+<td>Local or explicit <code>@file</code></td>
+<td>Local or explicit <code>@file</code></td>
+<td>Middleware/transport/TLS options validate and reload transactionally, including graph leaves; no implicit cross-provider lookup</td>
+</tr>
+<tr>
+<td>Container/Task health</td>
+<td>Discovery dependent</td>
+<td><code>starting</code>/unhealthy excluded</td>
+<td>Running Tasks initially eligible</td>
+<td>Task state is not HTTP application readiness; active checks provide that gate</td>
+</tr>
+<tr>
+<td>Zero/deletion/API failure</td>
+<td>Declared routes persist</td>
+<td>Last container gone removes declaration</td>
+<td>Zero Tasks retain declaration/empty pool</td>
+<td>HTTP unavailable pool 503; Service deletion removes route; failed full snapshots retain last good state</td>
+</tr>
+<tr>
+<td>Multiple ports/publishing</td>
+<td>Per-Service</td>
+<td>Typed TCP/UDP host maps</td>
+<td>Task network ports</td>
+<td>Protocol/container-port mapping, IPv6, missing-map exclusion and pure UDP publishing; no Swarm host-published-port resolution claim</td>
+</tr>
+<tr>
+<td>Source ownership</td>
+<td>Explicit Docker source</td>
+<td>Per-container records</td>
+<td>Physical Service owns Tasks/VIP</td>
+<td>Explicit same-alias multi-Service lookup rejects ambiguity even with instance selected; standalone grouping/legacy alias union preserved</td>
+</tr>
+<tr>
+<td>Network and VIP</td>
+<td>Operator catalog</td>
+<td>Container network</td>
+<td>Explicit Service VIP</td>
+<td>Validated non-ingress network; ambiguous/missing network, DNSRR or absent VIP has no Task fallback; zero stays empty</td>
+</tr>
+<tr>
+<td>VIP selection limits</td>
+<td>Enforced</td>
+<td>Not applicable</td>
+<td>Enforced</td>
+<td>Static instance policies reject; final IDS selectors/metadata/tags/gray fail closed even with override</td>
+</tr>
+<tr>
+<td>Constraints and SSH</td>
+<td>Operator catalog</td>
+<td>Applies</td>
+<td>Applies</td>
+<td>Strict Label/LabelRegex/<code>!</code>/<code>&amp;&amp;</code>/`</td>
+</tr>
+<tr>
+<td>HTTP weighted/failover graphs</td>
+<td>Static/explicit Docker leaves</td>
+<td>Registering-source leaves</td>
+<td>Registering-source leaves</td>
+<td>Real group weights independent of replicas; nested graphs, strict refs/cycles, distinct leaf port/TLS/health/pools; other explicit source providers unsupported</td>
+</tr>
+<tr>
+<td>Graph request governance</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>Supported</td>
+<td>One IDS/body buffer/root timeout/retry budget/final hook; hard conditions intersect final IDS; unresolved templates reject whole request</td>
+</tr>
+<tr>
+<td>Named TCP/UDP</td>
+<td>Stream YAML</td>
+<td>Implemented</td>
+<td>Implemented</td>
+<td>Raw TCP/UDP, shared-port TLS SNI passthrough and atomic admission locally tested; real Swarm update/zero/recovery and same-alias source isolation passed</td>
+</tr>
+</tbody>
+</table>
+<p>Graphs support ordinary HTTP(S). Cookies and child retry/timeout policies are rejected; upgrades return 503 and gRPC/gRPC-Web return RPC unavailable (14) without upstream traffic. Primary-only conditions are not inherited by sibling fallback: declare common tenant boundaries on the group/root. Empty/unhealthy fallback consumes no actual attempt; retryable failures share the root budget.</p>
+<p>Named L4 excludes IDS, middleware, graphs and named TLS termination/certificate paths/resolvers. Operator TCP attachment must explicitly handle non-TLS/no-SNI traffic and existing HTTP/operator routing; conflicting admission is rejected. Shared transport caps apply to the same endpoint plus policy, not separate per-Service quotas.</p>
+<h2 id="traefik-proxy-oss-34-comparison-and-remaining-gaps">Traefik Proxy OSS 3.4 comparison and remaining gaps</h2>
+<p>The lab pins <strong>3.4.4</strong>, not Hub/Enterprise. This is behavior/configuration comparison, not a performance ranking.</p>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Difference / remaining gap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Empty pool</td>
+<td>LiteGate retains declared Swarm routes with 503; the pinned lab returned Traefik 404. Traefik's configurable <code>allowEmptyServices</code> means this is not universal behavior. <a href="https://doc.traefik.io/traefik/v3.4/providers/swarm/#allowemptyservices">Official Swarm provider</a></td>
+</tr>
+<tr>
+<td>Retry</td>
+<td>LiteGate status/method gates add behavior beyond Traefik Retry, which stops after any HTTP response regardless of status. <a href="https://doc.traefik.io/traefik/v3.4/middlewares/http/retry/">Official Retry</a></td>
+</tr>
+<tr>
+<td>Composition</td>
+<td>Traefik 3.4 documents service WRR for File/IngressRoute and failover for File; do not infer Docker/Swarm label equivalence. LiteGate implements its own restricted named graph labels. <a href="https://doc.traefik.io/traefik/v3.4/routing/services/">Official Services</a></td>
+</tr>
+<tr>
+<td>Certificates</td>
+<td>Traefik names static certificate resolvers and associates routers with them. LiteGate retains site/auto-cert sources and finite TLS options; resolver/provider ecosystem parity remains open. <a href="https://doc.traefik.io/traefik/v3.4/https/acme/">Official ACME</a></td>
+</tr>
+<tr>
+<td>L4</td>
+<td>Traefik documents TCP TLS termination/passthrough and UDP routing; LiteGate named L4 is narrower. <a href="https://doc.traefik.io/traefik/v3.4/routing/routers/">Official Routers</a></td>
+</tr>
+</tbody>
+</table>
+<p>IDS is LiteGate-specific, not a Traefik equivalence test. Remaining gaps include broader graph providers, composition cookies/upgraded protocols, named L4 termination/governance and certificate-resolver ecosystem coverage. No benchmark, manager/node-failure HA or production reliability conclusion is claimed.</p>
+<h2 id="final-acceptance-evidence">Final acceptance evidence</h2>
+<p>Artifacts are local paths under <code>artifacts/swarm-acceptance/</code>, not public download links. Frozen manifests identify uncommitted implementation by hashes; base Git revision alone is insufficient. P8 gateway SHA-256: <code>c3f47480b84f9fb3246c5b8c49b6f85440cd00bca5760d7ea8ab49c9ebd56f7c</code>. Later repairs are not attributed to this binary.</p>
+<ul>
+<li><code>baseline-report.json</code>: eight of eleven passed, three failed and retained. <code>docker-baseline-report.json</code>: standalone discovery/IDS/trusted headers.</li>
+<li><code>p1-report.json</code>: staged lifecycle/ports/zero/health/readiness/IDS checks passed. <code>phase6-second-report.json</code>: central reload, rejected-generation retention and recovery. Main JSON is not watched directly; the lab used the existing watched reload trigger.</li>
+<li><code>phase7-fourth-report.json</code>: VIP/zero/network/DNSRR/constraints/static and IDS rejection/restoration. <code>ssh-p7-final-report.json</code>, <code>ssh-p7-final-wrong-key-report.json</code>, <code>ssh-p8-report.json</code>: strict SSH evidence. <code>phase8-report.json</code>: replica-independent ratios and failover/unhealthy/zero/recovery on its frozen build.</li>
+<li>Local tests/race cover host CA verification, health GC/readiness, physical source ownership/ambiguity, pure UDP host mapping and named L4. Warning capture now uses isolated test subprocesses with unchanged assertions; this repairs test interference, not production logging.</li>
+<li>Earlier failed SSH/VIP/central reports remain. An old owned Service VIP refused traffic while its Tasks and a fresh same-spec fixture worked; staged VIP acceptance passed after fixture recreation. This does not establish a LiteGate bug or Docker root cause.</li>
+<li>The final live gateway in the six suites below is the same <code>gateway:p9</code> binary, SHA-256 <code>15787bbd63ffab562cb2de866353f9282557e9b743191a65def398afe3a1068b</code>: <code>phase9-second-report.json</code> (named TCP/UDP/shared SNI and same-alias isolation); <code>final-swarm-second-report.json</code> (11/11); <code>final-docker-report.json</code> (3/3); <code>final-central-report.json</code>; <code>final-vip-report.json</code>; <code>final-graphs-report.json</code> (all passed). <code>final-ssh-report.json</code> verifies all three Managers with strict pins and rejection of a wrong key using the separately hashed connector probe.</li>
+<li>Health comparison retains an earlier observation where Traefik served a newly started, not-yet-ready Task with HTTP 200. The final health-proven unavailable window produced LiteGate 503 and Traefik 503; this is not evidence that Traefik universally routes unhealthy Tasks.</li>
+<li>Full Go <code>./...</code> tests, the eleven-package race run, vet and the final 46 Python harness tests passed. Read-only reviews are retained in <code>requirements-audit-source-fixes.md</code>, <code>requirements-audit-phase9-live.md</code>, <code>requirements-audit-final-live-progress.md</code> and <code>requirements-audit-health-final.md</code>. Their scope and earlier failure observations remain part of the evidence.</li>
+<li><code>final-cleanup-report.json</code> passed: exact owned Service/network/config IDs were removed, all three nodes had no owned Service/network/config/container inventory, local state was cleared, business specifications and versions matched baseline, and nodes remained Ready/Active. The initial short-ID cleanup failure, corrected recovery and first failed report are retained in <code>final-cleanup-first-failed-report.json</code> and <code>final-cleanup-state-recovery.json</code>.</li>
+<li>Owned images and owner-scoped temporary build assets remain for reproduction; cleanup is not a disk-pruning claim. <code>phase10-source.zip</code> and <code>phase10-build.json</code> freeze the final source/manifest after documentation and harness/test updates. The actual P10 build produces exactly the same SHA-256 as the live-tested P9 gateway above; it is the verified same binary, not a newly unverified executable.</li>
+</ul>
+<p>See the <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/swarm-acceptance/README.md">isolated acceptance lab</a>. Remaining feature limits in this matrix continue to apply after acceptance.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/docker_swarm_capability_matrix.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

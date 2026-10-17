@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ingress Entry Plugins · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../en/index.html">Home</a>
+      <a href="../../en/guide.html">Guide</a>
+      <a href="../../en/features.html">Features</a>
+      <a href="../../en/ecosystem.html">Ecosystem</a>
+      <a href="README.html" aria-current="page">Docs</a>
+      <a href="../zh-cn/ingress-plugin-guide.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="README.html">Docs home</a></li><li><details><summary>User guide</summary><ul><li><a href="user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="user/01-getting-started/build.html">Build from source</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="user/08-observability/access-log.html">Access Log</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>Topics</summary><ul><li><a href="database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="ids-recipes.html">IDS Recipes</a></li><li><a href="ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="ingress-plugin-guide.html" class="current" aria-current="page">Ingress Entry Plugins</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="release_control_guide.html">Configuration Release Control</a></li><li><a href="serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="ingress-entry-plugins">Ingress Entry Plugins</h1>
+<p>Ingress plugins handle requests on a given HTTP entrypoint before Site domain matching. They suit standard forward proxies or other HTTP services that recognize their own requests. Actions and Middleware keep serving matched site routes. Plugins are still registered at compile time; the public contract lives in <code>pkg/plugin/ingress.go</code>.</p>
+<h2 id="where-they-run">Where they run</h2>
+<pre><code class="language-text">Entrypoint identification and Forward target constraints
+  → Global Ingress governance and IP restrictions
+  → Trusted source headers and client IP resolution
+  → The current entrypoint's Ingress plugin chain
+  → Path cleaning, control endpoints, Site matching and HTTPS redirect
+  → Site / Route middleware → Action
+</code></pre>
+<p>The array order of <code>ingress_plugins</code> is the execution order. Each binding declares a unique <code>name</code>, a registered <code>type</code> and non-empty <code>entrypoints</code>; the entrypoints must exist in the global <code>entrypoints</code>. A plugin missing from the build fails configuration validation, so configuration never silently does nothing. An empty configuration takes over no traffic; without configured plugins, ordinary requests don't take the plugin lifecycle lock. Plugins cannot take over raw TCP/SNI; that belongs to entrypoint transport routes. Internal requests injected through Forward or Connect always go through the normal site authorization path and never run entry plugins.</p>
+<h2 id="minimal-plugin">Minimal plugin</h2>
+<pre><code class="language-go">package ping
+
+import (
+    &quot;net/http&quot;
+    &quot;github.com/jamesleeon/LiteGate/pkg/plugin&quot;
+)
+
+type config struct { Path string `json:&quot;path&quot;` }
+type handler struct { path string }
+
+func (h *handler) Claim(r *http.Request, m plugin.IngressRequest) http.Handler {
+    if r.Method != &quot;GET&quot; || r.URL.Path != h.path { return nil }
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Write([]byte(&quot;pong from &quot; + m.EntryPoint))
+    })
+}
+
+func init() {
+    err := plugin.RegisterTypedIngress(&quot;ping&quot;,
+        func(cfg config) (config, error) { return cfg, nil },
+        func(cfg config, deps *plugin.Dependencies) (plugin.IngressHandler, error) {
+            return &amp;handler{path: cfg.Path}, nil
+        },
+    )
+    if err != nil { panic(err) }
+}
+
+</code></pre>
+<p>Configuration goes in a separate <code>config</code> object, which may contain nested structures, lists and numbers:</p>
+<pre><code class="language-yaml">entrypoints:
+  tools:
+    address: 127.0.0.1:9000
+ingress_plugins:
+  - name: local-ping
+    type: ping
+    entrypoints: [tools]
+    config:
+      path: /ping
+</code></pre>
+<p>Plugins parse JSON tags with <code>IngressConfig.Decode</code>; the data comes from an independent immutable snapshot, and unknown fields are errors. <code>Validate</code> is a required side-effect-free check: it must not create resources, read the live environment or make network calls. <code>Factory</code> is runtime initialization and may read secrets, build transports or start resources; it runs once per binding, and multiple entrypoints of the same binding share the instance. Dependencies provides logging, service discovery and a view of the shared plugin configuration. Plugins can register <code>Manifest{Kind: &quot;ingress&quot;, ...}</code> for the CLI, Dashboard and MCP.</p>
+<h2 id="request-and-lifecycle-contract">Request and lifecycle contract</h2>
+<ul>
+<li><code>IngressHandler.Claim(r, meta) http.Handler</code> is the only way to take over a request and may be called concurrently. Return nil to continue routing; return a handler and the host runs it, recording logs, metrics and Dashboard data. Claim receives no ResponseWriter and must not modify the request or read the body.</li>
+<li>The request target is the one before path cleaning. A forward proxy must keep absolute-form target semantics; it must not match the destination host by the proxy's own domain, nor mistake ordinary paths for proxy requests.</li>
+<li>HTTP/1 CONNECT may use <code>http.NewResponseController(w).Hijack()</code>; keep any bytes already buffered in the returned reader. HTTP/2/3 don't use Hijack and must be implemented on the protocol's request/response streams.</li>
+<li>A handler must not return until it has released ownership of the connection; it must not start a background tunnel and return immediately. The host drains old instances with an atomic call counter; past <code>http.shutdown_grace</code> (30 seconds if unset) they are closed forcibly.</li>
+<li>The optional <code>IngressCloser.Close(context.Context)</code> releases resources, cancels work and closes held connections; it should return promptly and respect the Close deadline. Dependencies.Context is managed by the host and cancelled on shutdown. After a successful update the old instance is closed once its calls drain or the grace period expires; on process shutdown Close is called immediately and may run concurrently with Claim and with handlers of claimed requests. Each instance is closed once.</li>
+<li>If Factory returns both a non-nil handler and an error, the host closes that partially initialized instance. If Factory panics or cannot return an instance, it must prevent leaking whatever it initialized.</li>
+<li>Uncommitted candidate instances are closed; a published instance stays when a candidate fails. Unchanged bindings are not rebuilt, and updating only Sites neither interrupts nor rebuilds entry plugins.</li>
+<li>Claimed requests do not go through Site middleware or certificate authorization checks. Access logs, metrics and Dashboard data are recorded by the host and aggregated as <code>ingress:&lt;binding name&gt;</code>; CONNECT duration is recorded as stream lifetime, not ordinary request latency. Authentication, destination policy and rate limiting are the plugin's job.</li>
+<li>Bindings are compared with <code>reflect.DeepEqual</code>. Changing only the value of the environment variable named by <code>password_env</code> does not rebuild the instance; change the binding or restart to load the new password.</li>
+<li>The hook runs after global IP rules and IDS and before Site selection. The host has already stripped authoritative trust headers, <code>X-Forwarded-Proto</code> / <code>X-Forwarded-Host</code> from untrusted connections and <code>X-Selector-Sid</code> from untrusted routing clients, and injected source and forwarding-protocol metadata. The host's <code>Server</code> and <code>Alt-Svc</code> response headers are set only after plugins decline.</li>
+</ul>
+<p>The complete reference implementation is <a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/ingress/forwardproxy/README.md">forward_proxy</a>, with tests for real HTTP, HTTPS CONNECT, buffered bytes, half-close, DNS address validation and shutdown. Its source is public in <code>pkg/plugins/forwardproxy</code> and the standard CLI blank-imports it; the Dashboard, CLI and MCP show it from the same registry and Manifest as type <code>ingress</code>. Entry plugins run at a different stage from actions/IDS but use the same compile-time registration and public SDK. Generate a bcrypt hash with <code>litegate -hash 'your-password'</code> for <code>password</code>, or use <code>password_env</code> to read a raw password; the two are mutually exclusive. <code>hosts</code> constrains TLS SNI, not the destination host.</p>
+<h2 id="sdk-tools-and-forward-proxy-safety-rules">SDK tools and forward proxy safety rules</h2>
+<p><code>RegisterTypedIngress[T, P]</code> strictly decodes JSON into T, then explicitly produces the prepared value with <code>prepare func(T) (P, error)</code> and passes it to <code>factory func(P, *Dependencies) (IngressHandler, error)</code>. Building an instance decodes and prepares once; standalone configuration preflight prepares independently and discards the result, so prepare must have no side effects. Duration fields can use <code>plugin.Duration</code>, which accepts positive durations such as <code>&quot;10s&quot;</code>.
+<code>IngressRequest</code> carries EntryPoint, ClientIP, ServerName, the raw RequestURI and the protocol major/minor version.
+<code>proxyutil.Tunnel(ctx, w, r, backend, idle)</code> (import <code>pkg/plugin/proxyutil</code>) takes over an authorized, already dialed connection, handling HTTP/1 Hijack, HTTP/2/3 streams, bidirectional copying and cancellation. Half-close is kept only on hijacked HTTP/1 connections; on HTTP/2/3 the upload stops when the download ends and the function returns, signalling end of stream promptly. The caller closes backend; ctx should carry a maximum lifetime deadline.</p>
+<p>When sharing an entrypoint with websites, configure <code>hosts</code> or enable <code>probe_resistance</code>, otherwise absolute-form HTTP/1 requests to normal sites may get 407. <code>hosts</code> restricts TLS SNI; plaintext entrypoints should use a dedicated entrypoint or probe_resistance.
+Successful bcrypt authentication caches the SHA-256 digest of the request's authentication header for 5 minutes, renewed on hit and compared in constant time; the cache holds one entry, each instance runs at most two bcrypt verifications at once, and waiting for a slot is bound by the request context and at most 100 ms, after which 407 is returned (with probe_resistance, routing to websites continues).
+Wildcard domain rules reject local interface addresses, NAT64 <code>64:ff9b::/96</code>, <code>240.0.0.0/4</code> and <code>198.18.0.0/15</code> by default; to reach these on purpose, configure IP/CIDR explicitly. Deny rules always win.
+DNS resolution and each address dial have their own dial_timeout, while the whole request stays within max_duration; all DNS answers are validated before dialing.</p>
+<p>Dependencies.Context is injected only into ingress plugins; other plugin types get nil.
+The interface address snapshot is cached for 30 seconds and refreshed on demand. A cloud host's 1:1 NAT elastic public IP may not be on any interface, so the interface check cannot detect connections back to it; add the gateway's public IP to <code>denied_destinations</code>.
+Unchanged bindings reuse their instance; changing only <code>shutdown_grace</code> doesn't update the retirement grace stored in that instance — change the binding or restart.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/ingress-plugin-guide.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

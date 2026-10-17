@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/09-advanced/two-layer-routing.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details open><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html" class="current" aria-current="page">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="two-layer-routing-choose-the-upstream-then-rewrite-the-path-troubleshooting-recipes">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</h1>
+<p>If you've only used <code>path:</code> for forwarding, you've used about half of LiteGate's routing. Combining <strong><code>rule:</code> matching</strong> with <strong><code>rewrite</code></strong> solves most &quot;tricky gateway problems&quot; with one way of thinking. This page explains the mental model first, then gives a set of copyable recipes.</p>
+<hr>
+<h2 id="1-mental-model-two-orthogonal-questions">1. Mental model: two orthogonal questions</h2>
+<p>Handling a request comes down to two questions:</p>
+<pre><code>                A request arrives
+                     │
+        ┌────────────┴────────────┐
+        │ Layer 1: pick upstream   │   ← decided by match / rule
+        │ &quot;Which backend gets it?&quot; │      any boolean combination of host/path/
+        └────────────┬────────────┘         query/header/IP/method selects a route
+                     │
+        ┌────────────┴────────────┐
+        │ Layer 2: adapt the path  │   ← decided by rewrite
+        │ &quot;Does the backend know   │      after matching, change path/query to
+        │  this URL?&quot;              │      what the backend expects
+        └────────────┬────────────┘
+                     │
+               Forward upstream
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Configuration</th>
+<th>Job</th>
+<th>Decides</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Layer 1</td>
+<td><code>match</code> (<code>path</code> or <code>rule</code>)</td>
+<td><strong>Dispatch</strong></td>
+<td>Which route → which upstream</td>
+</tr>
+<tr>
+<td>Layer 2</td>
+<td><code>rewrite</code> / <code>strip_prefix</code></td>
+<td><strong>Adapt</strong></td>
+<td>Change path/query into the form the backend expects after matching</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Two rules</strong>:</p>
+<ol>
+<li><strong>Choosing the upstream is always layer 1 (match)</strong>, never rewrite.</li>
+<li><strong><code>rewrite</code> only changes the path within the matched route and never returns to the routing table</strong> (unlike Nginx <code>rewrite ... last</code>).</li>
+</ol>
+<p>Thinking in these two layers, many cases that used to need Nginx <code>if</code> + <code>rewrite ... last</code> become &quot;one conditional route + an optional rewrite&quot;.</p>
+<hr>
+<h2 id="2-why-path-isnt-enough-and-what-rule-unlocks">2. Why <code>path:</code> isn't enough, and what <code>rule:</code> unlocks</h2>
+<p><code>path:</code> / <code>path_prefix:</code> can only dispatch by URL path. <code>rule:</code> is a boolean expression DSL that combines <strong>any dimensions</strong>:</p>
+<ul>
+<li><strong>Host</strong>: <code>Host</code>, <code>HostRegexp</code></li>
+<li><strong>Path</strong>: <code>Path</code>, <code>PathPrefix</code>, <code>PathSuffix</code>, <code>PathRegex</code></li>
+<li><strong>Query</strong>: <code>Query</code>, <code>QueryPrefix</code> / <code>QueryIPrefix</code>, <code>QuerySuffix</code> / <code>QueryISuffix</code>, <code>QueryRegex</code></li>
+<li><strong>Header</strong>: <code>Header</code>, <code>HeaderRegexp</code>, <code>HeaderPrefix</code> / <code>HeaderIPrefix</code>, <code>HeaderSuffix</code> / <code>HeaderISuffix</code></li>
+<li><strong>Cookie</strong>: <code>Cookie</code>, <code>CookieRegex</code>, <code>CookiePrefix</code> / <code>CookieIPrefix</code>, <code>CookieSuffix</code> / <code>CookieISuffix</code></li>
+<li><strong>Source / method</strong>: <code>ClientIP</code> (CIDR supported), <code>Method</code></li>
+</ul>
+<blockquote>
+<p><code>Header</code>, <code>Query</code> and <code>Cookie</code> accept a single argument as an <strong>existence check</strong> (for example <code>Cookie(&quot;session&quot;)</code> matches when the cookie is present). Query/cookie values used for <strong>value</strong> matching must be single-valued; repeated names (several occurrences) don't match, so the gateway and the backend can't read different values.</p>
+</blockquote>
+<ul>
+<li><strong>Logic</strong>: <code>&amp;&amp;</code>, <code>||</code>, <code>!</code>, parentheses</li>
+</ul>
+<blockquote>
+<p>For full semantics see the <a href="../03-configuration/site-config.html#9-rule-expression-dsl-reference">rule expression DSL reference</a>.</p>
+</blockquote>
+<p><strong>Performance tip</strong>: when there's one route and paths don't overlap, keep using <code>path:</code> (O(1) exact matching). You need <code>rule:</code> only when <strong>several routes share a path and are distinguished by extra conditions</strong>, and then give the more specific route a higher <code>priority</code> (see <a href="#4-boundaries-and-pitfalls">section 4</a>).</p>
+<hr>
+<h2 id="3-troubleshooting-recipes">3. Troubleshooting recipes</h2>
+<p>Every recipe follows the same pattern: <strong>layer 1 picks the backend with match; layer 2 rewrites the path if needed</strong>.</p>
+<h3 id="31-one-oauth-callback-url-several-backends">3.1 One OAuth callback URL, several backends</h3>
+<p>The platform allows only one callback URL, but callbacks must go to main/sub accounts by <code>state</code> prefix. → See <a href="./oauth-single-callback.html">Single callback URL routing</a>.</p>
+<h3 id="32-canary-releases-choose-the-upstream-by-header">3.2 Canary releases (choose the upstream by header)</h3>
+<p>Traffic with a particular header goes to the new version; the rest to stable:</p>
+<pre><code class="language-yaml">- name: api-canary
+  priority: 200
+  match:
+    rule: 'PathPrefix(&quot;/api/&quot;) &amp;&amp; Header(&quot;X-Release&quot;, &quot;canary&quot;)'
+  proxy: [&quot;10.0.0.9:8080&quot;]   # new version
+- name: api-stable
+  priority: 100
+  match:
+    rule: 'PathPrefix(&quot;/api/&quot;)'
+  proxy: [&quot;10.0.0.1:8080&quot;]   # stable
+</code></pre>
+<p>For percentage canaries, let an upstream color requests with the header, or start with internal clients via <code>ClientIP</code>.</p>
+<h3 id="33-multiple-api-versions--legacy-compatibility">3.3 Multiple API versions + legacy compatibility</h3>
+<p>New and old versions are deployed separately, while old clients' <code>/api/v1/*</code> maps smoothly to the v2 backend's new paths:</p>
+<pre><code class="language-yaml"># v2 / v3 each go to their own backend
+- name: api-v3
+  match: { path_prefix: &quot;/api/v3/&quot; }
+  proxy: [&quot;10.0.0.3:8080&quot;]
+- name: api-v2
+  match: { path_prefix: &quot;/api/v2/&quot; }
+  proxy: [&quot;10.0.0.2:8080&quot;]
+
+# Old v1 clients → v2 backend, path rewritten into the v2 form (layer 2 adaptation)
+- name: api-v1-compat
+  match: { path_prefix: &quot;/api/v1/&quot; }
+  proxy: [&quot;10.0.0.2:8080&quot;]
+  rewrite:
+    path:
+      pattern: &quot;^/api/v1/(.*)$&quot;
+      target: &quot;/api/v2/$1&quot;
+</code></pre>
+<p>Versions can also go in a header: <code>rule: 'PathPrefix(&quot;/api/&quot;) &amp;&amp; Header(&quot;X-Api-Version&quot;, &quot;v3&quot;)'</code>, keeping URLs clean.</p>
+<h3 id="34-ab-tests-split-by-cookie">3.4 A/B tests (split by cookie)</h3>
+<p>The native <code>Cookie</code> matcher splits by cookie value directly:</p>
+<pre><code class="language-yaml">- name: bucket-b
+  priority: 200
+  match:
+    rule: 'PathPrefix(&quot;/&quot;) &amp;&amp; Cookie(&quot;ab&quot;, &quot;B&quot;)'
+  proxy: [&quot;10.0.0.12:8080&quot;]   # variant B
+- name: bucket-a
+  priority: 100
+  match: { path_prefix: &quot;/&quot; }
+  proxy: [&quot;10.0.0.11:8080&quot;]   # variant A (default)
+</code></pre>
+<p>For values with prefix/regex patterns use <code>CookiePrefix(&quot;ab&quot;, &quot;B&quot;)</code> or <code>CookieRegex(&quot;ab&quot;, &quot;^B[0-9]+$&quot;)</code>.</p>
+<h3 id="35-multi-tenant-one-domain-each-tenant-to-its-own-backend-by-header">3.5 Multi-tenant: one domain, each tenant to its own backend by header</h3>
+<pre><code class="language-yaml">- name: tenant-blue
+  priority: 200
+  match: { rule: 'Header(&quot;X-Tenant&quot;, &quot;blue&quot;)' }
+  proxy: [&quot;10.1.0.1:8080&quot;]
+- name: tenant-green
+  priority: 200
+  match: { rule: 'Header(&quot;X-Tenant&quot;, &quot;green&quot;)' }
+  proxy: [&quot;10.2.0.1:8080&quot;]
+</code></pre>
+<p>If tenants are distinguished by subdomain, separate sites with different <code>site:</code> values are simpler; use rules only when tenants appear in headers or paths of one domain.</p>
+<h3 id="36-moving-old-urls-to-a-new-backends-new-paths">3.6 Moving old URLs to a new backend's new paths</h3>
+<p>The old system's <code>/old/report/2024</code> must reach the new service's <code>/v2/analytics/report/2024</code>:</p>
+<pre><code class="language-yaml">- name: legacy-report
+  match: { path_prefix: &quot;/old/report/&quot; }
+  proxy: [&quot;10.0.5.1:8080&quot;]      # layer 1: switch to the new backend
+  rewrite:
+    path:
+      pattern: &quot;^/old/report/(.*)$&quot;
+      target: &quot;/v2/analytics/report/$1&quot;   # layer 2: new path
+</code></pre>
+<p>To simply strip one prefix, the lighter <a href="../04-actions/proxy.html#3-advanced-steering--proxy-settings"><code>strip_prefix</code></a> is enough; no rewrite needed.</p>
+<h3 id="37-split-by-client-type-different-backends-for-web-and-mobile">3.7 Split by client type (different backends for web and mobile)</h3>
+<pre><code class="language-yaml">- name: mobile-api
+  priority: 200
+  match:
+    rule: 'PathPrefix(&quot;/api/&quot;) &amp;&amp; HeaderRegexp(&quot;User-Agent&quot;, &quot;(?i)(iphone|android)&quot;)'
+  proxy: [&quot;10.0.7.1:8080&quot;]
+- name: web-api
+  priority: 100
+  match: { path_prefix: &quot;/api/&quot; }
+  proxy: [&quot;10.0.7.2:8080&quot;]
+</code></pre>
+<h3 id="38-features-open-only-to-internal-ips">3.8 Features open only to internal IPs</h3>
+<pre><code class="language-yaml">- name: admin-internal
+  priority: 200
+  match:
+    rule: 'PathPrefix(&quot;/admin/&quot;) &amp;&amp; ClientIP(&quot;10.0.0.0/8&quot;)'
+  proxy: [&quot;10.0.9.1:8080&quot;]
+- name: admin-blocked
+  priority: 100
+  match: { path_prefix: &quot;/admin/&quot; }
+  respond:
+    status: 403
+    body: &quot;forbidden&quot;
+</code></pre>
+<p>(<code>ClientIP</code> uses the directly connected IP; if another proxy sits in front of LiteGate, configure <code>trusted_proxies</code> so it parses <code>X-Forwarded-For</code>.)</p>
+<h3 id="39-selecting-instance-subsets-by-request-attributes-service-discovery-subset-routing">3.9 Selecting instance subsets by request attributes (service discovery subset routing)</h3>
+<p>The recipes above are all &quot;one condition → one route → one upstream&quot;. When the backend is a set of instances <strong>registered dynamically with service discovery</strong> and the instances carry endpoint metadata (such as <code>sid</code>, <code>version</code>), you can also <strong>select a subset of instances</strong> through the Service's <code>discovery.selector.*</code> or a selector returned by IDS, without writing a route per tenant or version.</p>
+<p>The values of <code>route_selector</code> and <code>route_meta</code> support <code>{cookie.x}</code> / <code>{header.x}</code> / <code>{query.x}</code> template variables (the same vocabulary as <code>rewrite</code> and <code>service_tag</code>). For example, sending traffic only to instances whose metadata matches the tenant cookie:</p>
+<pre><code class="language-yaml">- name: api-by-tenant
+  match: { path_prefix: &quot;/api/&quot; }
+  action:
+    type: proxy
+    service_name: api                 # dynamic instance pool from service discovery
+    route_meta:
+      tenant: &quot;{cookie.tenant}&quot;       # soft preference for the subset matching the cookie
+      version: &quot;{header.X-Api-Version}&quot;
+</code></pre>
+<ul>
+<li><strong>Choose the pool</strong>: <code>service_name: api</code> is resolved into a set of instances by service discovery;</li>
+<li><strong>Filter the subset</strong>: <code>route_meta</code> / <code>route_selector</code> use <strong>the same request attributes</strong> to select instances with matching metadata within the pool.</li>
+</ul>
+<p>So in service discovery scenarios there is a third layer besides &quot;match → rewrite&quot;: <strong>dynamic filtering by instance metadata within the pool</strong>. One route covers any number of tenants or versions, and instance changes follow service discovery automatically.</p>
+<p>The difference between the two fields matters:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Semantics</th>
+<th>Suits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>route_meta</code></td>
+<td><strong>Soft preference</strong>: matching instances first; falls back to other instances in the pool when none match</td>
+<td>Canaries, version preference, locality</td>
+</tr>
+<tr>
+<td><code>route_selector</code></td>
+<td><strong>Hard isolation</strong>: only matching instances; no match means no backend</td>
+<td>Strong isolation boundaries</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Missing template values skip the key</strong>: when <code>{cookie.tenant}</code> is absent it expands to an empty string and the key is <strong>skipped</strong> (it doesn't filter for an &quot;empty tenant&quot;). Requests without the cookie fall back to the default behavior of not filtering by tenant.</p>
+<p><strong>Security line (must read)</strong>: cookies/headers/query are <strong>forgeable by clients</strong>. Template keys are fixed by you (the operator) in configuration; clients only control <strong>values</strong> — so whether this can be abused depends on which key you hand to which request attribute:</p>
+<ul>
+<li>✅ OK: <strong>non-privileged dimensions</strong> such as <code>tenant</code> / <code>version</code> / <code>region</code> / <code>ab</code>, especially with <code>route_meta</code> (soft preference).</li>
+<li>❌ Don't: template <strong>physical isolation / permission boundary</strong> keys (such as <code>sid</code>) into <code>route_selector</code> from a bare <code>{cookie.x}</code> — that lets clients choose their own isolation pool. Authoritative routing like this belongs to <a href="../05-middleware/ids-governance.html">IDS / identity services</a> injecting it after authentication, or a trusted internal header <code>X-Selector-Sid</code> (requires a trusted client IP).</li>
+<li>⚠️ Use <strong>low-cardinality</strong> attributes for template values (tenant/version/region), not per-user IDs, or you'll thrash the service discovery cache.</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="4-boundaries-and-pitfalls">4. Boundaries and pitfalls</h2>
+<h3 id="rewrite-cant-switch-upstreams-and-doesnt-re-match"><code>rewrite</code> can't switch upstreams and doesn't re-match</h3>
+<p>It changes path/query <strong>only within the matched route</strong> and forwards straight to that route's upstream, without returning to the routing table. Any &quot;choose the backend by X&quot; must be written as &quot;a route with condition X pointing at the target upstream&quot;; don't expect rewrite to do it. For &quot;fall back to a front controller for clean URLs&quot; (WordPress/Laravel/SPA) use <a href="../04-actions/serve.html"><code>try_files</code></a>.</p>
+<h3 id="when-several-routes-share-a-path-make-the-order-explicit-with-priority">When several routes share a path, make the order explicit with <code>priority</code></h3>
+<p>Routes are tried in a fixed order: higher explicit <code>priority</code> first; at equal priority, exact paths (<code>path:</code>) come before rule routes with extra conditions. So with one route using <code>path:</code> and another using <code>rule:</code>, and neither setting <code>priority</code>, the <code>path:</code> route matches first and the conditional rule never gets a chance. Fix: <strong>give the more specific route an explicitly higher <code>priority</code></strong>. For the full order see <a href="../cookbook/06-matchers.html#3-which-route-matches-first-priority-rules">Named matchers and priority</a>.</p>
+<h3 id="query--header-values-used-for-matching-must-be-single-and-trustworthy">Query / header values used for matching must be single and trustworthy</h3>
+<ul>
+<li>Query parameters used for value matching must have <strong>exactly one value</strong>; multiple values (such as <code>?v=a&amp;v=b</code>) don't match, so the gateway and backend can't read different values.</li>
+<li>Be careful using <code>header</code> / <code>cookie</code> for <strong>security</strong> decisions: clients can forge them. Fine for canaries and A/B, but for permissions (such as the internal gate in 3.8) rely on <code>ClientIP</code> or backend authentication, with headers only as an aid.</li>
+</ul>
+<h3 id="templated-route_selector--route_meta-only-for-non-privileged-dimensions">Templated <code>route_selector</code> / <code>route_meta</code> only for non-privileged dimensions</h3>
+<p>When filtering instances with <code>{cookie.x}</code> / <code>{header.x}</code> / <code>{query.x}</code> templates (see <a href="#39-selecting-instance-subsets-by-request-attributes-service-discovery-subset-routing">3.9</a>), clients control the values. Use <strong>non-privileged dimensions</strong> (tenant/version/A-B/region) freely, preferably in <code>route_meta</code> (soft preference); <strong>never</strong> template <strong>permission / physical isolation boundaries</strong> (such as <code>sid</code>) from bare request attributes into <code>route_selector</code> — leave that to IDS injection after authentication or a trusted internal header. Also keep template values low-cardinality so the service discovery cache isn't thrashed.</p>
+<h3 id="rewriting-the-query-can-break-signature-checks">Rewriting the query can break signature checks</h3>
+<p><code>rewrite.query</code> re-encodes and reorders the query string; if a third party verifies a signature over the original query bytes, verification fails. In that case change only the path, or have the backend read <code>{original_uri}</code> / <code>{original_path}</code>. See <a href="../04-actions/proxy.html#8-url-rewrite-rewrite">Proxy <code>rewrite</code></a>.</p>
+<hr>
+<h2 id="5-in-one-sentence">5. In one sentence</h2>
+<blockquote>
+<p><strong>match decides &quot;to whom&quot;, rewrite decides &quot;in what shape&quot;.</strong> Split any tricky problem into these two questions: choose the right backend with <code>rule</code>'s boolean combinations, then adapt the URL with <code>rewrite</code>. Gateway-level routing, canaries, multi-version APIs, migrations and multi-tenancy are mostly within reach of this combination.</p>
+</blockquote>
+<hr>
+<h2 id="related-docs">Related docs</h2>
+<ul>
+<li><a href="./oauth-single-callback.html">Single callback URL routing (one OAuth callback, several backends)</a></li>
+<li><a href="../04-actions/proxy.html#8-url-rewrite-rewrite">Proxy and <code>rewrite</code> parameters</a></li>
+<li><a href="../03-configuration/site-config.html#9-rule-expression-dsl-reference">Rule expression DSL reference</a></li>
+<li><a href="../02-concepts/routing-priority.html">Routing priority</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/09-advanced/two-layer-routing.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

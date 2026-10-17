@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全局配置参考 (config.yaml) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/03-configuration/global-config.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details open><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html" class="current" aria-current="page">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: internal/configdocs/docs/zh/global-config.md (package internal/configdocs)
+     Regenerate: go generate ./internal/configdocs/...
+     Edit the source instead; a drift test fails if this copy is edited directly. -->
+<h1 id="全局配置参考-configyaml">全局配置参考 (<code>config.yaml</code>)</h1>
+<p><code>config.yaml</code> 定义 LiteGate 的监听、证书、注册发现、观测、缓存、认证以及 MCP 暴露方式。</p>
+<blockquote class="alert alert-tip"><p>MCP 的 <code>get_gateway_config_schema</code> 直接返回本文件内容。这里的字段应与当前代码中的 <code>internal/config/types.go</code> 保持一致。</p>
+</blockquote>
+<hr>
+<h2 id="0-全局模式-mode">0. 全局模式 (Mode)</h2>
+<pre><code class="language-yaml"># performance: 高性能模式（默认）。指标、访问日志、链路追踪、Dashboard 开启后照常工作
+# observability: 每个请求都记录路由明细，并始终推送 Dashboard 实时请求流
+mode: &quot;performance&quot;
+</code></pre>
+<p><code>performance</code> 只跳过&quot;没有开启任何消费者时&quot;的逐请求统计，开启 <code>metrics</code>、<code>dashboard</code>、<code>log.access_log</code> 或 <code>tracing</code> 后对应功能不受影响；开启 Dashboard 或 MCP SSE 时，实时请求流（MCP 的 <code>get_recent_requests</code> 读取它）也照常推送。需要始终记录路由明细时写 <code>mode: observability</code>。</p>
+<hr>
+<h2 id="1-监听器与-entrypoints-多端口网卡绑定">1. 监听器与 Entrypoints (多端口/网卡绑定)</h2>
+<p>LiteGate 支持类似 Traefik 的多入口监听器机制，允许不同站点或内部管理接口绑定在不同端口或特定物理网卡（SO_BINDTODEVICE）上。</p>
+<pre><code class="language-yaml">entrypoints:
+  web:
+    address: &quot;:80&quot;
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+  # internal:
+  #   address: &quot;:8080&quot;
+  #   interface_name: &quot;eth0&quot;         # 可选。绑定特定 Linux 网络设备名，跟随 DHCP IP 变化
+
+# 传统兼容端口配置（若已配置 entrypoints，则 entrypoints 拥有最高权威）
+http:
+  port: 80
+  https_port: 443
+  response_header_timeout: 60    # 可选。默认 HTTP 响应头超时（秒）
+  # upstream_transport_shards: 1  # 可选。每个上游实例分摊到几个连接池，降低高并发下的连接池锁竞争；默认 1 = 不分片
+  # upstream_buffer_size: 32768   # 可选。上游 HTTP/1 连接读写缓冲（字节，4096～65536，默认 32768）；大响应体会绕过缓冲直接读写
+  # upstream_client: fast         # 可选。默认 fast：明文 HTTP/1.1 后端用同步连接池（开销更低），TLS/mTLS/HTTP2/gRPC/WebSocket 自动走标准客户端；写 standard 则全部使用 Go 标准 Transport
+  # listen_backlog: 65535        # 可选。仅 Windows：TCP 等待接受队列长度（1～65535，默认 65535）。需用 make windows 构建才生效；Go 默认只有约 200，突发大量新连接时会被拒绝
+  # drain_delay: 5               # 摘流等待秒数；不写 = 自动，0 = 关闭，N = 固定 N 秒
+  # drain_delay_ms: 250          # 可选毫秒覆盖值，优先于 drain_delay
+</code></pre>
+<p><strong>停机摘流（<code>drain_delay</code>）</strong>：收到停止信号后，<code>/readyz</code> 先返回 503，并主动从 Consul / litemesh 注销，然后等待一段时间再关闭监听端口，让前面的负载均衡停止把新请求发过来。</p>
+<ul>
+<li><strong>不写（默认，自动）</strong>：只在确实有人观察时才等待——已注册到 Consul / litemesh 时，先注销再等 1 秒；最近 2 分钟内 <code>/readyz</code> 被探测过（K8s readinessProbe、云负载均衡）时等 5 秒；单机、无人探测时立即停止。</li>
+<li><code>drain_delay: 0</code> 关闭等待；<code>drain_delay: N</code> 固定等待 N 秒（例如负载均衡只做 TCP 探测、自动检测不到时）。</li>
+<li>等待期间再按一次 Ctrl-C（或再发一次 SIGTERM）可立即跳过。</li>
+<li>从旧版本升级：旧版生成的配置里写着 <code>drain_delay: 5</code>，会被视为显式设置而继续等待 5 秒；想用自动模式请删掉这一行。</li>
+</ul>
+<hr>
+<h3 id="11-入口插件ingress">1.1 入口插件（Ingress）</h3>
+<p>编译期插件可在 Site 匹配和路径清理之前接管指定入口上的 HTTP 请求。数组顺序是
+执行顺序，返回未处理时继续后续插件与 Site 路由。默认无插件；每个绑定必须有唯一
+名称和显式入口列表。缺失插件、未知入口或插件配置错误使配置校验失败。</p>
+<pre><code class="language-yaml"># 标准二进制已编入 forward_proxy；请在 entrypoints 中声明 websecure TLS 入口。
+ingress_plugins:
+  - name: developer-egress
+    type: forward_proxy
+    entrypoints: [websecure]
+    config:
+      username: developer
+      hosts: [proxy.example.com]
+      password: '$2a$10$REPLACE_WITH_COMPLETE_BCRYPT_HASH'
+      probe_resistance: true
+      hide_ip: true
+      hide_via: true
+      allowed_destinations: [example.org, &quot;*.example.org&quot;]
+      allowed_ports: [80, 443]
+</code></pre>
+<p>先执行 <code>litegate -hash '你的密码'</code>，将完整 bcrypt 哈希填入 <code>password</code>。
+客户端仍使用原始密码。<code>password_env</code> 是从环境变量读取原始密码的替代方案，
+必须与 <code>password</code> 二选一；不接受明文 <code>password</code>。<code>hosts</code> 匹配 TLS SNI，
+不是 CONNECT 的目标 Host；不匹配或没有 TLS/SNI 时回落到正常路由。
+省略 <code>hosts</code> 不限制入口域名。防探测开启后认证失败回落，需要普通 Site 或兜底站点。
+<code>hide_ip</code>、<code>hide_via</code> 默认开启：普通 HTTP 请求转发时移除已有来源 IP 头与 Via。
+显式关闭时分别追加来源 IP 到 Forwarded、追加 LiteGate 的 Via；不改写 CONNECT 数据。</p>
+<p>全局来源检查仍先执行；被插件处理的请求不进入 Site 中间件，宿主按 <code>ingress:&lt;binding name&gt;</code> 统一记录访问日志、指标和 Dashboard。
+LiteGate Forward/Connect 注入的内部流量不执行入口插件。候选实例初始化失败保留
+旧实例，成功提交后旧请求在 <code>http.shutdown_grace</code> 内排空（未设置时 30 秒），到期取消实例 Context 并带截止时间关闭；关闭进程则立即关闭实例。
+共用网站入口时必须配置 <code>hosts</code> 或开启 <code>probe_resistance</code>，避免本站 absolute-form 请求收到 407。仅改变 <code>password_env</code> 所指环境变量值不会重建未变化的绑定，需改变绑定配置或重启。
+成功 bcrypt 认证缓存头部 SHA-256 摘要 5 分钟，命中续期并做常量时间比较；每实例最多同时执行两次 bcrypt，等待槽位受请求 Context 约束且最多 100ms。通配规则默认拒绝本机网卡地址、<code>64:ff9b::/96</code>、<code>240.0.0.0/4</code> 和 <code>198.18.0.0/15</code>，有意访问需显式 IP/CIDR。每个解析地址单独使用拨号超时。网卡地址缓存 30 秒后按需刷新；云主机 1:1 NAT 的弹性公网 IP 可能不在网卡上，应显式加入 <code>denied_destinations</code>。绑定不变时，仅修改 <code>shutdown_grace</code> 不更新复用实例的宽限期，需改变绑定或重启。HTTP/2/3 下载结束即停止上传并结束响应，半关闭只在 HTTP/1 劫持连接上保留。
+完整公共契约与运行示例见 <a href="../../ingress-plugin-guide.html">入口插件指南</a>。</p>
+<h3 id="12-共享-443-的-sni--l4-分流">1.2 共享 443 的 SNI / L4 分流</h3>
+<p><code>entrypoints.websecure.routes</code> 在 HTTPS 解密之前检查 TLS ClientHello，根据 SNI
+将连接交给 L4 上游或命名 Stream。未匹配的域名继续进入普通 HTTPS 站点。
+当前显式传输路由只支持 <code>websecure</code>，并要求 <code>tls: true</code>。</p>
+<h4 id="直接透传到-tls-后端">直接透传到 TLS 后端</h4>
+<p>下面配置写在 <code>config.yaml</code> 中。<code>tcp.example.com</code> 的连接原样转发到 TLS 后端，
+其他域名继续由 LiteGate 处理 HTTPS：</p>
+<pre><code class="language-yaml">entrypoints:
+  web:
+    address: &quot;:80&quot;
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    default: http
+    on_non_tls: reject
+    on_no_sni: reject
+    inspect:
+      timeout: 5s
+      max_pending: 2048
+      per_ip_pending: 16
+    routes:
+      - name: private-tls
+        match:
+          sni: tcp.example.com
+        handle:
+          proxy: tcp://127.0.0.1:444
+</code></pre>
+<p><code>handle.proxy</code> 不终止 TLS，后端必须从第一个字节执行 TLS 握手并持有对应证书。
+它也支持 <code>unix:///run/service/tls.sock</code> 形式的 TCP Unix socket。</p>
+<h4 id="推荐用-stream-的-site-简写自动生成路由">推荐：用 Stream 的 site 简写自动生成路由</h4>
+<p>简单场景不必手写上面的 <code>routes</code>。全局保留 <code>websecure</code> 监听，在
+<code>streams/database.yaml</code> 中定义：</p>
+<pre><code class="language-yaml">site: tcp://db.example.com
+name: database
+proxy: 127.0.0.1:3306
+</code></pre>
+<p>它自动挂载 <code>websecure</code> 并生成 SNI 路由；无需再在 <code>config.yaml</code> 重复配置同一域名。
+默认透传 TLS。如需 LiteGate 解密 TLS，再在 Stream 中配置 <code>tls.enabled: true</code>
+及证书来源；<code>proxy</code> 指向的后端此时接收明文 TCP。</p>
+<p>需要显式选路到已有 Stream 时，路由写作下面形式，并合并到
+<code>entrypoints.websecure.routes</code>；名为 <code>database</code> 的 Stream 必须已存在且使用
+<code>listen: false</code>。每条路由的 <code>handle.proxy</code> 与 <code>handle.stream</code> 二选一：</p>
+<pre><code class="language-yaml">entrypoints:
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    routes:
+      - name: database
+        match:
+          sni: db.example.com
+        handle:
+          stream: database
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>match.sni</code></td>
+<td>一个域名或域名列表，支持 <code>*.example.com</code>。</td>
+</tr>
+<tr>
+<td><code>match.sni_regex</code></td>
+<td>正则匹配 SNI；简单域名优先用 <code>sni</code>。</td>
+</tr>
+<tr>
+<td><code>match.alpn</code></td>
+<td>可选，限制 ClientHello 提供的协议，如 <code>[h2]</code>；匹配协议区分大小写。</td>
+</tr>
+<tr>
+<td><code>handle.proxy</code></td>
+<td>原样转发 TLS 的 TCP / Unix socket 后端。</td>
+</tr>
+<tr>
+<td><code>handle.stream</code></td>
+<td>已存在的命名 Stream，执行其 TLS、ACL 和 L4 转发策略。</td>
+</tr>
+<tr>
+<td><code>default</code></td>
+<td>不匹配路由时回落到 HTTP/HTTPS 处理，当前只支持 <code>http</code>。</td>
+</tr>
+<tr>
+<td><code>on_non_tls</code>, <code>on_no_sni</code></td>
+<td>非 TLS / 无 SNI 时可配置 <code>http</code> 或 <code>reject</code>。</td>
+</tr>
+<tr>
+<td><code>inspect</code></td>
+<td>ClientHello 检查超时与并发上限。</td>
+</tr>
+</tbody>
+</table>
+<p>显式路由在声明相同 SNI 且未限定 ALPN 时优先于自动 Stream 路由；限定 ALPN
+的显式路由只接管对应协议，其余协议仍可使用自动路由。普通明文 TCP 和 UDP
+没有 TLS SNI，不能靠此方式按域名分流。UDP/QUIC 也不走这里的 TCP 443 路由。
+不要无意间让 L4 Stream 与 HTTP 站点使用相同域名：SNI 分流发生在 HTTP 路由之前。
+完整 Stream 场景见 <a href="l4-guide.html">L4 指南</a>。</p>
+<h2 id="2-静态-tls">2. 静态 TLS</h2>
+<pre><code class="language-yaml">tls:
+  enabled: false
+  certs_dir: &quot;./certs&quot;
+
+  # 本地 CA（自签自信任，对标 Caddy tls internal）
+  local_ca: false                       # 启用本地 CA 按需为本地域名签发叶子证书
+  local_ca_domains: [&quot;.localhost&quot;, &quot;.test&quot;]   # 允许签发的域名白名单（.开头=后缀匹配）
+  local_ca_trust: false                 # 仅首次生成时自动装入系统信任库（建议仅本机开发开启）
+</code></pre>
+<hr>
+<h2 id="3-auto-cert">3. Auto-Cert</h2>
+<p>显式关闭 <code>auto_cert.enabled</code> 后，不会自动申请或续期，包括 TLS 握手和热更新触发的路径。已启用的 <code>dns_providers</code> 域名组先于站点证书准备；组内泛域名覆盖的站点等待该证书，申请失败也不会另发 HTTP-01 单域名订单。泛域名申请使用 DNS-01。</p>
+<p>Auto-Cert 默认开启；显式设置 <code>enabled: false</code> 可关闭自动签发。具体域名站点在 TCP 443 成功监听后，先复用有效的精确域名、SAN 或泛域名证书，缺少时默认通过 HTTP-01 申请。仅绑定 <code>web</code> 的站点、IP 和通配匹配不会触发这条申请路径。</p>
+<p><code>https: true</code> 仅控制 HTTP 到 HTTPS 的重定向，与申请证书无关。HTTP-01 要求域名解析到网关，公网 TCP 80 可达。<code>on_demand.enabled</code> 用于未预先配置域名的 SaaS 授权流程；普通域名站点无需开启它。</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: &quot;litegate@example.com&quot; # 默认占位联系方式；CA 要求真实邮箱时请修改
+  domains: []                    # 旧字段，保留兼容
+  certs_dir: &quot;./certs&quot;
+  default_challenge: &quot;http&quot;      # 默认挑战模式: &quot;http&quot; (80 端口) 或 &quot;tls-alpn&quot; (443 端口)
+  storage_secret: &quot;&quot;             # 可选：ACME 账号私钥对称加密密钥 (长度需 &gt;= 32 字节)
+
+  # 多 CA 配置
+  ca_provider: &quot;letsencrypt&quot;     # letsencrypt, zerossl, google, custom
+  acme_url: &quot;&quot;                   # 自定义 ACME 目录服务 URL (在 custom 模式下必填)
+  acme_ca_cert: &quot;&quot;               # 私有 ACME HTTPS 根证书路径或内联 PEM
+  acme_headers: {}                # 私有 ACME 请求附加头
+  eab_kid: &quot;&quot;                    # 外部账户绑定 Key ID (针对 ZeroSSL 或 GTS)
+  eab_hmac: &quot;&quot;                   # 外部账户绑定 HMAC Key (针对 ZeroSSL 或 GTS)
+
+  provider: &quot;&quot;                   # 旧单 Provider 模式
+  provider_config: {}
+
+  dns_providers:
+    - name: &quot;aliyun-main&quot;
+      type: &quot;aliyun&quot;
+      enabled: true
+      domains: [&quot;*.example.com&quot;, &quot;example.com&quot;]
+      ddns:
+        enabled: true
+        ipv4: &quot;&quot;
+        ipv6: &quot;&quot;
+        sync_a: true
+        sync_aaaa: true
+        domains: [&quot;*.example.com&quot;]
+      config:
+        access_key_id: &quot;...&quot;
+        access_key_secret: &quot;...&quot;
+
+  renew_days: 10
+  check_interval: 24
+  use_staging: false
+  propagation_dns: [&quot;223.5.5.5&quot;, &quot;114.114.114.114&quot;]
+  bootstrap_dns: &quot;&quot;
+
+  dns_update:
+    enabled: false
+    auto_service_host_sync: false
+    ip: &quot;&quot;
+    key_prefix: &quot;litedns/v1/records/&quot;
+    node_id: &quot;&quot;
+    record_ttl: 30
+    heartbeat_interval: 30s
+
+  on_demand:
+    enabled: false
+    ask: &quot;http://your-api/check-domain&quot;
+    kv_prefix: &quot;&quot;
+    saas_template_site: &quot;&quot;
+
+  webhook_url: &quot;&quot;
+  webhook_token: &quot;&quot;
+</code></pre>
+<p>说明：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">字段</th>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>enabled</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">是否启用自动证书；默认 <code>true</code>，可显式关闭</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ca_provider</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">证书颁发机构提供商，默认值为 <code>letsencrypt</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>acme_url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">自定义 ACME 目录接口 URL，仅当 <code>ca_provider=custom</code> 时必填</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>eab_kid</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">外部账户绑定的 Key ID (ZeroSSL/GTS 强制需要)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>eab_hmac</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">外部账户绑定的 HMAC Key (ZeroSSL/GTS 强制需要)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>storage_secret</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">可选，对持久层存储中的 ACME 账号私钥进行 AES-256-GCM 加密的对称密钥，长度需 &gt;= 32 字节</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>dns_providers</code></td>
+<td style="text-align:left">array</td>
+<td style="text-align:left">多 DNS Provider 配置</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ddns.ipv4</code> / <code>ddns.ipv6</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">手动指定 IP</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>dns_update</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">将本网关内网 IP 按域名发布到 LiteMesh KV，供 LiteDNS 做内网解析（需启用 litemesh）</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>on_demand.ask</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">按需签发授权检查 URL</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>on_demand.kv_prefix</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">按需域名授权 KV 前缀</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>on_demand.saas_template_site</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">SaaS 域名绑定模板站点</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="31-echencrypted-clienthello">3.1 ECH（Encrypted ClientHello）</h3>
+<p>在主配置中开启浏览器到网关的 ECH，复用已启用的 DNS 提供商：</p>
+<pre><code class="language-yaml">ech:
+  enabled: true
+  groups:
+    - public_name: ech.example.com
+      dns_provider: aliyun-main
+    - public_name: ech.example.net
+      dns_provider: cloudflare-main
+  storage: file
+  # KV 集群可改为：
+  # storage: kv
+  # kv:
+  #   provider: litemesh  # 或 consul，复用对应连接和 namespace
+  #   key_prefix: litegate/ech/mycluster/
+  # key_prefix: litegate/ech/mycluster/
+</code></pre>
+<p>默认关闭。需要 <code>auto_cert.enabled: true</code>、TCP 443 的 <code>websecure</code>、允许 TLS 1.3 的站点，以及内置阿里云或 Cloudflare 提供商。域名必须是具体 ASCII 名称；网站需要直接 A/AAAA，不能使用 CNAME；Cloudflare 必须 DNS only。</p>
+<p>自动保障公共名称的证书申请、持久化 ECH 密钥并发布 HTTPS DNS 记录（TTL 600 秒）。每 7 天轮换；每个域名独立发布与重试，旧密钥不再被潜在 DNS 记录引用后保留 14 天，失败每分钟重试；不会覆盖非本实例管理的 HTTPS 记录。配置修改需要重启。各组密钥位于 <code>auto_cert.certs_dir/ech/&lt;public_name&gt;/state.json</code>（回退到 <code>tls.certs_dir</code>；匹配的旧单组状态目录继续复用），需要持久化备份；兼容的 auto 模式仅在启用 Consul/LiteMesh config_watch 时将加密状态共享到 KV；推荐显式 storage: kv，并填写 kv.provider 和 kv.key_prefix，由发布租约保证单个 DNS 写入者；各节点必须使用相同 storage_secret、public_name、提供商、站点配置及 key_prefix。显式 storage: file 使用单节点本地模式。关闭前先撤回 HTTPS 记录并等待 DNS 缓存过期。完整配置与测试步骤见 <a href="../06-certificates/ech.html">ECH</a>。</p>
+<h2 id="4-consul">4. Consul</h2>
+<pre><code class="language-yaml">consul:
+  enabled: false
+  address: &quot;127.0.0.1:8500&quot;
+  datacenter: &quot;dc1&quot;
+  token: &quot;&quot;
+  roles:
+    config_watch: false
+    cert_storage: false
+    service_register: false
+  keys:
+    config_prefix: &quot;litegate/config/sites/&quot;
+    cert_prefix: &quot;litegate/certs/&quot;
+    stream_prefix: &quot;litegate/streams/&quot;
+  service:
+    id: &quot;&quot;
+    name: &quot;litegate&quot;
+    address: &quot;&quot;   # 注册地址；留空时自动探测本机出口 IP
+    tags: [&quot;gateway&quot;, &quot;edge&quot;]
+    meta:
+      version: &quot;1.0&quot;
+</code></pre>
+<hr>
+<h2 id="5-litemesh">5. Litemesh</h2>
+<pre><code class="language-yaml">litemesh:
+  enabled: true
+  address: &quot;127.0.0.1:8787&quot;
+  token: &quot;&quot;
+  namespace: &quot;&quot;
+  mtls: true
+  spiffe_id: &quot;&quot;
+  mtls_port: 8443
+  roles:
+    config_watch: false
+    cert_storage: false
+    service_register: true
+  keys:
+    config_prefix: &quot;litegate/config/sites/&quot;
+    stream_prefix: &quot;litegate/config/streams/&quot;
+    cert_prefix: &quot;litegate/certs/&quot;
+  service:
+    id: &quot;&quot;
+    name: &quot;litegate&quot;
+    address: &quot;&quot;   # 注册地址；留空时自动探测本机出口 IP
+    tags: [&quot;gateway&quot;, &quot;edge&quot;]
+    meta:
+      version: &quot;1.0&quot;
+</code></pre>
+<hr>
+<h2 id="6-service-discovery">6. Service Discovery</h2>
+<pre><code class="language-yaml">service_discovery:
+  catalogs:
+    - enabled: false
+      provider: &quot;consul&quot;          # consul / discovery
+      name: &quot;&quot;                    # 插件发现源实例名（同类型内唯一）
+      config: {}                  # 插件发现源专用键值配置
+      url: &quot;127.0.0.1:8500&quot;
+      service_name: &quot;&quot;
+      resolve_via: &quot;&quot;             # consul / litemesh
+      default_domain: &quot;&quot;
+      auth_mode: &quot;disabled&quot;       # disabled / auto
+      token: &quot;&quot;
+      namespace: &quot;&quot;
+      jwt_auth_url: &quot;&quot;
+      md5_auth_url: &quot;&quot;
+
+    - enabled: false
+      provider: &quot;docker&quot;
+      socket_path: &quot;/var/run/docker.sock&quot;
+      network_mode: &quot;internal&quot;     # internal (容器网 IP) 或 external (主端口映射 IP)
+      swarm_mode: false            # 显式开启 Swarm 模式
+      swarm_auto_detect: false     # 显式允许检测 Manager
+
+  tag_entrypoints:
+    allowed_ports: []              # 允许服务标签新开的监听端口(HTTP 入口与 TCP/UDP Stream)，如 [8080, 15432]
+  path_ingress: true             # Magic Ingress 路径路由(http://网关/&lt;服务名&gt;/...)，仅对未声明 Router 的服务、且只在未匹配站点或通配兜底站点上生效
+</code></pre>
+<p>服务标签(<code>litegate.entrypoints.&lt;name&gt;.address</code>、<code>litegate.tcp.port</code>、<code>litegate.udp.port</code>)只能在 <code>tag_entrypoints.allowed_ports</code> 列出的端口上新开监听，且不能与本文件中的入口同名或同端口；为空时标签不能新开端口，只能引用已有入口(默认 <code>web</code>、<code>websecure</code>)。详见<a href="tag-dsl.html">服务标签使用指南</a>。</p>
+<blockquote class="alert alert-note"><p><code>catalogs</code> 是数组。当前代码已经不是旧的 <code>catalog</code> 单对象模式。
+外部 Discovery Provider 使用其注册名作为 <code>provider</code>，专用配置放在 <code>config</code>，并可用 <code>name</code> 区分同类型多实例。</p>
+</blockquote>
+<pre><code class="language-yaml">socket_path: &quot;ssh://root@192.168.50.44:22&quot;
+ssh:
+  password_env: &quot;LITEGATE_DOCKER_SSH_PASSWORD&quot;
+  known_hosts_file: &quot;/etc/litegate/known_hosts&quot;
+  connect_timeout: &quot;10s&quot;
+  # private_key_file: &quot;/etc/litegate/docker_ed25519&quot;
+  # agent_socket: &quot;/run/ssh-agent.sock&quot;
+</code></pre>
+<hr>
+<h2 id="7-cache-与-redis">7. Cache 与 Redis</h2>
+<pre><code class="language-yaml">cache:
+  local_ttl: &quot;60s&quot;
+  proxy_cache_max_entries: 10000  # 本地代理缓存 LRU 条目上限
+  proxy_cache:
+    backend: local              # local | redis；选 Redis 时也需启用下方连接
+    namespace: default          # 不同环境使用不同命名空间
+    max_object_bytes: 262144    # 256KB
+    redis_timeout: 200ms
+    # stale_while_revalidate: 0s # Redis 默认关闭；本地未配置时尊重上游窗口
+  redis:
+    enabled: false
+    mode: &quot;standalone&quot;              # standalone 或 cluster
+    address: &quot;localhost:6379&quot;
+    addr: &quot;&quot;                      # address 的别名
+    addrs: []                     # Redis Cluster 节点，如 [&quot;redis-1:6379&quot;, &quot;redis-2:6379&quot;]
+    username: &quot;&quot;
+    password: &quot;&quot;
+    db: 1
+    tls: false
+    pool_size: 20
+    min_idle_conns: 5  # 兼容旧配置；Redigo 按需创建连接，不主动预热
+    dial_timeout: &quot;3s&quot;
+    read_timeout: &quot;2s&quot;
+    write_timeout: &quot;2s&quot;
+    max_retries: 2
+
+redis:
+  enabled: false
+  mode: &quot;standalone&quot;
+  address: &quot;localhost:6379&quot;
+  addr: &quot;&quot;
+  addrs: []
+  username: &quot;&quot;
+  password: &quot;&quot;
+  db: 0
+  tls: false
+  pool_size: 20
+  min_idle_conns: 5  # 兼容旧配置；Redigo 按需创建连接，不主动预热
+  dial_timeout: &quot;3s&quot;
+  read_timeout: &quot;2s&quot;
+  write_timeout: &quot;2s&quot;
+  max_retries: 2
+</code></pre>
+<hr>
+<p>代理缓存多节点共享必须显式选择 <code>cache.proxy_cache.backend: redis</code>，仅启用 Redis 不会切换后端。连接优先使用已启用的 cache.redis，其次全局 redis。proxy_cache_max_entries 仅限制本地条目，Redis 容量需单独配置。Redis 故障时绕过缓存，默认关闭旧内容返回。写成功后可用 <code>on_success.invalidate_proxy_cache</code> 清理命名读取路由；dashboard <code>POST /api/proxy-cache/purge</code> 支持 all/site/route/key 范围，沿用现有鉴权。</p>
+<h2 id="9-dashboard--metrics--pprof">9. Dashboard / Metrics / Pprof</h2>
+<pre><code class="language-yaml">dashboard:
+  enabled: true
+  port: 9999
+  username: &quot;admin&quot;
+  password: &quot;$2a$...&quot;
+  token: &quot;&quot;                      # 管理 API Token (X-API-Key 头校验)
+  cookie_secret: &quot;&quot;              # Cookie 加密密钥 (AES-256 格式密钥)
+  allowed_origins: []            # 允许跨域及 WebSocket 访问的来源列表 (留空表示仅限 Same Origin)
+  require_secure_cookie: false   # 是否强制只能通过 HTTPS 传输控制台会话 Cookie
+
+metrics:
+  enabled: false
+  port: 9090
+
+pprof:
+  enabled: false
+  port: 6060
+</code></pre>
+<h3 id="go-运行时-runtime">Go 运行时 (runtime)</h3>
+<p>调整 Go 垃圾回收（GC）。不配置时保持 Go 默认值，行为与以前完全相同。</p>
+<pre><code class="language-yaml">runtime:
+  gc_percent: 200        # 等价于 GOGC，范围 25~1000；不写即 Go 默认的 100
+  memory_limit: 1GiB     # 等价于 GOMEMLIMIT，单位 B/KiB/MiB/GiB/TiB，最小 64MiB
+</code></pre>
+<ul>
+<li><strong><code>gc_percent</code></strong>：存活堆增长到多少百分比时触发下一轮 GC。LiteGate 常驻内存小，默认值下高并发时每秒可能 GC 几十轮；调到 <code>200</code> 可明显减少 GC 次数（16 vCPU 上 <code>respond</code> 站点实测吞吐约 +13%），代价是内存占用随之增加。</li>
+<li><strong><code>memory_limit</code></strong>：内存软上限，接近时 GC 会提前、更频繁地运行。提高 <code>gc_percent</code> 时建议同时设置，避免内存无界增长；取值应低于机器或容器内存，并为其他进程留出余量。只提高 <code>gc_percent</code> 而不设上限时，启动日志会给出警告。</li>
+<li>已设置 <code>GOGC</code> / <code>GOMEMLIMIT</code> 环境变量时，环境变量优先，对应配置项被忽略并记录警告。</li>
+<li>修改 <code>runtime</code> 需要重启进程，热重载会拒绝这一变更。</li>
+</ul>
+<hr>
+<h2 id="10-日志">10. 日志</h2>
+<pre><code class="language-yaml">log:
+  level: &quot;info&quot;                  # debug / info / warn / error
+  format: &quot;console&quot;              # console / json
+
+  webhook:
+    enabled: false
+    url: &quot;https://example.com/webhook&quot;
+    levels: [&quot;error&quot;, &quot;fatal&quot;, &quot;panic&quot;]
+    headers:
+      Content-Type: &quot;application/json&quot;
+
+  access_log:
+    enabled: true
+    stdout: true
+    level: info
+    file_enabled: false
+    file: &quot;&quot; # defaults to ./logs/access.log when file_enabled is true
+    max_size: 100         # 可选。单个日志文件最大大小 (MB)
+    max_age: 7            # 可选。旧日志文件最大保留天数
+    max_backups: 30       # 可选。最大保留的旧日志文件个数
+    compress: true        # 可选。是否压缩旧日志文件 (gzip)
+    routing_detail: false
+    webhook:
+      enabled: false
+      url: &quot;http://mq-gateway:8080/access-log&quot;
+      batch_size: 100
+      interval: &quot;1s&quot;
+      headers:
+        Authorization: &quot;Bearer token&quot;
+</code></pre>
+<hr>
+<h2 id="11-全局-ip-限制">11. 全局 IP 限制</h2>
+<pre><code class="language-yaml">ip_restriction:
+  allow_ips: []
+  deny_ips: []
+
+stream_ip_restriction:
+  allow_ips: []
+  deny_ips: []
+</code></pre>
+<hr>
+<h2 id="12-mcp">12. MCP</h2>
+<pre><code class="language-yaml">mcp:
+  enabled: false
+  port: 8080
+  token: &quot;&quot;                      # SSE Bearer Token
+  public_url: &quot;&quot;                 # 反向代理后的公开 MCP URL
+</code></pre>
+<hr>
+<h2 id="13-auth-providers">13. Auth Providers</h2>
+<pre><code class="language-yaml">auth_providers:
+  google:
+    enabled: true
+    type: &quot;oidc&quot;
+    issuer: &quot;https://accounts.google.com&quot;
+    client_id: &quot;...&quot;
+    client_secret: &quot;...&quot;
+    scopes: [&quot;openid&quot;, &quot;email&quot;, &quot;profile&quot;]
+    callback_path: &quot;/_auth/callback/google&quot;
+    notify_url: &quot;&quot;
+    clock_skew: &quot;5m&quot;
+    allowed_signing_algs: [&quot;RS256&quot;]
+    introspection_url: &quot;&quot;
+    introspection_interval: &quot;5m&quot;
+
+  github:
+    enabled: true
+    type: &quot;oauth2&quot;
+    client_id: &quot;...&quot;
+    client_secret: &quot;...&quot;
+    scopes: [&quot;read:user&quot;, &quot;user:email&quot;]
+    auth_url: &quot;https://github.com/login/oauth/authorize&quot;
+    token_url: &quot;https://github.com/login/oauth/access_token&quot;
+    callback_path: &quot;/_auth/callback/github&quot;
+</code></pre>
+<p>字段说明：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">字段</th>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>type</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">认证协议类型，可选 <code>oidc</code> 或 <code>oauth2</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>issuer</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">OIDC Discovery Issuer 地址（仅 OIDC 必填，网关自动拉取 <code>.well-known/openid-configuration</code>）</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>client_id</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">OAuth2 / OIDC Client ID</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>client_secret</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">OAuth2 / OIDC Client Secret</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>scopes</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">申请授权的作用域列表（默认 <code>[&quot;openid&quot;, &quot;email&quot;, &quot;profile&quot;]</code>）</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>callback_path</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">授权回调路径（默认 <code>/_auth/callback/&lt;provider&gt;</code>）</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>notify_url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">可选。Token 事件通知 Webhook 回调地址</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>auth_url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">非 OIDC 标准 OAuth2 服务的授权发起地址</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>token_url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">非 OIDC 标准 OAuth2 服务的 Token 交换接口地址</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>user_info_url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">可选 OAuth2 用户信息 JSON 接口，以 Bearer Token 请求。GitHub 默认使用 <code>/user</code>；获取失败会拒绝登录。通用 OAuth2 使用身份访问规则时应配置此接口。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>clock_skew</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">OIDC 过期、签发和生效时间校验的非负容忍偏差，例如 <code>5m</code>；默认 <code>0</code> 严格校验。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>allowed_signing_algs</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">允许的 JWT 签名算法列表，例如 <code>[&quot;RS256&quot;, &quot;ES256&quot;]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>introspection_url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">RFC 7662 Token 内省接口地址</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>introspection_interval</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Token 内省刷新周期，例如 <code>5m</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>auth_params</code></td>
+<td style="text-align:left">map</td>
+<td style="text-align:left">追加或覆盖授权请求参数（如 <code>prompt: login</code>），值为空表示去掉默认值。Google 默认 <code>access_type: offline</code>、<code>prompt: consent</code>，其他 IdP 默认不带</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="14-oidc-security">14. OIDC Security</h2>
+<pre><code class="language-yaml">oidc_security:
+  token_allowed_ips: []
+  me_allowed_ips: []
+  token_one_shot: false
+  cookie_secret: &quot;&quot;
+  cookie_same_site: &quot;lax&quot;        # lax / strict / none
+  max_concurrent_sessions: 10
+  token_endpoint_enabled: false  # 开启 /_litegate/oauth/token
+  refresh_allowed_ips: []        # /_litegate/oauth/refresh 调用方，默认仅本机
+  allowed_redirect_hosts: []     # 允许 redirect_back 跳转的外部主机
+  login_failure_limit: 20        # 同一 IP 15 分钟内登录回调失败上限，负数关闭
+</code></pre>
+<hr>
+<h2 id="15-real-ip">15. Real IP</h2>
+<pre><code class="language-yaml">real_ip:
+  # 受信任的反向代理/SLB IP列表，用于网关信任并解析上一跳传递的 X-Forwarded-For 真实客户端 IP
+  trusted_proxies:
+    - &quot;127.0.0.1/32&quot;
+    - &quot;10.0.0.5/32&quot;
+  # 允许通过 X-Selector-Sid 进行东西向服务间物理选路的可信内网微服务客户端 IP/网段列表
+  selector_trusted_clients:
+    - &quot;127.0.0.1/32&quot;
+    - &quot;10.0.0.0/8&quot;
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>
+<p><strong><code>trusted_proxies</code></strong>：代理信任网段，规定网关信任哪些上一跳代理。通常只配置几台前置负载均衡/SLB的特定 IP。默认为空：不信任任何上一跳，忽略 <code>X-Forwarded-For</code>，客户端 IP 即直连地址。同机前置 nginx 等代理时需显式加入 <code>127.0.0.1</code>。
+按 IP 限流复用入口解析的客户端地址，不直接读取请求头。只有直连地址属于 <code>real_ip.trusted_proxies</code>（或受文件权限保护的 Unix 入口）才解析 XFF；多条同名头作为完整链从右向左解析，使用第一个非受信 IP，并统一 IPv4/IPv6 表示。遇到边界上的非法或空地址时回退到直连地址。前置代理必须覆盖客户端提交的 XFF，或在完整链右侧追加它实际观察到的客户端 IP；若代理原样透传客户端自报地址，网关无法鉴别。不要把公网客户端所在网段或 <code>0.0.0.0/0</code>、<code>::/0</code> 配置为受信代理。</p>
+</li>
+<li>
+<p><strong><code>selector_trusted_clients</code></strong>：东西向可信物理选路客户端授权网段。仅在此网段内的真实客户端发起的请求，网关才允许提取并提升 <code>X-Selector-Sid</code> 用于实例物理隔离选路；外网非受信客户端携带的 <code>X-Selector-Sid</code> 将在网关入口处被物理强力抹除，防范外部伪造。若未配置此项，系统将优雅兜底 Fallback 指向 <code>trusted_proxies</code>。</p>
+</li>
+</ul>
+<hr>
+<h2 id="16-其他">16. 其他</h2>
+<pre><code class="language-yaml">sites_dir: &quot;./sites&quot;
+streams_dir: &quot;./streams&quot;
+# disable_trace_id: true   # 不写时自动：performance 模式下未开启 tracing / access_log 则不生成 TraceID；显式写 true/false 以写的为准
+
+# Cookie 会话保持加密密钥（32 字节 hex）。多节点部署需所有节点配相同值，
+# 否则跨节点的粘连 Cookie 无法解密。配合 action 的 lb_policy: cookie 使用
+sticky_key: &quot;&quot;
+
+# OpenTelemetry 分布式链路追踪 (OTLP/HTTP)
+tracing:
+  enabled: false
+  endpoint: &quot;http://127.0.0.1:4318&quot; # OTLP/HTTP 接收端地址（自动拼接 /v1/traces）
+  service_name: &quot;litegate&quot;
+  sample_ratio: 1.0                  # 采样率 0.0 - 1.0 (1.0 = 100% 全量采样)
+  trust_incoming_sampled: true       # 是否信任客户端发来的 traceparent sampled 标志
+  batch_size: 128
+  interval: &quot;2s&quot;
+
+# 被动健康检查与异常节点剔除 (Outlier Detection)
+passive_health:
+  consecutive_failures: 5            # 连续失败次数阈值（超过后自动剔除该节点）
+  base_ejection_time: &quot;3s&quot;           # 首次剔除隔离时长
+  max_ejection_time: &quot;30s&quot;           # 指数退避的最大隔离封禁时长
+  ejection_reset_time: &quot;30s&quot;         # 节点稳定运行时衰减重置回基础隔离时长的等待期
+
+# 外部插件动态加载目录
+# plugin_config:
+#   path: &quot;./plugins&quot;
+#   watch: true
+</code></pre>
+<hr>
+<h2 id="17-最小示例">17. 最小示例</h2>
+<pre><code class="language-yaml">http:
+  port: 80
+  https_port: 443
+
+sites_dir: &quot;./sites&quot;
+streams_dir: &quot;./streams&quot;
+
+mcp:
+  enabled: true
+  port: 8080
+
+dashboard:
+  enabled: true
+  port: 9999
+  username: &quot;admin&quot;
+  password: &quot;$2a$...&quot;
+</code></pre>
+<hr>
+<h2 id="18-扫描保护-scan-protection">18. 扫描保护 (Scan Protection)</h2>
+<p><code>scan_protection</code> 提供基于威胁评分机制的动态扫描阻断，能够在黑客探测敏感文件路径（如 <code>.git</code>、<code>.env</code>）或不存在的 API 时，自动封禁源 IP。</p>
+<pre><code class="language-yaml">scan_protection:
+  enabled: false                      # 扫描保护总开关，默认关闭。支持看板/API 运行时动态热切
+  block_duration: &quot;1h&quot;                # 自动封禁持续时间，支持 h/m/s
+  max_404_attempts: 6                 # 观察期内允许的最大 404 越权探测次数，超过加分并进入阻断
+  observation_period: &quot;1m&quot;            # 滑动观察窗口时间范围
+  block_direct_ip: false              # 首次上线建议保持 false，无误伤再改 true。开启后直接通过 IP 访问网关（无 Host）的恶意行为将被立即阻断
+  forbidden_paths:
+    - &quot;.env&quot;
+    - &quot;.php&quot;
+    - &quot;.jsp&quot;
+    - &quot;.asp&quot;
+    - &quot;.aspx&quot;
+    - &quot;/wp-admin&quot;
+    - &quot;/wp-content&quot;
+    - &quot;/phpmyadmin&quot;
+
+  global_rules:
+    - name: &quot;block_unsupported_ext&quot;
+      match:
+        path_exact:
+          - &quot;.php&quot;
+          - &quot;.php3&quot;
+          - &quot;.php5&quot;
+          - &quot;.php7&quot;
+          - &quot;.phtml&quot;
+          - &quot;.pht&quot;
+          - &quot;.asp&quot;
+          - &quot;.aspx&quot;
+          - &quot;.ashx&quot;
+          - &quot;.asmx&quot;
+          - &quot;.jsp&quot;
+          - &quot;.jspx&quot;
+          - &quot;.cgi&quot;
+          - &quot;.cfm&quot;
+      action: &quot;deny&quot;
+      score: 30
+      reason: &quot;unsupported_ext_probe&quot;
+
+    - name: &quot;secrets_and_vcs&quot;
+      match:
+        path_exact:    [&quot;/.git&quot;, &quot;/.svn&quot;, &quot;/.env&quot;, &quot;/.htpasswd&quot;]
+        path_contains: [&quot;/.git/&quot;, &quot;/.env.&quot;, &quot;/id_rsa&quot;, &quot;/.ssh/&quot;, &quot;/.aws/credentials&quot;, &quot;/.docker/config.json&quot;]
+      action: &quot;deny&quot;
+      score: 30
+      reason: &quot;secret_or_vcs_probe&quot;
+
+    - name: &quot;admin_tool_probe&quot;
+      match:
+        path_prefix:   [&quot;/phpmyadmin&quot;, &quot;/pma&quot;, &quot;/adminer&quot;, &quot;/manager/html&quot;, &quot;/cgi-bin/&quot;]
+        path_contains: [&quot;/vendor/phpunit/&quot;]
+      action: &quot;deny&quot;
+      score: 30
+      reason: &quot;admin_tool_probe&quot;
+</code></pre>
+<p>字段说明：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">字段</th>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>enabled</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">是否启用扫描保护模块。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>block_duration</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">封禁持续时间，例如 <code>&quot;1h&quot;</code> 或 <code>&quot;30m&quot;</code>。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>max_404_attempts</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">允许的探测最大 404 响应数限制。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>observation_period</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">探测窗口滑动时间。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>forbidden_paths</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">敏感路径后缀或前缀后缀定义。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>block_direct_ip</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">是否禁止直接 IP 访问。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>global_rules</code></td>
+<td style="text-align:left">array</td>
+<td style="text-align:left">扫描阻断规则，包含匹配规则与执行动作。支持 <code>deny</code>, <code>tarpit</code>, <code>rate_limit</code>, <code>score</code>, <code>observe</code> 动作类型。</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="19-litegate-connect">19. LiteGate Connect</h2>
+<p>Connect 让 Home 节点主动连接 Cloud，并通过 Cloud 的公网 80/443 发布 Home Site：</p>
+<pre><code class="language-yaml">connect:
+  server:                         # Cloud 节点
+    enabled: true
+    hostname: connect.example.com
+    path: /_litegate/connect/v1
+    state_file: data/connect-registry.json
+    health:
+      enabled: false              # 可选：对发布域名执行端到端健康检查
+      node_name: cloud-node-01    # 节点唯一名称（可选，默认使用主机名，容器环境建议显式指定）
+      advertise_addr: 10.0.0.5    # 发布到 LiteDNS / LiteMesh 的 Cloud 地址
+      advertise_port: 443
+      probe_path: /healthz        # 通过 Connect 反向隧道探测
+      probe_interval: 5s
+      probe_timeout: 2s
+      ttl: 15s                    # 仅 service_registration 开启时使用
+      fail_threshold: 2
+      max_concurrent_probes: 32
+      dns_registration:           # 将 passing 域名写入 LiteDNS KV；默认关闭
+        enabled: false
+        key_prefix: litedns/v1/records/
+        record_ttl: 10
+        kv_ttl: 15s
+      service_registration:       # 将 passing 域名注册成 LiteMesh 服务；默认关闭
+        enabled: false
+    peers:
+      private:
+        token_file: /etc/litegate/secrets/private-connect.token
+        allowed_domains: [&quot;*.private.example.com&quot;]
+        max_sites: 200
+        max_connections: 4096
+        sessions: 2
+        max_registrations_per_minute: 30
+
+  client:                         # Private 节点
+    enabled: true
+    name: private
+    remote: https://connect.example.com/_litegate/connect/v1
+    token_file: /etc/litegate/secrets/private-connect.token
+    publish_sites: true
+    publish_streams: false
+    sessions: 2
+    max_connections: 4096
+    registration_debounce: 500ms
+    exclude_domains: [connect.example.com]
+</code></pre>
+<p>Cloud 与 Private 通常分别使用各自配置，只启用对应一侧。完整的字段、安全边界、mTLS、多 Cloud、
+Token 轮换和上线步骤见 <code>docs/zh-cn/user/09-advanced/connect.md</code>。</p>
+<p>只开启健康检查不会发布任何数据；必须显式开启某个注册开关。<code>dns_registration</code> 会按“域名 + Cloud
+节点”写入带 TTL 的 LiteDNS KV，<code>service_registration</code> 只提供给仍使用 LiteMesh 服务发现 SDK 的调用方。
+两个开关彼此独立，默认均为 <code>false</code>。</p>
+<h2 id="自定义访问日志模板">自定义访问日志模板</h2>
+<pre><code class="language-yaml">log:
+  format: json
+  access_log:
+    enabled: true
+    stdout: true
+    file_enabled: true
+    file: ./logs/access.log
+    template: '{client_ip} - [{timestamp}] &quot;{method} {uri}&quot; {status} {size_bytes} &quot;{referer}&quot; &quot;{user_agent}&quot; {cost_ms}'
+</code></pre>
+<p><code>template</code> 控制访问日志的终端和文件输出；留空沿用现有格式。运行日志继续由 <code>log.format</code> 控制，Webhook 和看板保留结构化数据。文件轮转、异步写入和日志级别过滤照常生效。</p>
+<p>支持字段：<code>timestamp</code>、<code>client_ip</code>、<code>method</code>、<code>path</code>、<code>uri</code>（含查询参数）、<code>host</code>、<code>status</code>、<code>size_bytes</code>、<code>cost_ms</code>、<code>upstream</code>、<code>route</code>、<code>site</code>、<code>trace_id</code>、<code>referer</code>、<code>user_agent</code>。时间为现有结构化日志时间戳，耗时单位为毫秒，保留小数精度；空的 Referer 和 User-Agent 输出 <code>-</code>。缺失字段输出 <code>-</code>。字段值中的换行、控制字符、引号和反斜杠会转义，防止请求伪造额外日志行。模板必须为单行，未知字段或不完整占位符会在配置验证时报告错误。这是 LiteGate 的 <code>{字段}</code> 模板，不直接解析 Nginx <code>$变量</code> 格式。</p>
+<p>修改 <code>log.access_log.template</code> 后需要重启 LiteGate；当前全局日志配置只有 <code>log.level</code> 支持热更新。通过 MCP 保存配置会进行校验并请求重载，但保存成功不表示这些启动时配置已生效。<code>litegate -init</code> 生成的示例配置也包含空模板和自定义模板示例。</p>
+<h3 id="跨站点共享的匹配条件和配置片段">跨站点共享的匹配条件和配置片段</h3>
+<p><code>matchers</code> 和 <code>snippets</code> 不属于主配置。跨站点共享的定义放在 <code>sites/_shared.yaml</code>（KV 模式为站点前缀下的 <code>_shared.yaml</code> 键），详见站点配置参考中的“跨站点共享的匹配条件和配置片段”。在 <code>config.yaml</code> 顶层写这两项会在加载时报错。</p>
+<h2 id="上游-dns-解析器">上游 DNS 解析器</h2>
+<p>Consul/LiteMesh <code>config_watch</code> 模式下修改 <code>resolvers</code> 需要重启；文件模式会重新验证站点并拒绝删除仍被引用的解析器。ECH 发布成功后每 30 分钟全面检查 DNS，失败每分钟重试。关闭前可停止实例并执行 <code>litegate ech withdraw -config config.yaml</code> 撤回本实例管理的 HTTPS 记录，等待缓存过期后停用。ECH 公共名称的证书域名仅在运行时派生，不写回 DNS 提供商配置。</p>
+<pre><code class="language-yaml">resolvers:
+  corp:
+    servers: [192.168.1.53:53, 192.168.1.54:53]
+    timeout: 2s
+</code></pre>
+<p>站点代理或命名 Service 使用 <code>resolver: corp</code> 引用。服务器必须是 IP:port，IPv6 使用 <code>[地址]:53</code>；每个服务器查询默认超时 2 秒。UDP 响应截断时使用 TCP；查询失败可尝试同视图备用服务器，NXDOMAIN / NODATA 不切换。不回退系统 DNS / hosts；选定解析器的上游不使用环境 HTTP 代理。未配置时维持原有行为。新连接重新解析，长连接可继续复用。详细配置见 <a href="upstream-dns.html">上游自定义 DNS</a>。</p>
+<p>站点在 <code>site:</code> 同级设置 <code>ech: ech.example.com</code> 或 <code>ech: ech.example.net</code>，分别选择公共域名绑定的 DNS 提供商，无需 <code>domains</code>。只有一个组时可使用 <code>ech: true</code>，多个组时必须指定公共域名；<code>ech: false</code> 关闭。每组密钥、轮换、DNS 发布和 KV 租约独立，默认 KV 前缀为 <code>litegate/ech/&lt;public_name&gt;/</code>。根级 key_prefix 是组前缀的父目录，组级 key_prefix 是精确前缀，不能重复。旧单组配置仍兼容，使用原路径与 <code>litegate/ech/default/</code> 前缀。站点选组可热加载；主配置的组列表修改需要重启。</p>
+<p>第三方 ECH DNS 插件实现 <code>plugin.HTTPSDNSProvider</code> 并注册 <code>https_records</code> 能力。密钥、轮换、KV 同步、租约及重试由 LiteGate 内部管理；插件仅提交和撤回公开 HTTPS 记录。仅支持 HTTPS 的插件需要另行安排证书覆盖，其域名选择器在运行时不会参与证书 DNS-01 路由。</p>
+<h1 id="docker-ssh-与发现约束">Docker SSH 与发现约束</h1>
+<p>自动检测需显式设置 <code>swarm_auto_detect: true</code> 或 <code>LITEGATE_SWARM_AUTO_DETECT=true</code>；仅将 <code>swarm_mode</code> 设置为 false 不会自动检测。<code>swarm_mode: true</code> 直接启用 Swarm。检测失败会拒绝启动，不会静默切换到普通容器发现。</p>
+<p>Docker catalog 的 <code>constraints</code> 使用严格表达式：<code>Label(&quot;key&quot;, &quot;value&quot;)</code>、<code>LabelRegex(&quot;key&quot;, &quot;regex&quot;)</code>、<code>!</code>、<code>&amp;&amp;</code>、<code>||</code> 和括号。例如 <code>constraints: 'Label(&quot;team&quot;, &quot;payments&quot;) &amp;&amp; !LabelRegex(&quot;environment&quot;, &quot;^test$&quot;)'</code>。约束读取原始容器或 Service 标签，覆盖完整快照、事件刷新和零 Task 声明。表达式无效会拒绝启动。</p>
+<p>SSH 地址示例：<code>socket_path: &quot;ssh://root@192.168.50.44:22&quot;</code>。catalog 内设置 <code>ssh: {password_env: LITEGATE_DOCKER_SSH_PASSWORD, known_hosts_file: /etc/litegate/known_hosts, connect_timeout: 10s}</code>。密码只从指定环境变量读取，禁止 URL 密码。可选 <code>private_key_file</code> 或 <code>agent_socket</code> 使用密钥或 SSH agent；没有显式认证配置时读取 <code>SSH_AUTH_SOCK</code>。</p>
+<p>连接使用纯 Go SSH，远端固定执行 <code>docker system dial-stdio</code>，因此远端用户必须有 Docker CLI 和访问权限。主机身份使用指定 known_hosts 文件验证，默认 <code>~/.ssh/known_hosts</code>，根据已固定的主机密钥协商算法；未知或变更密钥均拒绝。连接、认证和远程执行共享有界的 <code>connect_timeout</code>；已建立 HTTP 连接不受初次 DialContext 结束影响，客户端停止或流截止时间到达时关闭。自动检测和后续发现调用共享同一个客户端。</p>
+<h1 id="ssh-主机证书">SSH 主机证书</h1>
+<p>Docker SSH 支持 known_hosts 中匹配的 <code>@cert-authority</code> 条目。主机证书严格验证 CA、主机身份和吊销规则；不可信证书不能绕过固定主机密钥验证。</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/03-configuration/global-config.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

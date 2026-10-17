@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../en/index.html">Home</a>
+      <a href="../../en/guide.html">Guide</a>
+      <a href="../../en/features.html">Features</a>
+      <a href="../../en/ecosystem.html">Ecosystem</a>
+      <a href="README.html" aria-current="page">Docs</a>
+      <a href="../zh-cn/forward-vs-forward-proxy.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="README.html">Docs home</a></li><li><details><summary>User guide</summary><ul><li><a href="user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="user/01-getting-started/build.html">Build from source</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="user/08-observability/access-log.html">Access Log</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>Topics</summary><ul><li><a href="database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="forward-vs-forward-proxy.html" class="current" aria-current="page">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="ids-recipes.html">IDS Recipes</a></li><li><a href="ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="release_control_guide.html">Configuration Release Control</a></li><li><a href="serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="two-forwards-in-litegate-forward-asset-mapping-tunnel-vs-forward-proxy">Two &quot;Forwards&quot; in LiteGate: <code>Forward</code> (Asset Mapping Tunnel) vs <code>Forward Proxy</code></h1>
+<p>LiteGate has two network features with &quot;Forward&quot; in the name:</p>
+<ol>
+<li><strong><code>Forward</code></strong> (built-in / <code>site.forward</code> / the <code>litegate forward</code> CLI)</li>
+<li><strong><code>Forward Proxy</code></strong> (an entry plugin / <code>pkg/plugins/forwardproxy</code>)</li>
+</ol>
+<p>They are easy to confuse at first, and some assume they are two names for one feature. <strong>They are independent mechanisms with completely different use cases, topologies, client requirements and security models.</strong></p>
+<p>This page compares them so you can choose correctly.</p>
+<hr>
+<h2 id="1-positioning-and-direction-in-one-picture">1. Positioning and direction in one picture</h2>
+<pre><code class="language-text">┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ Case 1: LiteGate Forward (private asset mapping tunnel)                               │
+│ Purpose: &quot;I securely use isolated private assets in the cloud/intranet&quot;               │
+│          (cloud RDS, Redis, internal RPC)                                              │
+│                                                                                        │
+│ Local tool (Navicat) ──TCP──▶ litegate forward CLI ══TLS 443 (token)══▶ Cloud LiteGate │
+│ (127.0.0.1:3306)              (dedicated client, dials out)    │ (bound to one Stream) │
+│                                                                ▼                       │
+│                                                         RDS MySQL 3306 in the VPC      │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ Case 2: Forward Proxy (generic HTTP/HTTPS forward proxy plugin)                        │
+│ Purpose: &quot;I use LiteGate as an egress hop to the internet or any authorized site&quot;      │
+│                                                                                        │
+│ Any client (browser/curl) ──HTTP CONNECT (bcrypt)──▶ LiteGate ──TCP/TLS──▶ Internet API│
+│ (no LiteGate install, just set a proxy)              (Ingress plugin)  (github.com, ...)│
+└────────────────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<ul>
+<li><strong><code>Forward</code></strong> is a <strong>point-to-point private tunnel</strong>: the client must run the <code>litegate forward</code> CLI, and <strong>the target is locked by the server to a specific private Stream</strong> (for example only one internal database; the client has no way to request any other address).</li>
+<li><strong><code>Forward Proxy</code></strong> is a <strong>point-to-any egress hop</strong>: the client is an ordinary browser, curl or crawler using standard HTTP <code>CONNECT</code>, <strong>the client chooses the target</strong> (<code>github.com</code>, <code>api.openai.com</code>, ...), and a server-side ACL allow list controls what is reachable.</li>
+</ul>
+<hr>
+<h2 id="2-comparison-matrix">2. Comparison matrix</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Aspect</th>
+<th style="text-align:left">LiteGate Forward (asset mapping tunnel)</th>
+<th style="text-align:left">Forward Proxy (generic forward proxy plugin)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Purpose</strong></td>
+<td style="text-align:left"><strong>Bastion for private internal assets</strong><br>Maps databases/TCP services in isolated cloud environments to local ports securely</td>
+<td style="text-align:left"><strong>Egress proxy and network hop</strong><br>Lets LAN clients or crawlers use LiteGate as the exit to the internet or third-party services</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Client requirement</strong></td>
+<td style="text-align:left">⚠️ <strong>Must run the <code>litegate</code> client</strong><br><code>litegate forward</code> listens on a local port</td>
+<td style="text-align:left">✅ <strong>Nothing to install</strong><br>Any standard browser, curl or framework, just set <code>HTTP_PROXY</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Target control</strong></td>
+<td style="text-align:left">🔒 <strong>Bound by the server (strict)</strong><br>Server configuration binds a specific Stream (such as <code>10.0.0.25:3306</code>); the client has no destination parameter at all, so it can't be used as a pivot</td>
+<td style="text-align:left">🌐 <strong>Declared by the client (ACL-protected)</strong><br>The client names the target (<code>CONNECT target.com:443</code>), filtered by the server's <code>allowed_destinations</code> allow list</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Protocol layer</strong></td>
+<td style="text-align:left"><strong>L4 over L7 private long-lived connection</strong><br>After an HTTPS handshake on public 443, upgrades to a dedicated binary channel with keepalives in both directions</td>
+<td style="text-align:left"><strong>Standard L7 HTTP proxy protocol</strong><br>Handles HTTP/1.1, HTTP/2 and HTTP/3 <code>CONNECT</code> tunnels and absolute-URL requests</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Authentication</strong></td>
+<td style="text-align:left">🔑 <strong>Pre-shared token file</strong><br>A dedicated file generated offline with <code>litegate forward token</code> (mode 0600); no token, no tunnel</td>
+<td style="text-align:left">👤 <strong>Standard HTTP Basic</strong><br>Credentials in <code>Proxy-Authorization</code>, verified on the server with timing-safe bcrypt</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Where it is configured</strong></td>
+<td style="text-align:left"><code>forward:</code> in <code>sites/*.yaml</code> + <code>streams/*.yaml</code></td>
+<td style="text-align:left">The global <code>ingress_plugins</code> array in <code>config.yaml</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Anti-probing</strong></td>
+<td style="text-align:left">Invalid requests or handshakes without a token are cut off or get 404 / a disguised response</td>
+<td style="text-align:left"><code>probe_resistance: true</code>: unauthenticated requests <strong>never get 407</strong> (so it doesn't reveal itself as a proxy) and fall through to the ordinary website</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>ECH</strong></td>
+<td style="text-align:left">❌ <strong>Not applicable</strong> (the client is a dedicated CLI)</td>
+<td style="text-align:left">❌ <strong>Not recommended</strong> (most proxy clients don't support ECH, so connections may fail)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="3-scenarios-and-configuration">3. Scenarios and configuration</h2>
+<h3 id="case-1-developers-reaching-a-cloud-internal-database-securely-use-forward">Case 1: developers reaching a cloud-internal database securely (use <code>Forward</code>)</h3>
+<h4 id="why-it-must-be-forward">Why it must be <code>Forward</code></h4>
+<p>Enterprise cloud RDS databases (MySQL/PostgreSQL/Redis) usually live only in the VPC, and exposing 3306 publicly is forbidden.</p>
+<ul>
+<li>Traditional SSH tunnels need a Linux account on a cloud server for each person — too much privilege.</li>
+<li>With a generic forward proxy, a leaked password lets an attacker use the proxy as a pivot to scan the whole VPC.</li>
+<li><strong>LiteGate <code>Forward</code> solves this</strong>: the tunnel's <strong>target is fixed</strong>, so even a client holding the token <strong>can only reach that one database</strong> and nothing else on the internal network.</li>
+</ul>
+<h4 id="configuration">Configuration</h4>
+<p><strong>1. Server</strong></p>
+<pre><code class="language-yaml"># streams/rds-mysql.yaml
+name: rds-mysql
+protocol: tcp
+enabled: true
+listen: false                  # no public port; referenced only by Forward
+upstream: 10.0.0.25:3306       # private RDS address in the VPC
+idle_timeout: 600
+</code></pre>
+<pre><code class="language-yaml"># sites/db-tunnel.example.com.yaml
+site: db-tunnel.example.com
+forward:
+  stream: rds-mysql            # target locked; the client can't change it
+  token_file: /etc/litegate/secrets/rds.token
+</code></pre>
+<pre><code class="language-bash"># Generate the token on the server and distribute it securely
+litegate forward token --output /etc/litegate/secrets/rds.token
+</code></pre>
+<p><strong>2. Client</strong>
+Developers run locally:</p>
+<pre><code class="language-bash">litegate forward \
+  --remote https://db-tunnel.example.com \
+  --local 127.0.0.1:3306 \
+  --token-file ./rds.token
+</code></pre>
+<p>Local database tools (Navicat / DBeaver) connect to <code>127.0.0.1:3306</code>, as if the database ran on the same machine.</p>
+<hr>
+<h3 id="case-2-unified-egress-for-internal-serverscrawlers-without-public-ips-use-forward-proxy">Case 2: unified egress for internal servers/crawlers without public IPs (use <code>Forward Proxy</code>)</h3>
+<h4 id="why-it-must-be-forward-proxy">Why it must be <code>Forward Proxy</code></h4>
+<p>In private data centers or isolated financial zones, many servers have no public IP but need to:</p>
+<ul>
+<li>call WeChat Pay / Alipay public APIs;</li>
+<li>reach public SaaS (GitHub, SMS providers, AI model APIs);</li>
+<li>crawl many public websites on a schedule.</li>
+</ul>
+<p>The targets are <strong>thousands of varying domains</strong>; you can't write thousands of <code>stream.yaml</code> fixed port mappings. What you need is a <strong>standard HTTP/HTTPS egress proxy</strong>.</p>
+<h4 id="configuration-1">Configuration</h4>
+<p>On the edge LiteGate host, <code>config.yaml</code>:</p>
+<pre><code class="language-yaml"># config.yaml
+entrypoints:
+  websecure:
+    address: &quot;:443&quot;
+
+ingress_plugins:
+  - name: my-forward-proxy
+    type: forward_proxy            # enable the forward proxy plugin
+    entrypoints: [websecure]       # attach to 443
+    config:
+      hosts: [proxy.example.com]   # only for this SNI
+      username: crawler_ops
+      password_env: LITEGATE_PROXY_PASSWORD # proxy password from an environment variable
+      probe_resistance: true       # anti-probing
+      allowed_ports: [80, 443]     # web traffic only
+      allowed_destinations:        # destination allow list
+        - &quot;*.github.com&quot;
+        - &quot;*.wechat.com&quot;
+        - &quot;api.openai.com&quot;
+</code></pre>
+<h4 id="client">Client</h4>
+<p>Internal machines install nothing; use the standard environment variable:</p>
+<pre><code class="language-bash">export https_proxy=&quot;https://crawler_ops:YourPassword@proxy.example.com:443&quot;
+
+# curl or Python crawlers reach the internet through the proxy
+curl https://api.github.com/zen
+</code></pre>
+<hr>
+<h2 id="4-common-misconceptions">4. Common misconceptions</h2>
+<h3 id="misconception-1-can-forward-proxy-replace-forward-for-database-access">Misconception 1: can <code>Forward Proxy</code> replace <code>Forward</code> for database access?</h3>
+<p><strong>Technically yes (via HTTP CONNECT 443), but it is a dangerous security architecture.</strong></p>
+<ul>
+<li>If clients may freely connect back to internal 3306 through the forward proxy, anyone with a proxy account can target <code>10.0.0.1:22</code> or <code>10.0.0.2:80</code> and turn your proxy into an internal pivot.</li>
+<li><code>Forward</code> statically binds the domain to a target Stream in the data model (least privilege, zero trust).</li>
+</ul>
+<h3 id="misconception-2-can-forward-replace-forward-proxy-for-browsing">Misconception 2: can <code>Forward</code> replace <code>Forward Proxy</code> for browsing?</h3>
+<p><strong>Not practically.</strong></p>
+<ul>
+<li><code>Forward</code> is designed for infrastructure asset mapping. To browse with it you would need a SOCKS5 Stream with client <code>mappings</code>, and the client would have to keep <code>litegate forward</code> running. For ordinary browsers and ad-hoc scripts, setting <code>HTTP_PROXY</code> is far more natural.</li>
+</ul>
+<h3 id="misconception-3-how-does-connect-relate-to-forward">Misconception 3: how does Connect relate to Forward?</h3>
+<ul>
+<li><strong>Forward</strong>: reach inside from outside (the client connects to the cloud and brings cloud-private assets to the local computer).</li>
+<li><strong>Connect</strong>: publish from inside to outside (an internal machine without a public IP connects out to the cloud and publishes its internal sites for everyone).</li>
+<li><em>See <a href="user/09-advanced/forward-and-connect.html">Forward and Connect overview</a></em>.</li>
+</ul>
+<hr>
+<h2 id="5-decision-flow">5. Decision flow</h2>
+<pre><code class="language-text">You need network connectivity
+      │
+      ▼
+Is the target a fixed private asset (cloud RDS, Redis, internal admin)
+or arbitrary internet sites (public APIs, crawl targets, browsing)?
+      │
+      ├─► [fixed private asset] ──► Can the client run a command-line tool?
+      │                               │
+      │                               ├─► [yes] ──► 🌟 LiteGate Forward
+      │                               │            (strong token auth, Stream locked)
+      │                               │
+      │                               └─► [no] ──► consider LiteGate Connect
+      │                                            (publish the internal asset as an authenticated website)
+      │
+      └─► [dynamic / many public targets] ──► 🌟 Forward Proxy (forward proxy plugin)
+                                              (standard HTTP CONNECT, nothing to install, ACL + anti-probing)
+</code></pre>
+<h2 id="related-docs">Related docs</h2>
+<ul>
+<li><a href="user/03-configuration/stream-config.html">Stream configuration reference</a></li>
+<li><a href="ingress-plugin-guide.html">Ingress entry plugins</a></li>
+<li><a href="https://github.com/jamesleeon/LiteGate/blob/master/examples/plugins/ingress/forwardproxy/README.md">forward_proxy example</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/forward-vs-forward-proxy.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

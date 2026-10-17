@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>443 端口 L4 SNI 分流与 L7 组合实战 · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/09-advanced/sni-routing-recipes.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details open><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html" class="current" aria-current="page">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="443-端口-l4-sni-分流与-l7-组合实战">443 端口 L4 SNI 分流与 L7 组合实战</h1>
+<p>同一个 TCP/443 上，按 TLS ClientHello 里的 SNI（和 ALPN）决定连接去哪：一部分原样透传给其他程序，一部分由 LiteGate 终止 TLS 后转成四层字节流，其余进入 LiteGate 自己的 HTTPS 站点。本文从 caddy-l4 的常见写法出发，给出 LiteGate 的对应配置和更多组合玩法。</p>
+<p>机制细节、热更新和排错见<a href="shared-443-l4-stream.html">同一个 443 承载 HTTPS 与 L4 TCP</a>，字段定义见 <a href="../03-configuration/entrypoints.html">Entrypoints</a> 和 <a href="../03-configuration/stream-config.html">Stream 配置参考</a>。</p>
+<h2 id="1-从-caddy-l4-迁移四层透传服务与网站共用-443">1. 从 caddy-l4 迁移：四层透传服务与网站共用 443</h2>
+<p>caddy-l4 的典型配置：</p>
+<pre><code class="language-caddyfile">layer4 {
+    :443 {
+        @tls-regexp tls sni_regexp ^a.example.com$
+        route @tls-regexp {
+            proxy localhost:444      # a.example.com 流量转给后端四层服务
+        }
+        @tls-any tls
+        route @tls-any {
+            proxy localhost:1234     # 其他流量转给 caddy 自己的 HTTPS
+        }
+    }
+}
+</code></pre>
+<p>LiteGate 的等价配置：</p>
+<pre><code class="language-yaml"># config.yaml
+entrypoints:
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    routes:
+      - name: a-service
+        match:
+          sni: a.example.com
+        handle:
+          proxy: tcp://127.0.0.1:444
+</code></pre>
+<p>不需要写&quot;其他流量&quot;那一条：没有命中任何路由的连接直接进入 LiteGate 内置的 HTTPS 管道，由 <code>sites/</code> 中的站点处理。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>caddy-l4</th>
+<th>LiteGate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>其余流量进入网站</td>
+<td>再 <code>proxy</code> 到本机 1234，多一跳 TCP</td>
+<td>同一进程内交给 HTTPS，没有第二跳</td>
+</tr>
+<tr>
+<td>网站看到的客户端 IP</td>
+<td>1234 端要额外开启 PROXY protocol 才是真实 IP</td>
+<td>天然是真实 IP</td>
+</tr>
+<tr>
+<td>域名匹配</td>
+<td>需要自己写正则</td>
+<td>精确、<code>*.</code> 通配、正则、ALPN 四种，按固定优先级</td>
+</tr>
+<tr>
+<td>改路由</td>
+<td>重载配置</td>
+<td>原子热更新，不重绑 443</td>
+</tr>
+<tr>
+<td>四层治理</td>
+<td>另写 matcher</td>
+<td>交给命名 Stream：ACL、负载均衡、服务发现、会话上限、指标</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-三种处理方式怎么选">2. 三种处理方式怎么选</h2>
+<p>一个 SNI 命中后，交给谁处理有三种写法：</p>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>TLS</th>
+<th>能力</th>
+<th>适用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>入口路由 <code>handle.proxy</code></td>
+<td>原样透传，后端自己握手</td>
+<td>单一目标（TCP 或 Unix Socket），可选 PROXY protocol</td>
+<td>最简单的透传，如自建 TCP/TLS 代理、自带证书的服务</td>
+</tr>
+<tr>
+<td>入口路由 <code>handle.stream: &lt;name&gt;</code></td>
+<td>由该 Stream 决定</td>
+<td>Stream 的全部能力</td>
+<td>需要手工控制匹配条件（正则、ALPN）又要 Stream 能力</td>
+</tr>
+<tr>
+<td>Stream 自己写 <code>entrypoints</code> + <code>hostnames</code></td>
+<td>由该 Stream 决定</td>
+<td>Stream 的全部能力，自动生成路由和证书域名</td>
+<td><strong>推荐</strong>：域名只写一次</td>
+</tr>
+</tbody>
+</table>
+<p>没有命中的连接 → L7 HTTPS 站点。</p>
+<h2 id="3-组合玩法">3. 组合玩法</h2>
+<h3 id="31-透传证书留在后端">3.1 透传：证书留在后端</h3>
+<p>就是第 1 节的写法。后端从第一个字节开始执行 TLS，必须自己持有该域名的证书。</p>
+<p>后端怎么拿证书需要提前考虑：80 端口由 LiteGate 占用，后端无法直接完成 HTTP-01 验证；443 上该域名已被透传，TLS-ALPN-01 也只能由后端自己应答。常见做法是让后端使用 DNS-01，或者改用下一种方式，由 LiteGate 统一管证书。</p>
+<p>后端支持 PROXY protocol 时，可以把真实客户端地址传过去：</p>
+<pre><code class="language-yaml">        handle:
+          proxy: tcp://127.0.0.1:444
+          proxy_protocol: 2     # 后端必须开启对应解析，否则会把头当成数据
+</code></pre>
+<h3 id="32-终止litegate-管证书后端收明文">3.2 终止：LiteGate 管证书，后端收明文</h3>
+<p>后端只需要处理明文 TCP（或者支持关闭自身 TLS 监听）时，让 Stream 终止 TLS：</p>
+<pre><code class="language-yaml"># streams/tunnel.yaml
+name: tunnel
+listen: false
+entrypoints: [websecure]
+hostnames: [tunnel.example.com]
+protocol: tcp
+upstream: tcp://127.0.0.1:10000
+enabled: true
+tls:
+  enabled: true
+  auto_cert: true        # 与 HTTPS 站点共用证书池，已有 *.example.com 时直接复用
+</code></pre>
+<p><code>hostnames</code> 同时决定 SNI 路由和证书域名。证书的申请、续期与 HTTPS 站点完全一致，后端不再关心证书。</p>
+<h3 id="33-一个-sni多个后端">3.3 一个 SNI，多个后端</h3>
+<p>透传同样可以做负载均衡或服务发现，只是要写成 Stream：</p>
+<pre><code class="language-yaml"># streams/tls-pool.yaml
+name: tls-pool
+listen: false
+entrypoints: [websecure]
+hostnames: [api-tls.example.com]
+protocol: tcp
+enabled: true
+lb_policy: round_robin
+backends:
+  - {upstream: 10.0.0.11:8443}
+  - {upstream: 10.0.0.12:8443}
+</code></pre>
+<p>也可以用 <code>service_name</code> 从 Consul、LiteMesh 等注册中心动态获取后端，实例上下线不需要改配置，详见 <a href="../03-configuration/stream-config.html#%E5%8A%A8%E6%80%81%E5%8F%91%E7%8E%B0%E4%B8%8A%E6%B8%B8">Stream 配置参考</a>。</p>
+<h3 id="34-同一个域名按协议拆分alpn">3.4 同一个域名，按协议拆分（ALPN）</h3>
+<p>浏览器发出的 ClientHello 带 <code>h2</code> / <code>http/1.1</code>，其他客户端可以带自己的 ALPN。于是同一个域名可以一半走网站、一半走四层：</p>
+<pre><code class="language-yaml">entrypoints:
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    routes:
+      # PostgreSQL 17+（sslnegotiation=direct）→ 数据库
+      - name: pg
+        match:
+          sni: db.example.com
+          alpn: postgresql
+        handle:
+          stream: pg
+</code></pre>
+<ul>
+<li>浏览器打开 <code>https://db.example.com</code> → ALPN 不匹配 → 进入 L7 站点（比如数据库的 Web 管理界面）；</li>
+<li><code>psql &quot;host=db.example.com sslnegotiation=direct&quot;</code> → 进入 <code>pg</code> Stream。</li>
+</ul>
+<p>自研客户端只要在 TLS 配置里设置一个自定义 ALPN（如 <code>myproto/1</code>），就能用同样的方法与网站共用域名和证书。</p>
+<h3 id="35-通配与正则批量接入">3.5 通配与正则：批量接入</h3>
+<pre><code class="language-yaml">entrypoints:
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    routes:
+      # 每个租户一个子域，全部透传给租户集群的入口
+      - name: tenants
+        match:
+          sni: &quot;*.tenant.example.com&quot;
+        handle:
+          proxy: tcp://10.1.0.10:443
+
+      # 编号节点：node-1.example.com、node-23.example.com ...
+      - name: nodes
+        match:
+          sni_regex: 'node-[0-9]+\.example\.com'
+        handle:
+          stream: node-pool
+</code></pre>
+<p><code>sni_regex</code> 自动做完整匹配并忽略大小写，不需要写 <code>^</code>、<code>$</code>。优先级固定为：<strong>精确域名 → 最长通配 → 正则 → 仅 ALPN</strong>。因此可以用一条宽泛的通配兜底，再用精确域名把个别子域拉回来：</p>
+<pre><code class="language-yaml">      - name: tenant-special
+        match:
+          sni: vip.tenant.example.com     # 精确优先，覆盖上面的 *.tenant.example.com
+        handle:
+          proxy: tcp://10.1.0.20:443
+</code></pre>
+<h3 id="36-收紧公网入口">3.6 收紧公网入口</h3>
+<pre><code class="language-yaml">entrypoints:
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    on_non_tls: reject    # 首包不是 TLS（扫描器、明文协议）直接断开
+    on_no_sni: reject     # 按 IP 访问、不带 SNI 的连接直接断开
+    inspect:
+      timeout: 5s
+      per_ip_pending: 16  # 同一来源 IP 同时处于握手检查中的连接数上限
+</code></pre>
+<p>四层服务本身的访问控制写在 Stream 上：</p>
+<pre><code class="language-yaml"># streams/admin-tunnel.yaml
+ip_restriction:
+  allow_ips: [&quot;203.0.113.0/24&quot;]
+max_sessions: 200
+idle_timeout: 600
+</code></pre>
+<p>HTTP 站点则继续使用 WAF、认证、限流等 L7 中间件。一个 443 端口上，两类流量各自用各自的治理手段。</p>
+<h3 id="37-前面还有一层四层负载均衡">3.7 前面还有一层四层负载均衡</h3>
+<p>LiteGate 位于云 LB、HAProxy 之后时，让入口接收 PROXY protocol 恢复真实地址。SNI 分流、L7 站点和透传后端都会用恢复后的地址：</p>
+<pre><code class="language-yaml">entrypoints:
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    proxy_protocol:
+      accept: true
+      required: true
+      trusted: [10.0.0.0/8]   # 只信任 LB 的地址段
+    routes:
+      - name: a-service
+        match: {sni: a.example.com}
+        handle:
+          proxy: tcp://127.0.0.1:444
+          proxy_protocol: 2   # 再把恢复出的地址传给后端
+</code></pre>
+<h3 id="38-内网服务按-sni-走隧道">3.8 内网服务按 SNI 走隧道</h3>
+<p>Cloud 端的 LiteGate 可以把某个 SNI 通过 Connect 隧道交给内网 Home 节点，内网不需要开放任何入站端口。这类路由由 Connect 注册动态产生，不用写在 <code>routes</code> 里，详见 <a href="connect.html">LiteGate Connect 配置与上线</a>。</p>
+<h2 id="4-优先级速查">4. 优先级速查</h2>
+<p>一个新连接按以下顺序决定去向：</p>
+<ol>
+<li>首包不是 TLS → <code>on_non_tls</code>（<code>http</code> 交给 HTTPS 服务返回错误 / <code>reject</code> 直接断开）；</li>
+<li>没有 SNI → <code>on_no_sni</code>；没有被拒绝时，只有&quot;仅 ALPN&quot;路由还能命中，否则进入 L7；</li>
+<li>Connect 控制面域名 → Connect；</li>
+<li>精确域名（同一域名下，ALPN 命中的路由优先于不带 ALPN 的）；</li>
+<li>最长的 <code>*.</code> 通配；</li>
+<li><code>sni_regex</code>，按配置顺序；</li>
+<li>仅 ALPN 的路由；</li>
+<li>都没命中 → L7 HTTPS 站点。</li>
+</ol>
+<p>Stream <code>hostnames</code> 生成的路由参与第 4、5 步。在相同模式上，显式写在 <code>routes</code> 里的规则优先。</p>
+<h2 id="5-注意事项">5. 注意事项</h2>
+<ul>
+<li><strong><code>default</code> 只能是 <code>http</code>。</strong> 没有&quot;其余全部转给另一个程序&quot;的开关。不要用 <code>sni_regex: '.+'</code> 充当兜底：L7 站点不在 SNI 路由表里，这条正则会把本该进入网站的连接也吞掉。需要把一批域名交给旧服务时，列出它们的精确域名或通配。</li>
+<li><strong>域名不要在 L4 和 L7 两边重复。</strong> 同一个 SNI 既是 Stream <code>hostnames</code> 又是 HTTPS 站点域名时，L4 先接管，站点收不到流量。LiteGate 会在启动和热更新时输出冲突日志，但不会替你选择。同一域名确实要两边都用，请按 3.4 用 ALPN 拆分。</li>
+<li><strong>HTTP/3 不参与分流。</strong> 它跑在 UDP/443，由独立 Listener 处理；这里说的全部是 TCP/443。</li>
+<li><strong>ECH 与无 SNI。</strong> 客户端开启 ECH 后网关只能看到外层 SNI；直接按 IP 连接的客户端没有 SNI，只能靠 ALPN 或 <code>on_no_sni</code> 处理。</li>
+<li><strong>首包必须是 TLS。</strong> 明文 SSH、原生 MySQL TLS、旧版 PostgreSQL 的 SSLRequest 都无法按 SNI 分流，替代方案见<a href="shared-443-l4-stream.html#9-%E5%8D%8F%E8%AE%AE%E9%99%90%E5%88%B6">协议限制</a>。</li>
+<li><strong>一旦有路由，所有连接都要先过 ClientHello 检查</strong>，包括最终进入网站的连接。CDN 回源或企业 NAT 出口共用同一个 IP 时，按实际握手峰值调高 <code>per_ip_pending</code>。</li>
+</ul>
+<h2 id="6-相关文档">6. 相关文档</h2>
+<ul>
+<li><a href="shared-443-l4-stream.html">同一个 443 承载 HTTPS 与 L4 TCP</a></li>
+<li><a href="../03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li>
+<li><a href="../03-configuration/stream-config.html">Stream 配置参考</a></li>
+<li><a href="../06-certificates/auto-cert.html">Auto-Cert</a></li>
+<li><a href="forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/09-advanced/sni-routing-recipes.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

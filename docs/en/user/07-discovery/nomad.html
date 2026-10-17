@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nomad Service Discovery · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/07-discovery/nomad.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details open><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html" class="current" aria-current="page">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="nomad-service-discovery">Nomad Service Discovery</h1>
+<p>The Nomad plugin reads native Nomad service registrations directly. Tags generate LiteGate routes and upstream pools without a LiteDNS discovery agent. The Nomad job must use <code>provider = &quot;nomad&quot;</code>; services using <code>provider = &quot;consul&quot;</code> should use <a href="consul.html">Consul discovery</a>.</p>
+<p>Developers should start with <a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a>, covering implementation, registration, compilation and user configuration in order. This page is the detailed configuration reference for deployment users.</p>
+<h2 id="1-check-plugin-availability">1. Check plugin availability</h2>
+<p>The standard <code>cmd/litegate</code> binary includes the plugin. After deploying the updated binary, run:</p>
+<pre><code class="language-bash">litegate plugins inspect discovery/nomad
+</code></pre>
+<p>The output should contain <code>Name: nomad</code>. A custom main must blank-import <code>github.com/jamesleeon/LiteGate/pkg/plugins/nomad</code> and rebuild. Configuration alone cannot install a plugin into an older binary. See <a href="../12-plugins/build-and-cli.html">Plugin build and CLI</a>.</p>
+<h2 id="2-configure-global-configyaml">2. Configure global config.yaml</h2>
+<pre><code class="language-yaml">service_discovery:
+  catalogs:
+    - name: nomad-prod
+      enabled: true
+      provider: nomad
+      namespace: default
+      config:
+        address: &quot;https://nomad.example.com:4646&quot;
+        namespace: &quot;default&quot;
+        token_file: &quot;/run/secrets/nomad-token&quot;
+        region: &quot;global&quot;
+        # ca_file: &quot;/etc/nomad/ca.pem&quot;
+        # cert_file: &quot;/etc/nomad/client.pem&quot;
+        # key_file: &quot;/etc/nomad/client-key.pem&quot;
+        # timeout: &quot;10s&quot;
+        # protocol: &quot;http&quot;
+</code></pre>
+<p>Replace the API address and region. Mount the token file into the <strong>LiteGate process or container</strong>. The file contains only the token text, without an <code>X-Nomad-Token:</code> prefix. It is read for every request, supporting file-based rotation. When ACLs are enabled, grant service read access in the target namespaces; the plugin does not write to Nomad.</p>
+<p>The outer <code>name</code> identifies the LiteGate discovery instance, not a Nomad job or service. <code>config.address</code> is the Nomad API endpoint. The plugin does not consume the Catalog's outer <code>url</code> or <code>token</code> as connection parameters.</p>
+<h3 id="configuration-fields">Configuration fields</h3>
+<p>All fields below belong under <code>catalogs[].config</code> and use string values. Unknown fields are rejected.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Default</th>
+<th style="text-align:left">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>address</code></td>
+<td style="text-align:left">Required</td>
+<td style="text-align:left">HTTP/HTTPS API URL; URL credentials, query parameters and fragments are rejected</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>namespace</code></td>
+<td style="text-align:left"><code>default</code></td>
+<td style="text-align:left">Nomad API scope; <code>&quot;*&quot;</code> lists namespaces authorized for the token</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>region</code></td>
+<td style="text-align:left">Nomad agent's region</td>
+<td style="text-align:left">API region; replace the example <code>global</code> with the deployment's region</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>token_file</code></td>
+<td style="text-align:left">None</td>
+<td style="text-align:left">Token file path; mutually exclusive with <code>token</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>token</code></td>
+<td style="text-align:left">None</td>
+<td style="text-align:left">Inline ACL token; do not commit real tokens to source control</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ca_file</code></td>
+<td style="text-align:left">System trust store</td>
+<td style="text-align:left">Additional PEM CA bundle for private Nomad server certificates</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cert_file</code></td>
+<td style="text-align:left">None</td>
+<td style="text-align:left">PEM mTLS client certificate; requires <code>key_file</code>; reloaded when the files change</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>key_file</code></td>
+<td style="text-align:left">None</td>
+<td style="text-align:left">PEM mTLS client private key</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>timeout</code></td>
+<td style="text-align:left"><code>10s</code></td>
+<td style="text-align:left">Positive HTTP request timeout, such as <code>&quot;5s&quot;</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>protocol</code></td>
+<td style="text-align:left"><code>http</code></td>
+<td style="text-align:left">Backend protocol: <code>http</code>, <code>https</code>, <code>h2c</code>, <code>grpc</code>, <code>grpcs</code>, <code>tcp</code>, <code>tls</code>, or <code>udp</code></td>
+</tr>
+</tbody>
+</table>
+<p>HTTPS in <code>address</code> secures the Nomad API connection; <code>protocol</code> selects the application backend protocol independently. HTTP API connections do not encrypt tokens; use HTTPS in production. Server certificate verification is enabled and cannot be skipped.</p>
+<h3 id="namespaces-and-multiple-clusters">Namespaces and multiple clusters</h3>
+<p><strong>The outer <code>namespace</code> does not reach the plugin Factory and cannot replace <code>config.namespace</code>.</strong> It is a Catalog fallback; the service's returned namespace takes precedence. For <code>prod</code>, set <code>config.namespace: &quot;prod&quot;</code> and preferably set the outer namespace to <code>prod</code> as well.</p>
+<p>Use <code>config.namespace: &quot;*&quot;</code> for discovery across authorized namespaces. Instance resolution then uses each service's concrete namespace. For multiple Nomad clusters, create separate catalogs with distinct names, API addresses and credentials. Services sharing a name and namespace can be merged across sources; use distinct namespaces or service names when isolation is required.</p>
+<h2 id="3-register-a-nomad-service-and-declare-a-route">3. Register a Nomad service and declare a route</h2>
+<p>Define a network port and a service in an existing task group. Place this fragment inside the group, and configure the application task to use the <code>http</code> port label:</p>
+<pre><code class="language-hcl">network {
+  port &quot;http&quot; {
+    to = 8080
+  }
+}
+
+service {
+  name         = &quot;orders&quot;
+  provider     = &quot;nomad&quot;
+  port         = &quot;http&quot;
+  address_mode = &quot;host&quot;
+  tags = [
+    &quot;litegate.http.host=orders.example.com&quot;,
+    &quot;litegate.http.path_prefix=/&quot;
+  ]
+}
+</code></pre>
+<p>Replace <code>8080</code> with the application port and configure the task for its Nomad driver and network mode. LiteGate uses the registered <code>Address</code> and actual numeric <code>Port</code>, including dynamically assigned host ports. These endpoints must be reachable from LiteGate. Point DNS for <code>orders.example.com</code> at the LiteGate ingress, not the Nomad API.</p>
+<p>Tags use LiteGate's common tag parser; this example generates a hostname route. Do not define the same route again through site YAML or another tag model. See <a href="../03-configuration/tag-dsl.html">Tag DSL</a>. <code>protocol</code> only selects the backend protocol; TCP/UDP entrypoints and routes require separate configuration.</p>
+<p>Endpoint metadata includes <code>nomad.job_id</code>, <code>nomad.alloc_id</code>, <code>nomad.node_id</code>, and <code>nomad.datacenter</code>. The registration API does not return job port labels, so <code>port_name</code> selection is unsupported. Register separate service names for multiple ports.</p>
+<h2 id="4-updates-health-and-dashboard">4. Updates, health and Dashboard</h2>
+<ul>
+<li>The plugin long-polls <code>/v1/services</code> with Nomad blocking queries; any registration change (scaling, removal, address/port/tag change) triggers a Catalog rescan immediately. The 30-second periodic Catalog scan remains as a fallback. A failed blocking query ends Watch with its error, so the Dashboard shows the watch as failed with the reason; the host then restarts it with backoff and rescans.</li>
+<li>Successful empty responses remove registrations. API errors retain the host's last successful snapshot, currently without a maximum stale age.</li>
+<li>Registration presence means eligibility for backend selection, not application readiness. The plugin does not query Nomad checks or Allocation health. Configure LiteGate active health checks when application readiness is required.</li>
+<li>Find Nomad and configured instances under <strong>Plugins</strong> in the Dashboard. <strong>Control Plane Providers</strong> on the overview shows runtime status. A newly loaded instance may show Active before its first query; use the last-success timestamp, errors and logs to assess connectivity. API failures show Degraded.</li>
+</ul>
+<h2 id="5-troubleshooting">5. Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Symptom</th>
+<th style="text-align:left">Check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>unregistered provider</code></td>
+<td style="text-align:left">Whether the running binary includes Nomad and the updated build was deployed</td>
+</tr>
+<tr>
+<td style="text-align:left">HTTP 403</td>
+<td style="text-align:left">Token validity and read permission for the target namespace</td>
+</tr>
+<tr>
+<td style="text-align:left">Certificate or connection error</td>
+<td style="text-align:left">API address, CA, mTLS files, network and timeout; do not confuse application and API ports</td>
+</tr>
+<tr>
+<td style="text-align:left">No services found</td>
+<td style="text-align:left">Job provider must be <code>nomad</code>; verify region and <code>config.namespace</code></td>
+</tr>
+<tr>
+<td style="text-align:left">Discovery succeeds but requests fail</td>
+<td style="text-align:left">Registered address/dynamic port reachability, backend protocol, application readiness, and DNS pointing at LiteGate</td>
+</tr>
+<tr>
+<td style="text-align:left">Removed instances remain visible</td>
+<td style="text-align:left">Allow the next scan; persistent API failures can retain stale snapshots, so check Degraded status</td>
+</tr>
+</tbody>
+</table>
+<p><a href="overview.html">Discovery overview</a> · <a href="../12-plugins/README.html">Plugin overview</a></p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/07-discovery/nomad.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

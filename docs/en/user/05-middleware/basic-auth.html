@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Basic Auth (HTTP Basic Authentication Middleware) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/05-middleware/basic-auth.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details open><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html" class="current" aria-current="page">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="basic-auth-http-basic-authentication-middleware">Basic Auth (HTTP Basic Authentication Middleware)</h1>
+<p><code>basic_auth</code> is a named middleware that protects routes with standard HTTP Basic authentication (<code>WWW-Authenticate: Basic</code>). It suits internal tools, staging environments and simple admin pages — places where you don't want OIDC/SSO but must keep anonymous visitors out.</p>
+<blockquote>
+<p><strong>The one thing to know</strong>: <code>users</code> must contain <strong>bcrypt hashes</strong> (as produced by <code>htpasswd -B</code>), <strong>never plaintext passwords</strong>. Plaintext fails at load time.</p>
+</blockquote>
+<hr>
+<h2 id="1-quick-start">1. Quick start</h2>
+<p>Step 1: generate a <strong>bcrypt</strong> password hash with LiteGate's built-in command (no extra tools needed):</p>
+<pre><code class="language-bash">./litegate -hash 'S3cret!'
+# The hash field in the log output is the result, e.g.:
+#   hash=$2a$10$Q9Q0k8m....  (a 60-character bcrypt hash)
+</code></pre>
+<p>Step 2: put <code>username:hash</code> into a named middleware and reference it from a route:</p>
+<pre><code class="language-yaml">site: internal.example.com
+
+middlewares:
+  admin-gate:
+    type: basic_auth
+    config:
+      users: 'admin:$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'   # username:bcrypt hash; use your own
+      realm: &quot;Internal Tools&quot;
+
+/:
+  use: [admin-gate]
+  proxy: 127.0.0.1:8080
+</code></pre>
+<p>Without credentials, or with wrong ones, the gateway returns <strong><code>401 Unauthorized</code></strong> with <code>WWW-Authenticate: Basic realm=&quot;Internal Tools&quot;</code>, and the browser shows a login prompt.</p>
+<hr>
+<h2 id="2-fields">2. Fields</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Required</th>
+<th style="text-align:left">Default</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>users</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">Comma-separated <code>username:bcrypt_hash</code> entries. Hashes must be valid bcrypt (starting with <code>$2a$</code>/<code>$2b$</code>/<code>$2y$</code>, 60 characters).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>realm</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left"><code>LiteGate Restricted</code></td>
+<td style="text-align:left">Realm shown in the browser's login prompt. Must not contain double quotes or control characters.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>remove_header</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left">Remove the <code>Authorization</code> header after successful authentication so Basic credentials don't reach the upstream.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>enabled</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left"><code>true</code></td>
+<td style="text-align:left">When <code>false</code>, the definition is excluded from the runtime pipeline and from composition conflict checks.</td>
+</tr>
+</tbody>
+</table>
+<p>Separate multiple users with commas:</p>
+<pre><code class="language-yaml">config:
+  users: &quot;admin:$2y$05$AAAA....,ops:$2y$05$BBBB.....&quot;
+</code></pre>
+<hr>
+<h2 id="3-ways-to-generate-bcrypt-hashes">3. Ways to generate bcrypt hashes</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Tool</th>
+<th style="text-align:left">Command</th>
+<th style="text-align:left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>LiteGate built-in (recommended)</strong></td>
+<td style="text-align:left"><code>./litegate -hash 'password'</code></td>
+<td style="text-align:left">Prints a bcrypt hash directly, no extra tools</td>
+</tr>
+<tr>
+<td style="text-align:left">Apache htpasswd</td>
+<td style="text-align:left"><code>htpasswd -nbB user 'password'</code></td>
+<td style="text-align:left">Prints <code>user:hash</code>; take the part after the colon</td>
+</tr>
+<tr>
+<td style="text-align:left">Python</td>
+<td style="text-align:left"><code>python -c &quot;import bcrypt;print(bcrypt.hashpw(b'password', bcrypt.gensalt()).decode())&quot;</code></td>
+<td style="text-align:left">Needs <code>pip install bcrypt</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Only <strong>bcrypt</strong> is supported. MD5 (<code>$apr1$</code>), SHA (<code>{SHA}</code>) and plaintext are rejected at load time with <code>password must be a valid bcrypt hash</code>.</p>
+</blockquote>
+<hr>
+<h2 id="4-versus-inline-auth-type-basic">4. Versus inline <code>auth: {type: basic}</code></h2>
+<p>LiteGate has two &quot;basic authentication&quot; paths; don't mix them up:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Aspect</th>
+<th style="text-align:left">Named <code>basic_auth</code> middleware (this page)</th>
+<th style="text-align:left">Inline <code>auth: { type: basic }</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Purpose</td>
+<td style="text-align:left">Generic, reusable cross-cutting middleware referenced by many routes</td>
+<td style="text-align:left">Static authentication bound to a single route's action</td>
+</tr>
+<tr>
+<td style="text-align:left">Reuse</td>
+<td style="text-align:left">Define once, reference from many routes with <code>use: [name]</code></td>
+<td style="text-align:left">Each route writes its own</td>
+</tr>
+<tr>
+<td style="text-align:left">Phase</td>
+<td style="text-align:left">Authentication phase, compiled into the PipelinePlan</td>
+<td style="text-align:left">Inline on the route, also run in the Authentication phase</td>
+</tr>
+<tr>
+<td style="text-align:left">Best for</td>
+<td style="text-align:left">Sharing one set of accounts across routes; seeing the pipeline in the Dashboard</td>
+<td style="text-align:left">One-off protection of a single route</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation</strong>: use named <code>basic_auth</code> when several routes share it or you want its position visible in the PipelinePlan; for a one-off single route, inline <code>auth</code> is simpler. Don't stack both on the same route.</p>
+<hr>
+<h2 id="5-placement-and-security-notes">5. Placement and security notes</h2>
+<ul>
+<li><strong>Phase</strong>: <code>basic_auth</code> runs in the <strong>Authentication</strong> phase — after CORS preflight, request rewriting and WAF, before the proxy action. CORS preflights (<code>OPTIONS</code>) are not blocked by it.</li>
+<li><strong>Single instance</strong>: <code>basic_auth</code> has <code>AllowMultiple = false</code>; a route may have only one active basic authentication definition, and duplicates fail at load time.</li>
+<li><strong>Forged header cleanup</strong>: client-forged internal identity headers are stripped before authentication (same as <code>jwt_auth</code> / <code>api_key</code>).</li>
+<li><strong>Username enumeration resistance</strong>: for unknown users the gateway still runs one bcrypt comparison against a fixed dummy hash, so &quot;no such user&quot; and &quot;wrong password&quot; take the same time.</li>
+<li><strong>Always use HTTPS</strong>: Basic credentials are Base64-encoded, not encrypted; over plaintext they are exposed. In production enable it only on TLS entrypoints.</li>
+</ul>
+<hr>
+<h2 id="6-faq">6. FAQ</h2>
+<p><strong>Q: Every request gets 401 although the username and password are right.</strong>
+Plaintext passwords are rejected at load time, so check the hash itself: it should start with <code>$2a$</code>/<code>$2b$</code>/<code>$2y$</code>, be 60 characters, and be generated from the current password. Hashes copied from elsewhere are often truncated or carry stray spaces.</p>
+<p><strong>Q: Can the backend get the username?</strong>
+Requests continue to the upstream after authentication, but this middleware doesn't inject a username header. To pass identity upstream use <code>inject_claims</code> of <code>jwt_auth</code>, or parse it in the backend. If you don't want Basic credentials to reach the backend, set <code>remove_header: true</code>.</p>
+<p><strong>Q: Can <code>realm</code> contain non-ASCII text?</strong>
+Yes, but no double quotes <code>&quot;</code> or control characters, or loading fails.</p>
+<hr>
+<h2 id="further-reading">Further reading</h2>
+<ul>
+<li><a href="./authentication.html">Authentication overview</a></li>
+<li><a href="./pipeline.html">Middleware pipeline and chain</a></li>
+<li><a href="./oidc.html">OIDC single sign-on</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/05-middleware/basic-auth.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

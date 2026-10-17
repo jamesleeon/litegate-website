@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plugin Builds and the Management CLI · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/12-plugins/build-and-cli.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details open><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html" class="current" aria-current="page">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="plugin-builds-and-the-management-cli">Plugin Builds and the Management CLI</h1>
+<p>LiteGate plugins are compiled in, so third-party plugins must be built into a LiteGate binary. LiteGate offers two complementary ways to do that.</p>
+<hr>
+<h2 id="method-1-the-litegate-build-command-recommended">Method 1: the <code>litegate build</code> command (recommended)</h2>
+<p><code>litegate build</code> generates a temporary <code>main.go</code> and <code>go.mod</code> that blank-import the plugins you list, then runs the Go toolchain you have installed to produce a custom binary. You don't need to maintain a gateway entry program of your own.</p>
+<h3 id="1-common-build-scenarios">1. Common build scenarios</h3>
+<h4 id="a-plugins-published-in-publicprivate-git-repositories">A. Plugins published in public/private Git repositories</h4>
+<pre><code class="language-bash">litegate build \
+  --with github.com/acme/litegate-jwt-auth@v1.2.0 \
+  --with github.com/acme/litegate-nacos-discovery@v0.5.1 \
+  -o custom-litegate
+</code></pre>
+<blockquote class="alert alert-tip"><p>For private Git repositories, make sure the machine has the standard Go environment variables (such as <code>GOPRIVATE=github.com/acme/*</code>); the builder reuses your local Git credentials.</p>
+</blockquote>
+<h4 id="b-local-development-local-directory-replacement">B. Local development (local directory replacement)</h4>
+<p>While developing a plugin you don't need to commit and tag first; map the package path to local code with <code>=&lt;local_path&gt;</code>:</p>
+<pre><code class="language-bash">litegate build \
+  --with github.com/acme/litegate-plugin=../my-plugin-repo \
+  -o custom-litegate
+</code></pre>
+<p>When the plugins live in one project with several sub-packages, list them in the same command:</p>
+<pre><code class="language-bash">litegate build \
+  --with mycompany/plugins/action/ai=./my-plugins \
+  --with mycompany/plugins/middleware/tenant=./my-plugins \
+  -o custom-litegate
+</code></pre>
+<h4 id="c-pinning-or-replacing-the-litegate-core">C. Pinning or replacing the LiteGate core</h4>
+<p>To build against a specific LiteGate core branch or a local LiteGate source tree:</p>
+<pre><code class="language-bash"># Replace the LiteGate core with a local development copy
+litegate build \
+  --replace github.com/jamesleeon/LiteGate=/path/to/LiteGate \
+  --with github.com/acme/my-plugin@v1.0.0 \
+  -o custom-litegate
+</code></pre>
+<h3 id="2-all-litegate-build-options">2. All <code>litegate build</code> options</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Option</th>
+<th style="text-align:left">Description</th>
+<th style="text-align:left">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>--with &lt;package[@version][=replacement]&gt;</code></td>
+<td style="text-align:left">Add a plugin package; repeatable. <code>=replacement</code> points to a local plugin module directory.</td>
+<td style="text-align:left"><code>--with github.com/foo/bar@v1.0.0</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>--dns &lt;[type=]provider[@version]&gt;</code></td>
+<td style="text-align:left">Compile in a libdns (v1 API) DNS provider. A short name means <code>github.com/libdns/&lt;name&gt;</code>; a full module path is also accepted; <code>type</code> defaults to the last path element. Repeatable.</td>
+<td style="text-align:left"><code>--dns huaweicloud --dns route53</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>--replace &lt;module[@version]=target[@version]&gt;</code></td>
+<td style="text-align:left">Add a Go module replacement; repeatable. The legacy form <code>--replace &lt;path&gt;</code> replaces the LiteGate core with a local source tree.</td>
+<td style="text-align:left"><code>--replace github.com/foo/bar=../bar</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>--litegate-version &lt;v&gt;</code></td>
+<td style="text-align:left">Select and lock the LiteGate core module version.</td>
+<td style="text-align:left"><code>--litegate-version v0.4.2</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>-o, --output &lt;path&gt;</code></td>
+<td style="text-align:left">Output binary path; default <code>./litegate</code> (<code>litegate.exe</code> on Windows).</td>
+<td style="text-align:left"><code>-o /usr/local/bin/litegate</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>--keep-workdir</code></td>
+<td style="text-align:left">Keep the generated temporary module for dependency diagnostics.</td>
+<td style="text-align:left"><code>--keep-workdir</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>--tags &lt;tags&gt;</code></td>
+<td style="text-align:left">Go build tags.</td>
+<td style="text-align:left"><code>--tags wasmids</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>--race</code></td>
+<td style="text-align:left">Enable Go's race detector.</td>
+<td style="text-align:left"><code>--race</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>--debug</code></td>
+<td style="text-align:left">Disable compiler optimizations and inlining for debuggers.</td>
+<td style="text-align:left"><code>--debug</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>--no-trimpath</code></td>
+<td style="text-align:left">Keep local filesystem paths in the binary (stripped by default).</td>
+<td style="text-align:left"><code>--no-trimpath</code></td>
+</tr>
+</tbody>
+</table>
+<p>Related environment variables: <code>LITEGATE_VERSION</code>, <code>LITEGATE_LOCAL_PATH</code>, <code>LITEGATE_GO</code>, <code>LITEGATE_BUILD_KEEP_WORKDIR</code>, <code>GOOS</code>, <code>GOARCH</code>, <code>GOARM</code>, <code>CGO_ENABLED</code>.</p>
+<hr>
+<h2 id="method-2-your-own-maingo-with-blank-imports">Method 2: your own <code>main.go</code> with blank imports</h2>
+<p>If you use LiteGate as the base of an in-house gateway and want one repository to manage custom logic and dependencies, write your own <code>main.go</code>:</p>
+<h3 id="1-create-a-go-project">1. Create a Go project</h3>
+<pre><code class="language-bash">mkdir my-gateway &amp;&amp; cd my-gateway
+go mod init my-gateway
+go get github.com/jamesleeon/LiteGate
+</code></pre>
+<h3 id="2-blank-import-plugins-in-maingo">2. Blank-import plugins in <code>main.go</code></h3>
+<pre><code class="language-go">package main
+
+import (
+	&quot;log&quot;
+
+	// 1. Blank-import your own plugin packages (their init() registers them)
+	_ &quot;my-gateway/plugins/custom_audit&quot;
+	_ &quot;my-gateway/plugins/ldap_auth&quot;
+
+	// 2. Import plugins shipped in the standard LiteGate distribution as needed
+	_ &quot;github.com/jamesleeon/LiteGate/pkg/plugins/nats&quot;
+	_ &quot;github.com/jamesleeon/LiteGate/pkg/plugins/forwardproxy&quot;
+
+	// 3. Start the LiteGate core
+	&quot;github.com/jamesleeon/LiteGate/pkg/litegate&quot;
+)
+
+func main() {
+	if err := litegate.Run(); err != nil {
+		log.Fatalf(&quot;Gateway exited with error: %v&quot;, err)
+	}
+}
+</code></pre>
+<h3 id="3-build-with-plain-go-build">3. Build with plain <code>go build</code></h3>
+<pre><code class="language-bash">go build -o my-gateway .
+</code></pre>
+<hr>
+<h2 id="plugin-management-and-diagnostics-cli">Plugin management and diagnostics CLI</h2>
+<p>LiteGate has built-in CLI commands to audit, self-check and debug the plugins in a binary:</p>
+<h3 id="1-litegate-plugins-list--list-compiled-plugins">1. <code>litegate plugins list</code> — list compiled plugins</h3>
+<p>Shows every plugin registered through the public API in the current binary: extension kind, plugin name, plugin version and the LiteGate API version it follows:</p>
+<pre><code class="language-bash">litegate plugins list
+</code></pre>
+<p><strong>Sample output (default build):</strong></p>
+<pre><code class="language-text">KIND             NAME                             VERSION        API
+action           nats                             1.0.0          v1
+discovery        nomad                            0.1.0          v1
+ids              openapi-md5                      1              v1
+ingress          forward_proxy                    0.3.0          v1
+middleware       forward_auth                     0.1.0          v1
+</code></pre>
+<p>Structured JSON output for release pipelines:</p>
+<pre><code class="language-bash">litegate plugins list --json
+</code></pre>
+<h3 id="2-litegate-plugins-inspect--metadata-and-configuration-template">2. <code>litegate plugins inspect</code> — metadata and configuration template</h3>
+<p>Shows a plugin's metadata: display name, description, capabilities and a <strong>ready-to-use YAML configuration template</strong>:</p>
+<pre><code class="language-bash">litegate plugins inspect ingress/forward_proxy
+</code></pre>
+<p><strong>Sample output (excerpt):</strong></p>
+<pre><code class="language-text">Kind: ingress
+Name: forward_proxy
+Version: 0.3.0
+Plugin API: v1
+Display name: HTTP forward proxy
+Description: HTTP forward proxy with authenticated HTTP/1.1, HTTP/2 and HTTP/3 CONNECT and destination ACLs.
+Capabilities: connect, destination_acl, http1, http2, http3, probe_resistance, proxy_auth
+Configuration example:
+# Global config; generate a hash with litegate -hash 'your-password'.
+ingress_plugins:
+  - name: forward-proxy
+    type: forward_proxy
+    entrypoints: [websecure]
+    config:
+      hosts: [proxy.example.com]
+      username: user
+      password: '$2a$10$REPLACE_WITH_COMPLETE_BCRYPT_HASH'
+      probe_resistance: true
+      allowed_destinations: [&quot;*&quot;]
+      allowed_ports: [80, 443]
+</code></pre>
+<h3 id="3-litegate-plugins-doctor--health-and-compatibility-check">3. <code>litegate plugins doctor</code> — health and compatibility check</h3>
+<p>Before deploying a custom binary to production, run <code>doctor</code> to catch problems early:</p>
+<pre><code class="language-bash">litegate plugins doctor
+</code></pre>
+<p><code>doctor</code> checks:</p>
+<ul>
+<li><strong>Manifest completeness</strong>: every plugin compiled in declares a unified <code>Manifest</code>.</li>
+<li><strong>APIVersion compatibility</strong>: the <code>APIVersion</code> each plugin claims (such as <code>v1</code>) matches what the gateway expects.</li>
+<li><strong>Configuration example safety</strong>: each plugin's <code>ConfigExample</code> is valid, with no unescaped characters or oversized data.</li>
+</ul>
+<hr>
+<h2 id="viewing-plugins-in-the-dashboard">Viewing plugins in the Dashboard</h2>
+<p>LiteGate's built-in Dashboard shows compiled plugins:</p>
+<ol>
+<li>Open the LiteGate Dashboard (default <code>http://&lt;gateway address&gt;:9999/status</code>; the port comes from <code>dashboard.port</code>).</li>
+<li>Click <strong>Compiled Plugins</strong> in the navigation.</li>
+<li>Action, Middleware, Discovery, DNS and other plugins are shown as cards by kind, with configuration templates you can copy.</li>
+</ol>
+<hr>
+<h2 id="cicd-build-example-dockerfile">CI/CD build example (Dockerfile)</h2>
+<p>A standard multi-stage Dockerfile that builds a small image with in-house plugins:</p>
+<pre><code class="language-dockerfile"># Stage 1: custom build in the official Go image
+FROM golang:1.27-alpine AS builder
+
+WORKDIR /build
+
+# Basic build dependencies
+RUN apk add --no-cache git ca-certificates tzdata
+
+# Install the LiteGate tool, which provides litegate build
+RUN go install github.com/jamesleeon/LiteGate/cmd/litegate@latest
+
+# Inject private plugins with litegate build
+RUN litegate build \
+    --with github.com/acme/litegate-plugin-auth@v1.0.0 \
+    --with github.com/acme/litegate-plugin-discovery@v0.2.0 \
+    -o /build/litegate
+
+# Stage 2: minimal runtime image
+FROM alpine:3.20
+
+RUN apk add --no-cache ca-certificates tzdata
+
+WORKDIR /app
+
+# Copy the single static binary from the build stage
+COPY --from=builder /build/litegate /usr/local/bin/litegate
+
+# Default volumes and configuration mount points
+VOLUME [&quot;/app/config.yaml&quot;, &quot;/app/sites&quot;, &quot;/app/certs&quot;]
+
+EXPOSE 80 443
+
+ENTRYPOINT [&quot;litegate&quot;]
+CMD [&quot;-config&quot;, &quot;/app/config.yaml&quot;]
+</code></pre>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/12-plugins/build-and-cli.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

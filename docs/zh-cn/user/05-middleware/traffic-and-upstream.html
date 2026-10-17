@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>流量控制与上游治理中间件 · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/05-middleware/traffic-and-upstream.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details open><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html" class="current" aria-current="page">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="流量控制与上游治理中间件">流量控制与上游治理中间件</h1>
+<p>这一组中间件处理“请求进来后到打后端之间”的保护与治理，分属两个阶段：</p>
+<ul>
+<li><strong>TrafficControl</strong>（<code>limit_conn</code>）：普通 HTTP 层的并发/速率保护。</li>
+<li><strong>Upstream</strong>（<code>retry</code>、<code>circuit_breaker</code>）：需要理解后端实例和单次尝试的治理，编译进 Proxy 内部，<strong>只对 <code>proxy</code> action 生效</strong>。</li>
+<li><strong>PostAuth</strong>（<code>mirror</code>）：只复制已经过认证的流量。</li>
+</ul>
+<blockquote>
+<p>限速（<code>ratelimit</code>）单独成篇，见 <a href="./rate-limit.html">Rate Limit 与并发连接限制</a>。</p>
+</blockquote>
+<hr>
+<h2 id="1-limit_conn--并发连接限制">1. <code>limit_conn</code> —— 并发连接限制</h2>
+<p>限制路由上<strong>同时在处理</strong>的请求数，防止慢客户端拖垮后端、打满连接池。</p>
+<pre><code class="language-yaml">middlewares:
+  concurrency-guard:
+    type: limit_conn
+    config:
+      limit: &quot;100&quot;      # 最大并发在途请求数，正整数
+      key: &quot;ip&quot;         # global（默认）= 按路由全局；ip = 按客户端 IP
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">字段</th>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">必填</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>limit</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">最大并发请求数，必须为正整数。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>key</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left"><code>global</code>（默认）按路由整体计数；<code>ip</code> 按客户端 IP 分别计数。</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>超过上限返回 <strong><code>503 Service Unavailable</code></strong>，带 <code>Retry-After: 5</code>。</li>
+<li>也可以在路由上内联写 <code>limit_conn</code>，语义相同。</li>
+</ul>
+<blockquote>
+<p><code>limit_conn</code>（并发）与 <code>ratelimit</code>（速率）互补：速率控持续吞吐，并发控慢/卡连接，建议组合使用。</p>
+</blockquote>
+<hr>
+<h2 id="2-retry--上游失败重试">2. <code>retry</code> —— 上游失败重试</h2>
+<p>对代理到后端的<strong>单次尝试</strong>失败进行自动重试。</p>
+<blockquote>
+<p><strong>推荐写法：</strong> 重试是“怎么到达后端”的问题，推荐写在 Service 中：<code>services.&lt;name&gt;.retry.attempts</code>。下面的 <code>retry</code> 中间件写法已弃用，仍可使用，加载时会提示一次。见 <a href="../03-configuration/services.html">命名 Service 与配置分层</a>。</p>
+</blockquote>
+<pre><code class="language-yaml">site: api.example.com
+middlewares:
+  api-retry:
+    type: retry
+    config:
+      attempts: &quot;3&quot;     # 最大尝试次数，正整数
+
+/api:
+  use: [api-retry]
+  proxy: 10.0.0.1:8080, 10.0.0.2:8080   # 必须是 proxy
+</code></pre>
+<ul>
+<li><strong>只允许用于 <code>proxy</code> action</strong>；配到 <code>serve</code>/<code>respond</code> 等 action 上会加载失败。</li>
+<li>它被编译进 Action 的强类型副本，复用 Proxy 成熟的<strong>重试预算、幂等检查、实例选择</strong>逻辑，而不是简单地把整个 handler 重跑一遍。</li>
+<li><code>AllowMultiple = false</code>，且不能与内联 <code>retry</code> 或 Service 的 <code>retry</code> 叠加。</li>
+<li>幂等方法（GET、HEAD、PUT、DELETE、OPTIONS、TRACE）出错后可以重试；POST 等非幂等方法只在能确认请求没有送达或未被处理时才重试（例如连接未建立、gRPC <code>UNAVAILABLE</code>）。</li>
+<li>重试之间有指数退避；每条路由的重试量受预算限制（滚动 1 秒窗口内约为请求量的 20%，至少 10 次），避免上游故障时放大流量。</li>
+</ul>
+<hr>
+<h2 id="3-circuit_breaker--熔断">3. <code>circuit_breaker</code> —— 熔断</h2>
+<p>后端连续失败到阈值时“跳闸”，短时间内直接拒绝请求，给后端恢复窗口，避免雪崩。</p>
+<blockquote>
+<p><strong>推荐写法：</strong> 熔断作用于单个后端实例，推荐写在 Service 中：<code>services.&lt;name&gt;.circuitbreaker.*</code>（键名为 <code>enabled</code>、<code>timeout</code>、<code>maxrequests</code>、<code>tripthreshold</code>）。下面的 <code>circuit_breaker</code> 中间件写法已弃用，仍可使用。</p>
+</blockquote>
+<pre><code class="language-yaml">middlewares:
+  api-breaker:
+    type: circuit_breaker
+    config:
+      enabled: &quot;true&quot;
+      trip_threshold: &quot;5&quot;    # 连续失败多少次触发熔断
+      timeout: &quot;30&quot;          # 熔断打开后的冷却时长（秒）
+      max_requests: &quot;2&quot;      # 半开状态放行的探测请求数
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">字段</th>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">默认值</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>enabled</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left"><code>true</code></td>
+<td style="text-align:left">是否启用。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>trip_threshold</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left"><code>3</code></td>
+<td style="text-align:left">连续失败达到该次数则跳闸（Open）。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>timeout</code></td>
+<td style="text-align:left">int（秒）</td>
+<td style="text-align:left"><code>60</code></td>
+<td style="text-align:left">Open 状态持续时长，到点后转入 Half-Open 试探。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>max_requests</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left"><code>1</code></td>
+<td style="text-align:left">Half-Open 状态允许通过的探测请求数；成功则闭合，失败则重新打开。</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>同样<strong>只对 <code>proxy</code> action 生效</strong>，<code>AllowMultiple = false</code>，不能与内联或 Service 的熔断配置并存。</li>
+<li>也支持滑动窗口失败率策略（<code>strategy</code>、<code>window_seconds</code>、<code>minimum_requests</code>、<code>failure_ratio</code>），字段与用法见 <a href="../09-advanced/circuit-breaker.html">熔断</a>。</li>
+<li>本地熔断拒绝发生在请求发出之前，可以不退避地改选其他实例，也不计入上游被动健康检查的失败。</li>
+<li>熔断状态按后端实例维度维护（<code>ScopeUpstreamInstance</code>），一个实例跳闸不影响其它健康实例。</li>
+</ul>
+<blockquote>
+<p><code>retry</code> 与 <code>circuit_breaker</code> 常配合：<code>retry</code> 吸收偶发抖动，<code>circuit_breaker</code> 应对后端持续故障。</p>
+</blockquote>
+<hr>
+<h2 id="4-mirror--流量镜像影子流量">4. <code>mirror</code> —— 流量镜像（影子流量）</h2>
+<p>把已获准的流量异步复制一份到影子后端，用于灰度验证、压测回放、迁移比对。主请求不受影响。</p>
+<pre><code class="language-yaml">middlewares:
+  shadow:
+    type: mirror
+    config:
+      target: &quot;shadow.internal:8080&quot;   # host:port 或完整 http(s):// 地址
+      percent: &quot;10&quot;                     # 复制比例 0-100，默认 100
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">字段</th>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">必填</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>target</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">影子后端地址，可为 <code>host:port</code>（默认补 <code>http://</code>）或完整 URL。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>percent</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">复制比例，<code>0-100</code>，默认 <code>100</code>。</td>
+</tr>
+</tbody>
+</table>
+<p>安全与稳定性保证：</p>
+<ul>
+<li><strong>位于 PostAuth 阶段</strong>：只复制已经通过 WAF 与认证的请求，未授权/被拦截的流量不会进影子服务。</li>
+<li>复制的请求带 <code>X-Forwarded-Shadow: true</code>，并剥离逐跳（hop-by-hop）头。</li>
+<li>请求体上限 <strong>4 MB</strong>，超过则跳过镜像，避免 OOM。</li>
+<li>并发有上限，打满时丢弃影子请求以保护主链路。</li>
+<li><strong>镜像失败绝不影响主请求</strong>（fail-open）。</li>
+</ul>
+<blockquote>
+<p>注意：当前实现会连同 <code>Cookie</code> / <code>Authorization</code> 一起复制给影子后端。若影子环境不可信，请确保它无法用这些凭证做副作用操作。</p>
+</blockquote>
+<hr>
+<h2 id="5-阶段与执行位置">5. 阶段与执行位置</h2>
+<pre><code class="language-text">... → Security(WAF/IP) → TrafficControl(limit_conn/ratelimit) → Authentication → PostAuth(mirror) → Response → Action/Upstream(retry/circuit_breaker)
+</code></pre>
+<p><code>retry</code> 和 <code>circuit_breaker</code> 不是普通 HTTP handler，它们编译进 Proxy 的上游治理层；<code>limit_conn</code> 是标准 HTTP 中间件；<code>mirror</code> 在认证之后才复制。用 MCP 的 <code>lookup_route</code> 可以看到它们在 <code>Effective Pipeline</code> 中的最终位置。</p>
+<hr>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ul>
+<li><a href="../03-configuration/services.html">命名 Service 与配置分层</a></li>
+<li><a href="../09-advanced/circuit-breaker.html">熔断</a></li>
+<li><a href="./rate-limit.html">Rate Limit 与并发连接限制</a></li>
+<li><a href="./pipeline.html">Middleware Pipeline 与 Chain</a></li>
+<li><a href="../04-actions/proxy.html">反向代理 Action</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/05-middleware/traffic-and-upstream.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

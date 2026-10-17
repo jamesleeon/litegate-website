@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>authentik OIDC configuration example · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/05-middleware/authentik.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details open><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html" class="current" aria-current="page">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="authentik-oidc-configuration-example">authentik OIDC configuration example</h1>
+<p>LiteGate can use its built-in OIDC support with self-hosted authentik. No dedicated plugin or external account registration is required. Users sign in through authentik; LiteGate verifies their ID Token and forwards identity headers to the backend. LiteGate requires Redis for login state and sessions.</p>
+<p>This example uses HTTP on a private network to make testing straightforward. Use HTTPS domains and valid certificates for production. Browser login, identity headers, automatic refresh, and full logout were verified with authentik <strong>2026.8.3</strong> and the current LiteGate source.</p>
+<h2 id="1-prepare-addresses-and-services">1. Prepare addresses and services</h2>
+<p>Replace the documentation address <code>192.0.2.10</code> below with your server address. Both the browser and LiteGate must be able to reach the authentik URL.</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Example address</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>authentik</td>
+<td><code>http://192.0.2.10:19000</code></td>
+</tr>
+<tr>
+<td>LiteGate application</td>
+<td><code>http://192.0.2.10:18086</code></td>
+</tr>
+<tr>
+<td>Redis</td>
+<td><code>127.0.0.1:16379</code></td>
+</tr>
+<tr>
+<td>HTTP backend</td>
+<td><code>127.0.0.1:18087</code></td>
+</tr>
+</tbody>
+</table>
+<p>Deploy authentik using its <a href="https://docs.goauthentik.io/install-config/install/docker-compose/">Docker Compose installation guide</a>, initialize the local administrator, and create a test user. You do not need to register on an external website. Set <code>COMPOSE_PORT_HTTP=19000</code> for the installation's HTTP port. Run Redis and the backend separately. The loopback addresses above refer to LiteGate's network environment; for a container deployment, use service addresses reachable from that container.</p>
+<h2 id="2-create-an-application-and-provider-in-authentik">2. Create an application and provider in authentik</h2>
+<p>Create an <strong>OAuth2/OpenID Connect Provider</strong> and associate it with an Application:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application slug</td>
+<td><code>litegate</code></td>
+</tr>
+<tr>
+<td>Application launch URL</td>
+<td><code>http://192.0.2.10:18086/</code></td>
+</tr>
+<tr>
+<td>Client type</td>
+<td><code>Confidential</code></td>
+</tr>
+<tr>
+<td>Client ID</td>
+<td><code>litegate-lab</code></td>
+</tr>
+<tr>
+<td>Client Secret</td>
+<td>Keep the generated value for LiteGate</td>
+</tr>
+<tr>
+<td>Authorization flow</td>
+<td><code>default-provider-authorization-implicit-consent</code></td>
+</tr>
+<tr>
+<td>Grant types, if exposed by the UI</td>
+<td>Authorization code and Refresh token</td>
+</tr>
+<tr>
+<td>Issuer mode</td>
+<td>Keep the default separate issuer for each provider</td>
+</tr>
+<tr>
+<td>Signing Key</td>
+<td>Select an RSA certificate/key pair for <code>RS256</code> signatures</td>
+</tr>
+<tr>
+<td>Encryption Key</td>
+<td>Leave unset</td>
+</tr>
+<tr>
+<td>Scope mappings</td>
+<td>Mappings for <code>openid</code>, <code>profile</code>, <code>email</code>, and <code>offline_access</code></td>
+</tr>
+<tr>
+<td>Include claims in ID Token</td>
+<td>Enable</td>
+</tr>
+</tbody>
+</table>
+<p>Register two <strong>Strict</strong> redirect URIs. In the 2026.8 UI, select the corresponding type for each:</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Address</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Authorization</td>
+<td><code>http://192.0.2.10:18086/_litegate/oauth/callback</code></td>
+</tr>
+<tr>
+<td>Logout</td>
+<td><code>http://192.0.2.10:18086/</code></td>
+</tr>
+</tbody>
+</table>
+<p>LiteGate verifies signatures using the JWKS advertised by Discovery. Without a Signing Key, authentik uses <code>HS256</code>, which does not fit this example. Select an RSA Signing Key and leave token encryption disabled. Request <code>offline_access</code> for refresh tokens, and include user claims in the ID Token for <code>inject_claims</code>.</p>
+<p>The issuer should be <code>http://192.0.2.10:19000/application/o/litegate/</code>. Its Discovery URL is:</p>
+<pre><code class="language-text">http://192.0.2.10:19000/application/o/litegate/.well-known/openid-configuration
+</code></pre>
+<p>Check that the JSON document's <code>issuer</code> exactly matches LiteGate's configuration, including the trailing <code>/</code>. Configure the issuer itself in LiteGate, not the full Discovery URL.</p>
+<h2 id="3-litegate-global-configuration">3. LiteGate global configuration</h2>
+<p>Save as <code>config.yaml</code>:</p>
+<pre><code class="language-yaml">mode: observability
+entrypoints:
+  web:
+    address: &quot;:18086&quot;
+auto_cert:
+  enabled: false
+sites_dir: ./sites
+
+redis:
+  enabled: true
+  address: &quot;127.0.0.1:16379&quot;
+
+auth_providers:
+  authentik:
+    enabled: true
+    type: oidc
+    issuer: &quot;http://192.0.2.10:19000/application/o/litegate/&quot;
+    client_id: litegate-lab
+    client_secret: &quot;env:LITEGATE_AUTHENTIK_CLIENT_SECRET&quot;
+    scopes: [openid, profile, email, offline_access]
+    allowed_signing_algs: [RS256]
+
+oidc_security:
+  cookie_secret: &quot;REPLACE_WITH_RANDOM_SECRET_AT_LEAST_32_BYTES&quot;
+  cookie_same_site: lax
+  me_allowed_ips: [&quot;127.0.0.1&quot;, &quot;::1&quot;]
+</code></pre>
+<p>Replace <code>cookie_secret</code> with a random secret of at least 32 bytes; for example, generate one with <code>openssl rand -hex 32</code> and paste the value. This field takes the value directly. The <code>client_secret</code> field supports the <code>env:VARIABLE_NAME</code> syntax shown above. Set the Client Secret in the environment of the LiteGate process:</p>
+<pre><code class="language-bash">export LITEGATE_AUTHENTIK_CLIENT_SECRET='REPLACE_WITH_AUTHENTIK_CLIENT_SECRET'
+litegate -config config.yaml
+</code></pre>
+<p>For systemd, use the service's <code>EnvironmentFile</code>; for containers, pass the environment variable to the container. Session diagnostics are restricted to localhost in this example. Add your test computer's IP to <code>me_allowed_ips</code> if you need to inspect sessions from its browser.</p>
+<h2 id="4-litegate-site-configuration">4. LiteGate site configuration</h2>
+<p>Save as <code>sites/app.yaml</code>, replacing the backend with your HTTP service:</p>
+<pre><code class="language-yaml">site: &quot;:18086&quot;
+
+/public: 127.0.0.1:18087
+
+/:
+  proxy: 127.0.0.1:18087
+  remote_auth:
+    provider: authentik
+    enforce: true
+    inject_claims:
+      X-Auth-User: preferred_username
+      X-Auth-Email: email
+      X-Auth-Subject: sub
+</code></pre>
+<p><code>/public</code> allows anonymous access; other paths require authentication. The mapping direction is <code>header: claim</code>. The backend can read these headers to identify the user and should accept requests only from LiteGate. LiteGate handles the default callback path; no separate callback route is needed.</p>
+<h2 id="5-configure-logout">5. Configure logout</h2>
+<p>Visiting <code>http://192.0.2.10:18086/_litegate/oauth/logout</code> deletes the LiteGate session and redirects to authentik's End Session endpoint.</p>
+<p>authentik's default <code>default-provider-invalidation-flow</code> preserves the global SSO session. Returning to the protected <code>/</code> route can therefore immediately sign the browser back in through SSO.</p>
+<p>To require username and password entry after logout in this example, set the provider's <strong>Invalidation flow</strong> to <strong><code>default-invalidation-flow</code></strong>. This also ends the global authentik session, affecting subsequent SSO access to other authentik applications in that browser. Register the Logout redirect URI shown above as well.</p>
+<p>This is browser-initiated logout. LiteGate does not currently implement an endpoint for authentik back-channel logout notifications.</p>
+<h2 id="6-verify">6. Verify</h2>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Expected result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Open <code>http://192.0.2.10:18086/</code> in a browser</td>
+<td>Redirect to authentik and return to the application after signing in</td>
+</tr>
+<tr>
+<td>Inspect backend request headers</td>
+<td><code>X-Auth-User</code>, <code>X-Auth-Email</code>, and <code>X-Auth-Subject</code> identify the signed-in user</td>
+</tr>
+<tr>
+<td><code>curl -i http://192.0.2.10:18086/orders</code></td>
+<td>API request without a session returns <code>401</code></td>
+</tr>
+<tr>
+<td><code>curl -i http://192.0.2.10:18086/public</code></td>
+<td>Backend responds without login</td>
+</tr>
+<tr>
+<td>Supply a forged <code>X-Auth-User</code> header</td>
+<td>Protected routes replace it with the real user; the public route strips it</td>
+</tr>
+<tr>
+<td>Inspect <code>/_litegate/oauth/me</code> after login</td>
+<td>From an allowed IP, returns <code>provider: authentik</code> and user claims</td>
+</tr>
+<tr>
+<td>Temporarily set the provider access token lifetime to 2 minutes; access a protected route about 100 seconds after login</td>
+<td>Stay signed in and see an extended <code>expiry</code> in <code>/me</code>; restore your desired lifetime afterward</td>
+</tr>
+<tr>
+<td>Use the full logout flow and visit the application</td>
+<td>authentik shows the login form again</td>
+</tr>
+</tbody>
+</table>
+<p>Browser requests with <code>text/html</code> in <code>Accept</code> redirect to login; API requests return <code>401</code>. If authentik is unavailable or Discovery fails, protected routes return <code>503</code>, and provider initialization retries in the background.</p>
+<h2 id="related-documentation">Related documentation</h2>
+<ul>
+<li><a href="oidc.html">OIDC / OAuth2 authentication guide</a></li>
+<li><a href="authentication.html">Authentication overview</a></li>
+<li><a href="https://docs.goauthentik.io/add-secure-apps/providers/oauth2/">authentik OAuth2/OIDC provider</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/05-middleware/authentik.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

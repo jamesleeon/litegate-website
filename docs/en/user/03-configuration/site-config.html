@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site configuration reference (sites/*.yaml) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/03-configuration/site-config.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details open><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html" class="current" aria-current="page">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: internal/configdocs/docs/en/site-config.md (package internal/configdocs)
+     Regenerate: go generate ./internal/configdocs/...
+     Edit the source instead; a drift test fails if this copy is edited directly. -->
+<h1 id="site-configuration-reference-sitesyaml">Site configuration reference (<code>sites/*.yaml</code>)</h1>
+<h2 id="notify-shortcuts-and-business-jwt">Notify shortcuts and business JWT</h2>
+<pre><code class="language-yaml">site: app.example.com
+notify:
+  ack_secret_ref: shared.notify_ack_secret
+  retention: 168h
+  replicas: 1
+/events/workorder:
+  auth:
+    type: jwt
+    secret: env://APP_JWT_SECRET
+    token_from: ['cookie:lg_token']
+    subject_claim: user_id
+    tenant_claim: tenant_id
+  subscribe: notify.{auth.tenant}.workorder
+  offline: auth.subscriber
+</code></pre>
+<p>Exact-path publish accepts POST; subscribe accepts GET. publish: true means the portal, not NATS. JWT requires exactly one of secret (HS256/384/512) or jwks_url (RS/ES). token_from selects header or cookie:name in order; tenant_claim requires subject_claim. Match issuer/audience to the issuer's contract. Token exp bounds the stream even without identity mapping; tokens without exp only use max_duration. Update the cookie on login AND renewal, and clear it on logout.</p>
+<p>A fixed subject is shared broadcast, not tenant isolation. Subscription templates allow only {auth.tenant} and {auth.subscriber}; publish additionally accepts {body.x}, {header.x}, {query.x}, requiring authorization for client-selected targets. Never expose an unauthenticated publishing endpoint. Identity/template values allow letters, digits, underscore and hyphen, at most 128 characters.</p>
+<p>Publish offline: true waits for JetStream PubAck. Subscribe offline uses a stable identity or auth.subscriber; the same-path POST ACK inherits authentication. Handle sequence/ack_token/payload, then POST application/json with ack_token; success is 204. EventSource does not ACK automatically. Durable server progress, not Last-Event-ID, provides offline recovery. Different identities ACK independently; a new connection takes over the same identity. New consumers start with new messages; resync current business state on reconnect and make processing idempotent.</p>
+<p>Defaults: connection default, retention 168h (1m..720h), replicas 1. First publish or subscribe creates the stream; existing stream policies are not rewritten. Multiple nodes need the same ack_secret_ref resolving to at least 32 bytes; random process keys are for single-process use. Default quotas share 100 connections per site. notify.sse.tenants is unsupported; use explicit actions for tenant quotas. One unacknowledged message per consumer limits throughput by ACK latency.</p>
+<p>IDS NotifySubscriber is optional, without assuming a cache. Plugin notifications use Core NATS plus Resync, not JetStream offline replay. Cache invalidation does not revoke established SSE; JWT verification cannot automatically detect tenant disablement or token revocation.</p>
+<p>MCP enable_jwt_for_site supports secret/jwks_url, token_from, subject_claim and tenant_claim, but protects PROXY routes only. For notification routes explicitly configure auth using get_site_config → get_config_guide → validate_site_config → save_site_config, preserving the full existing site.</p>
+<p>Each site is one YAML file, by default under <code>./sites</code>. LiteGate scans that directory and hot-reloads on change.</p>
+<blockquote class="alert alert-tip"><p>MCP's <code>get_config_guide</code> returns this file verbatim. The fields here must stay in step with <code>internal/loader/types.go</code>.</p>
+</blockquote>
+<hr>
+<h2 id="0-unified-site-yaml-v2-default-for-new-configurations">0. Unified site YAML (v2, default for new configurations)</h2>
+<p>Create new sites as <code>.yaml</code> with a top-level <code>site:</code>. Users no longer need to choose Lite or standard mode. <code>version: 2</code> is optional: <code>site</code> identifies v2, <code>domain</code> identifies legacy standard YAML, and legacy <code>.lite.yaml</code> domain mappings remain supported. All documents in a file must use the same format. Existing files require no migration.</p>
+<p>AI tools should generate v2 for new sites and preserve the format when editing existing files. <code>litegate -t -config config.yaml</code> checks all three formats through the common Loader. v2 defaults <code>https</code> to false; explicit true or false takes precedence. Creation tools preserve their previous HTTPS choices.</p>
+<pre><code class="language-yaml">site: api.example.com
+proxy: localhost:8080, 192.168.50.110:8088
+</code></pre>
+<p>A frontend with an API proxy uses path-segment prefixes and a site-level fallback:</p>
+<pre><code class="language-yaml">site: app.example.com
+response_headers:
+  X-Frame-Options: DENY
+/api:
+  proxy: localhost:8080
+  strip_prefix: true
+  cache: {ttl: 30s}
+spa: ./dist
+</code></pre>
+<ul>
+<li>Use <code>serve: ./public</code> for static files and <code>spa: ./dist</code> for an SPA. Single-action shorthands include <code>respond: ok</code> and <code>redirect: https://example.com</code>.</li>
+<li>Proxy scalars/lists always contain addresses; commas separate multiple addresses. Reference a defined local Service using <code>service: orders</code> or <code>proxy: {service: orders}</code>. Advanced discovery/connection settings can retain internal fields under <code>action</code>; a discovery name is not a proxy address.</li>
+<li>Use <code>routes</code> with <code>match</code> for exact paths and method/header/query/rule combinations. Path-key routes cannot also specify match. Advanced action fields remain available under <code>action</code>.</li>
+<li><code>use</code> references defined middleware. Site request_headers apply only to proxies; response_headers apply to every action. Route header values override site values.</li>
+<li>With child routes, put root authentication/rate limiting in an explicit <code>/</code> route; use site use for middleware covering all routes. Boolean true and string &quot;true&quot; strip_prefix both require prefix matching.</li>
+<li>MCP enable_jwt/apikey/oidc_for_site tools support single-document v2 and legacy standard sites. v2 edits proxy route AST nodes while retaining comments and shorthand; repeated calls do not duplicate bindings. JWT/API Key update same-name definitions and reject type conflicts; OIDC updates route remote_auth. Static/SPA routes receive no new authentication. Use full YAML editing, validation and saving for legacy Lite or multi-document files.</li>
+</ul>
+<p>All examples below use v2; routes and action remain supported for advanced configurations.</p>
+<h3 id="listener-port-shorthand">Listener port shorthand</h3>
+<p><code>site: :9090</code>, <code>site: &quot;*:9090&quot;</code>, and <code>site: 0.0.0.0:9090</code> are equivalent to <code>site: &quot;*&quot;</code> plus <code>port: 9090</code>, accepting any HTTP Host on that port. YAML values starting with <code>*</code> require quotes. Ports range from 1–65535; do not also set <code>port</code> or <code>entrypoints</code>. <code>site: example.com:9090</code> matches that hostname on the port; use <code>[::1]:9090</code> for IPv6 with a port. The host selects requests, not the local network interface to bind. <code>https</code> still defaults to false.</p>
+<pre><code class="language-yaml">site: :9090
+proxy: 127.0.0.1:8080
+</code></pre>
+<h3 id="case-insensitive-path-prefixes">Case-insensitive path prefixes</h3>
+<p><code>/goapi:</code> is case-sensitive; <code>~/goapi:</code> is case-insensitive. Both match path segments: the latter matches <code>/goapi</code>, <code>/GoApi</code>, and <code>/GOAPI/orders</code>, but not <code>/goapix</code> or <code>/other/goapi</code>. This is not regex syntax; use routes/match.rule for regex. <code>strip_prefix: true</code> removes the actual matched prefix while preserving the remaining path's case.</p>
+<p><code>~/</code> guarantees case-insensitive matching for ASCII paths only. Middleware references are deduplicated across inherited and imported declarations; duplicates within one <code>use</code> declaration are errors. The same prefix cannot be declared using both <code>/path</code> and <code>~/path</code>.</p>
+<pre><code class="language-yaml">site: :9090
+~/goapi:
+  proxy: 127.0.0.1:8080
+  cors:
+    allowed_origins: [&quot;*&quot;]
+    allowed_methods: [GET, POST, OPTIONS]
+    allowed_headers: [&quot;*&quot;]
+    max_age: 1728000
+</code></pre>
+<h3 id="file_server-alias">file_server alias</h3>
+<p>Path keys also accept a proxy address directly, equivalent to a <code>proxy</code> field under that path:</p>
+<pre><code class="language-yaml">site: :9090
+~/goapi: 127.0.0.1:8080
+spa: ./www
+</code></pre>
+<p>API requests preserve their paths when forwarded; other paths use the SPA. Ordinary <code>/api</code> keys also support this shorthand. Use a mapping with <code>proxy</code> when adding route options such as <code>strip_prefix: true</code>.</p>
+<p><code>file_server</code> aliases <code>serve</code>, accepting a directory string or an object, including under path keys and routes lists. Specify the directory explicitly. Do not combine file_server, serve, spa, or other terminal actions on the same route. Keep using spa for Vue/React SPA shorthand. Generic <code>action: {type: file_server, root: ./public}</code> also compiles to serve.</p>
+<pre><code class="language-yaml">site: example.com
+file_server: /www/example.com
+</code></pre>
+<pre><code class="language-yaml">site: localhost
+file_server: {root: ./www, index: index.html}
+/api:
+  proxy: localhost:9001
+</code></pre>
+<h3 id="php-websites-wordpress--laravel">PHP websites (WordPress / Laravel)</h3>
+<p>The <code>php</code> action combines PHP-FPM, static files, directory indexes and front-controller fallback:</p>
+<pre><code class="language-yaml">site: example.com
+https: true
+compress: true
+php:
+  root: /var/www/wordpress
+  upstream: unix:///run/php/php8.3-fpm.sock
+  deny_scripts: [/wp-content/uploads]
+  keep_conn: true
+  max_idle_conns: 16
+  idle_timeout: 60
+</code></pre>
+<p>Use the actual PHP-FPM socket path, <code>fastcgi://127.0.0.1:9000</code>, or an address list. PHP-FPM runs separately; both processes must have access to the same website files. Use TCP on Windows.</p>
+<p>By default, requests check the requested file, a directory's <code>index.php</code>, then its <code>index.html</code>, and finally <code>/index.php</code>. PHP scripts and PATH_INFO go to PHP-FPM; both PHP and HTML directory indexes receive a trailing-slash redirect preserving the query. Front-controller fallback preserves the original <code>REQUEST_URI</code>, query and request body. Explicit requests for nonexistent PHP scripts return 404 and never serve PHP source as static content.</p>
+<p>Optional fields: <code>index</code> (default <code>index.php</code>, must be a PHP file), <code>try_files</code> (default <code>[&quot;{path}&quot;, &quot;{path}/index.php&quot;, &quot;{path}/index.html&quot;, &quot;/index.php&quot;]</code>), <code>timeout</code> (seconds), <code>keep_conn</code>, <code>max_idle_conns</code>, <code>idle_timeout</code> (seconds), and <code>params</code> (additional CGI variables). <code>try_files</code> checks regular files within root in order, executes PHP candidates through PHP-FPM, and returns 404 when none exists. Set <code>try_files: [&quot;{path}&quot;, &quot;{path}/index.php&quot;, &quot;{path}/index.html&quot;]</code> to retain directory indexes while disabling root front-controller fallback.</p>
+<p>Keep <code>deny_scripts</code> in production WordPress configurations. High-concurrency deployments can enable <code>keep_conn</code>, which is off by default. The example retains up to 16 idle connections and reclaims them after 60 seconds; adjust these values for PHP-FPM worker counts and actual load.</p>
+<p>Common PHP source backup suffixes return 404, case-insensitively: <code>.php~</code>, <code>.php.bak</code>, <code>.php.old</code>, <code>.php.orig</code>, <code>.php.backup</code>, <code>.php.save</code>, <code>.php.swp</code>, <code>.php.swo</code>, <code>.php.tmp</code>. Hidden files remain blocked by static serving rules. Ordinary static resources containing <code>.php</code>, such as <code>prism.php.min.js</code> and <code>syntax.php.css</code>, remain accessible. These rules do not detect every possible backup name; keep other backups outside the website root.</p>
+<p>Use <code>php</code> at site level, under a path key, or in <code>routes</code>. Each route accepts one terminal action. Set <code>strip_prefix: true</code> explicitly to remove a mounting prefix; the application must also support that deployment prefix. With child routes, put root governance such as compression on an explicit <code>/</code> route.</p>
+<p><strong>Disable script execution in uploads</strong>: set <code>deny_scripts: [/wp-content/uploads]</code> under <code>php</code>. No directories are denied by default. Configured directories reject PHP scripts, PATH_INFO and PHP directory indexes with 403 while allowing static resources. Entries start with <code>/</code>, are relative to <code>root</code>, and match case-insensitively on directory boundaries; <code>/wp-content/uploads-extra</code> remains accessible. Checks happen after stripping a mounting prefix and also cover resolved in-root symlink targets and scripts selected by custom <code>try_files</code>.</p>
+<p><strong>TLS termination at a load balancer</strong>: configure the actual proxy IPs or CIDRs in global <code>config.yaml</code>, for example <code>real_ip: {trusted_proxies: [&quot;192.0.2.10/32&quot;]}</code>. This is global configuration, not site YAML.</p>
+<p>A direct trusted peer supplying a single <code>X-Forwarded-Proto: https</code> value causes PHP to receive <code>HTTPS=on</code> and, without an explicit Host port, <code>SERVER_PORT=443</code>. <code>https: true</code> also avoids redirecting this request again. Untrusted sources, repeated values and comma-separated protocol chains are not accepted. The proxy should overwrite this header with the actual client protocol. This applies to lower-level FastCGI proxy actions too.</p>
+<p><strong>Subpath mapping</strong>: <code>php</code> preserves the URL path by default, while <code>file_server</code> automatically strips the matched route prefix. For route <code>/blog</code>, root <code>/var/www</code> and request <code>/blog/x</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Physical path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>php: {root: /var/www, upstream: ...}</code></td>
+<td><code>/var/www/blog/x</code> (like Nginx root)</td>
+</tr>
+<tr>
+<td><code>strip_prefix: true</code> + <code>php: {root: /var/www, upstream: ...}</code></td>
+<td><code>/var/www/x</code></td>
+</tr>
+<tr>
+<td><code>file_server: /var/www</code></td>
+<td><code>/var/www/x</code> (like Nginx alias)</td>
+</tr>
+</tbody>
+</table>
+<p>PHP's static files and scripts use the same mapping. The default <code>/index.php</code> fallback is always relative to <code>root</code>; explicitly configure <code>try_files</code> to use <code>/blog/index.php</code> as a mounted application's front controller.</p>
+<h3 id="configuration-fragments-snippets--import">Configuration fragments: snippets / import</h3>
+<p>Define document-local route governance under top-level <code>snippets</code>, and expand it with <code>import</code> at a site or route. <code>import</code> accepts a name or list of names. Fragments have no parameters or file/KV imports; <code>sites/_shared.yaml</code> shares snippets across sites. It reuses configuration, without changing runtime middleware, rate-limit, or load-balancing state scopes.</p>
+<p>Fragments accept governance fields such as cors, auth, compress, strip_prefix, use, request_headers, and response_headers. They cannot define site, port, match, routes, terminal actions, or services/transports/middlewares resources. Declare proxy/service and actions at the use site. Nested imports are supported; cycles, missing references, duplicate references, and expansion limits are errors.</p>
+<p>Merge rules:</p>
+<ul>
+<li>Repeated ordinary governance fields are errors even when equal. No deep merging of auth/cors objects or silent local overrides.</li>
+<li>request_headers / response_headers merge by case-insensitive header name. Local values win; conflicting headers from sibling imported fragments are errors.</li>
+<li>use references at one import location merge in declaration order and deduplicate. Existing site/route inheritance and duplicate-binding validation still apply.</li>
+<li>With child routes, imported root governance such as cors/auth belongs in an explicit <code>/</code> route. Site-level use and response headers retain inheritance.</li>
+</ul>
+<p>Source files retain snippets/import and comments; runtime compilation uses independent expanded nodes. Errors preserve definition locations; compile diagnostics also identify the snippet and import location. Unused definitions are checked for fields, types, references, and cycles; business semantics are validated on effective routes. Loader exposes <code>ExpandSiteV2Document</code> for effective AST inspection.</p>
+<pre><code class="language-yaml">site: localhost
+snippets:
+  public-api:
+    cors:
+      allowed_origins: [&quot;*&quot;]
+      allowed_methods: [GET, POST, OPTIONS]
+      allowed_headers: [&quot;*&quot;]
+    response_headers:
+      X-Frame-Options: DENY
+    compress: true
+/goapi:
+  import: public-api
+  proxy: localhost:9001
+/userapi:
+  import: public-api
+  response_headers:
+    X-Service: users
+  proxy: localhost:9002
+</code></pre>
+<h3 id="v2-backends-and-transports">v2 backends and transports</h3>
+<p><code>proxy</code> objects and named <code>services</code> accept <code>to</code>, <code>servers</code>, <code>discovery</code>, <code>resolver</code>, <code>timeout</code>, <code>retry</code>, <code>lb</code> / <code>loadbalancer</code>, <code>health</code> / <code>healthcheck</code>, and <code>circuitbreaker</code>. <code>servers</code> aliases <code>to</code>; using both is an error. Static addresses and discovery are mutually exclusive. Use <code>service</code> for a named reference.</p>
+<p><code>retry: 2</code> means <code>retry: {attempts: 2}</code>; <code>health: /health</code> means <code>healthcheck: {path: /health}</code>; <code>lb: least_conn</code> means <code>loadbalancer: {strategy: least_conn}</code>; <code>discovery: orders</code> means <code>discovery: {name: orders}</code>. Do not combine health/healthcheck or lb/loadbalancer. Apart from these aliases, object fields retain the service-label hierarchy.</p>
+<p>Define top-level <code>transports</code> and reference them through backend <code>loadbalancer.serverstransport</code>. Backend <code>transport</code> is unsupported.</p>
+<pre><code class="language-yaml">site: shop.example.com
+transports:
+  mesh:
+    tls: {enabled: true, insecureskipverify: false}
+services:
+  orders:
+    to: ['https://127.0.0.1:8080']
+    timeout: 500ms
+    retry: 2
+    health: /health
+    loadbalancer: {strategy: least_conn, serverstransport: mesh}
+/orders:
+  service: orders
+/api:
+  proxy: {to: 'localhost:8080', timeout: 2s, retry: 2, lb: least_conn, health: /health}
+</code></pre>
+<h3 id="legacy-fields-versus-v2">Legacy fields versus v2</h3>
+<table>
+<thead>
+<tr>
+<th>Legacy field</th>
+<th>v2 syntax</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>domain / force_https</td>
+<td>site / https</td>
+</tr>
+<tr>
+<td>serverstransports / route middlewares</td>
+<td>transports / use (string or list)</td>
+</tr>
+<tr>
+<td>headers / res_headers</td>
+<td>request_headers / response_headers</td>
+</tr>
+<tr>
+<td>enable_tracing</td>
+<td>tracing</td>
+</tr>
+<tr>
+<td>proxy_cache / proxy_cache_ttl / proxy_cache_key</td>
+<td>cache: {enabled, ttl, key}</td>
+</tr>
+<tr>
+<td>Route upstream / timeout</td>
+<td>proxy: {to, timeout}</td>
+</tr>
+<tr>
+<td>fastcgi_<em>, insecure_skip_verify, host, sticky_</em> and advanced fields</td>
+<td>action: {type: proxy, ...}</td>
+</tr>
+<tr>
+<td>action: {service: x}</td>
+<td>service: x or proxy: {service: x}; generic action requires type</td>
+</tr>
+</tbody>
+</table>
+<p>The examples below use v2; complex routes may use routes and advanced action mappings.</p>
+<h2 id="1-root-fields-v2">1. Root fields (v2)</h2>
+<pre><code class="language-yaml">site: &quot;example.com&quot; # Required. The site's domain
+entrypoints: [&quot;web&quot;, &quot;websecure&quot;] # Optional. Listeners to bind to (empty binds to all of them)
+port: 0 # Optional. A dedicated port for this site; 0 uses the global listeners
+https: true # Optional. Redirect HTTP to HTTPS automatically
+connect_override: home # Optional. Allow this Connect peer to take over the same exact hostname
+description: &quot;User Center&quot; # Optional. Site description
+disable_trace_id: false # Optional. Suppress X-Trace-Id injection
+# Optional. Custom certificate and key paths; once set this certificate is used instead of global auto-issuance
+tls:
+  enabled: true
+  cert_file: &quot;./certs/example.com.crt&quot;
+  key_file: &quot;./certs/example.com.key&quot;
+defaults:
+  timeout: 30 # Optional. Default timeout, in seconds
+ip_restriction:
+  allow_ips: [&quot;192.168.0.0/16&quot;]
+  deny_ips: []
+# Middleware definitions (optional)
+middlewares:
+  limit-10:
+    type: &quot;ratelimit&quot;
+    config:
+      qps: &quot;10&quot;
+  strip-api:
+    type: &quot;strip_prefix&quot;
+    config:
+      prefixes: &quot;/api&quot;
+routes:
+  - name: &quot;default&quot;
+    match:
+      path_prefix: &quot;/&quot;
+    proxy: [&quot;127.0.0.1:8080&quot;]
+</code></pre>
+<p><code>connect_override</code> supports zero-downtime migration of an existing Cloud Site to LiteGate Connect. It must name a configured <code>connect.server.peers</code> entry and is valid only for an exact DNS hostname. The local route remains active until that peer registers the same hostname; after takeover, an offline peer remains fail-closed and does not fall back to the local upstream.</p>
+<p>Field reference:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>site</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Required. The site's domain</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>entrypoints</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">Optional. Names of the global listeners to bind to (e.g. <code>[&quot;web&quot;, &quot;websecure&quot;]</code>); empty binds to all of them</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>port</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">Optional. A dedicated listening port for this site</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>https</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Optional. Redirect HTTP to HTTPS automatically</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>description</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. Site description</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>disable_trace_id</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Optional. Suppress the <code>X-Trace-Id</code> response header</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>tls</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">Optional. Custom (purchased) TLS certificate configuration</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>tls.enabled</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Required when using a custom certificate. Enables this site's own TLS certificate</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>tls.cert_file</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Required when using a custom certificate. Path to the certificate file (e.g. <code>./certs/example.crt</code>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>tls.key_file</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Required when using a custom certificate. Path to the private key (e.g. <code>./certs/example.key</code>)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Note: with <code>tls</code> enabled, the domain matches by exact SNI and uses <strong>only</strong> this certificate — it no longer falls back to global automatic issuance, and a missing or unloadable certificate fails the handshake outright. The certificate is read when the site configuration reloads, so after a renewal you must save the configuration again. A global HTTPS listener still has to be enabled for any of this to apply.
+| <code>defaults.timeout</code> | int | Optional. Default timeout in seconds |
+| <code>ip_restriction</code> | object | Optional. Site-level IP allow/deny list |
+| <code>middlewares</code> | map | Optional. Middleware definitions (like Traefik's middlewares) |
+| <code>services</code> | map | Optional. Named Service definitions, referenced by routes with <code>action.service</code> (see section 4) |
+| <code>transports</code> | map | Optional. Upstream transport settings (TLS / mTLS) referenced by services |
+| <code>routes</code> | array | Optional. Explicit routes; path shorthand or a site-level action can also be used |</p>
+</blockquote>
+<hr>
+<h3 id="forward-only-sites">Forward-only sites</h3>
+<p>A Forward site does not need <code>routes</code>. Its hostname binds one server-selected internal
+target that clients cannot override. Tokens must be at least 32 bytes; <code>token_file</code> is
+recommended in production. A target may be a dedicated L4/SOCKS5 Stream, a local L7
+Site, or a remote service registered through Connect.</p>
+<pre><code class="language-yaml">site: forward.example.com
+forward:
+  target:
+    type: stream # stream, site, or connect
+    name: rds-mysql
+  token_file: /etc/litegate/secrets/forward.token
+</code></pre>
+<p>The legacy <code>stream: rds-mysql</code> spelling remains supported and is equivalent to
+<code>target.type: stream</code>. For local Sites and Connect-published L7 Sites, every tunneled
+request is authority-bound to <code>target.name</code>, so one Forward token cannot reach another Site.</p>
+<p><code>entrypoints</code> may be omitted. When the global configuration has no explicit entrypoints, LiteGate still synthesizes <code>websecure</code> from <code>http.https_port</code>. Forward itself requires WSS/TLS. Set <code>entrypoints: [websecure]</code> only when multiple entrypoints exist and the site must be restricted to that one.</p>
+<p>Public connections use WSS at <code>/_litegate/forward/v1</code>. The hostname must be covered
+by an existing HTTPS certificate; for example, <code>*.example.com</code> covers
+<code>forward.example.com</code>.</p>
+<h2 id="2-routes">2. Routes</h2>
+<p><code>routes</code> match in order, but when several overlap — with a complex <code>rule</code> DSL, say — <code>priority</code> controls the matching order precisely.</p>
+<pre><code class="language-yaml">site: example.com
+middlewares:
+  limit-10:
+    type: ratelimit
+    config: {qps: &quot;10&quot;}
+routes:
+  - name: &quot;api-v1&quot;
+    priority: 100 # Optional. Match priority; higher matches first
+    match:
+      path_prefix: &quot;/api/v1&quot;
+      method: [&quot;GET&quot;, &quot;POST&quot;]
+      header:
+        X-Env: &quot;staging&quot;
+    use: [&quot;limit-10&quot;] # reference a middleware
+    ip_restriction:
+      deny_ips: [&quot;1.2.3.4&quot;]
+    proxy: [&quot;127.0.0.1:8080&quot;]
+</code></pre>
+<h3 id="route-fields">Route fields</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>name</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. Unique route identifier</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>priority</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">Optional. Match priority (default <code>0</code>; with mixed matching or the Rule DSL, higher wins)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>match</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">Optional. Path and condition matching block; omitted matches all requests</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>use</code></td>
+<td style="text-align:left">string / string[]</td>
+<td style="text-align:left">Optional. Middleware names to attach</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ip_restriction</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">Optional. Route-specific IP allow/deny list, overriding the site-level one</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>action</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">Advanced action configuration; direct proxy, respond, webdav and other shorthand is also supported</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-match-block">The <code>match</code> block</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>path_prefix</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Prefix path match, e.g. <code>/api</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>path</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Exact path match, e.g. <code>/health</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>rule</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Expression rule (Caddy/Traefik-style DSL), e.g. <code>Host(&quot;a.com&quot;) &amp;&amp; PathPrefix(&quot;/api&quot;)</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>method</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">Restrict to these HTTP methods, e.g. <code>[&quot;GET&quot;, &quot;POST&quot;]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>header</code></td>
+<td style="text-align:left">map</td>
+<td style="text-align:left">Header key/value conditions the request must satisfy</td>
+</tr>
+</tbody>
+</table>
+<h3 id="route-level-ip_restriction">Route-level <code>ip_restriction</code></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>allow_ips</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">IPs or CIDRs allowed through this route</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>deny_ips</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">IPs or CIDRs blocked from this route</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="3-common-action-fields">3. Common action fields</h2>
+<p>Every <code>action</code> type supports the following:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>type</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Required. Built in: <code>proxy</code>, <code>serve</code>, <code>respond</code>, <code>redirect</code>, <code>block</code>, <code>list</code>, <code>webdav</code>, <code>markdown</code>, <code>template</code>, <code>status</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>headers</code></td>
+<td style="text-align:left">map[string]string</td>
+<td style="text-align:left">Request header injection (when proxying) or response headers (in some cases)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>res_headers</code></td>
+<td style="text-align:left">map[string]string</td>
+<td style="text-align:left">Override upstream response headers</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>rate_limit</code></td>
+<td style="text-align:left">float64</td>
+<td style="text-align:left">Requests per configured window (default 1s); 0 disables</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>rate_limit_policy</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left"><code>static</code> or <code>adaptive</code> (<code>adaptive</code> only supports <code>token_bucket</code> with 1s window)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>rate_limit_algorithm</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left"><code>token_bucket</code> (default), <code>sliding_window</code>, <code>sliding_window_log</code>, or <code>fixed_window</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>rate_limit_window</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Window duration (e.g. <code>500ms</code>, <code>1s</code>, <code>10s</code>, <code>1m</code>, min 1ms), for all algorithms</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>auth</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">Basic / JWT authentication</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cors</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">CORS configuration</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>waf</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">WAF configuration</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>circuit_breaker</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">Circuit breaker configuration</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ids</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">Unified control engine / OIDC / remote authorization</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>remote_auth</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">Remote authorization / OIDC (backwards compatible)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>route_selector</code></td>
+<td style="text-align:left">map[string]string</td>
+<td style="text-align:left">Multi-tenant or multi-dimensional route selection</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>route_tags_header</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Explicitly enable a client route-tag request header; unset, the default header is only honoured for trusted selector clients</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="alert alert-note"><p>Validator requirements:</p>
+<ul>
+<li><code>proxy</code> must set either <code>upstream</code> or <code>service_name</code></li>
+<li><code>serve</code> / <code>webdav</code> / <code>markdown</code> must set <code>root</code></li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="4-proxy">4. Proxy</h2>
+<pre><code class="language-yaml">site: example.com
+action:
+  type: proxy
+  namespace: &quot;default&quot;
+  upstream: [&quot;127.0.0.1:8080&quot;]
+  service_name: &quot;order-api&quot;
+  service_tag: &quot;v2&quot;
+  host: &quot;backend.internal&quot;
+  proto: &quot;http&quot; # http / https / ws / wss / fastcgi / grpc
+  insecure_skip_verify: false
+  strip_prefix: &quot;/api&quot;
+  prepend_prefix: &quot;/gateway&quot;
+  timeout: 30
+  retry: 0
+  disable_chunked: false
+  lb_policy: round_robin
+  prefer_h2: false
+  mtls: false
+  flush_interval: 0
+  # Governance and observability parameters (optional)
+  gray_weight: 10 # canary weight (10 sends 10% of traffic to this route)
+  log_level: &quot;info&quot; # per-route log level override
+  enable_tracing: true # enable distributed tracing for this proxy path
+  health_check:
+    enabled: true
+    path: &quot;/health&quot;
+    interval: 10s
+    timeout: 3s
+  route_selector:
+    sid: &quot;{head.X-Tenant-ID}&quot;
+  route_tags_header: &quot;X-LiteGate-Tags&quot;
+</code></pre>
+<h3 id="fast-http11-upstream-client-upstream_client">Fast HTTP/1.1 upstream client (<code>upstream_client</code>)</h3>
+<p>On by default and normally needs no configuration: when the backend is plain HTTP/1.1 (no TLS, gRPC or HTTP/2), the proxy uses a synchronous connection pool that lowers the CPU cost of each request; other backends automatically use the standard client. Set the field only to turn it off or to enforce it. A site value applies to every proxy route of the site, a route value overrides it, and changes take effect on site hot reload:</p>
+<pre><code class="language-yaml">site: api.example.com
+/api:
+  proxy: 10.0.0.11:8080, 10.0.0.12:8080
+/legacy:
+  proxy: 10.0.0.13:8080
+  upstream_client: standard # off: this route always uses Go's net/http Transport
+/orders:
+  proxy: 10.0.0.14:8080
+  upstream_client: fast # enforced: this route must be able to use the fast client, or the site fails to load
+</code></pre>
+<ul>
+<li>The default and a site-level <code>fast</code> mean &quot;use it where possible&quot;: <code>https://</code>, <code>grpc</code>, <code>prefer_h2</code> and mTLS/TLS routes quietly keep the standard client. A route-level <code>fast</code> is strict and those configurations fail to load; discovered endpoints are only known at runtime and fall back with one warning logged per endpoint.</li>
+<li>To turn it off globally: <code>http.upstream_client: standard</code> in <code>config.yaml</code>.</li>
+<li>WebSocket and other protocol upgrades keep using the tunnel path.</li>
+<li>A few requests still go to the standard client so behaviour stays identical: <code>Expect: 100-continue</code>, request trailers, and request bodies of unknown length or over 64KB.</li>
+<li>To confirm what is used: the metric <code>litegate_upstream_client_requests_total{route, client, fallback}</code> counts <code>client=fast/standard</code> and the fallback reason per route; a trusted request with <code>X-LiteGate-Debug: true</code> gets the response header <code>X-LiteGate-Upstream-Client</code> set to <code>fast</code> or <code>standard; fallback=&lt;reason&gt;</code>.</li>
+</ul>
+<h3 id="fastcgi-proxying">FastCGI proxying</h3>
+<p>For PHP-FPM and other FastCGI backends:</p>
+<pre><code class="language-yaml">site: example.com
+action:
+  type: proxy
+  proto: &quot;fastcgi&quot; # must be fastcgi
+  fastcgi_root: &quot;/var/www/html&quot; # Required when proto is fastcgi. The backend's document root
+  fastcgi_split_path: &quot;.php&quot; # Optional. Suffix splitting script from PATH_INFO, default &quot;.php&quot;
+  fastcgi_extensions: [&quot;.php&quot;] # Optional. Allow-list of executable extensions, default [&quot;.php&quot;]. &quot;*&quot; allows all, with the obvious risk
+  fastcgi_params: # Optional. Extra CGI environment variables passed to PHP-FPM
+    APP_ENV: production
+    REDIRECT_STATUS: &quot;200&quot;
+  fastcgi_keep_conn: true # Optional. Reuse pooled connections, default false
+  fastcgi_max_idle_conns: 10 # Optional. Maximum idle connections kept in the pool, default 2
+  fastcgi_idle_timeout: 60 # Optional. Idle connection reclaim timeout in seconds; 0 means never
+  upstream:
+    - &quot;fastcgi://127.0.0.1:9000&quot; # a backend addressed over TCP
+    # or a Unix socket:
+    # - &quot;unix:///var/run/php-fpm.sock&quot;
+</code></pre>
+<p>Field reference:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>namespace</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. Upstream namespace</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>upstream_type</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">How the upstream is resolved</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>upstream</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">Static upstream list</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>service_name</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Service discovery name</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>service_tag</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Service tag</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>host</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Override the request Host</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>proto</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Upstream protocol</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fastcgi_root</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">FastCGI only. The backend's document root. Required when <code>proto</code> is <code>fastcgi</code>.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fastcgi_split_path</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">FastCGI only. Suffix splitting the script path from PATH_INFO (e.g. <code>.php</code>). Defaults to <code>.php</code>.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fastcgi_extensions</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">FastCGI only. Allow-list of script extensions executable over FastCGI (e.g. <code>[&quot;.php&quot;]</code>). Defaults to <code>[&quot;.php&quot;]</code>. <code>[&quot;*&quot;]</code> permits any extension, which risks arbitrary file execution if PHP-FPM is misconfigured.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fastcgi_params</code></td>
+<td style="text-align:left">map[string]string</td>
+<td style="text-align:left">FastCGI only. Extra CGI environment variables such as <code>APP_ENV</code> and <code>REDIRECT_STATUS</code>; cannot override path, request or built-in <code>HTTP_*</code> variables.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fastcgi_keep_conn</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">FastCGI only. Reuse pooled connections to the backend. Defaults to <code>false</code>.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fastcgi_max_idle_conns</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">FastCGI only. Maximum idle connections in the pool (default <code>2</code>, cannot be negative).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fastcgi_idle_timeout</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">FastCGI only. Idle connection reclaim timeout in seconds (default <code>0</code>, meaning never; cannot be negative).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>insecure_skip_verify</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Skip TLS verification. Note: under <code>mtls: true</code> the certificate chain and SPIFFE identity are still verified strictly even with this set — it only emits a warning and cannot be bypassed, which keeps the zero-trust guarantee intact.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>strip_prefix</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Remove this path prefix before forwarding</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>prepend_prefix</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Prepend this path prefix before forwarding</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>timeout</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">Timeout in seconds</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>retry</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">Retry count, cannot be negative; non-idempotent requests are retried only when the request is known not to have been sent</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>retry_on_status</code></td>
+<td style="text-align:left">int[]</td>
+<td style="text-align:left">Optional. Upstream status codes that trigger failover and retry (e.g. <code>[502, 503, 504]</code>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>retry_methods</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">Optional. HTTP methods allowed to retry (e.g. <code>[&quot;GET&quot;, &quot;HEAD&quot;]</code>; idempotent methods only by default)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>passive_failure_status</code></td>
+<td style="text-align:left">int[]</td>
+<td style="text-align:left">Optional. Status codes counted against passive health and outlier ejection (e.g. <code>[500, 502, 503, 504]</code>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>xff_mode</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. X-Forwarded-For handling: <code>transparent</code> (pass through untouched) or <code>boundary</code> (sanitize at the boundary)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>disable_chunked</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Disable chunked transfer; buffers the body to compute its length and returns 413 above 2 MiB</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>lb_policy</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Load-balancing policy: <code>round_robin</code>, <code>ip_hash</code>, <code>weighted</code> / <code>weighted_round_robin</code> (aliases for smooth weighted round robin), <code>p2c</code> (power-of-two-choices over in-flight requests and latency), <code>least_conn</code> (fewest in-flight requests, uniform random selection among ties), <code>cookie</code> (session affinity)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>prefer_h2</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Prefer HTTP/2</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>upstream_client</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Follows the global <code>http.upstream_client</code> (default <code>fast</code>: synchronous pool for plaintext HTTP/1.1 upstreams, standard client for the rest); <code>standard</code> turns it off; a route-level <code>fast</code> is strict. See below</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>mtls</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Enable mTLS</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>flush_interval</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">Flush interval; <code>-1</code> flushes immediately</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>gray_weight</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">Optional. Share of traffic for this canary route (0 - 100)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>log_level</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. Per-route access-log level override (<code>none</code> / <code>error</code> / <code>warn</code> / <code>info</code> / <code>debug</code>); applies to every action type</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>enable_tracing</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Optional. Always sample and export this route's edge span (ignores <code>sample_ratio</code>); requires global <code>tracing.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>health_check</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">Health check configuration</td>
+</tr>
+</tbody>
+</table>
+<h3 id="caching-rewriting-session-affinity-concurrency-limits-and-grpc">Caching, rewriting, session affinity, concurrency limits and gRPC</h3>
+<p>All of these go on a proxy route's <code>action</code>:</p>
+<pre><code class="language-yaml">site: example.com
+action:
+  type: proxy
+  upstream: [&quot;127.0.0.1:8080&quot;]
+  # Reverse-proxy content cache
+  proxy_cache: true
+  proxy_cache_ttl: 30 # cache seconds, default 10; also honours upstream Cache-Control, taking the shorter
+  proxy_cache_key: &quot;{host}:{uri}:{header.Accept-Language}&quot; # optional; {uri} includes the query string, {path} does not
+  # URL regexp rewrite (runs before auth / WAF / rate limiting)
+  rewrite:
+    pattern: &quot;^/old/(.*)$&quot;
+    target: &quot;/new/$1&quot;
+  # Cookie session affinity
+  lb_policy: cookie # others: round_robin / ip_hash / weighted / weighted_round_robin / p2c / least_conn
+  sticky_cookie_name: &quot;LG_STICKY_BACKEND&quot; # optional, this is the default
+  sticky_cookie_ttl: 1800 # optional, seconds, default 1800
+  # Concurrency limit
+  limit_conn: 100
+  limit_conn_key: &quot;ip&quot; # &quot;ip&quot; limits per client IP; empty limits the route as a whole
+  # First-class gRPC: proto: grpc (cleartext h2c; with mtls:true it upgrades to grpcs / TLS)
+  proto: grpc
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>proxy_cache</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Enable response caching. Credential-bearing requests require an explicit nonempty identity key. Set-Cookie/private responses, unknown Vary dimensions, incomplete bodies, non-GET/HEAD methods, and WS/gRPC/SSE bypass caching</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>proxy_cache_ttl</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">Cache lifetime in seconds, default 10</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>proxy_cache_key</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Custom cache-key template supporting <code>{host}</code>/<code>{uri}</code> (with query string)/<code>{path}</code>/<code>{method}</code>/<code>{header.X}</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>rewrite.pattern</code> / <code>rewrite.target</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Go regexp rewrite of <code>URL.Path</code>, <code>$1</code> referencing a capture group; does not re-run route matching</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>lb_policy: cookie</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Cookie session affinity. The cookie is AES-GCM encrypted, HttpOnly, and Secure over HTTPS</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>sticky_cookie_name</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Affinity cookie name, default <code>LG_STICKY_BACKEND</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>sticky_cookie_ttl</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">Affinity cookie lifetime in seconds, default 1800</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>limit_conn</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">Maximum concurrent in-flight requests; over the limit returns 503 with Retry-After</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>limit_conn_key</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left"><code>ip</code> limits per client IP; empty limits the route as a whole</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>proto: grpc</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">First-class gRPC proxying with automatic HTTP/2 and trailer pass-through; upgrades to grpcs when <code>mtls:true</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Related global settings (config.yaml): multi-node cookie affinity needs <code>sticky_key</code> (a shared 32-byte hex key). <code>cache.proxy_cache.backend</code> selects local or redis; enabling cache.redis alone does not switch proxy caching. <code>cache.proxy_cache_max_entries</code> caps local entries. Proxy-cache object size defaults to 256KB. Redis stale responses default to disabled.</p>
+</blockquote>
+<p>Proxy response invalidation: successful upstream 2xx writes can use <code>on_success.invalidate_proxy_cache: [read-route-name]</code>, or <code>[&quot;*&quot;]</code> for the current site. Existing <code>invalidate_cache</code> only clears template fetch_json tags. Dashboard <code>POST /api/proxy-cache/purge</code> accepts scope all/site/route/key and uses existing authentication and CSRF checks. Redis invalidation rotates generations without full database scans; older fills cannot revive invalidated responses. Local scope invalidation conservatively clears the whole process cache. Failed Redis write-side invalidation is logged, retried up to three times, and exposed as <code>X-LiteGate-Cache-Invalidation: failed</code>; retries are not durable.</p>
+<hr>
+<h3 id="running-old-and-new-services-side-by-side-mcpai-must-follow-this">Running old and new services side by side (MCP/AI must follow this)</h3>
+<p><code>rewrite</code> is not Nginx's <code>rewrite ... last</code>: it only changes the path sent upstream on the route that already matched. It does not re-match other routes and cannot switch the upstream.</p>
+<p>When the user asks to &quot;keep the old service running and move some traffic to a new one by query or header&quot;, the AI must generate two proxy routes: a high-priority conditional route pointing at the new service, and a low-priority catch-all keeping the old one. Do not claim that a rewrite will jump to another route.</p>
+<pre><code class="language-yaml">site: example.com
+routes:
+  - name: oauth-new
+    priority: 100
+    match:
+      path: &quot;/oauthcallback&quot;
+      rule: 'Query(&quot;state&quot;, &quot;optional_state_id&quot;)'
+    rewrite:
+      pattern: &quot;^/oauthcallback$&quot;
+      target: &quot;/new_oauthcallback&quot;
+    proxy: [&quot;new-oauth-service:8080&quot;]
+  - name: oauth-old
+    priority: 10
+    match:
+      path: &quot;/oauthcallback&quot;
+    proxy: [&quot;old-oauth-service:8080&quot;]
+</code></pre>
+<p>MCP call order: read and preserve the existing configuration with <code>get_site_config</code>, validate the complete YAML with <code>validate_site_config</code>, and only then call <code>save_site_config</code>. Do not use <code>create_proxy_site</code> to modify such a site — it can only produce a single route. After saving, call <code>lookup_route</code> at least twice, to verify the conditional match and the catch-all separately.</p>
+<h3 id="post-success-actions-for-pure-api-backends-on_success">Post-success actions for pure API backends (<code>on_success</code>)</h3>
+<p>When the page is rendered by LiteGate's <code>template</code> action and the backend only exposes a JSON API, cache invalidation and the HTMX protocol can stay in gateway configuration:</p>
+<pre><code class="language-yaml">site: example.com
+routes:
+  - name: create-todo
+    match:
+      path: &quot;/api/todos&quot;
+      method: [&quot;POST&quot;]
+    on_success:
+      invalidate_cache: [&quot;todos&quot;]
+      htmx_trigger: [&quot;todos-changed&quot;]
+      discard_body: true
+    proxy: [&quot;127.0.0.1:9000&quot;]
+</code></pre>
+<p>Success means strictly <code>200</code> through <code>299</code>. On <code>3xx</code>, <code>4xx</code> and <code>5xx</code> none of these actions run and the error body still reaches the client. <code>htmx_trigger</code> overrides an upstream response header of the same name; <code>invalidate_cache</code> corresponds to <code>fetch_json.cache_tags</code>. The YAML route match field is <code>method</code>; in the JSON representation it is <code>methods</code>.</p>
+<p>Templates may come from files under <code>template_root</code>, or from litemesh/Consul KV with <code>template_kv_mode</code> enabled; <code>on_success</code> is independent of how templates are stored.</p>
+<h3 id="referencing-a-named-service-v2-services--transports">Referencing a named Service (v2: <code>services</code> / <code>transports</code>)</h3>
+<p>Define &quot;how to reach the backend&quot; once as a site-level named Service and reference it from routes with <code>action.service</code>.
+The keys are the same as the service discovery tags <code>litegate.http.services.&lt;name&gt;.*</code> and <code>litegate.http.serverstransports.&lt;name&gt;.*</code>, and so are the validation rules.</p>
+<pre><code class="language-yaml">site: example.com
+transports:
+  mesh:
+    tls:
+      enabled: true
+      clientcertificate: litemesh # mutual TLS with the Litemesh identity
+      insecureskipverify: false
+services:
+  orders:
+    discovery:
+      name: orders # service name in discovery; mutually exclusive with servers
+      selector:
+        match: {version: v2} # hard boundary: only instances whose metadata matches
+        meta: {zone: a} # soft preference: preferred, falls back when none match
+    timeout: 5s # end-to-end timeout of one request; 500ms etc. allowed
+    loadbalancer:
+      strategy: least_conn
+      server: {port: 8080, scheme: https}
+      serverstransport: mesh
+    healthcheck: {path: /health, interval: 10s}
+    retry: {attempts: 2}
+    circuitbreaker: {enabled: true, timeout: 60, maxrequests: 1, tripthreshold: 3}
+  legacy:
+    to: [&quot;http://10.0.0.1:8080&quot;, &quot;http://10.0.0.2:8080&quot;] # static backends
+routes:
+  - match: {path_prefix: /orders}
+    service: orders
+  - match: {path_prefix: /v2/orders}
+    service: orders
+</code></pre>
+<p>Rules:</p>
+<ul>
+<li>A route that references a <code>service</code> cannot also set upstream fields inline (<code>service_name</code>, <code>upstream</code>, <code>lb_policy</code>, <code>timeout</code>, <code>retry</code>, <code>circuit_breaker</code>, <code>health_check</code>, <code>route_selector</code>, <code>route_meta</code>, <code>service_port</code>, <code>proto</code>, <code>insecure_skip_verify</code>, <code>mtls</code>); loading fails otherwise. A route's backend has exactly one source of configuration.</li>
+<li>Exactly one of <code>discovery.name</code> and <code>servers</code> must be set; <code>selector</code> only works with <code>discovery</code>.</li>
+<li>Routes referencing the same Service share health and circuit-breaker state; a discovery-based Service also shares one load balancer, while static <code>servers</code> keep a round-robin position per route.</li>
+<li>The inline form (writing <code>service_name</code>, <code>timeout</code>, ... directly in <code>action</code>) keeps working and behaves the same as referencing a Service.</li>
+<li>The <code>retry</code> and <code>circuit_breaker</code> middleware types are deprecated; use the Service's <code>retry</code> / <code>circuitbreaker</code> instead.</li>
+</ul>
+<h2 id="5-static-file-and-directory-actions">5. Static file and directory actions</h2>
+<h3 id="serve"><code>serve</code></h3>
+<pre><code class="language-yaml">site: example.com
+compress: true
+spa:
+  root: &quot;/var/www/html&quot;
+  index: &quot;index.html&quot;
+  file: &quot;&quot;
+  not_found_file: &quot;404.html&quot;
+  cache_control: &quot;public, max-age=3600&quot;
+  try_files: [&quot;{path}&quot;, &quot;/index.php&quot;] # Optional. Fall back through candidate files; a last entry starting with / is an internal redirect fallback (max 5, to prevent loops). Suits a PHP front controller
+  # --- Serve KV auto-deployment mode (optional) ---
+  kv_mode: true # enable hot deployment of a static ZIP
+  kv_provider: &quot;litemesh&quot; # driver: litemesh, consul, http
+  kv_key: &quot;litegate/config/main&quot; # key to watch; for http, the full endpoint URL
+  keep_versions: 3 # how many historical version bundles to keep locally (default 3)
+</code></pre>
+<h3 id="webdav"><code>webdav</code></h3>
+<pre><code class="language-yaml">site: example.com
+webdav:
+  root: &quot;/data/shared&quot;
+  web_ui: true
+  read_only: false
+  direct_download: true # Optional. Allow direct file download, skipping the web player or serving as an attachment
+  allow_browse: true # Optional. Let anonymous visitors browse directories in the web UI (pairs with auth)
+</code></pre>
+<h3 id="markdown"><code>markdown</code></h3>
+<pre><code class="language-yaml">site: example.com
+markdown:
+  root: &quot;./docs&quot;
+  index: &quot;README.md&quot;
+  render_markdown: true
+  title: &quot;Project Docs&quot;
+  show_hidden: false
+</code></pre>
+<p>Field reference:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>root</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Required. Root directory</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>index</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Default index page</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>file</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Serve one fixed file</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>not_found_file</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Custom 404 file</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>spa</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">SPA fallback to <code>index.html</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>compress</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Enable compression</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cache_control</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Cache-Control header</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>try_files</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">serve only. Fall back through candidate files; a last entry starting with <code>/</code> acts as an internal redirect fallback (capped at 5 to prevent loops)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>kv_mode</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Enable KV/HTTP auto-deployment of a front-end static ZIP</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>kv_provider</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Version driver: <code>litemesh</code>, <code>consul</code>, <code>http</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>kv_key</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">KV key to watch, or the full API URL</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>keep_versions</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">How many historical version directories each node keeps locally (default 3)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>web_ui</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">WebDAV file management UI</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>read_only</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">WebDAV read-only</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>direct_download</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">WebDAV only. Allow direct file download, skipping the previewer and supporting unauthenticated direct links</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>allow_browse</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">WebDAV only. Allow anonymous users to browse directories in the web UI</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>title</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Title for the listing / markdown page</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>show_hidden</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Show hidden files</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>render_markdown</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Enable markdown rendering</td>
+</tr>
+</tbody>
+</table>
+<h3 id="template"><code>template</code></h3>
+<p>Server-side template rendering. The main template and its partials use <code>html/template</code>, which applies context-sensitive escaping against XSS automatically.</p>
+<pre><code class="language-yaml">site: example.com
+action:
+  type: template
+  template: &quot;./site/pages/index.html&quot; # Main template file (under KV mode, the main template's key in KV storage); or inline it with body
+  template_root: &quot;./site&quot; # Optional. Root scanned for partials, reusable as {{ template &quot;partials/header.html&quot; . }} (only when template_kv_mode is false)
+  body: &quot;&quot; # Inline template string (alternative to template)
+  status: 200
+  content_type: &quot;text/html; charset=utf-8&quot;
+  headers: {}
+  # --- Template KV auto-deployment mode (optional) ---
+  template_kv_mode: true # load template files from KV storage
+  template_kv_provider: &quot;litemesh&quot; # KV driver: litemesh or consul
+  template_kv_prefix: &quot;litegate/templates/&quot; # KV key prefix watched for template files
+  template_kv_namespace: &quot;default&quot; # Optional. Litemesh-only namespace
+  # Fetch backend JSON APIs concurrently at render time (merged into .Data)
+  fetch_json:
+    - key: &quot;weather&quot; # merged key name, reachable as {{ .Data.weather }}
+      url: &quot;http://api.weather.local/v1&quot; # JSON endpoint fetched at render time (supports request context such as {{.Path}})
+      ttl: 60 # cache lifetime, in seconds
+      timeout: 5 # request timeout, in seconds
+      allow_private: false # allow requests to private IPs (SSRF protection)
+      max_body_size: 2097152 # maximum response body, default 2MB
+      fail_policy: &quot;ignore&quot; # failure policy: &quot;ignore&quot; (swallow and return empty) or &quot;error&quot; (respond 500)
+      forward_headers: [&quot;Authorization&quot;] # client headers forwarded to the backend endpoint
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>template</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Path to the main template (mutually exclusive with <code>body</code>, which <code>template</code> wins; under KV mode this is the main template's key in KV storage)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_root</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. Root directory scanned for partials, for composing multiple files</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>body</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Inline template string</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>status</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">Response status, default 200</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>content_type</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Defaults to <code>text/html; charset=utf-8</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>headers</code></td>
+<td style="text-align:left">map</td>
+<td style="text-align:left">Extra response headers</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_kv_mode</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Load templates from KV with hot updates</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_kv_provider</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Version driver: <code>litemesh</code>, <code>consul</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_kv_prefix</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">KV key prefix watched for template files</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_kv_namespace</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. Namespace (litemesh only)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fetch_json</code></td>
+<td style="text-align:left">array</td>
+<td style="text-align:left">Backend JSON endpoints fetched concurrently at render time</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fetch_json[].key</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Key the data is merged under in <code>.Data</code>, e.g. <code>weather</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fetch_json[].url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">URL template for the target JSON API (<code>{{ ... }}</code> parameters are rendered with <code>text/template</code> to avoid escaping)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fetch_json[].ttl</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">How long a success or failure is cached at the gateway, in seconds</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fetch_json[].timeout</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">Backend request timeout in seconds (default 5s)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fetch_json[].allow_private</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Allow requests to private IPs. Defaults to <code>false</code>, which blocks SSRF and DNS rebinding</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fetch_json[].max_body_size</code></td>
+<td style="text-align:left">int64</td>
+<td style="text-align:left">Maximum backend response size in bytes (default 2MB)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fetch_json[].fail_policy</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left"><code>ignore</code> (swallow the error, readable in the template as <code>.Errors.key</code>) or <code>error</code> (respond 500 immediately)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>fetch_json[].forward_headers</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">Client headers to forward. Their values take part in the cache key, normalized case-insensitively</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Variables and functions available in templates: <code>{{ .Host }}</code>, <code>{{ .Path }}</code>, <code>{{ .Method }}</code>, <code>{{ .ClientIP }}</code>, <code>{{ .Time }}</code>, <code>{{ header &quot;K&quot; }}</code>, <code>{{ query &quot;k&quot; }}</code>, <code>{{ cookie &quot;n&quot; }}</code>, <code>{{ .Nonce }}</code>.
+Built-in template functions:</p>
+<ul>
+<li><code>{{ htmx }}</code>: emits the embedded HTMX script tag <code>&lt;script src=&quot;/_litegate/assets/htmx-4.0.0.min.js&quot;&gt;&lt;/script&gt;</code>, with nothing to download by hand.</li>
+<li><code>{{ markdown &quot;## Content&quot; }}</code>: converts Markdown text to safe HTML at render time.</li>
+<li><code>{{ safeHTML &quot;&lt;div&gt;&quot; }}</code>: marks an HTML fragment as trusted.</li>
+<li><code>{{ lower &quot;ABC&quot; }}</code> / <code>{{ upper &quot;abc&quot; }}</code> / <code>{{ contains &quot;a&quot; &quot;b&quot; }}</code> / <code>{{ replace &quot;a&quot; &quot;b&quot; &quot;c&quot; }}</code> / <code>{{ substr &quot;abc&quot; 0 2 }}</code>: common string operations.</li>
+<li><code>{{ env &quot;APP_ENV&quot; }}</code>: reads a value from the environment-variable allow-list.</li>
+<li><code>{{ formatTime .Time &quot;2006-01-02&quot; }}</code> / <code>{{ formatDateTime .Time &quot;2006-01-02&quot; }}</code>: RFC3339 and common time formatting.</li>
+</ul>
+</blockquote>
+<blockquote class="alert alert-warning"><p><strong>Security and functional limits of distributed templates (KV mode)</strong></p>
+<ol>
+<li><strong>Markdown file loading stops working</strong>: with <code>template_kv_mode</code> enabled there is no real local template directory (<code>realTemplateRoot</code> is empty), so <code>{{markdown &quot;x.md&quot;}}</code> referencing an external file no longer works. Only inline Markdown text renders (e.g. <code>{{markdown &quot;## 文本&quot;}}</code>).</li>
+<li><strong>The generic <code>namespace</code> field is rejected</strong>: validation forbids a root <code>namespace</code> field on <code>template</code> and <code>status</code> actions. For tenant or KV namespace isolation, declare <code>template_kv_namespace</code> explicitly.</li>
+<li><strong>Security — equivalent to deploy permission</strong>: write access to the target KV prefix (<code>template_kv_prefix</code>) is equivalent to being able to inject and execute arbitrary HTML/template code in the gateway through mechanisms like <code>safeHTML</code>. Lock down the namespace and the read/write token for that KV path accordingly.</li>
+</ol>
+</blockquote>
+<h3 id="combining-htmx-with-a-backend-api-fetch_json">Combining HTMX with a backend API (fetch_json)</h3>
+<pre><code class="language-yaml">site: &quot;dashboard.example.com&quot;
+routes:
+  - name: &quot;realtime-dashboard&quot;
+    match:
+      path_prefix: &quot;/&quot;
+    template:
+      template: &quot;./pages/dashboard.html&quot;
+      fetch_json:
+        - key: &quot;metrics&quot;
+          url: &quot;http://metrics-service.internal:8000/api/v1/stats?domain={{.Host}}&quot;
+          allow_private: true # allow reaching the internal metrics service
+          ttl: 5 # short cache for fast refresh
+          fail_policy: &quot;ignore&quot;
+</code></pre>
+<p>And in the main template <code>./pages/dashboard.html</code>:</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Dashboard&lt;/title&gt;
+    &lt;!-- pulls in the built-in HTMX script --&gt;
+    {{ htmx }}
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;System Status for {{ .Host }}&lt;/h1&gt;
+    
+    &lt;!-- render the concurrently fetched JSON data --&gt;
+    &lt;div id=&quot;stats&quot;&gt;
+        &lt;p&gt;Active Users: {{ .Data.metrics.active_users }}&lt;/p&gt;
+        &lt;p&gt;Total Requests: {{ .Data.metrics.total_reqs }}&lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;!-- partial refresh via HTMX --&gt;
+    &lt;button hx-get=&quot;/stats-partial&quot; hx-target=&quot;#stats&quot;&gt;Refresh Stats&lt;/button&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h3 id="status"><code>status</code></h3>
+<p>Renders a system status dashboard, collecting live traffic, QPS and latency metrics plus historical health for every site and proxy route in the gateway.</p>
+<pre><code class="language-yaml">site: example.com
+action:
+  type: status
+  title: &quot;Service Status&quot; # Optional. Status page heading, default &quot;LiteGate System Status&quot;
+  host: &quot;self&quot; # Optional. &quot;self&quot; shows only the domain being visited; empty (default) shows every site
+  template: &quot;./site/pages/status.html&quot; # Optional. Custom status page template path (same usage as the template action)
+  template_root: &quot;./site&quot; # Optional. Root scanned for partials
+  template_debug: false # Optional. Debug mode (templates not cached)
+  template_production: true # Optional. Production mode (templates cached)
+  show_instances: false # Optional. Show the backend instances beneath each proxy route (default false)
+  # --- Template KV auto-deployment mode (optional) ---
+  template_kv_mode: true # load the status page template from KV storage
+  template_kv_provider: &quot;litemesh&quot; # KV driver: litemesh or consul
+  template_kv_prefix: &quot;litegate/templates/&quot; # KV key prefix watched for the status page template
+  template_kv_namespace: &quot;default&quot; # Optional. Litemesh-only namespace
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>title</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. Heading shown at the top of the status page</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>host</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. Which site to show. <code>self</code> shows only the domain being visited, which isolates tenants; a specific domain also works; empty (the default) shows every site in the gateway</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. Path to a custom status page template. Empty renders the gateway's built-in dashboard</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_root</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. Root directory scanned for partials</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_debug</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Optional. Debug mode, which disables template caching</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_production</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Optional. Production mode, which caches templates</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>show_instances</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Optional. Show the underlying backend instances beneath each proxy route (default false)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_kv_mode</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Optional. Load the status page template from KV with hot updates</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_kv_provider</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. Version driver: <code>litemesh</code>, <code>consul</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_kv_prefix</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. KV key prefix watched for the status page template</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>template_kv_namespace</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. Namespace (litemesh only)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>The status page is not only an HTML dashboard: a request carrying <code>?format=json</code> or <code>Accept: application/json</code> returns the whole metric set as structured JSON, so other systems can scrape it.</p>
+</blockquote>
+<hr>
+<h2 id="6-respond-and-redirect">6. <code>respond</code> and <code>redirect</code></h2>
+<h3 id="respond"><code>respond</code></h3>
+<pre><code class="language-yaml">site: example.com
+respond:
+  status: 200
+  body: &quot;Hello, LiteGate!&quot;
+  content_type: &quot;text/plain; charset=utf-8&quot;
+</code></pre>
+<h3 id="redirect"><code>redirect</code></h3>
+<pre><code class="language-yaml">site: example.com
+redirect:
+  location: &quot;https://new-site.com{path}&quot;
+  status: 301
+</code></pre>
+<hr>
+<h2 id="7-middleware-configuration">7. Middleware configuration</h2>
+<h3 id="cors"><code>cors</code></h3>
+<pre><code class="language-yaml">cors:
+  allowed_origins: [&quot;https://app.example.com&quot;]
+  allowed_methods: [&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;DELETE&quot;]
+  allowed_headers: [&quot;Authorization&quot;, &quot;Content-Type&quot;]
+  exposed_headers: [&quot;X-Request-ID&quot;]
+  allow_credentials: true
+  max_age: 3600
+</code></pre>
+<p><code>allow_credentials: true</code> requires an explicit <code>allowed_origins</code> list; combining it with <code>*</code> (or <code>enabled: true</code> without origins) fails at load time.</p>
+<h3 id="auth"><code>auth</code></h3>
+<pre><code class="language-yaml">auth:
+  type: basic
+  realm: &quot;LiteGate&quot;
+  users:
+    admin: &quot;&lt;sha256&gt;&quot;
+  permissions:
+    admin: &quot;rw&quot;
+  secret: &quot;&quot;
+  sso_enabled: false
+  allow_anonymous: false
+  jwks_url: &quot;&quot;
+  issuer: &quot;&quot;
+  audience: []
+</code></pre>
+<h3 id="waf"><code>waf</code></h3>
+<pre><code class="language-yaml">waf:
+  enabled: true
+  block_mode: true
+  sensitivity: &quot;medium&quot;
+</code></pre>
+<h3 id="circuit_breaker"><code>circuit_breaker</code></h3>
+<pre><code class="language-yaml">circuit_breaker:
+  enabled: true
+  timeout: 60
+  max_requests: 1
+  trip_threshold: 3
+</code></pre>
+<p>Select <code>strategy: failure_rate</code> for a sliding time window. Legacy action fields are <code>window_seconds</code> (default 30, range 1–3600), <code>minimum_requests</code> (default 20) and <code>failure_ratio</code> (default 0.5, range (0,1]). These require the failure-rate strategy; omitted strategy preserves consecutive failures. Service / registry tag spellings are <code>strategy</code>, <code>window</code>, <code>minimumrequests</code>, <code>failureratio</code>. See <a href="../09-advanced/circuit-breaker.html">circuit breaking</a>.</p>
+<hr>
+<h2 id="8-ids-providers-ids-and-oidc-remote_auth">8. IDS Providers (<code>ids</code>) and OIDC (<code>remote_auth</code>)</h2>
+<p><code>ids</code> invokes a registered request-decision plugin. <code>remote_auth</code> configures OIDC / OAuth2 login; it is not an alias for IDS. The old “unified control engine” description no longer represents the current configuration. The core does not implement MD5, Redis sessions, login_steering or token_steering business rules.</p>
+<p>V2 route example (<code>company-ids</code> must be implemented and registered):</p>
+<pre><code class="language-yaml">site: api.example.com
+/api:
+  proxy: localhost:8080
+  ids:
+    provider: company-ids
+    fail_policy: deny
+    selector_merge_policy: intersect
+    options:
+      policy_ref: order-read
+    header_projection:
+      allowed_headers: [X-Tenant-Ref]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>IDS field</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>provider</code></td>
+<td>Required registered IDS Provider name, independent of auth_providers</td>
+</tr>
+<tr>
+<td><code>fail_policy</code></td>
+<td>Defaults to deny; allow never overrides explicit rejection, host timeout or panic</td>
+</tr>
+<tr>
+<td><code>selector_merge_policy</code></td>
+<td>Defaults to intersect; merges static and plugin discovery filters</td>
+</tr>
+<tr>
+<td><code>runtime</code></td>
+<td>Host timeout, slow_threshold, max_concurrency and circuit_breaker</td>
+</tr>
+<tr>
+<td><code>options</code></td>
+<td>Plugin-defined string parameters, not built-in business rules</td>
+</tr>
+<tr>
+<td><code>header_projection</code></td>
+<td>allowed_headers controls trusted headers forwarded downstream</td>
+</tr>
+</tbody>
+</table>
+<p>IDS runs before the action, including proxy, respond and serve. Only proxy consumes discovery filters; the plugin cannot replace the selected Service. openapi-md5 is registered by the default entry point; upgrade to a binary containing it before use. See the <a href="../../ids-provider-plugin-guide.html">IDS Provider guide</a>.</p>
+<p>remote_auth supports enabled, provider, callback_path, enforce, inject_claims, default_redirect_back and fail_policy, using a global OIDC / OAuth2 auth_providers entry. Its retained sign_method field does not provide an MD5 IDS plugin.</p>
+<p>Old ids.enabled, url, sign_method, static_secret, lookup and session parameters are not part of the current IDSConfig. Implement the relevant business logic in a Provider and define its options.</p>
+<hr>
+<h2 id="9-rule-expression-dsl-reference">9. Rule expression DSL reference</h2>
+<p><code>match.rule</code> supports boolean logic and a set of predicate functions:</p>
+<ul>
+<li><code>Host(&quot;domain&quot;)</code>: match the domain, ignoring the port.</li>
+<li><code>Path(&quot;/path&quot;)</code>: exact path match.</li>
+<li><code>PathPrefix(&quot;/prefix&quot;)</code>: prefix match.</li>
+<li><code>PathRegex(&quot;^/api/.*$&quot;)</code>: regular expression path match.</li>
+<li><code>Method(&quot;GET&quot;)</code>: HTTP method match.</li>
+<li><code>Header(&quot;Key&quot;)</code> or <code>Header(&quot;Key&quot;, &quot;Value&quot;)</code>: header presence or value match.</li>
+<li><code>HeaderRegexp(&quot;Key&quot;, &quot;Pattern&quot;)</code>: header regular expression match.</li>
+<li><code>Query(&quot;Key&quot;)</code> or <code>Query(&quot;Key&quot;, &quot;Value&quot;)</code>: query parameter presence or value match.</li>
+<li><code>QueryRegex(&quot;Key&quot;, &quot;Pattern&quot;)</code>: query parameter regular expression match.</li>
+<li><code>Cookie(&quot;Name&quot;)</code> or <code>Cookie(&quot;Name&quot;, &quot;Value&quot;)</code>: cookie presence or value match.</li>
+<li><code>CookieRegex(&quot;Name&quot;, &quot;Pattern&quot;)</code>: cookie regular expression match.</li>
+<li><code>CookiePrefix(&quot;Name&quot;, &quot;Prefix&quot;)</code> / <code>CookieSuffix(&quot;Name&quot;, &quot;Suffix&quot;)</code>: cookie prefix/suffix match (<code>CookieIPrefix</code>/<code>CookieISuffix</code> match case-insensitively).</li>
+<li><code>ClientIP(&quot;10.0.0.0/8&quot;)</code>: match the real client IP or a CIDR range.</li>
+</ul>
+<p>Logical operators: <code>&amp;&amp;</code> (and), <code>||</code> (or), <code>!</code> (not), <code>()</code> (grouping).</p>
+<p>Example:</p>
+<pre><code class="language-yaml">match:
+  rule: 'Host(&quot;api.example.com&quot;) &amp;&amp; (Cookie(&quot;env&quot;, &quot;canary&quot;) || Header(&quot;X-Beta&quot;))'
+</code></pre>
+<hr>
+<h2 id="response-header-removal-client-ip-limits-and-site-tls-policies">Response header removal, client IP limits and site TLS policies</h2>
+<pre><code class="language-yaml">site: api.example.com
+response_headers:
+  &quot;-Server&quot;: &quot;&quot;
+  &quot;-X-Powered-By&quot;: &quot;&quot;
+  X-Gateway: LiteGate
+tls:
+  min_version: &quot;1.2&quot;
+  max_version: &quot;1.3&quot;
+  client_auth: require
+  client_ca_file: ./certs/client-ca.pem
+/api:
+  rate_limit: {rate: 10, key: ip}
+  proxy: localhost:8080
+</code></pre>
+<p>A leading <code>-</code> removes a response header at commit time; its value must be empty. An ordinary name with an empty value still sets an empty header. Route declarations override inherited site declarations. Setting and removing the same header in one declaration is rejected. Legacy <code>res_headers</code> supports removal too.</p>
+<p>The numeric <code>rate_limit: 10</code> shares a bucket within a site and route. The mapping <code>{rate: 10, key: ip}</code> gives each client IP its own bucket; <code>key: route</code> shares it. Legacy actions use <code>rate_limit: 10</code> plus <code>rate_limit_key: ip</code>; named <code>ratelimit</code> middleware accepts <code>config: {qps: &quot;10&quot;, key: ip}</code>. Rates are requests per configured window (one second by default); the default algorithm is token_bucket. Forwarded client addresses honor global <code>trusted_proxies</code>. Redis-backed limits remain distributed when keyed by IP.</p>
+<p>TLS policies work with automatic certificates independently of the manual-certificate <code>enabled</code> flag. Versions accept only <code>1.2</code> and <code>1.3</code>; the minimum defaults to 1.2 and an omitted maximum is unrestricted. HTTP/3 requires TLS 1.3, so a site capped at TLS 1.2 cannot use HTTP/3.</p>
+<p><code>client_auth</code> accepts <code>none</code> (default), <code>optional</code> (verify any supplied certificate), and <code>require</code> (require a trusted certificate). The latter two require a local PEM <code>client_ca_file</code> and reject plain HTTP requests. Policies apply during the SNI handshake and are checked against the request's target site on every request, including reused connections. Reload the site after changing the CA file.</p>
+<p>Optional <code>cipher_suites</code> lists safe Go TLS 1.2 suite names, for example <code>[TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256]</code>. TLS 1.3 suites cannot be customized.</p>
+<h3 id="client-certificate-revocation-lists-and-connection-caches">Client certificate revocation lists and connection caches</h3>
+<pre><code class="language-yaml">tls:
+  client_auth: require
+  client_ca_file: ./certs/client-ca.pem
+  client_crl_file: ./certs/client.crl.pem
+</code></pre>
+<p><code>client_crl_file</code> accepts a local PEM CRL bundle (<code>X509 CRL</code>) or one DER CRL and requires <code>client_auth: optional</code> or <code>require</code>. When enabled, each leaf and intermediate certificate in an accepted chain requires a full CRL from its issuer. Missing, expired, future-dated, incorrectly signed lists and revoked certificates reject access. Signatures are checked against the actual issuer. Multiple full lists for one issuer use the highest CRL number. Delta, indirect and distribution-point-scoped CRLs are unsupported. If the CA file explicitly trusts an intermediate, include its issuer chain through a self-signed root in that file so intermediate revocation can also be checked.</p>
+<p>CRLs are checked during TLS handshakes, including session resumption. HTTP/1, HTTP/2 and HTTP/3 requests reuse a connection-local verification result. Chains already verified by the handshake are reused only if trusted by the target site's current CA set. Each connection caches at most one successful result for the current policy, bounded by the earliest certificate or CRL expiration. Changing the target site, CA or CRL policy triggers verification again, including on existing keep-alive connections.</p>
+<p>Reload the site after updating CA or CRL files; lists are not downloaded automatically. A failed reload preserves the previous configuration. Once its CRL expires, access remains denied rather than accepting stale revocation data.</p>
+<h2 id="10-minimal-examples-v2">10. Minimal examples (v2)</h2>
+<pre><code class="language-yaml">site: api.example.com
+proxy: 127.0.0.1:8080
+</code></pre>
+<pre><code class="language-yaml">site: docs.example.com
+spa: ./public
+</code></pre>
+<h3 id="named-request-matchers">Named request matchers</h3>
+<p>Site-level <code>matchers</code> define reusable conditions. Use <code>match: &quot;@name&quot;</code> to reference one in the same site. This is a reference, not an expression; YAML requires quotes around <code>@name</code>. Names start with a letter or underscore and contain letters, digits, underscores or hyphens. Undefined references, duplicate names, empty conditions and unknown fields are rejected, including in unused definitions. A matcher definition may be a list that composes other matchers (see composition below); cycles are rejected.</p>
+<pre><code class="language-yaml">site: example.com
+matchers:
+  blocked: {path: [/xmlrpc.php, &quot;*.sql&quot;]}
+  post: {method: POST}
+routes:
+  - match: &quot;@blocked&quot;
+    respond: {status: 403}
+  - match: &quot;@post&quot;
+    proxy: localhost:6001
+proxy: localhost:8080
+</code></pre>
+<p>Inline and named conditions have identical semantics. Different criteria are ANDed; path alternatives are ORed. A plain single <code>path</code> is exact. Path lists accept exact paths and <code>*</code> wildcards, matching the whole case-sensitive request path without its query. <code>*</code> matches zero or more characters, including <code>/</code>; <code>?</code> and brackets are literal. Quote YAML strings starting with <code>*</code>. <code>method</code> accepts a string or list. Use <code>rule</code> for expressions, ANDed with other criteria.</p>
+<p>References do not change routing order: routing uses the precedence described below, and the root <code>proxy</code> is the fallback. The blocked example is a rejecting route, not a policy executed before every business route. Continue using snippets for shared governance settings.</p>
+<p>Matcher routing order: explicit <code>priority</code> first (higher wins); at equal priority, exact paths precede pathless conditional routes (rule/method/header/query), which precede prefix routes. Prefixes retain length sorting, root <code>/</code> remains the fallback, and ties retain existing source precedence and declaration order. A singleton exact-path list has the same specificity as a scalar path. Thus <code>@blocked</code> with <code>*.sql</code> and method-only <code>@post</code> run before <code>/api</code>; use higher priority to override an exact path.</p>
+<p>Paths are case-sensitive: <code>/xmlrpc.php</code> does not match <code>/XMLRPC.PHP</code>. For case-insensitive security matching use <code>PathRegexp</code> with <code>(?i)</code> in <code>rule</code>. <code>match</code> may be a list whose items must all hold: each item is <code>&quot;@name&quot;</code>, an inline condition or a <code>/prefix</code> shorthand, for example <code>match: [&quot;@api&quot;, {method: POST}]</code>. When merging, <code>rule</code> expressions are joined with AND and <code>header</code>/<code>query</code> maps are merged without repeating a key (headers case-insensitively); other fields such as <code>prefix</code>, <code>path</code> and <code>method</code> may come from one item only (an identical repeat is allowed, a different value is an error). Lists do not nest.</p>
+<p>Duplicate normalized route conditions are rejected; to reuse one matcher on several routes, add a different condition per route with a list. The routing-order change also affects legacy standard YAML, Lite, catalog-only and merged sites; set explicit priority to preserve the intended behavior of overlapping legacy routes.</p>
+<h3 id="multiple-addresses-wildcard-sites-and-redirect-placeholders">Multiple addresses, wildcard sites and redirect placeholders</h3>
+<pre><code class="language-yaml">site: a.example.com, b.example.com
+proxy: localhost:8080
+</code></pre>
+<p>Comma-separated v2 site addresses expand into independent sites sharing the configuration. Each address can include its own port. Empty or duplicate addresses are rejected; hostnames are lowercased and trailing dots removed. Single-site MCP authentication shortcuts do not support these multi-site configurations; use full YAML editing and validation.</p>
+<pre><code class="language-yaml">site: &quot;*.example.com&quot;
+respond: hello
+</code></pre>
+<p>A wildcard matches one DNS label: foo.example.com, but neither example.com nor a.foo.example.com. Exact sites precede wildcards, which precede SaaS mappings and global fallbacks. Port-specific wildcards match that port only. HTTP matching does not configure TLS certificates; HTTPS still requires a valid certificate. Loading an HTTPS wildcard site without a matching enabled DNS-01 configuration or site-specific certificate logs a configuration warning; an existing usable wildcard certificate can still be served. A wildcard site does not authorize individual certificates for arbitrary subdomains. Use an existing DNS-01 wildcard certificate; without one, issuance is denied when on-demand is disabled, and otherwise still requires on-demand authorization and rate limits.</p>
+<p>Exact sites allow <code>redirect: https://www.{host}{uri}</code>. Expanded multi-address sites are also exact sites. <code>{labels.N}</code> indexes hostname labels from the right, starting at zero, without the port: for <a href="http://www.example.com">www.example.com</a>, labels.0=com, labels.1=example and labels.2=www. Out-of-range indexes and IP addresses yield an empty string. For example, <code>site: www.a.com, www.b.com</code> with <code>redirect: https://{labels.1}.{labels.0}{uri}</code> removes www. Wildcard and catch-all sites retain restrictions on variable-derived cross-origin redirects; query/header inputs cannot change the target origin.</p>
+<h3 id="spa-index-caching-defaults">SPA index caching defaults</h3>
+<p><code>spa: ./dist</code> defaults fallback, root and directly requested index files to <code>Cache-Control: no-cache</code>, permitting storage but requiring revalidation before reuse. Ordinary JS/CSS assets retain their existing behavior; missing resources with extensions still return 404. Explicit <code>cache_control</code> or an existing Cache-Control response header takes precedence. Explicit cache_control continues to apply to all files.</p>
+<h3 id="shared-matchers-and-configuration-fragments-_sharedyaml">Shared matchers and configuration fragments (_shared.yaml)</h3>
+<p>Put <code>sites/_shared.yaml</code> in the sites directory (in KV mode, the <code>_shared.yaml</code> key under the sites prefix). It accepts only top-level <code>matchers</code> and <code>snippets</code>. It is never compiled as a site; it is distributed together with the sites as shared definitions. Sites reference them with <code>match: &quot;@name&quot;</code> and <code>import: &quot;@name&quot;</code>; the existing <code>import: name</code> form remains supported. <code>config.yaml</code> no longer holds these keys; using them there is an error that names the new location.</p>
+<p>Local definitions take precedence for direct site references. Imports inside shared snippets always resolve against the shared definitions, so site definitions cannot change their behavior. Only referenced shared definitions enter a site, and middleware names in <code>use</code> are checked against each site that actually imports the snippet. <code>_shared.yaml</code> itself is checked for syntax, references and cycles when loaded; <code>_shared.yaml</code> and <code>_shared.yml</code> cannot both exist.</p>
+<p>Changing <code>_shared.yaml</code> revalidates every site. Any failure rejects the whole change and keeps the previous definitions and sites. In KV mode, unchanged shared content does not rebuild sites, and KV sites rejected because they arrived before the shared entry are retried once it applies. Removing shared definitions that are still referenced is rejected. Errors name <code>_shared.yaml</code> or the site file with source lines.</p>
+<pre><code class="language-yaml"># sites/_shared.yaml
+matchers:
+  api:
+    prefix: /api
+snippets:
+  common:
+    compress: true
+</code></pre>
+<pre><code class="language-yaml"># sites/app.yaml
+site: https://a.b.com
+routes:
+  - match: &quot;@api&quot;
+    import: &quot;@common&quot;
+    proxy: localhost:8080
+</code></pre>
+<p><code>site: https://a.b.com</code> is equivalent to <code>site: a.b.com</code> with <code>https: true</code>, using the existing TLS and HTTP-to-HTTPS redirect behavior. A trailing <code>/</code> is allowed; URL paths, queries and user information are rejected. Combining it with <code>https: false</code> is an error. Explicit ports retain the existing <code>site: host:port</code> listener behavior and default HTTPS redirect target port rules.</p>
+<p>Set site-level ech: ech.example.com alongside site: to select a configured ech.groups public name and DNS provider. Names are derived automatically. Multiple groups require explicit selection; one group also accepts true, and false disables ECH. Requires global ech.enabled, HTTPS port 443 and TLS 1.3; unknown groups and wildcard/IP/passthrough sites are rejected. Selection reloads live; transfers withdraw old records before the new group publishes. Legacy global domains remain enabled even with a false flag.</p>
+<h2 id="traffic-protection-on-registered-services">Traffic protection on registered services</h2>
+<p>Register this identical resource tag set on every orders instance. Rate limiting admits at most 100 requests per client IP in a one-minute sliding log window. Circuit breaking tracks completed upstream outcomes independently per backend address over 30 seconds, opening at 20 samples and a failure ratio of 0.5. Rate-limit window accepts a duration (1m) or integer milliseconds; breaker window is integer seconds (30). Deregistration removes an instance after the discovery update reaches the gateway; requests during that propagation interval can still fail. Backend failures remain breaker samples. Do not mix named resources with shortcut tags.</p>
+<pre><code class="language-properties">litegate.http.routers.orders.match.hosts=api.example.com
+litegate.http.routers.orders.match.path_prefix=/orders
+litegate.http.routers.orders.service=orders
+litegate.http.routers.orders.middlewares=orders-limit
+litegate.http.middlewares.orders-limit.ratelimit.qps=100
+litegate.http.middlewares.orders-limit.ratelimit.key=ip
+litegate.http.middlewares.orders-limit.ratelimit.algorithm=sliding_window_log
+litegate.http.middlewares.orders-limit.ratelimit.window=1m
+litegate.http.services.orders.circuitbreaker.enabled=true
+litegate.http.services.orders.circuitbreaker.strategy=failure_rate
+litegate.http.services.orders.circuitbreaker.window=30
+litegate.http.services.orders.circuitbreaker.minimumrequests=20
+litegate.http.services.orders.circuitbreaker.failureratio=0.5
+</code></pre>
+<p>For MCP generation, read <code>get_config_guide(topic=&quot;traffic&quot;)</code>, then run <code>preview_service_tags</code>: errors must be fixed; review warnings before applying. For YAML, run <code>validate_site_config</code> before <code>save_site_config</code>.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/03-configuration/site-config.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

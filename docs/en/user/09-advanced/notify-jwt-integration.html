@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notify and Business JWT Integration: Configuration, Limits and Troubleshooting · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/09-advanced/notify-jwt-integration.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details open><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html" class="current" aria-current="page">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="notify-and-business-jwt-integration-configuration-limits-and-troubleshooting">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</h1>
+<p>This page records the boundaries between gateway notifications, third-party JWTs, offline consumption and IDS notifications. Business state may come from a database, KV or any other system; the gateway doesn't constrain state storage, and it doesn't issue or refresh JWTs for the business system.</p>
+<h2 id="1-choose-the-notification-semantics-first">1. Choose the notification semantics first</h2>
+<table>
+<thead>
+<tr>
+<th>Need</th>
+<th>Configuration and responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Online alerts; after a disconnect, re-query current state</td>
+<td>Omit <code>offline</code> and use Core NATS; resynchronize from the business system on every connect</td>
+</tr>
+<tr>
+<td>Events during an offline period after the first subscription must be delivered later</td>
+<td>Publish with <code>offline: true</code>, subscribe with <code>offline: auth.subscriber</code>; uses JetStream and business ACKs</td>
+</tr>
+<tr>
+<td>Optional state invalidation for an IDS Provider</td>
+<td>Implement <code>plugin.NotifySubscriber</code>; the plugin notify bus is an online signal + Resync, not a JetStream offline queue</td>
+</tr>
+</tbody>
+</table>
+<p>An IDS doesn't have to use a cache, nor subscribe to notifications. A Provider that only verifies signatures need not touch notify at all. Plugins that need notifications define their own subjects, message formats and handling.</p>
+<h2 id="2-same-origin-browsers-reliable-multi-tenant-subscriptions">2. Same-origin browsers, reliable multi-tenant subscriptions</h2>
+<p>Site configuration (v2):</p>
+<pre><code class="language-yaml">site: app.example.com
+notify:
+  ack_secret_ref: shared.notify_ack_secret
+  retention: 168h
+  replicas: 1
+/events/workorder:
+  auth:
+    type: jwt
+    secret: env://APP_JWT_SECRET
+    token_from: [cookie:lg_token]
+    subject_claim: user_id
+    tenant_claim: tenant_id
+  subscribe: notify.{auth.tenant}.workorder
+  offline: auth.subscriber
+</code></pre>
+<p>Plugin configuration:</p>
+<pre><code class="language-yaml">plugins:
+  nats:
+    connections:
+      default:
+        servers: nats://127.0.0.1:4222
+shared:
+  notify_ack_secret: &quot;REPLACE_WITH_AT_LEAST_32_RANDOM_BYTES&quot;
+</code></pre>
+<p>The ACK secret above is a placeholder; replace it with at least 32 random bytes distributed through controlled plugin configuration. <code>ack_secret_ref</code> names a plugin configuration key; the JWT <code>env://</code> reference rules don't apply to it. All gateway nodes use the same ACK secret, which is a different secret from the JWT key. Production NATS clusters can use <code>replicas: 3</code> given enough nodes.</p>
+<p>Configure authentication separately for the publishing route:</p>
+<pre><code class="language-yaml">/internal/publish/workorder:
+  auth:
+    type: jwt
+    secret: env://NOTIFY_PUBLISH_JWT_SECRET
+    token_from: [header]
+    issuer: trusted-notify-publisher
+    audience: litegate-notify
+  publish: notify.{body.tenant_id}.workorder
+  offline: true
+</code></pre>
+<p>Give this publishing key only to trusted publishing services. <code>body.tenant_id</code> lets the publisher choose the target tenant, and the gateway does not check that it matches the caller's identity. When tenant users publish themselves, use <code>notify.{auth.tenant}.workorder</code> with a verified tenant claim, or add business authorization. Never give a browser a credential that can publish across tenants.</p>
+<h2 id="3-responsibilities-of-the-jwt-and-the-cookie">3. Responsibilities of the JWT and the cookie</h2>
+<p>Publishing can also pick the subject from a custom header, without a tenant field in the body:</p>
+<pre><code class="language-yaml">/internal/publish/workorder:
+  publish: notify.{header.key}.workorder
+  offline: true
+</code></pre>
+<p>A request carrying <code>key: tenant_a</code> publishes to <code>notify.tenant_a.workorder</code>. <code>key</code> is a header name of your choosing; there is no fixed name. This example has no authentication: notify doesn't force it, and access policy is up to you via the route's JWT, forward_auth or other authentication plugins. The body is kept as-is; using a header template doesn't make the gateway parse a tenant field from it.</p>
+<ul>
+<li><code>secret</code> accepts HS256/384/512; <code>jwks_url</code> accepts RS/ES. Configure exactly one; <code>alg: none</code> is rejected. Still set <code>issuer</code> and <code>audience</code> to match how your business issues tokens.</li>
+<li><code>token_from</code> takes the first non-empty token in order, such as <code>[header, cookie:lg_token]</code>. If the selected token is invalid the request is rejected; the other source is not tried. URL query tokens are not supported.</li>
+<li><code>subject_claim</code> produces the trusted subscriber identity; <code>tenant_claim</code> produces the trusted tenant identity and requires <code>subject_claim</code>. When a mapping is configured but the claim is missing, the response is 401. 18-digit numeric IDs keep their precision.</li>
+<li>Subscription identities and template values use letters, digits, underscores and hyphens, at most 128 characters. Usernames with dots, email addresses and the like are not suitable as-is; map them to stable IDs.</li>
+<li><code>exp</code> ends the stream when it passes, even without identity mapping. A JWT without <code>exp</code> still verifies, and the connection is bounded only by <code>max_duration</code>; issuers should always set an expiry.</li>
+<li>Shared secret references are cached for about a minute and resolved once for concurrent requests, so rotation doesn't take effect immediately. Connections that already passed verification are not re-verified after a key rotation. A rotation plan should define the transition period for old tokens and the maximum connection lifetime.</li>
+</ul>
+<p>The business backend should set the <code>lg_token</code> cookie on <strong>login and on every renewal</strong>, with the new JWT as its value; updating only localStorage or a <code>New-Authorization</code> response header doesn't update the cookie. On logout, delete the cookie with the same Path and Domain. Make the cookie HttpOnly, Secure under production HTTPS, with Expires aligned to the JWT; for same-origin subscriptions, for example, <code>Path=/events; SameSite=Lax</code>.</p>
+<p>Native EventSource doesn't read localStorage and cannot set arbitrary Authorization headers. Same-origin requests carry cookies whose path matches automatically; when the page and the subscription service have different origins you need <code>withCredentials: true</code> and CORS that explicitly allows the origin and credentials. Only cross-site cases require evaluating <code>SameSite=None; Secure</code> — a different origin is not necessarily a different site. The cookie must belong to a host the subscription service can receive it on, and browser policies may restrict third-party cookies.</p>
+<p>The subscription GET and the automatically generated same-path POST ACK are both protected by the route's authentication. The ACK path must fall within the cookie's Path. Cookie Path limits where it is sent; it is not a permission boundary. HttpOnly stops scripts from reading the cookie but cannot stop XSS from making requests with the existing session.</p>
+<h2 id="4-tenant-isolation-and-consumer-identity">4. Tenant isolation and consumer identity</h2>
+<p><strong>Passing authentication doesn't mean messages are isolated.</strong> <code>subscribe: notify.workorder</code> is a shared subject that every tenant passing route authentication can subscribe to. Only <code>notify.{auth.tenant}.workorder</code> selects the subject per tenant; subscription templates accept only <code>{auth.tenant}</code> and <code>{auth.subscriber}</code>, and clients cannot change the subscription scope through query or body.</p>
+<p>Offline progress, leases and ACK credentials are bound to the subject, subscription namespace, quota group, trusted tenant and subscriber. The same user ID in different tenants consumes independently. <strong>Each identity has a single active session</strong>: a new connection takes over from the old one. With user IDs as identities, a user's tabs or devices take over from each other. If each device must receive independently, have the authentication system provide a verified stable device identity; don't trust device IDs reported by the client.</p>
+<p>Shorthand routes count the default connection quota per site: subscriptions on the same site share a default of 100 connections. <code>notify.sse.tenant</code> can override the group; the shorthand doesn't accept <code>notify.sse.tenants</code>, so per-tenant limits require the full NATS action. A quota group is not a message permission boundary.</p>
+<h2 id="5-what-reliable-offline-delivery-actually-guarantees">5. What reliable offline delivery actually guarantees</h2>
+<ol>
+<li>Publishing returns success only after a JetStream PubAck; failures before the gateway must still be retried reliably by the publisher. Link state commits and notification publishing through a reliable mechanism on the business side, whether the state is in a database or KV.</li>
+<li>A new consumer receives messages from its creation onwards; history before the first subscription is not delivered. Offline messages can be delivered only within the stream retention period, storage capacity and consumer retention period.</li>
+<li>On every <code>ready</code>, first synchronize from the business state source, then process <code>{sequence, ack_token, payload}</code> serially. After success, POST <code>{&quot;ack_token&quot;:&quot;...&quot;}</code> to the same subscription path with <code>Content-Type: application/json</code>; only 204 means the ACK request succeeded.</li>
+<li>Progress lives in a server-side durable consumer; <strong>offline recovery doesn't depend on Last-Event-ID</strong>. Last-Event-ID is not a business processing acknowledgement either.</li>
+<li>Deliveries may repeat; clients need business idempotency or version checks. JetStream publish deduplication covers only the deduplication window and doesn't guarantee exactly-once business processing.</li>
+</ol>
+<p>Retry publishes with the same <code>Idempotency-Key</code>, for example <code>tenant-a:workorder:42</code>. Without a stable idempotency key, don't assume two HTTP publishes will be treated as one business event. The shorthand's default deduplication window is the smaller of the retention period and 10 minutes; beyond the window duplicates are still possible.</p>
+<p>100 different identities have 100 separate consumption progresses; one person's ACK doesn't release messages for others. Native EventSource has no reliable ACK, so an old frontend cannot support offline mode just by changing the URL. See <code>examples/nats-events/browser-client.js</code>; Go uses <code>pkg/eventclient</code>. Both follow the same protocol, but the browser uses cookies while Go can use the Authorization header.</p>
+<p>The default retention is 7 days, configurable from 1 minute to 30 days. Existing streams' retention isn't updated when the shorthand changes; adjust them with NATS administration tools. Recreating a consumer, changing the consuming identity or changing the NATS storage cluster loses the previous progress, so keep a full resynchronization as a fallback.</p>
+<p>Each consumer has one unacknowledged message at a time, so single-message HTTP ACK throughput is bound by latency: a 50 ms round trip allows about 20 messages per second in theory, and processing time lowers that. This suits configuration notifications, not high-frequency messaging in the current implementation. Each identity has a durable consumer, so administrators should limit capacity and consumer counts.</p>
+<p>A bad message is TERMed for the current consumer and a <code>delivery-warning</code> is sent; later messages continue. The original event stays in the stream; there is no automatic dead-letter forwarding. Monitor termination counts and the stream, durable and sequence in the logs.</p>
+<h2 id="6-tenant-suspension-logout-and-the-ids-boundary">6. Tenant suspension, logout and the IDS boundary</h2>
+<p>Local JWT verification only confirms the signature and claims; it cannot know about logout, token revocation or tenant suspension. Clearing the cookie doesn't revoke an established SSE either. Existing connections end when the JWT expires, the maximum duration passes or another disconnect condition occurs.</p>
+<p>An IDS Provider that uses a cache invalidates it on notification, and <code>Evaluate</code> then reads the new state and returns 401/403 explicitly. The framework doesn't assume a cache exists, doesn't force plugins to subscribe, and doesn't turn cache invalidation into revoking long-lived connections.</p>
+<p>So &quot;reject new requests immediately after a tenant is suspended&quot; and &quot;stop delivering on existing SSE immediately&quot; are two separate requirements. The latter needs an additional active disconnect or continuous authorization mechanism and cannot be guaranteed by JWTs and IDS cache invalidation alone. Browsers must also handle expired logins: EventSource's error callback has no HTTP status, so check login state through an endpoint before reconnecting rather than reconnecting blindly.</p>
+<h2 id="7-multiple-nodes-hot-reload-and-troubleshooting">7. Multiple nodes, hot reload and troubleshooting</h2>
+<p>A shared NATS/JetStream supports multiple gateways, and every node must use the same ACK secret. The default random secret suits a single process only; cross-node ACKs return 403. After a process restart old tokens are invalid, and reconnecting redelivers with new tokens. Front proxies should disable SSE buffering and use idle timeouts longer than the heartbeat interval.</p>
+<p>Site hot reloads may close connections of the old instance, so clients must reconnect. Online mode may lose signals and should resynchronize fully; reliable mode recovers unacknowledged deliveries and should also synchronize current state. Don't describe hot reload as seamless.</p>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Check first</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Subscription 401</td>
+<td>Cookie host/Path, whether renewal updates it, JWT exp, key, issuer/audience, missing claims</td>
+</tr>
+<tr>
+<td>Messages visible across tenants</td>
+<td>Still using a fixed subject? Does publishing authorization restrict the target tenant?</td>
+</tr>
+<tr>
+<td>Messages keep repeating</td>
+<td>Is the client ACKing? Is processing longer than ack_wait? Do all nodes share the ACK secret?</td>
+</tr>
+<tr>
+<td>ACK 403</td>
+<td>Identity/tenant/subject consistency; credentials expired or from another process's secret</td>
+</tr>
+<tr>
+<td>Tabs disconnect each other</td>
+<td>They share one subscription identity</td>
+</tr>
+<tr>
+<td>No history after a long offline period</td>
+<td>Stream retention/capacity, consumer reclamation, changed consuming identity</td>
+</tr>
+<tr>
+<td>A suspended tenant still receives pushes</td>
+<td>Existing long connections aren't revoked by cache invalidation</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-mcp-configuration">8. MCP configuration</h2>
+<p>MCP's <code>get_config_guide</code> and <code>resource://documentation/site-config</code> read the configuration guide compiled into the binary and don't scan newly added documents. After updating the built-in guide, rebuild and restart the running MCP service.</p>
+<p><code>enable_jwt_for_site</code> supports JWKS or a shared secret, cookie sources and identity mapping, but <strong>adds the named JWT middleware to proxy routes only</strong>; it doesn't protect notify publishing, subscriptions or ACKs. For notifications, go through <code>get_site_config</code> → <code>get_config_guide</code> → <code>validate_site_config</code> → <code>save_site_config</code>, keep the existing site content and configure auth explicitly on notification routes. &quot;The tool call succeeded&quot; doesn't mean the whole site is protected.</p>
+<p>See also: <a href="./event-notification.html">Event notification and plugin notifications</a>, <a href="../04-actions/nats-events.html">Reliable delivery protocol</a>, <a href="../05-middleware/authentication.html">JWT authentication fields</a>.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/09-advanced/notify-jwt-integration.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circuit breaking (V2 configuration) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/09-advanced/circuit-breaker.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details open><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html" class="current" aria-current="page">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: internal/configdocs/docs/en/circuit-breaker.md (package internal/configdocs)
+     Regenerate: go generate ./internal/configdocs/...
+     Edit the source instead; a drift test fails if this copy is edited directly. -->
+<h1 id="circuit-breaking-v2-configuration">Circuit breaking (V2 configuration)</h1>
+<p>Circuit breaking is an upstream Service policy. YAML <code>services</code> defines local upstream configurations and does not require a service registry: use <code>servers</code> for static addresses or <code>discovery</code> for registered services. Both support the same breaker policies. Use V2 site and path routes:</p>
+<h2 id="consecutive-failures-compatible-default">Consecutive failures (compatible default)</h2>
+<pre><code class="language-yaml">site: api.example.com
+services:
+  payment:
+    to: [&quot;http://127.0.0.1:8080&quot;, &quot;http://127.0.0.1:8081&quot;]
+    circuitbreaker:
+      enabled: true
+      timeout: 60
+      maxrequests: 1
+      tripthreshold: 3
+/api/payment:
+  service: payment
+  rate_limit: 100
+</code></pre>
+<p>Service keys use <code>circuitbreaker</code>, <code>maxrequests</code> and <code>tripthreshold</code>, without underscores. For service discovery, replace <code>servers</code> with <code>discovery: {name: payment}</code>; do not configure both. See <a href="../03-configuration/services.html">Services</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td><code>false</code></td>
+<td>Enable the breaker</td>
+</tr>
+<tr>
+<td><code>strategy</code></td>
+<td><code>consecutive</code></td>
+<td>Consecutive failures, or <code>failure_rate</code> for a sliding window</td>
+</tr>
+<tr>
+<td><code>window</code></td>
+<td><code>30</code></td>
+<td>Window seconds, range 1–3600; failure-rate mode only</td>
+</tr>
+<tr>
+<td><code>minimumrequests</code></td>
+<td><code>20</code></td>
+<td>Minimum effective window calls; failure-rate mode only</td>
+</tr>
+<tr>
+<td><code>failureratio</code></td>
+<td><code>0.5</code></td>
+<td>Failure fraction threshold in (0,1]; failure-rate mode only</td>
+</tr>
+<tr>
+<td><code>slowthresholdms</code></td>
+<td><code>0</code></td>
+<td>Slow-call threshold in milliseconds, range 0–3600000; 0 disables it. Calls strictly above it count as failures in either strategy</td>
+</tr>
+<tr>
+<td><code>tripthreshold</code></td>
+<td><code>3</code></td>
+<td>Consecutive failures required to open</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td><code>60</code></td>
+<td>Seconds before probing recovery; not the request timeout</td>
+</tr>
+<tr>
+<td><code>maxrequests</code></td>
+<td><code>1</code></td>
+<td>Half-open probe allowance and consecutive successes needed to close</td>
+</tr>
+</tbody>
+</table>
+<p>Omitted or zero numeric parameters use defaults. State is local to each gateway process, not shared through Redis. The cache uses upstream address and breaker settings, with separate ports and custom DNS views isolated. Routes with identical keys share state. At most 2048 entries are cached. Eviction only removes closed entries with no effective failure history or in-flight requests. If all entries are protected, requests for new keys return 503 until a safe slot becomes available; existing circuits retain their state.</p>
+<h2 id="sliding-window-failure-rate">Sliding-window failure rate</h2>
+<p>Select <code>failure_rate</code> explicitly for either static or registered services. Each instance tracks completed effective calls over the recent window. It opens when both the minimum sample size and the failure fraction threshold are reached. Successes remain in the denominator without clearing earlier failures.</p>
+<h3 id="static-upstreams-yaml-without-a-registry">Static upstreams: YAML without a registry</h3>
+<p>Put this configuration in a site YAML file. <code>payment</code> is a locally defined upstream name referenced by the route through <code>service: payment</code>.</p>
+<pre><code class="language-yaml">site: api.example.com
+services:
+  payment:
+    to:
+      - &quot;http://127.0.0.1:8080&quot;
+      - &quot;http://127.0.0.1:8081&quot;
+    timeout: 5s
+    circuitbreaker:
+      enabled: true
+      strategy: failure_rate
+      window: 30
+      minimumrequests: 20
+      failureratio: 0.5
+      timeout: 30
+      maxrequests: 1
+/api/payment:
+  service: payment
+</code></pre>
+<p>The two addresses have separate statistics: opening one circuit does not open the other. For one backend, keep one <code>servers</code> entry. For failover between addresses, optionally add <code>retry: {attempts: 1}</code>; see the failover section below.</p>
+<p><code>services.payment.timeout: 5s</code> bounds the request; <code>circuitbreaker.window: 30</code> is the statistical window in seconds; <code>circuitbreaker.timeout: 30</code> is the open-state wait before probing. The latter two are integers, not duration strings such as <code>30s</code>. Each backend must have at least 20 effective calls in its window and a failure fraction of at least 50% to trip. Low traffic below the sample minimum does not open the circuit.</p>
+<h3 id="registry-upstreams-yaml-discovery-reference">Registry upstreams: YAML discovery reference</h3>
+<p>Replace <code>servers</code> in the same configuration with this block, keeping the breaker settings:</p>
+<pre><code class="language-yaml">discovery:
+  name: payment
+</code></pre>
+<p><code>discovery</code> belongs under <code>services.payment</code> and is mutually exclusive with <code>servers</code>. <code>discovery.name</code> names the registered service and may differ from the local upstream name.</p>
+<h3 id="registry-upstreams-registration-tags">Registry upstreams: registration tags</h3>
+<p>The same policy can be declared through registration tags:</p>
+<pre><code class="language-text">litegate.http.services.payment.circuitbreaker.enabled=true
+litegate.http.services.payment.circuitbreaker.strategy=failure_rate
+litegate.http.services.payment.circuitbreaker.window=30
+litegate.http.services.payment.circuitbreaker.minimumrequests=20
+litegate.http.services.payment.circuitbreaker.failureratio=0.5
+</code></pre>
+<p>This example opens at a failure fraction of at least 50% with at least 20 effective calls. Client cancellation, client-set <code>grpc-timeout</code> expiry and breaker rejections are excluded from both numerator and denominator. Gateway-owned timeouts, network errors and configured failure status codes count as failures. Each actual retry counts against its target instance, using completion time. Each gateway process has independent statistics.</p>
+<p>The window uses 64 fixed time slices plus one boundary slice, bounding memory independently of QPS. A partially expired slice remains until its newest sample expires, retaining old samples for less than <code>window / 64</code> additional seconds (about 0.47 seconds for a 30-second window), without dropping still-recent samples early. The next completion or monitoring snapshot expires idle samples.</p>
+<p>Choose either <code>failure_rate</code> or <code>consecutive</code>. <code>tripthreshold</code> is inactive in failure-rate mode. Omitted <code>strategy</code> preserves the legacy consecutive-failure policy; window parameters require <code>strategy: failure_rate</code>. Half-open recovery still uses limited probes and reopens on any failure. Closing after recovery clears the old window and starts fresh.</p>
+<p>Deregistering an instance is handled by service discovery and is not a breaker failure sample. Breaking isolates instances that remain discoverable but actually fail calls.</p>
+<p>Legacy action / middleware fields are <code>strategy</code>, <code>window_seconds</code>, <code>minimum_requests</code> and <code>failure_ratio</code>.</p>
+<h2 id="states-and-outcomes">States and outcomes</h2>
+<ul>
+<li><strong>Closed:</strong> forward requests; the selected policy opens on consecutive failures or window failure rate; success resets the streak only for the consecutive policy.</li>
+<li><strong>Open:</strong> reject this instance without forwarding; after <code>timeout</code>, enter Half-Open.</li>
+<li><strong>Half-Open:</strong> accept limited probes and reject excess requests; any failure opens the breaker again; enough consecutive successes close it.</li>
+</ul>
+<p>Network errors and HTTP 5xx responses count as failures by default. A failure response is still forwarded: the response that trips the breaker retains the upstream status, such as 500. Later requests encounter the fast rejection.</p>
+<p>Client cancellation and client-set <code>grpc-timeout</code> expiry do not count as upstream failures. These are neutral outcomes: neither success nor failure is recorded, failure streaks remain intact, and half-open probe slots are released without advancing recovery. Gateway-owned timeouts still count as failures. WebSocket and other Upgrade requests apply the same breaker to dialing and the HTTP handshake; established tunnel traffic is not counted. This breaker observes HTTP RoundTrip results, not business errors in HTTP 200 bodies, response-body read errors or gRPC trailer status.</p>
+<h2 id="responses-and-failover">Responses and failover</h2>
+<p>A final breaker fast rejection returns <strong>503</strong> for ordinary HTTP. Other upstream errors generally return 502; timeouts return 504. Native gRPC and gRPC-Web use protocol error responses (<code>grpc-status: 14</code> for breaker rejection).</p>
+<p>Retries can try another instance, so one open instance does not necessarily cause a route-wide 503:</p>
+<pre><code class="language-yaml">site: api.example.com
+services:
+  payment:
+    to: [&quot;http://127.0.0.1:8080&quot;, &quot;http://127.0.0.1:8081&quot;]
+    retry: {attempts: 1}
+    circuitbreaker: {enabled: true, timeout: 30, maxrequests: 1, tripthreshold: 3}
+/api/payment:
+  service: payment
+</code></pre>
+<p>Breaker rejections did not send a request upstream and allow failover without backoff. Endpoint selection and request replay rules still apply. Service <code>healthcheck</code> complements circuit breaking.</p>
+<h2 id="custom-failure-codes-compatibility-block">Custom failure codes: compatibility block</h2>
+<p>The Service schema exposes the policy parameters above. Custom code lists require an explicit action compatibility block inside a V2 route:</p>
+<pre><code class="language-yaml">site: api.example.com
+/api/payment:
+  action:
+    type: proxy
+    upstream: [&quot;127.0.0.1:8080&quot;]
+    circuit_breaker:
+      enabled: true
+      trip_threshold: 3
+      timeout: 60
+      max_requests: 1
+      failure_status_codes: [500, 502, 504]
+      ignore_status_codes: [503]
+</code></pre>
+<p>Ignored codes take precedence. With a failure list, only listed HTTP codes count; network failures still count. Do not put these legacy names inside Service <code>circuitbreaker</code> or combine Service breaking with named breaker middleware on the same route. Prefer Services for new configurations.</p>
+<p>Dashboard and Prometheus expose breaker state and trips. Distinguish rate-limit 429, concurrency-limit 503, breaker 503 and upstream 503. See <a href="../05-middleware/rate-limit.html">rate limiting</a>.</p>
+<p>Monitoring snapshots also expose <code>strategy</code>, <code>window_seconds</code>, <code>minimum_requests</code>, <code>failure_ratio</code>, <code>window_requests</code>, <code>window_failures</code> and <code>window_failure_ratio</code>. Window counters reset on state changes.</p>
+<h2 id="monitoring-and-troubleshooting">Monitoring and troubleshooting</h2>
+<p>The dashboard shows upstream breaker state and failure counts. Prometheus exposes <code>litegate_circuit_breaker_state</code> (0 closed, 1 half-open, 2 open) and <code>litegate_circuit_breaker_trips_total</code>. Distinguish rate-limit 429, concurrency-limit 503, breaker 503 and upstream 503 when investigating.</p>
+<p>Snapshots include <code>strategy</code>, <code>window_seconds</code>, <code>minimum_requests</code>, <code>failure_ratio</code>, <code>window_requests</code>, <code>window_failures</code> and <code>window_failure_ratio</code>. Window samples reset when the breaker changes state.</p>
+<h2 id="latency-based-circuit-breaking">Latency-based circuit breaking</h2>
+<p>Service <code>circuitbreaker.slowthresholdms</code> sets a slow-call threshold in milliseconds (default <code>0</code>, disabled; maximum <code>3600000</code>). Calls strictly above this threshold count as breaker failures even when HTTP 200 is returned; the original response is preserved. Network errors and configured failure statuses still count, with each call counted only once. With <code>failure_rate</code>, the threshold applies to the combined fraction of failed or slow calls:</p>
+<pre><code class="language-yaml">services:
+  payment:
+    servers: [&quot;http://10.0.0.11:8080&quot;, &quot;http://10.0.0.12:8080&quot;]
+    retry: {attempts: 1}
+    circuitbreaker:
+      enabled: true
+      strategy: failure_rate
+      window: 30
+      minimumrequests: 20
+      failureratio: 0.5
+      slowthresholdms: 500
+      timeout: 30
+      maxrequests: 1
+</code></pre>
+<p>Each instance needs 20 completed effective calls in the window. When at least 50% fail or exceed 500ms, its circuit opens. After 30 seconds a probe is allowed; recovery requires successful probes within the latency threshold. A slow probe reopens the circuit. Client cancellation and client <code>grpc-timeout</code> remain neutral.</p>
+<p>Latency covers HTTP RoundTrip through response headers, including connection establishment and waiting for headers, excluding body reads and established stream lifetimes. This policy does not interrupt a slow request; configure Service <code>timeout</code> to limit individual request duration. With <code>consecutive</code>, slow calls count toward the consecutive failure threshold.</p>
+<p>Registry tags use <code>circuitbreaker.slowthresholdms</code>; legacy Action / middleware uses <code>slow_threshold_ms</code>. Snapshots expose <code>slow_threshold_ms</code>; existing failure counters include slow calls. An open circuit rejects before contacting the upstream. Load balancing may still select that instance; retries can try another instance, and final breaker rejection returns 503.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/09-advanced/circuit-breaker.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECH：隐藏网站的 TLS ClientHello · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/06-certificates/ech.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details open><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html" class="current" aria-current="page">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="ech隐藏网站的-tls-clienthello">ECH：隐藏网站的 TLS ClientHello</h1>
+<p>ECH（Encrypted ClientHello）加密浏览器到 LiteGate 的 ClientHello。公网只能看到对应组的 <code>public_name</code>，LiteGate 解密后仍按实际网站域名选择证书、TLS 策略和路由。网站继续使用普通 ACME 证书，不需要申请特殊的 ECH 证书。</p>
+<h2 id="如何配置-ech服务端dns-与客户端">如何配置 ECH：服务端、DNS 与客户端</h2>
+<p>完整链路是：LiteGate 加载 ECH 密钥并发布网站的 HTTPS DNS 记录 → 客户端解析器保留记录中的 <code>ech</code> 参数 → 浏览器取得配置并加密 ClientHello → LiteGate 解密后按原网站域名提供服务。服务端开启并不会强制所有客户端使用 ECH。</p>
+<h3 id="1-服务端准备">1. 服务端准备</h3>
+<ul>
+<li>使用支持 ECH 的 LiteGate 构建，在真正终止客户端 TLS 的节点配置 ECH。前面的 CDN 或 TLS 终止代理也必须支持相应功能，否则这里的配置不作用于浏览器连接。</li>
+<li>开启 <code>auto_cert.enabled</code>，配置可用的 Aliyun/Cloudflare DNS 提供商，确保其 <code>domains</code> 覆盖隐藏网站和公共名称，凭据允许管理 HTTPS 记录。</li>
+<li><code>websecure</code> 监听 TCP 443，站点允许 TLS 1.3。隐藏网站有直接指向 LiteGate 的 A/AAAA 记录；公共名称使用有效证书。</li>
+<li>持久化并备份证书/ECH 状态目录。单节点可显式使用 <code>storage: file</code>；共享密钥部署参见下方 KV 配置。已有部署不要随意更改存储模式或删除密钥。</li>
+</ul>
+<h3 id="2-旧单组配置仍兼容">2. 旧单组配置仍兼容</h3>
+<p>已有配置无需迁移，例如以下主配置块继续有效（保留已有的 <code>auto_cert</code>、DNS 提供商和站点配置）：</p>
+<pre><code class="language-yaml">ech:
+  enabled: true
+  public_name: ech.example.com
+  dns_provider: aliyun-main
+  domains:
+    - litemesh.example.com
+    - dashboard.example.com
+</code></pre>
+<p><code>public_name</code> 是外层可见名称；<code>dns_provider</code> 对应 <code>auto_cert.dns_providers[].name</code>；<code>domains</code> 是需要隐藏的实际网站。列出的每个域名都必须有本地 HTTPS 站点，包括最终从 Consul/LiteMesh KV 加载的站点。这种写法不要求在每个站点再加 <code>ech: true</code>。</p>
+<p>旧配置不填写 <code>storage</code> 时继续使用兼容的自动选择：启用 Consul/LiteMesh <code>config_watch</code> 时使用相应 KV，否则使用文件。不会因为示例推荐 <code>storage: file</code> 就自动改用本地存储。保留原密钥、状态和 KV 前缀；迁移规则见“多组、KV 与升级”。</p>
+<p>新部署可使用下方 <code>groups</code> 配置，并在站点选择公共名称。不能将 <code>groups</code> 与根级旧 <code>public_name</code>、<code>dns_provider</code>、<code>domains</code> 混用。旧全局 <code>domains</code> 列表不会被站点 <code>ech: false</code> 取消；从列表移除需修改主配置并重启。</p>
+<h3 id="3-启动并检查-dns">3. 启动并检查 DNS</h3>
+<p>主 ECH/DNS 提供商配置变化需要重启。先执行语法检查，再启动服务：</p>
+<pre><code class="language-bash">litegate -t -config config.yaml
+litegate -config config.yaml
+</code></pre>
+<p>KV 模式下 <code>-t</code> 不拉取远端站点，只检查可见本地配置并提示延后完整 ECH 校验。运行时要等初始 KV 快照到齐且合法才发布；不要把 <code>-t</code> 成功当作所有远端站点已验证。</p>
+<p>日志应出现 <code>ECH keys loaded</code> 和每个域名的 <code>ECH HTTPS record published</code>。若看到 <code>invalid_keys</code> 或发布失败，先处理具体的 KV key、证书或 DNS 错误。</p>
+<pre><code class="language-bash"># 默认 dig 查 A，必须显式查询 HTTPS 才能看到 ECH 配置。
+dig app.example.com HTTPS
+# 直接检查自己的解析器，替换地址和端口。
+dig @192.168.50.110 -p 53 app.example.com HTTPS
+</code></pre>
+<p>预期回答是类型 65 的 <code>HTTPS 1 . alpn=&quot;h2&quot; ech=&quot;...&quot;</code>；启用 HTTP/3 时 ALPN 包含 h3。<code>ech</code> 是公开配置，Base64 不是 DNS 传输加密；不能仅凭查到这个记录判断浏览器实际使用了 ECH。</p>
+<h3 id="4-客户端配置">4. 客户端配置</h3>
+<p>推荐让浏览器通过自己的 DoH 解析器获取配置，例如 <code>https://dns.example.com/dns-query</code>。这个地址必须提供标准 DNS wire-format DoH（GET 的 <code>dns=</code> 参数或 POST 的 <code>application/dns-message</code>）及有效 HTTPS 证书；浏览器使用的是这个端点，不是 <code>?name=...&amp;type=65</code> JSON 测试地址。</p>
+<ul>
+<li><strong>Vivaldi</strong>：设置 → 网络 → 开启“通过 HTTPS 查询 DNS / DNS Lookup Over HTTPS”，选择自定义提供商并填入自己的 DoH 地址。<a href="https://vivaldi.com/blog/tips/tip-739/">官方说明</a></li>
+<li><strong>其他浏览器</strong>：在其安全 DNS/DoH 设置中选择自己的解析器；具体入口和 ECH 支持受版本、管理策略、代理设置影响。<a href="https://support.mozilla.org/en-US/kb/understand-encrypted-client-hello">Firefox 官方 ECH 说明</a></li>
+<li><strong>普通 UDP/TCP DNS</strong>也能返回 HTTPS/ECH 记录，但系统 DNS 指向 CamoDNS 不保证浏览器会通过该路径获取并使用配置。DoH 不是 ECH 协议的硬性要求；需要实际验证客户端。普通 DNS 查询仍会明文暴露原域名，DoH/DoT 才加密 DNS 传输。</li>
+</ul>
+<p>保存设置后完全退出并重启浏览器，继续访问原网站域名（例如 <code>https://app.example.com</code>），不要改为访问公共名称。</p>
+<h3 id="5-camodns-的脚本与测试">5. CamoDNS 的脚本与测试</h3>
+<p>自己的解析器必须保留网站 HTTPS 记录中的 <code>ech</code>。前置脚本若对 <code>qtype == &quot;HTTPS&quot;</code> 直接返回 <code>reject/noerror</code>，浏览器拿到的是空回答，无法启用 ECH。只测试两个域名时，在原来的 HTTPS 拦截分支内先放行白名单（根据脚本实际收到的域名格式调整）：</p>
+<pre><code class="language-javascript">if qtype == &quot;HTTPS&quot; {
+    if domain == &quot;app.example.com&quot; || domain == &quot;dashboard.example.com&quot; {
+        return { &quot;action&quot;: &quot;continue&quot; }
+    }
+    return { &quot;action&quot;: &quot;reply&quot;, &quot;mode&quot;: &quot;reject&quot;, &quot;reason&quot;: &quot;noerror&quot; }
+}
+</code></pre>
+<p>修改后保存并清除脚本缓存；后置脚本也不能通过 <code>filter_type: [&quot;HTTPS&quot;]</code> 删除这些记录。限制类型 65 查询不等于阻止所有 HTTPS、HTTP/3 或其他 DoH 流量。</p>
+<p>支持 JSON 查询的 CamoDNS 可用以下命令诊断；这不是通用 DoH 接口必需的功能：</p>
+<pre><code class="language-bash">curl 'https://dns.example.com/dns-query?name=app.example.com&amp;type=65'
+</code></pre>
+<p>响应 <code>Question.type</code> 和 <code>Answer.type</code> 应为 65，数据包含 <code>ech</code>。如果 Question 是 1，先检查服务版本是否正确支持数字查询类型；这表示请求变成了 A 查询，不能直接归因于缓存混用。终端显示解密后的 JSON 明文是正常的。</p>
+<h3 id="6-确认实际隐藏成功">6. 确认实际隐藏成功</h3>
+<p>浏览器开发者工具的安全面板若显示“已加密的 ClientHello：已启用”，可直接确认该连接使用 ECH。抓取新连接的 ClientHello，外层 <code>server_name</code> 应是 <code>ech.example.com</code>，原网站仍正常打开。服务端解密后的 ServerName、HTTP Host 以及浏览器地址栏仍是原网站名称，这是预期行为。</p>
+<p>Wireshark 可先使用 <code>tls.handshake.extensions_server_name</code> 查看 SNI；只测试 TCP 时可以按目标 IP 和 <code>tcp.port == 443</code> 缩小范围。HTTP/3 使用 UDP 443，没有 TCP ClientHello 不表示失败。只有 <code>encrypted_client_hello</code> 扩展、TLS 1.3 或网页正常打开都不足以单独证明成功，扩展也可能是 GREASE 占位。</p>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>优先检查</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTTPS 查询是 NOERROR 空回答</td>
+<td>前/后置脚本、解析器缓存、上游失败和本地覆盖</td>
+</tr>
+<tr>
+<td>JSON type=65 却返回 Question.type=1</td>
+<td>查询类型解析是否支持数字 65，部署版本是否更新</td>
+</tr>
+<tr>
+<td>DNS 有 ech，抓包仍是原域名</td>
+<td>浏览器实际 DNS 路径、策略、代理、缓存和已有连接</td>
+</tr>
+<tr>
+<td>ECH 等待或暂停，日志有 invalid_keys</td>
+<td>对应 KV key 的解析错误与初始同步状态</td>
+</tr>
+<tr>
+<td>删除站点后旧 HTTPS 记录仍存在</td>
+<td>是否仍列在全局 domains；校验失败时保留旧记录，不自动撤销</td>
+</tr>
+</tbody>
+</table>
+<h2 id="新配置多组与站点选择">新配置：多组与站点选择</h2>
+<p>在主 <code>config.yaml</code> 中复用现有 DNS 提供商：</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: admin@example.com
+  certs_dir: ./certs
+  dns_providers:
+    - name: aliyun-main
+      type: aliyun
+      enabled: true
+      domains: [&quot;*.example.com&quot;, &quot;example.com&quot;]
+      config:
+        access_key_id: &quot;...&quot;
+        access_key_secret: &quot;...&quot;
+    - name: cloudflare-main
+      type: cloudflare
+      enabled: true
+      domains: [&quot;*.example.net&quot;]
+      config:
+        api_token: &quot;...&quot;
+
+ech:
+  enabled: true
+  groups:
+    - public_name: ech.example.com
+      dns_provider: aliyun-main
+    - public_name: ech.example.net
+      dns_provider: cloudflare-main
+  storage: file
+  # KV 集群可改为：
+  # storage: kv
+  # kv:
+  #   provider: litemesh  # 或 consul，复用对应连接和 namespace
+  #   key_prefix: litegate/ech/mycluster/
+  # key_prefix: litegate/ech/mycluster/
+</code></pre>
+<p>在需要启用的站点中指定公共域名，例如：</p>
+<pre><code class="language-yaml">site: app.example.com
+ech: ech.example.com
+https: true
+proxy: 127.0.0.1:8080
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td>默认关闭，显式开启 ECH</td>
+</tr>
+<tr>
+<td><code>groups[].public_name</code></td>
+<td>客户端外层可见的公共域名，建议使用专用名称；必须是具体的 ASCII 域名</td>
+</tr>
+<tr>
+<td><code>groups[].dns_provider</code></td>
+<td>一个已启用的 <code>auto_cert.dns_providers[].name</code></td>
+</tr>
+<tr>
+<td><code>domains</code></td>
+<td>可选旧配置列表；新配置从站点 <code>ech: 公共域名</code> 收集，不需要重复填写</td>
+</tr>
+<tr>
+<td><code>storage</code></td>
+<td><code>file</code> 为单节点本地存储；<code>kv</code> 显式选择共享存储。兼容 <code>auto</code>，仅在 config_watch 开启时选 KV，也兼容旧 litemesh/consul 写法</td>
+</tr>
+<tr>
+<td><code>kv.provider</code></td>
+<td>storage: kv 时必填，litemesh 或 consul，复用已有连接；不使用 DNS provider</td>
+</tr>
+<tr>
+<td><code>kv.key_prefix</code></td>
+<td>storage: kv 时必填；根级作为各组父目录，组级为精确前缀；实际键为 state 和 publisher</td>
+</tr>
+<tr>
+<td><code>key_prefix</code></td>
+<td>可选 KV 前缀，组默认 litegate/ech/&lt;public_name&gt;/；根级前缀作为父目录，组级前缀为精确值，组间不得重复</td>
+</tr>
+</tbody>
+</table>
+<p>内置支持 <code>aliyun</code> 和 <code>cloudflare</code>；其他服务商可通过声明 <code>https_records</code> 并实现 <code>plugin.HTTPSDNSProvider</code> 的 DNS 插件扩展，见 <a href="../../dns-provider-plugin-guide.html">插件开发指南</a>。ECH 密钥、轮换、KV 同步及发布状态由 LiteGate 内部管理，插件只负责 HTTPS 记录 API。要求 <code>websecure</code> 监听 TCP 443，站点允许 TLS 1.3。ECH 配置和 DNS 提供商配置修改需要重启，站点内容仍可热加载。</p>
+<p>Cloudflare 使用原有的 <code>api_token</code> 或 <code>token</code>，同名 A/AAAA 记录必须是 DNS only（关闭橙云代理）。阿里云自动识别 <code>example.com.cn</code> 等公共后缀；如使用委派子区域，可在提供商的 <code>config</code> 中设置 <code>zone: delegated.example.com</code>。</p>
+<h2 id="dns-和证书">DNS 和证书</h2>
+<ol>
+<li>
+<p>为启用 ECH 的每个具体名称建立指向 LiteGate 的精确 A/AAAA 记录，不能使用 CNAME 或 Cloudflare 代理。仅有泛解析不够：发布 HTTPS 记录后，该名称不再触发泛解析。如果相应 Provider 已启用匹配该名称的 DDNS，同步目标也会包含泛域名站点承载的具体 ECH 名称及公共名称；ECH 的 HTTPS 发布接口本身不改动地址记录。</p>
+</li>
+<li>
+<p>确保 <code>public_name</code> 的证书可以正常申请。若现有证书已覆盖它，会复用该证书；否则使用所选提供商的凭据建立独立证书组，不把公共名称加入已有业务证书的 SAN，公共名称申请失败也不会阻塞原业务证书续签。DNS-01 申请不要求公共名称有 A/AAAA，但为这个名称也配置地址记录便于排查。</p>
+</li>
+<li>
+<p>启动后，先加载密钥并启动 HTTPS；公共名称的证书可用后，才发布网站的 HTTPS（类型 65）记录：</p>
+<pre><code class="language-text">app.example.com. 600 IN HTTPS 1 . alpn=&quot;h2&quot; ech=&quot;&lt;ECHConfigList 的 Base64&gt;&quot;
+</code></pre>
+</li>
+</ol>
+<p>提供商账户需要查询记录以及创建、更新、删除 HTTPS 记录的权限。DNS 平台或套餐必须支持 HTTPS 记录。已有的非 LiteGate 管理的 HTTPS 记录会触发报错，系统不会覆盖它；上线前请先检查并自行处理这些记录。</p>
+<p>浏览器必须支持 ECH，并能取得包含 <code>ech</code> 的 HTTPS DNS 响应。若还要避免普通 DNS 查询暴露访问域名，客户端应使用可信的 DoH/DoT。服务端开启 ECH 不会强制所有客户端使用 ECH，普通 TLS 1.2/1.3 客户端仍能访问。</p>
+<h2 id="密钥与运维">密钥与运维</h2>
+<p>各组密钥保存在 <code>auto_cert.certs_dir/ech/&lt;public_name&gt;/state.json</code>（未指定该目录时使用 <code>tls.certs_dir</code>），文件包含私钥，需要持久化和备份。在 Unix 上目录/文件权限分别为 0700/0600；Windows 请为证书目录配置合适的账户 ACL。本地恢复副本包含私钥；KV 中的状态使用 <code>auto_cert.storage_secret</code> 加密，所有同组节点必须使用相同、至少 32 字节的 secret。首次启用 KV 时，通过 CAS 导入现有本地密钥；不要删除状态重新生成。</p>
+<p>每 7 天自动生成新密钥，先持久化并安装到 TLS，再更新 DNS。发布按域名单独记录结果：健康域名每 30 分钟检查，失败域名每分钟重试，不阻塞其他域名或正常轮换。旧密钥在不再被任何域名的已发布或未确认写入引用后保留 14 天；失败域名可能仍在使用的密钥不会删除。极长期故障耗尽 256 个配置 ID 时，会告警并推迟生成新密钥，现有密钥和健康域名仍可使用。重启复用已有密钥；状态损坏会报错，不能通过删除状态文件来简单修复。</p>
+<p>KV 模式支持多个 TLS 终止节点共享密钥和发布状态，租约选出一个发布者，其他节点通过 KV watch / blocking query 接收变化，并在最多一个 5 秒周期内刷新密钥。轮换先写 KV，至少等待 15 秒后再发布 DNS，旧密钥继续保留。所有节点应使用相同 public_name、DNS 提供商、站点配置、key_prefix 和 storage_secret，并确认节点能正常同步 KV 后再接入流量。KV 初始化未完成或站点配置解析失败时暂停发布。每个节点仍需要独立持久化目录，不能共用本地目录；显式 storage: file 仅适用于单节点。网站前面若有 CDN、其他 TLS 终止器或 Connect/L4 透传，需在真正终止客户端 TLS 的服务上实现 ECH。<code>public_name</code> 在 LiteGate 的 443 SNI 分流中保留给本地解密，不会进入重叠的透传路由；不要将它用作 Connect 控制域名。</p>
+<p>将站点 <code>ech</code> 改为 false、删除站点或更换组，可热加载并撤回该状态管理的 HTTPS 记录；旧 <code>domains</code> 列表仍兼容，列出的域名不会被站点 false 取消，需同时从旧列表删除并重启。修改 <code>public_name</code> 或 <code>dns_provider</code> 前，需要先撤回旧 HTTPS 记录并等待 DNS 缓存过期，再归档旧状态文件；否则启动会明确拒绝不匹配的状态。</p>
+<p>关闭 ECH 时，可先停止该 KV 组所有实例，再运行 <code>litegate ech withdraw -config config.yaml</code>。该命令使用保存状态中的域名及原提供商身份，仅删除本实例密钥对应的 HTTPS 记录，保留私钥备份；需要配置中仍保留原提供商的凭据。全部删除成功才清除已发布域名状态，部分失败可重试。命令要求独占状态目录，避免运行中的实例再次发布记录。</p>
+<p>撤销后等待至少一个 TTL（默认 600 秒，并考虑客户端缓存），再以 <code>ech.enabled: false</code> 启动。若必须在等待期间继续服务，可先在 DNS 控制台撤销记录并安排停用；运行中的 ECH 会在下次全面检查时重新发布，需在检查前完成停用。移除 ECH 配置不会自动撤销记录。更换公共名称或提供商时，使用原配置撤销并等待缓存过期，再归档旧状态文件。</p>
+<p>发布成功且配置、协议和密钥未改变时，每 30 分钟全面核对一次 DNS；失败每分钟重试。启用 HTTP/3 后记录包含 <code>alpn=&quot;h2,h3&quot;</code>。公共名称的证书申请域名仅在运行时派生，不会写回提供商的 <code>domains</code>。等待证书超过 5 分钟会产生 Warn 日志。</p>
+<p>加载完成后检查每个隐藏域名的本地 HTTPS 站点，拒绝与 SNI 透传、L4 或 Connect 控制域名冲突，以及不允许 TLS 1.3 的策略。<code>public_name</code> 不能列入 <code>domains</code>。KV 站点尚未加载完成时暂停发布并记录原因，站点配置就绪后再发布。</p>
+<p>站点校验使用只读元数据快照，不重新编译线上路由。仅匹配非 HTTP ALPN（例如 <code>mqtt</code>）的透传路由不会被误判为 HTTP 站点冲突；匹配 <code>h2</code> 或 <code>http/1.1</code> 的路由仍需避免覆盖隐藏域名。覆盖 <code>public_name</code> 的透传路由或 L4 流会产生 Warn，提示公共名称已保留给本地 TLS。</p>
+<p>运行期站点变得不合法时，暂停后续 DNS 发布，<strong>不会自动撤回已经发布的 HTTPS 记录</strong>。同一校验错误或路由遮蔽告警最多每 30 分钟提醒一次，错误变化或恢复后再次失败会立即提醒。需要撤回时使用前述撤销命令；站点删除、发现服务消失等情况应结合告警排查，不能仅凭旧 DNS 记录判断服务仍然正常。</p>
+<h2 id="上线测试">上线测试</h2>
+<p>抓包出现 <code>encrypted_client_hello</code> 扩展本身不代表 ECH 成功：浏览器也可能发送随机的 GREASE 占位扩展。若外层 ClientHello 的 <code>server_name</code> 仍是原网站域名（且不是配置的公共名称），这条连接没有隐藏原域名。先通过浏览器实际使用的 DNS/DoH 解析器查询网站的 HTTPS（类型 65）记录，确认包含有效 <code>ech</code>；再检查浏览器 ECH 策略、安全 DNS、代理或 hosts 覆盖，以及 DNS 缓存和已有连接。使用新的浏览器连接重新抓包，外层 SNI 应为所选组的 <code>public_name</code>。服务端握手后的 ServerName/HTTP Host 仍是原域名，这是正常的解密结果。</p>
+<ul>
+<li>日志中应先出现 <code>ECH keys loaded</code>，证书可用并发布成功后，每个域名出现 <code>ECH HTTPS record published</code>。出现 <code>ECH publication failed</code> 时会显示具体原因并自动重试。</li>
+<li>用 <code>dig app.example.com HTTPS</code> 检查返回 <code>ech=&quot;...&quot;</code>；同时核对 A/AAAA 指向本实例。</li>
+<li>用支持 ECH 的浏览器访问原网站，确认业务与证书正常。浏览器访问成功本身不能证明用了 ECH；可用支持 ECH 的 TLS 客户端或抓包确认外层 SNI 为 <code>ech.example.com</code>。</li>
+<li>仓库自动化测试覆盖 HTTP/1.1、HTTP/2、HTTP/3 的实际 ECH 握手、内层站点 TLS 策略、未知密钥的认证重试、普通 TLS 1.2、重启恢复、轮换/部分 DNS 失败及 DNS 记录所有权。</li>
+</ul>
+<p>协议与 DNS 记录说明可参阅 <a href="https://pkg.go.dev/crypto/tls#EncryptedClientHelloKey">Go TLS ECH 接口</a>、<a href="https://caddyserver.com/docs/automatic-https#encrypted-clienthello-ech">Caddy ECH 说明</a>及 <a href="https://developers.cloudflare.com/dns/manage-dns-records/reference/dns-record-types/#https">Cloudflare HTTPS 记录</a>。</p>
+<h2 id="多组kv-与升级">多组、KV 与升级</h2>
+<p><code>site: app.example.net</code> 使用 <code>ech: ech.example.net</code>，由 cloudflare-main 发布；app.example.com 使用 ech.example.com，由 aliyun-main 发布。不限制隐藏域名与公共域名同后缀，但所选 DNS 提供商必须有权管理隐藏域名。多个组时 ech: true 会报错；只有一个组时可使用 true；false 关闭。每个隐藏域名只能属于一组，任何组的公共域名都不能作为隐藏域名。</p>
+<p>每组独立管理密钥、发布状态及租约。KV 默认键为 <code>litegate/ech/&lt;public_name&gt;/state</code> 和 <code>litegate/ech/&lt;public_name&gt;/publisher</code>。不用额外配置连接或 Token，复用已有连接与 LiteMesh namespace；ACL 需要前缀读写及会话/锁权限。所有同组节点使用相同 storage_secret 和组配置。组级 storage/key_prefix 可覆盖根级默认值；根级 key_prefix 加公共域名后组成默认组前缀。</p>
+<p>旧单组 public_name/dns_provider/domains 配置继续兼容，不能与 groups 混用，保留原 state.json 和 litegate/ech/default/。迁移到 groups 时，匹配公共域名和提供商的旧本地目录会继续复用。已有 KV 部署建议在对应组明确设置 <code>key_prefix: litegate/ech/default/</code> 继续使用已有共享状态，其他组使用自己的默认前缀。停止旧配置实例后再切换，保留状态及备份。新组配置须重启；站点选组可热加载，换组先撤回旧组的记录，再由新组发布。</p>
+<p>撤回指定组：<code>litegate ech withdraw -config config.yaml -public-name ech.example.com</code>。不传 public-name 则撤回所有配置组。撤回前停止对应 KV 组的全部实例。删除组或修改公共域名/提供商/存储前缀前，先用原配置撤回并等待 DNS 缓存过期，然后归档该组本地与 KV 状态；不能删除密钥来清除发布错误。</p>
+<h2 id="显式选择共享存储">显式选择共享存储</h2>
+<pre><code class="language-yaml">ech:
+  enabled: true
+  storage: kv
+  kv:
+    provider: litemesh
+    key_prefix: litegate/ech/production/
+  groups:
+    - public_name: ech.example.com
+      dns_provider: aliyun-main
+    - public_name: ech.example.net
+      dns_provider: cloudflare-main
+      # 本组也可覆盖 kv.provider 和 kv.key_prefix
+</code></pre>
+<p>对应第一组的实际键为 <code>litegate/ech/production/ech.example.com/state</code> 和 <code>litegate/ech/production/ech.example.com/publisher</code>。连接地址、凭据及 LiteMesh namespace 复用主配置中的 <code>litemesh</code> 或 <code>consul</code>；DNS provider 与 KV provider 是两项独立配置。单节点使用 <code>storage: file</code> 即可，不需配置 KV。显式选择 KV 但站点来自本地文件时会告警，所有共享节点的站点必须一致。</p>
+<p>站点域名必须由所选 DNS provider 的 <code>domains</code> 明确覆盖（通配符只匹配一级）；不覆盖的站点在加载时被拒绝。转组时始终先撤回旧记录，只有仍被其他组占用的域名暂停新增并告警；其他域名正常发布。撤销失败的域名继续保留所有可能已发布的密钥，等待单独重试。</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/06-certificates/ech.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

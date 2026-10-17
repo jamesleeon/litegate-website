@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gateway configuration reference (config.yaml) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/03-configuration/global-config.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details open><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html" class="current" aria-current="page">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: internal/configdocs/docs/en/global-config.md (package internal/configdocs)
+     Regenerate: go generate ./internal/configdocs/...
+     Edit the source instead; a drift test fails if this copy is edited directly. -->
+<h1 id="gateway-configuration-reference-configyaml">Gateway configuration reference (<code>config.yaml</code>)</h1>
+<p><code>config.yaml</code> defines LiteGate's listeners, certificates, service discovery, observability, caching, authentication and MCP exposure.</p>
+<blockquote class="alert alert-tip"><p>MCP's <code>get_gateway_config_schema</code> returns this file verbatim. The fields here must stay in step with <code>internal/config/types.go</code>.</p>
+</blockquote>
+<hr>
+<h2 id="0-mode">0. Mode</h2>
+<pre><code class="language-yaml"># performance: high-throughput mode (default). Metrics, access logs, tracing and the dashboard still work when enabled
+# observability: records routing details for every request and always feeds the dashboard live stream
+mode: &quot;performance&quot;
+</code></pre>
+<p><code>performance</code> (the default) only skips per-request accounting that nothing consumes: enabling <code>metrics</code>, <code>dashboard</code>, <code>log.access_log</code> or <code>tracing</code> keeps that feature fully working, and the live request stream (read by the dashboard and the MCP <code>get_recent_requests</code> tool) keeps flowing while the dashboard or MCP SSE is on. Use <code>mode: observability</code> to always record routing details.</p>
+<hr>
+<h2 id="1-listeners-and-entrypoints-multiple-ports--network-interfaces">1. Listeners and entrypoints (multiple ports / network interfaces)</h2>
+<p>LiteGate supports Traefik-style multiple ingress listeners, so different sites or an internal management interface can bind to different ports or to a specific physical interface (<code>SO_BINDTODEVICE</code>).</p>
+<pre><code class="language-yaml">entrypoints:
+  web:
+    address: &quot;:80&quot;
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+  # internal:
+  #   address: &quot;:8080&quot;
+  #   interface_name: &quot;eth0&quot;         # Optional. Bind a Linux network device, following its DHCP address
+
+# Legacy port configuration; when entrypoints is present, entrypoints wins
+http:
+  port: 80
+  https_port: 443
+  response_header_timeout: 60    # Optional. Default response-header timeout, in seconds
+  # upstream_transport_shards: 1  # Optional. Connection pools per upstream endpoint, to cut pool-lock contention under high concurrency; default 1 = off
+  # upstream_buffer_size: 32768   # Optional. Upstream HTTP/1 connection read/write buffer in bytes (4096..65536, default 32768); large bodies bypass it
+  # upstream_client: fast         # Optional. Default fast: plaintext HTTP/1.1 upstreams use a synchronous pool (lower overhead) and TLS/mTLS/HTTP2/gRPC/WebSocket automatically use the standard client; standard uses Go's net/http Transport everywhere
+  # listen_backlog: 65535        # Optional. Windows only: TCP accept queue length (1..65535, default 65535). Needs a `make windows` build; Go's default is about 200, so connection bursts get refused
+  # drain_delay: 5               # drain wait in seconds; omitted = auto, 0 = off, N = fixed N seconds
+  # drain_delay_ms: 250          # optional millisecond override, taking precedence over drain_delay
+</code></pre>
+<p><strong>Shutdown drain (<code>drain_delay</code>)</strong>: on a stop signal, <code>/readyz</code> starts returning 503 and LiteGate actively deregisters from Consul / litemesh, then waits before closing its listeners so load balancers in front stop sending new requests.</p>
+<ul>
+<li><strong>Omitted (default, auto)</strong>: waits only when something is actually watching — when registered with Consul / litemesh it deregisters first and waits 1 second; when <code>/readyz</code> was probed within the last 2 minutes (K8s readinessProbe, a cloud load balancer) it waits 5 seconds; a standalone instance nobody probes stops immediately.</li>
+<li><code>drain_delay: 0</code> disables the wait; <code>drain_delay: N</code> always waits N seconds (e.g. when the load balancer only does TCP checks, which auto-detection cannot see).</li>
+<li>Press Ctrl-C again (or send a second SIGTERM) during the wait to skip it.</li>
+<li>Upgrading: configs generated by older versions contain <code>drain_delay: 5</code>, which counts as an explicit setting and keeps the 5-second wait; delete that line to use auto mode.</li>
+</ul>
+<p><code>interface_name</code> binds a specific Linux network device and follows its DHCP address. The legacy <code>http</code> block still works; when <code>entrypoints</code> is present, <code>entrypoints</code> wins.</p>
+<hr>
+<h3 id="11-ingress-plugins">1.1 Ingress plugins</h3>
+<p>Compiled ingress plugins handle HTTP requests on explicitly selected entrypoints
+before site matching and path normalization. Bindings execute in array order;
+unhandled requests continue to the next plugin and then the site router. No
+plugins are enabled by default. Names must be unique and entrypoints explicit.
+Missing plugins, unknown entrypoints and invalid plugin options reject configuration.</p>
+<pre><code class="language-yaml"># The standard binary includes forward_proxy; declare a websecure TLS entrypoint first.
+ingress_plugins:
+  - name: developer-egress
+    type: forward_proxy
+    entrypoints: [websecure]
+    config:
+      username: developer
+      hosts: [proxy.example.com]
+      password: '$2a$10$REPLACE_WITH_COMPLETE_BCRYPT_HASH'
+      probe_resistance: true
+      hide_ip: true
+      hide_via: true
+      allowed_destinations: [example.org, &quot;*.example.org&quot;]
+      allowed_ports: [80, 443]
+</code></pre>
+<p>Global ingress security runs first. Handled requests do not enter site middleware
+; the host records access logs, metrics and dashboard traffic under <code>ingress:&lt;binding name&gt;</code>. The plugin owns authentication and destination policies. Internally injected
+Forward/Connect traffic skips this chain. Failed candidate initialization keeps
+the active instances; successful reloads drain old instances for <code>http.shutdown_grace</code> (30 seconds when unset), then cancel their host context and close them with a deadline. Shutdown closes their owned connections immediately.
+Generate the full bcrypt hash with <code>litegate -hash 'your-password'</code> and place it in
+<code>password</code>; clients use the original password. Alternatively set <code>password_env</code>
+to read the original password from an environment variable. Configure exactly one;
+plaintext <code>password</code> is rejected. Optional <code>hosts</code> matches TLS SNI, not CONNECT's
+destination Host; unmatched, non-TLS or missing-SNI requests fall through. Configure
+a normal or catch-all Site for unauthenticated requests when probe resistance is enabled.
+A shared website listener must configure <code>hosts</code> or enable <code>probe_resistance</code>, otherwise legitimate absolute-form requests may receive 407. Changing only the value of the environment variable named by <code>password_env</code> does not rebuild an unchanged binding; change binding configuration or restart to load it.
+Successful bcrypt authentication caches the header SHA-256 digest for 5 minutes, renewing the TTL on cache hits with constant-time comparison; each instance admits at most two concurrent bcrypt checks, waiting for admission for at most 100ms subject to the request context. Wildcards do not grant access to local interface addresses, <code>64:ff9b::/96</code>, <code>240.0.0.0/4</code> or <code>198.18.0.0/15</code>; intentional access requires explicit IP/CIDR rules. Each resolved address has its own dial timeout. Interface addresses are cached for 30 seconds and refreshed on demand. A cloud public IP behind 1:1 NAT may not appear on the interfaces; add it to <code>denied_destinations</code> to block connections back to the gateway. Changing only <code>shutdown_grace</code> keeps the reused instance’s original grace period; change the binding or restart to adopt the new value. HTTP/2/3 end both directions when download ends; half-close is retained only for hijacked HTTP/1 connections.
+<code>hide_ip</code> and <code>hide_via</code> default to true, removing existing client-IP and Via headers
+from forwarded HTTP requests. Setting them to false appends the client IP to Forwarded
+and LiteGate to Via respectively. CONNECT payloads are never rewritten.
+The plugin supports HTTP/1.1 forwarding and HTTP/1.1, HTTP/2 and HTTP/3 CONNECT through the public
+<code>RegisterIngress</code> API; see <code>examples/plugins/ingress/forwardproxy/README.md</code>.</p>
+<h3 id="12-sni--l4-routing-on-shared-443">1.2 SNI / L4 routing on shared 443</h3>
+<p><code>entrypoints.websecure.routes</code> inspects the TLS ClientHello before HTTPS
+termination and dispatches connections to an L4 backend or a named Stream.
+Unmatched hostnames continue to normal HTTPS sites. Explicit transport routes
+currently require <code>websecure</code> with <code>tls: true</code>.</p>
+<h4 id="direct-passthrough-to-a-tls-backend">Direct passthrough to a TLS backend</h4>
+<p>Place this configuration in <code>config.yaml</code>. Connections for <code>tcp.example.com</code>
+pass through to the TLS backend; LiteGate handles HTTPS for other hostnames:</p>
+<pre><code class="language-yaml">entrypoints:
+  web:
+    address: &quot;:80&quot;
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    default: http
+    on_non_tls: reject
+    on_no_sni: reject
+    inspect:
+      timeout: 5s
+      max_pending: 2048
+      per_ip_pending: 16
+    routes:
+      - name: private-tls
+        match:
+          sni: tcp.example.com
+        handle:
+          proxy: tcp://127.0.0.1:444
+</code></pre>
+<p><code>handle.proxy</code> does not terminate TLS. The backend must start a TLS handshake
+from the first byte and hold the appropriate certificate. TCP Unix sockets such
+as <code>unix:///run/service/tls.sock</code> are also supported.</p>
+<h4 id="recommended-generate-routes-from-stream-site-shorthand">Recommended: generate routes from Stream site shorthand</h4>
+<p>Simple configurations do not need explicit <code>routes</code>. Keep the global
+<code>websecure</code> listener and define <code>streams/database.yaml</code>:</p>
+<pre><code class="language-yaml">site: tcp://db.example.com
+name: database
+proxy: 127.0.0.1:3306
+</code></pre>
+<p>This attaches to <code>websecure</code> and generates the SNI route automatically. Do not
+repeat the hostname in <code>config.yaml</code>. TLS passes through by default. To terminate
+TLS in LiteGate, configure Stream <code>tls.enabled: true</code> and a certificate source;
+the backend specified by <code>proxy</code> then receives plain TCP.</p>
+<p>For explicit routing to an existing Stream, merge the following route into
+<code>entrypoints.websecure.routes</code>. The Stream named <code>database</code> must exist and use
+<code>listen: false</code>. Choose exactly one of <code>handle.proxy</code> and <code>handle.stream</code> per route:</p>
+<pre><code class="language-yaml">entrypoints:
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+    routes:
+      - name: database
+        match:
+          sni: db.example.com
+        handle:
+          stream: database
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>match.sni</code></td>
+<td>One hostname or a list; supports <code>*.example.com</code>.</td>
+</tr>
+<tr>
+<td><code>match.sni_regex</code></td>
+<td>SNI regular expressions; prefer <code>sni</code> for simple names.</td>
+</tr>
+<tr>
+<td><code>match.alpn</code></td>
+<td>Optional restriction to protocols offered in ClientHello, such as <code>[h2]</code>; case-sensitive.</td>
+</tr>
+<tr>
+<td><code>handle.proxy</code></td>
+<td>TCP / Unix socket backend receiving the original TLS bytes.</td>
+</tr>
+<tr>
+<td><code>handle.stream</code></td>
+<td>Existing named Stream applying its TLS, ACL and L4 proxy policies.</td>
+</tr>
+<tr>
+<td><code>default</code></td>
+<td>Unmatched routes fall back to HTTP/HTTPS processing; only <code>http</code> is supported.</td>
+</tr>
+<tr>
+<td><code>on_non_tls</code>, <code>on_no_sni</code></td>
+<td>Configure <code>http</code> or <code>reject</code> for non-TLS / missing SNI.</td>
+</tr>
+<tr>
+<td><code>inspect</code></td>
+<td>ClientHello inspection timeout and concurrency limits.</td>
+</tr>
+</tbody>
+</table>
+<p>Explicit routes for the same SNI without an ALPN restriction take precedence
+over generated Stream routes. ALPN-scoped explicit routes claim only those
+protocols; the generated route can still handle the rest. Plain TCP and UDP have
+no TLS SNI and cannot use this mechanism for hostname routing. UDP/QUIC does not
+use these TCP 443 routes. Avoid unintentionally assigning the same hostname to
+an L4 Stream and an HTTP site: SNI dispatch happens before HTTP routing.
+See the <a href="l4-guide.html">L4 guide</a> for complete Stream scenarios.</p>
+<h2 id="2-static-tls">2. Static TLS</h2>
+<pre><code class="language-yaml">tls:
+  enabled: false
+  certs_dir: &quot;./certs&quot;
+
+  # Local CA (self-signed and self-trusted, the equivalent of Caddy's tls internal)
+  local_ca: false                       # issue leaf certificates for local domains on demand
+  local_ca_domains: [&quot;.localhost&quot;, &quot;.test&quot;]   # allow-list of issuable domains (a leading dot means suffix match)
+  local_ca_trust: false                 # install into the system trust store on first generation (local development only)
+</code></pre>
+<p>The local CA is the equivalent of Caddy's <code>tls internal</code>: it self-signs leaf certificates on demand for local domains. In <code>local_ca_domains</code>, a leading dot means suffix match. <code>local_ca_trust</code> installs the CA into the system trust store on first generation — enable it for local development only.</p>
+<hr>
+<h2 id="3-auto-cert">3. Auto-Cert</h2>
+<p>Setting <code>auto_cert.enabled: false</code> disables automatic issuance and renewal, including TLS handshakes and hot reloads. Enabled <code>dns_providers</code> groups are prepared before site certificates. Sites covered by a configured wildcard wait for that group; a failed group does not trigger a separate HTTP-01 order. Wildcards use DNS-01.</p>
+<p>Auto-Cert is enabled by default; set <code>enabled: false</code> to disable issuance. Concrete domain sites using the standard HTTPS listener automatically prepare certificates after TCP 443 binds successfully. Existing valid exact, SAN, or wildcard certificates are reused first; missing certificates default to HTTP-01. HTTP-only <code>web</code> bindings, IP addresses, and wildcard routing patterns are excluded.</p>
+<p>Site <code>https: true</code> controls HTTP-to-HTTPS redirects independently of issuance. HTTP-01 requires DNS pointing to this gateway and publicly reachable TCP 80. <code>on_demand.enabled</code> enables the additional SaaS authorization flow for domains not configured in advance; ordinary configured sites do not need it.</p>
+<pre><code class="language-yaml">auto_cert:
+  enabled: true
+  email: &quot;litegate@example.com&quot; # Default placeholder; replace if your CA requires a real address
+  domains: []                    # legacy field, kept for compatibility
+  certs_dir: &quot;./certs&quot;
+  default_challenge: &quot;http&quot;      # default challenge type: &quot;http&quot; (port 80) or &quot;tls-alpn&quot; (port 443)
+  storage_secret: &quot;&quot;             # Optional: symmetric key encrypting the ACME account private key (&gt;= 32 bytes)
+
+  # Multiple CA configuration
+  ca_provider: &quot;letsencrypt&quot;     # letsencrypt, zerossl, google, custom
+  acme_url: &quot;&quot;                   # custom ACME directory URL (required when ca_provider is custom)
+  acme_ca_cert: &quot;&quot;               # private ACME root certificate path, or inline PEM
+  acme_headers: {}                # extra headers for private ACME requests
+  eab_kid: &quot;&quot;                    # External Account Binding key ID (ZeroSSL / GTS)
+  eab_hmac: &quot;&quot;                   # External Account Binding HMAC key (ZeroSSL / GTS)
+
+  provider: &quot;&quot;                   # legacy single-provider mode
+  provider_config: {}
+
+  dns_providers:
+    - name: &quot;aliyun-main&quot;
+      type: &quot;aliyun&quot;
+      enabled: true
+      domains: [&quot;*.example.com&quot;, &quot;example.com&quot;]
+      ddns:
+        enabled: true
+        ipv4: &quot;&quot;
+        ipv6: &quot;&quot;
+        sync_a: true
+        sync_aaaa: true
+        domains: [&quot;*.example.com&quot;]
+      config:
+        access_key_id: &quot;...&quot;
+        access_key_secret: &quot;...&quot;
+
+  renew_days: 10
+  check_interval: 24
+  use_staging: false
+  propagation_dns: [&quot;223.5.5.5&quot;, &quot;114.114.114.114&quot;]
+  bootstrap_dns: &quot;&quot;
+
+  dns_update:
+    enabled: false
+    auto_service_host_sync: false
+    ip: &quot;&quot;
+    key_prefix: &quot;litedns/v1/records/&quot;
+    node_id: &quot;&quot;
+    record_ttl: 30
+    heartbeat_interval: 30s
+
+  on_demand:
+    enabled: false
+    ask: &quot;http://your-api/check-domain&quot;
+    kv_prefix: &quot;&quot;
+    saas_template_site: &quot;&quot;
+
+  webhook_url: &quot;&quot;
+  webhook_token: &quot;&quot;
+</code></pre>
+<p>Field reference:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>enabled</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Enables automatic certificates; defaults to <code>true</code>; set <code>false</code> to disable issuance</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ca_provider</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Certificate authority provider. Defaults to <code>letsencrypt</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>acme_url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Custom ACME directory URL. Required when <code>ca_provider=custom</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>eab_kid</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">External Account Binding key ID (mandatory for ZeroSSL/GTS)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>eab_hmac</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">External Account Binding HMAC key (mandatory for ZeroSSL/GTS)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>storage_secret</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional AES-256-GCM key encrypting the ACME account private key at rest. Must be at least 32 bytes</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>dns_providers</code></td>
+<td style="text-align:left">array</td>
+<td style="text-align:left">Multiple DNS provider configurations</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ddns.ipv4</code> / <code>ddns.ipv6</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Pin the IP manually</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>dns_update</code></td>
+<td style="text-align:left">object</td>
+<td style="text-align:left">Publishes this gateway's internal IP per domain into LiteMesh KV for LiteDNS internal resolution (requires litemesh)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>on_demand.ask</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Authorization check URL for on-demand issuance</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>on_demand.kv_prefix</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">KV prefix holding on-demand domain authorizations</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>on_demand.saas_template_site</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Template site SaaS domains bind to</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="31-encrypted-clienthello-ech">3.1 Encrypted ClientHello (ECH)</h3>
+<p>Enable browser-to-gateway ECH in the main configuration using an existing enabled DNS provider:</p>
+<pre><code class="language-yaml">ech:
+  enabled: true
+  groups:
+    - public_name: ech.example.com
+      dns_provider: aliyun-main
+    - public_name: ech.example.net
+      dns_provider: cloudflare-main
+  storage: file
+  # For shared storage:
+  # storage: kv
+  # kv:
+  #   provider: litemesh  # or consul, reuse the existing connection
+  #   key_prefix: litegate/ech/mycluster/
+  # key_prefix: litegate/ech/mycluster/
+</code></pre>
+<p>Disabled by default. Requires <code>auto_cert.enabled: true</code>, the <code>websecure</code> TCP listener on port 443, site TLS policies permitting TLS 1.3, and a built-in Aliyun or Cloudflare provider. Names must be concrete ASCII hostnames. Sites need direct A/AAAA records, without CNAME; Cloudflare records must be DNS only.</p>
+<p>LiteGate arranges the public-name certificate, persists ECH keys, and publishes HTTPS DNS records with TTL 600. Keys rotate every 7 days; old keys stay accepted for 14 days after no potentially published records reference them. Failed writes retry every minute, and unmanaged HTTPS records are never overwritten. Configuration changes require a restart. Persist and back up <code>auto_cert.certs_dir/ech/&lt;public_name&gt;/state.json</code> (falling back to <code>tls.certs_dir</code>; matching legacy single-group state directories remain in use). Auto storage encrypts and shares state through Consul/LiteMesh only when config_watch is enabled; a publisher lease selects one DNS writer. Explicit storage: file supports one instance; storage: kv requires kv.provider (litemesh or consul) and kv.key_prefix. Root KV prefixes are parent directories; group prefixes are exact, and the state/publisher keys are appended. Explicit KV with local site files warns that every node must have identical sites. Withdraw HTTPS records and wait for DNS caches before disabling ECH. See <a href="../06-certificates/ech.html">ECH</a> for deployment details.</p>
+<h2 id="4-consul">4. Consul</h2>
+<pre><code class="language-yaml">consul:
+  enabled: false
+  address: &quot;127.0.0.1:8500&quot;
+  datacenter: &quot;dc1&quot;
+  token: &quot;&quot;
+  roles:
+    config_watch: false
+    cert_storage: false
+    service_register: false
+  keys:
+    config_prefix: &quot;litegate/config/sites/&quot;
+    cert_prefix: &quot;litegate/certs/&quot;
+    stream_prefix: &quot;litegate/streams/&quot;
+  service:
+    id: &quot;&quot;
+    name: &quot;litegate&quot;
+    address: &quot;&quot;   # Registered address; auto-detects the outbound IP when empty
+    tags: [&quot;gateway&quot;, &quot;edge&quot;]
+    meta:
+      version: &quot;1.0&quot;
+</code></pre>
+<hr>
+<h2 id="5-litemesh">5. Litemesh</h2>
+<pre><code class="language-yaml">litemesh:
+  enabled: true
+  address: &quot;127.0.0.1:8787&quot;
+  token: &quot;&quot;
+  namespace: &quot;&quot;
+  mtls: true
+  spiffe_id: &quot;&quot;
+  mtls_port: 8443
+  roles:
+    config_watch: false
+    cert_storage: false
+    service_register: true
+  keys:
+    config_prefix: &quot;litegate/config/sites/&quot;
+    stream_prefix: &quot;litegate/config/streams/&quot;
+    cert_prefix: &quot;litegate/certs/&quot;
+  service:
+    id: &quot;&quot;
+    name: &quot;litegate&quot;
+    address: &quot;&quot;   # Registered address; auto-detects the outbound IP when empty
+    tags: [&quot;gateway&quot;, &quot;edge&quot;]
+    meta:
+      version: &quot;1.0&quot;
+</code></pre>
+<hr>
+<h2 id="6-service-discovery">6. Service discovery</h2>
+<pre><code class="language-yaml">service_discovery:
+  catalogs:
+    - enabled: false
+      provider: &quot;consul&quot;          # consul / discovery
+      name: &quot;&quot;                    # plugin discovery instance name, unique within a type
+      config: {}                  # plugin-specific key/value configuration
+      url: &quot;127.0.0.1:8500&quot;
+      service_name: &quot;&quot;
+      resolve_via: &quot;&quot;             # consul / litemesh
+      default_domain: &quot;&quot;
+      auth_mode: &quot;disabled&quot;       # disabled / auto
+      token: &quot;&quot;
+      namespace: &quot;&quot;
+      jwt_auth_url: &quot;&quot;
+      md5_auth_url: &quot;&quot;
+
+    - enabled: false
+      provider: &quot;docker&quot;
+      socket_path: &quot;/var/run/docker.sock&quot;
+      network_mode: &quot;internal&quot;     # internal (container network IP) or external (host port-mapped IP)
+      swarm_mode: false            # explicit Swarm mode
+      swarm_auto_detect: false     # opt in to manager-only detection
+
+  tag_entrypoints:
+    allowed_ports: []              # ports service tags may open (HTTP entrypoints and TCP/UDP streams), e.g. [8080, 15432]
+  path_ingress: true             # Magic Ingress path routing (http://gateway/&lt;service&gt;/...): only for services without their own Router, and only on unmatched or catch-all hosts
+</code></pre>
+<p>Service tags (<code>litegate.entrypoints.&lt;name&gt;.address</code>, <code>litegate.tcp.port</code>, <code>litegate.udp.port</code>) may open a listener only on a port listed in <code>tag_entrypoints.allowed_ports</code>, and never with the name or port of an entrypoint in this file. When the list is empty, tags cannot open ports and may only reference existing entrypoints (<code>web</code> and <code>websecure</code> by default). See the Service Tags Guide.</p>
+<p><code>network_mode</code> selects between the container network IP (<code>internal</code>) and the host port-mapped IP (<code>external</code>). Swarm detection is opt-in through <code>swarm_auto_detect: true</code> or <code>LITEGATE_SWARM_AUTO_DETECT=true</code>; <code>swarm_mode: true</code> explicitly enables Swarm without detection. Detection failures reject startup rather than silently selecting standalone mode.</p>
+<p>Docker catalogs also accept <code>constraints</code>, a strict expression composed of <code>Label(&quot;key&quot;, &quot;value&quot;)</code>, <code>LabelRegex(&quot;key&quot;, &quot;regex&quot;)</code>, <code>!</code>, <code>&amp;&amp;</code>, <code>||</code>, and parentheses. It filters original container/Service labels on complete snapshots and event refreshes, including declarations with zero Tasks. Invalid expressions reject startup. For example: <code>constraints: 'Label(&quot;team&quot;, &quot;payments&quot;) &amp;&amp; !LabelRegex(&quot;environment&quot;, &quot;^test$&quot;)'</code>.</p>
+<p>An SSH endpoint uses pure Go SSH and executes the fixed command <code>docker system dial-stdio</code>; the remote host must provide Docker CLI access for that user. The same client performs Swarm detection and later discovery calls. Operator authentication and host trust are configured on the catalog:</p>
+<pre><code class="language-yaml">socket_path: &quot;ssh://root@192.168.50.44:22&quot;
+ssh:
+  password_env: &quot;LITEGATE_DOCKER_SSH_PASSWORD&quot;
+  known_hosts_file: &quot;/etc/litegate/known_hosts&quot;
+  connect_timeout: &quot;10s&quot;
+  # private_key_file: &quot;/etc/litegate/docker_ed25519&quot;
+  # agent_socket: &quot;/run/ssh-agent.sock&quot;
+</code></pre>
+<p>The password comes only from the named environment variable; URL passwords are rejected. Private keys and an SSH agent are optional operator alternatives. With no explicit authentication, <code>SSH_AUTH_SOCK</code> is used. Host verification uses the configured known_hosts file (default <code>~/.ssh/known_hosts</code>) and negotiates algorithms matching pinned keys; unknown or changed keys fail. Connection setup, authentication and remote execution share the bounded <code>connect_timeout</code>. Established HTTP streams outlive their initial dial context and close when the client stops or a stream deadline expires.</p>
+<blockquote class="alert alert-note"><p><code>catalogs</code> is an array. The old single-object <code>catalog</code> form is gone from the current code.
+An external discovery provider uses its registered name as <code>provider</code>, keeps its own settings under <code>config</code>, and can use <code>name</code> to distinguish several instances of the same type.</p>
+</blockquote>
+<hr>
+<h2 id="7-cache-and-redis">7. Cache and Redis</h2>
+<pre><code class="language-yaml">cache:
+  local_ttl: &quot;60s&quot;
+  proxy_cache_max_entries: 10000  # local proxy-cache LRU entry limit
+  proxy_cache:
+    backend: local              # local | redis; Redis must also be enabled below
+    namespace: default          # separate environments
+    max_object_bytes: 262144    # 256KB
+    redis_timeout: 200ms
+    # stale_while_revalidate: 0s # Redis defaults to zero; local otherwise honors upstream
+  redis:
+    enabled: false
+    mode: &quot;standalone&quot;              # standalone or cluster
+    address: &quot;localhost:6379&quot;
+    addr: &quot;&quot;                      # alias for address
+    addrs: []                     # Redis Cluster nodes, e.g. [&quot;redis-1:6379&quot;, &quot;redis-2:6379&quot;]
+    username: &quot;&quot;
+    password: &quot;&quot;
+    db: 1
+    tls: false
+    pool_size: 20
+    min_idle_conns: 5  # legacy compatibility; Redigo creates connections on demand
+    dial_timeout: &quot;3s&quot;
+    read_timeout: &quot;2s&quot;
+    write_timeout: &quot;2s&quot;
+    max_retries: 2
+
+redis:
+  enabled: false
+  mode: &quot;standalone&quot;
+  address: &quot;localhost:6379&quot;
+  addr: &quot;&quot;
+  addrs: []
+  username: &quot;&quot;
+  password: &quot;&quot;
+  db: 0
+  tls: false
+  pool_size: 20
+  min_idle_conns: 5  # legacy compatibility; Redigo creates connections on demand
+  dial_timeout: &quot;3s&quot;
+  read_timeout: &quot;2s&quot;
+  write_timeout: &quot;2s&quot;
+  max_retries: 2
+</code></pre>
+<p><code>proxy_cache_max_entries</code> bounds local response-cache entries. Select <code>cache.proxy_cache.backend: redis</code> explicitly for shared multi-node responses; enabling Redis alone does not switch this backend. Connections prefer enabled cache.redis, then global redis. Configure Redis capacity independently. Redis failures bypass caching; stale responses are disabled by default. Successful proxy writes can invalidate named read routes with <code>on_success.invalidate_proxy_cache</code>. Dashboard <code>POST /api/proxy-cache/purge</code> supports all/site/route/key scopes with existing authentication. <code>addr</code> is an alias for <code>address</code>; <code>addrs</code> lists Redis Cluster nodes.</p>
+<hr>
+<h2 id="9-dashboard--metrics--pprof">9. Dashboard / metrics / pprof</h2>
+<pre><code class="language-yaml">dashboard:
+  enabled: true
+  port: 9999
+  username: &quot;admin&quot;
+  password: &quot;$2a$...&quot;
+  token: &quot;&quot;                      # management API token, checked against the X-API-Key header
+  cookie_secret: &quot;&quot;              # cookie encryption key (AES-256)
+  allowed_origins: []            # origins allowed for CORS and WebSocket access (empty means same-origin only)
+  require_secure_cookie: false   # require the dashboard session cookie to travel over HTTPS only
+
+metrics:
+  enabled: false
+  port: 9090
+
+pprof:
+  enabled: false
+  port: 6060
+</code></pre>
+<p><code>token</code> is the management API token checked against the <code>X-API-Key</code> header. <code>allowed_origins</code> lists origins allowed for CORS and WebSocket access; empty means same-origin only.</p>
+<h3 id="go-runtime-runtime">Go runtime (runtime)</h3>
+<p>Tunes the Go garbage collector (GC). When omitted, Go's defaults apply and behavior is unchanged.</p>
+<pre><code class="language-yaml">runtime:
+  gc_percent: 200        # same as GOGC, 25-1000; omit for Go's default of 100
+  memory_limit: 1GiB     # same as GOMEMLIMIT, units B/KiB/MiB/GiB/TiB, at least 64MiB
+</code></pre>
+<ul>
+<li><strong><code>gc_percent</code></strong>: how far, as a percentage of the live heap, the heap may grow before the next collection. LiteGate keeps little resident memory, so under the default it can collect dozens of times per second at high load; <code>200</code> noticeably reduces collections (about +13% throughput for a <code>respond</code> site on 16 vCPUs) at the cost of more memory.</li>
+<li><strong><code>memory_limit</code></strong>: a soft memory cap; near it the collector runs earlier and more often. Set it whenever you raise <code>gc_percent</code> so memory cannot grow unbounded; keep it below the machine or container memory with headroom for other processes. Raising <code>gc_percent</code> without a limit logs a startup warning.</li>
+<li>An explicitly set <code>GOGC</code> / <code>GOMEMLIMIT</code> environment variable takes precedence; the matching field is ignored with a warning.</li>
+<li>Changing <code>runtime</code> requires a process restart; hot reload rejects the change.</li>
+</ul>
+<hr>
+<h2 id="10-logging">10. Logging</h2>
+<pre><code class="language-yaml">log:
+  level: &quot;info&quot;                  # debug / info / warn / error
+  format: &quot;console&quot;              # console / json
+
+  webhook:
+    enabled: false
+    url: &quot;https://example.com/webhook&quot;
+    levels: [&quot;error&quot;, &quot;fatal&quot;, &quot;panic&quot;]
+    headers:
+      Content-Type: &quot;application/json&quot;
+
+  access_log:
+    enabled: true
+    stdout: true
+    level: info
+    file_enabled: false
+    file: &quot;&quot; # defaults to ./logs/access.log when file_enabled is true
+    max_size: 100         # Optional. Maximum size of one log file, in MB
+    max_age: 7            # Optional. Maximum age of a rotated log file, in days
+    max_backups: 30       # Optional. Maximum number of rotated log files kept
+    compress: true        # Optional. Gzip rotated log files
+    routing_detail: false
+    webhook:
+      enabled: false
+      url: &quot;http://mq-gateway:8080/access-log&quot;
+      batch_size: 100
+      interval: &quot;1s&quot;
+      headers:
+        Authorization: &quot;Bearer token&quot;
+</code></pre>
+<p><code>max_size</code> is per-file in MB, <code>max_age</code> the retention in days, <code>max_backups</code> the number of rotated files kept, and <code>compress</code> gzips them.</p>
+<hr>
+<h2 id="11-global-ip-restrictions">11. Global IP restrictions</h2>
+<pre><code class="language-yaml">ip_restriction:
+  allow_ips: []
+  deny_ips: []
+
+stream_ip_restriction:
+  allow_ips: []
+  deny_ips: []
+</code></pre>
+<hr>
+<h2 id="12-mcp">12. MCP</h2>
+<pre><code class="language-yaml">mcp:
+  enabled: false
+  port: 8080
+  token: &quot;&quot;                      # SSE Bearer Token
+  public_url: &quot;&quot;                 # publicly reachable MCP URL when behind a reverse proxy
+</code></pre>
+<p><code>public_url</code> is the externally reachable MCP URL when LiteGate sits behind a reverse proxy.</p>
+<hr>
+<h2 id="13-auth-providers">13. Auth providers</h2>
+<pre><code class="language-yaml">auth_providers:
+  google:
+    enabled: true
+    type: &quot;oidc&quot;
+    issuer: &quot;https://accounts.google.com&quot;
+    client_id: &quot;...&quot;
+    client_secret: &quot;...&quot;
+    scopes: [&quot;openid&quot;, &quot;email&quot;, &quot;profile&quot;]
+    callback_path: &quot;/_auth/callback/google&quot;
+    notify_url: &quot;&quot;
+    clock_skew: &quot;5m&quot;
+    allowed_signing_algs: [&quot;RS256&quot;]
+    introspection_url: &quot;&quot;
+    introspection_interval: &quot;5m&quot;
+
+  github:
+    enabled: true
+    type: &quot;oauth2&quot;
+    client_id: &quot;...&quot;
+    client_secret: &quot;...&quot;
+    scopes: [&quot;read:user&quot;, &quot;user:email&quot;]
+    auth_url: &quot;https://github.com/login/oauth/authorize&quot;
+    token_url: &quot;https://github.com/login/oauth/access_token&quot;
+    callback_path: &quot;/_auth/callback/github&quot;
+</code></pre>
+<p>Field reference:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>type</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Authentication protocol type: <code>oidc</code> or <code>oauth2</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>issuer</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">OIDC Discovery Issuer URL (required for OIDC, LiteGate fetches <code>.well-known/openid-configuration</code> automatically)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>client_id</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">OAuth2 / OIDC Client ID</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>client_secret</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">OAuth2 / OIDC Client Secret</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>scopes</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">Requested OAuth2 scopes (default <code>[&quot;openid&quot;, &quot;email&quot;, &quot;profile&quot;]</code>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>callback_path</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">OAuth2 callback path (default <code>/_auth/callback/&lt;provider&gt;</code>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>notify_url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional. Webhook URL to notify business systems on token events</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>auth_url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Authorization endpoint for standard non-OIDC OAuth2 providers</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>token_url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Token exchange endpoint for standard non-OIDC OAuth2 providers</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>user_info_url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Optional OAuth2 user-info JSON endpoint, called with a bearer token. GitHub defaults to its <code>/user</code> endpoint; errors reject login. Configure this for identity-based access rules with generic OAuth2.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>clock_skew</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Nonnegative OIDC tolerance for expiry, issued-at and not-before checks, e.g. <code>5m</code>; default <code>0</code> uses strict checks.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>allowed_signing_algs</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">Allowed JWT signing algorithms, e.g. <code>[&quot;RS256&quot;, &quot;ES256&quot;]</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>introspection_url</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">RFC 7662 Token Introspection endpoint</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>introspection_interval</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Token introspection refresh interval, e.g. <code>5m</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>auth_params</code></td>
+<td style="text-align:left">map</td>
+<td style="text-align:left">Adds or overrides authorization request parameters (e.g. <code>prompt: login</code>); an empty value removes a default. Google defaults to <code>access_type: offline</code> and <code>prompt: consent</code>; other IdPs get none</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="14-oidc-security">14. OIDC security</h2>
+<pre><code class="language-yaml">oidc_security:
+  token_allowed_ips: []
+  me_allowed_ips: []
+  token_one_shot: false
+  cookie_secret: &quot;&quot;
+  cookie_same_site: &quot;lax&quot;        # lax / strict / none
+  max_concurrent_sessions: 10
+  token_endpoint_enabled: false  # enables /_litegate/oauth/token
+  refresh_allowed_ips: []        # callers of /_litegate/oauth/refresh; loopback only by default
+  allowed_redirect_hosts: []     # external hosts allowed as redirect_back targets
+  login_failure_limit: 20        # failed login callbacks per IP within 15 minutes; negative disables
+</code></pre>
+<hr>
+<h2 id="15-real-ip">15. Real IP</h2>
+<pre><code class="language-yaml">real_ip:
+  # Trusted reverse proxy / load balancer IPs, whose X-Forwarded-For the gateway resolves the real client IP from
+  trusted_proxies:
+    - &quot;127.0.0.1/32&quot;
+    - &quot;10.0.0.5/32&quot;
+  # Internal client IPs/ranges allowed to perform east-west instance routing via X-Selector-Sid
+  selector_trusted_clients:
+    - &quot;127.0.0.1/32&quot;
+    - &quot;10.0.0.0/8&quot;
+</code></pre>
+<ul>
+<li>
+<p><strong><code>trusted_proxies</code></strong>: which upstream proxies the gateway trusts when resolving the real client IP from <code>X-Forwarded-For</code>. Normally just the specific IPs of your front-facing load balancers. Empty by default: no peer is trusted, <code>X-Forwarded-For</code> is ignored and the client IP is the direct connection address. When nginx or another proxy runs on the same host in front of LiteGate, add <code>127.0.0.1</code> explicitly.
+Per-IP limits use the client address resolved at ingress, never the raw request header. XFF is honored only when the direct peer belongs to <code>real_ip.trusted_proxies</code> (or a Unix ingress protected by filesystem permissions). All same-name fields form one chain, scanned right to left for the first untrusted IP; IPv4/IPv6 representations are canonicalized. Invalid or empty boundary hops fall back to the direct peer. The front proxy must overwrite incoming XFF or append the client IP it actually observes on the right of the complete chain. A gateway cannot authenticate client-supplied addresses blindly passed through by its trusted proxy. Do not trust public client networks, <code>0.0.0.0/0</code> or <code>::/0</code>.</p>
+</li>
+<li>
+<p><strong><code>selector_trusted_clients</code></strong>: the networks allowed to perform east-west instance routing via <code>X-Selector-Sid</code>. Only requests originating inside these ranges may have that header honoured for physical instance isolation; a <code>X-Selector-Sid</code> arriving from anywhere else is stripped at ingress, so it cannot be forged externally. If unset, this falls back to <code>trusted_proxies</code>.</p>
+</li>
+</ul>
+<hr>
+<h2 id="16-other">16. Other</h2>
+<pre><code class="language-yaml">sites_dir: &quot;./sites&quot;
+streams_dir: &quot;./streams&quot;
+# disable_trace_id: true   # Omitted = automatic: in performance mode no trace IDs unless tracing or the access log is enabled; an explicit true/false wins
+
+# Session-affinity cookie key (32-byte hex). Every node in a multi-node deployment
+# must share the same value, or a sticky cookie cannot be decrypted across nodes. Pairs with lb_policy: cookie
+sticky_key: &quot;&quot;
+
+# OpenTelemetry distributed tracing (OTLP/HTTP)
+tracing:
+  enabled: false
+  endpoint: &quot;http://127.0.0.1:4318&quot; # OTLP/HTTP receiver address (/v1/traces is appended)
+  service_name: &quot;litegate&quot;
+  sample_ratio: 1.0                  # sample ratio 0.0 - 1.0 (1.0 samples everything)
+  trust_incoming_sampled: true       # trust the sampled flag on an incoming traceparent
+  batch_size: 128
+  interval: &quot;2s&quot;
+
+# Passive health checking and outlier detection
+passive_health:
+  consecutive_failures: 5            # consecutive failures before the node is ejected
+  base_ejection_time: &quot;3s&quot;           # first ejection duration
+  max_ejection_time: &quot;30s&quot;           # maximum ejection duration under exponential backoff
+  ejection_reset_time: &quot;30s&quot;         # how long a node must run cleanly before the duration decays back to the base
+
+# External plugin directory, loaded dynamically
+# plugin_config:
+#   path: &quot;./plugins&quot;
+#   watch: true
+</code></pre>
+<p><code>sticky_key</code> is a 32-byte hex key for session-affinity cookies. Every node in a multi-node deployment must share the same value, otherwise a sticky cookie issued by one node cannot be decrypted by another. It pairs with an action's <code>lb_policy: cookie</code>.</p>
+<p>Under <code>tracing</code>, <code>endpoint</code> is the OTLP/HTTP receiver (<code>/v1/traces</code> is appended automatically) and <code>sample_ratio</code> runs from 0.0 to 1.0.</p>
+<p>Under <code>passive_health</code> (outlier detection), a node is ejected after <code>consecutive_failures</code>, held out for <code>base_ejection_time</code> growing exponentially up to <code>max_ejection_time</code>, and decays back to the base duration after <code>ejection_reset_time</code> of stable operation.</p>
+<hr>
+<h2 id="17-minimal-example">17. Minimal example</h2>
+<pre><code class="language-yaml">http:
+  port: 80
+  https_port: 443
+
+sites_dir: &quot;./sites&quot;
+streams_dir: &quot;./streams&quot;
+
+mcp:
+  enabled: true
+  port: 8080
+
+dashboard:
+  enabled: true
+  port: 9999
+  username: &quot;admin&quot;
+  password: &quot;$2a$...&quot;
+</code></pre>
+<hr>
+<h2 id="18-scan-protection">18. Scan protection</h2>
+<p><code>scan_protection</code> blocks scanners dynamically using a threat score, banning the source IP when it probes sensitive paths (<code>.git</code>, <code>.env</code>) or non-existent APIs.</p>
+<pre><code class="language-yaml">scan_protection:
+  enabled: false                      # master switch, off by default. Can be toggled at runtime from the dashboard or API
+  block_duration: &quot;1h&quot;                # ban duration; h/m/s accepted
+  max_404_attempts: 6                 # 404 probes tolerated per observation window; beyond it the score rises and blocking starts
+  observation_period: &quot;1m&quot;            # length of the sliding observation window
+  block_direct_ip: false              # leave false when rolling out; switch to true once no legitimate traffic is affected. Blocks requests reaching the gateway by raw IP with no Host
+  forbidden_paths:
+    - &quot;.env&quot;
+    - &quot;.php&quot;
+    - &quot;.jsp&quot;
+    - &quot;.asp&quot;
+    - &quot;.aspx&quot;
+    - &quot;/wp-admin&quot;
+    - &quot;/wp-content&quot;
+    - &quot;/phpmyadmin&quot;
+
+  global_rules:
+    - name: &quot;block_unsupported_ext&quot;
+      match:
+        path_exact:
+          - &quot;.php&quot;
+          - &quot;.php3&quot;
+          - &quot;.php5&quot;
+          - &quot;.php7&quot;
+          - &quot;.phtml&quot;
+          - &quot;.pht&quot;
+          - &quot;.asp&quot;
+          - &quot;.aspx&quot;
+          - &quot;.ashx&quot;
+          - &quot;.asmx&quot;
+          - &quot;.jsp&quot;
+          - &quot;.jspx&quot;
+          - &quot;.cgi&quot;
+          - &quot;.cfm&quot;
+      action: &quot;deny&quot;
+      score: 30
+      reason: &quot;unsupported_ext_probe&quot;
+
+    - name: &quot;secrets_and_vcs&quot;
+      match:
+        path_exact:    [&quot;/.git&quot;, &quot;/.svn&quot;, &quot;/.env&quot;, &quot;/.htpasswd&quot;]
+        path_contains: [&quot;/.git/&quot;, &quot;/.env.&quot;, &quot;/id_rsa&quot;, &quot;/.ssh/&quot;, &quot;/.aws/credentials&quot;, &quot;/.docker/config.json&quot;]
+      action: &quot;deny&quot;
+      score: 30
+      reason: &quot;secret_or_vcs_probe&quot;
+
+    - name: &quot;admin_tool_probe&quot;
+      match:
+        path_prefix:   [&quot;/phpmyadmin&quot;, &quot;/pma&quot;, &quot;/adminer&quot;, &quot;/manager/html&quot;, &quot;/cgi-bin/&quot;]
+        path_contains: [&quot;/vendor/phpunit/&quot;]
+      action: &quot;deny&quot;
+      score: 30
+      reason: &quot;admin_tool_probe&quot;
+</code></pre>
+<p>Leave <code>block_direct_ip</code> at <code>false</code> when first rolling this out, and turn it on once you have confirmed no legitimate traffic is affected; it immediately blocks requests that reach the gateway by raw IP with no Host header.</p>
+<p>Field reference:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>enabled</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Enable scan protection. Can be toggled at runtime from the dashboard or API.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>block_duration</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">How long a ban lasts, e.g. <code>&quot;1h&quot;</code> or <code>&quot;30m&quot;</code>.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>max_404_attempts</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">Maximum 404 probes tolerated within the observation window.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>observation_period</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Length of the sliding observation window.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>forbidden_paths</code></td>
+<td style="text-align:left">string[]</td>
+<td style="text-align:left">Sensitive path prefixes and suffixes.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>block_direct_ip</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Block requests that address the gateway by IP directly.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>global_rules</code></td>
+<td style="text-align:left">array</td>
+<td style="text-align:left">Blocking rules pairing a match with an action. Supported actions: <code>deny</code>, <code>tarpit</code>, <code>rate_limit</code>, <code>score</code>, <code>observe</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="19-litegate-connect">19. LiteGate Connect</h2>
+<p>Connect lets a Home node initiate a tunnel to Cloud and publish Home Sites through Cloud ports 80/443:</p>
+<pre><code class="language-yaml">connect:
+  server:                         # Cloud node
+    enabled: true
+    hostname: connect.example.com
+    path: /_litegate/connect/v1
+    state_file: data/connect-registry.json
+    health:
+      enabled: false              # Optional: probe published domains end-to-end
+      node_name: cloud-node-01    # Unique node name (optional, defaults to hostname)
+      advertise_addr: 10.0.0.5    # Cloud address published to LiteDNS / LiteMesh
+      advertise_port: 443
+      probe_path: /healthz        # Probed through the Connect reverse tunnel
+      probe_interval: 5s
+      probe_timeout: 2s
+      ttl: 15s                    # Used only when service_registration is enabled
+      fail_threshold: 2
+      max_concurrent_probes: 32
+      dns_registration:           # Publish passing domains to LiteDNS KV; default off
+        enabled: false
+        key_prefix: litedns/v1/records/
+        record_ttl: 10
+        kv_ttl: 15s
+      service_registration:       # Register passing domains as LiteMesh services; default off
+        enabled: false
+    peers:
+      private:
+        token_file: /etc/litegate/secrets/private-connect.token
+        allowed_domains: [&quot;*.private.example.com&quot;]
+        max_sites: 200
+        max_connections: 4096
+        sessions: 2
+        max_registrations_per_minute: 30
+
+  client:                         # Private node
+    enabled: true
+    name: private
+    remote: https://connect.example.com/_litegate/connect/v1
+    token_file: /etc/litegate/secrets/private-connect.token
+    publish_sites: true
+    publish_streams: false
+    sessions: 2
+    max_connections: 4096
+    registration_debounce: 500ms
+    exclude_domains: [connect.example.com]
+</code></pre>
+<p>Cloud and Private normally use separate configurations and enable only their respective side. See <code>docs/en/user/09-advanced/connect.md</code> for the complete field reference, security boundaries, mTLS, multiple Cloud nodes, token rotation, and rollout procedure.</p>
+<p>Health probing does not publish anything unless one of the two registration switches is enabled. <code>dns_registration</code> writes one expiring LiteDNS KV record per passing domain and Cloud node; <code>service_registration</code> is optional for applications that still use the LiteMesh service-discovery SDK. The switches are independent and both default to <code>false</code>.</p>
+<h2 id="custom-access-log-templates">Custom access log templates</h2>
+<pre><code class="language-yaml">log:
+  format: json
+  access_log:
+    enabled: true
+    stdout: true
+    file_enabled: true
+    file: ./logs/access.log
+    template: '{client_ip} - [{timestamp}] &quot;{method} {uri}&quot; {status} {size_bytes} &quot;{referer}&quot; &quot;{user_agent}&quot; {cost_ms}'
+</code></pre>
+<p><code>template</code> formats access log stdout and files. Leave it empty to preserve existing output. Application logs still use <code>log.format</code>; webhooks and dashboard data remain structured. Rotation, asynchronous output and level filtering still apply.</p>
+<p>Fields: <code>timestamp</code>, <code>client_ip</code>, <code>method</code>, <code>path</code>, <code>uri</code> (including the query), <code>host</code>, <code>status</code>, <code>size_bytes</code>, <code>cost_ms</code>, <code>upstream</code>, <code>route</code>, <code>site</code>, <code>trace_id</code>, <code>referer</code>, <code>user_agent</code>. Timestamps use the existing structured log timestamp; costs are milliseconds with fractional precision. Empty Referer and User-Agent values become <code>-</code>. Missing values become <code>-</code>. Newlines, control characters, quotes and backslashes in field values are escaped to prevent forged log lines. Templates must be single-line; unknown or malformed placeholders fail configuration validation. This uses LiteGate <code>{field}</code> syntax rather than Nginx <code>$variables</code>.</p>
+<p>Restart LiteGate after changing <code>log.access_log.template</code>. Only <code>log.level</code> is hot-reloadable among global log settings. MCP saves validate the configuration and request a reload, but a successful save does not mean startup-only settings are active. <code>litegate -init</code> includes an empty template and a custom template example in its generated configuration.</p>
+<h3 id="shared-matchers-and-configuration-fragments">Shared matchers and configuration fragments</h3>
+<p><code>matchers</code> and <code>snippets</code> are not main configuration. Definitions shared across sites live in <code>sites/_shared.yaml</code> (in KV mode, the <code>_shared.yaml</code> key under the sites prefix); see &quot;Shared matchers and configuration fragments&quot; in the site configuration reference. Writing these keys at the top level of <code>config.yaml</code> fails at load time.</p>
+<h2 id="upstream-dns-resolvers">Upstream DNS resolvers</h2>
+<p>Changes to <code>resolvers</code> require a restart in Consul/LiteMesh <code>config_watch</code> mode. Filesystem reloads revalidate sites and reject removal of referenced resolvers. Stable ECH publication checks DNS every 30 minutes; failures retry every minute. To disable ECH, stop the instance, run <code>litegate ech withdraw -config config.yaml</code> to withdraw owned HTTPS records, then wait for caches to expire. Public-name certificate domains are derived at runtime without changing provider configuration.</p>
+<pre><code class="language-yaml">resolvers:
+  corp:
+    servers: [192.168.1.53:53, 192.168.1.54:53]
+    timeout: 2s
+</code></pre>
+<p>Proxy objects and named Services reference this configuration with <code>resolver: corp</code>. Servers must be literal IP:port addresses (bracket IPv6); the default per-server query timeout is 2 seconds. Truncated UDP replies retry over TCP. Failed queries try backup servers in the same DNS view; NXDOMAIN / NODATA do not. Explicit resolvers bypass system DNS, hosts and environment HTTP proxies. Unconfigured upstreams retain existing behavior. New connections re-query DNS; existing connections can be reused. See <a href="upstream-dns.html">Upstream DNS</a>.</p>
+<p>Set site-level <code>ech: ech.example.com</code> or <code>ech: ech.example.net</code> to select the public name and its DNS provider; domains are derived automatically. Boolean true is accepted only with one group; false disables ECH. Groups independently manage keys, rotation, DNS publication and KV leases. Default prefixes are litegate/ech/&lt;public_name&gt;/. Root key_prefix is a parent directory; group-level key_prefix is an exact, unique prefix. Legacy single-group configs keep their original state path and litegate/ech/default/ prefix. Site selection reloads live; group configuration changes require restart.</p>
+<p>Third-party ECH DNS providers implement <code>plugin.HTTPSDNSProvider</code> and register the <code>https_records</code> capability. LiteGate owns ECH keys, rotation, KV synchronization, leases and retries; plugins only publish/withdraw public HTTPS records. HTTPS-only providers need separate certificate coverage; their domain selectors are excluded from certificate DNS-01 routing at runtime.</p>
+<h1 id="ssh-host-certificates">SSH host certificates</h1>
+<p>Docker SSH also supports matching <code>@cert-authority</code> entries in known_hosts. Host certificates retain strict CA, principal and revocation verification; untrusted certificates never bypass pinned-key verification.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/03-configuration/global-config.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

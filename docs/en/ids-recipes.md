@@ -52,7 +52,7 @@ return &plugin.IDSDecision{
 
 - Business rejections use `Respond`; infrastructure failures use `error` (`fail_policy` decides between passing and 503).
 - Injected headers must be **regenerated** by the plugin; client-forged headers with the same names have already been stripped by the core.
-- Redis/DB clients are concurrency-safe, reused connections inside the Provider singleton; passwords come from [shared plugin configuration](ids-provider-plugin-guide.md#dynamic-configuration-secrets-and-caching), not `options`.
+- Redis/DB clients are concurrency-safe, reused connections inside the Provider singleton; passwords come from [shared plugin configuration](ids-provider-plugin-guide.md), not `options`.
 
 ---
 
@@ -176,7 +176,7 @@ The core projects headers injected by Forward safely:
 
 ## Three ways to write the configuration
 
-The same IDS configuration can be expressed as route YAML, service tags or [shared plugin configuration](ids-provider-plugin-guide.md#dynamic-configuration-secrets-and-caching). Service tags go on a named Router:
+The same IDS configuration can be expressed as route YAML, service tags or [shared plugin configuration](ids-provider-plugin-guide.md). Service tags go on a named Router:
 
 ```text
 litegate.http.routers.orders.match.hosts=api.example.com

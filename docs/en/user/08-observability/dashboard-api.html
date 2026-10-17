@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard API Reference · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/08-observability/dashboard-api.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details open><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html" class="current" aria-current="page">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="dashboard-api-reference">Dashboard API Reference</h1>
+<p>The Dashboard pages and the management API share one port. This page lists every endpoint the current code registers, for scripts and automation.</p>
+<h2 id="1-basics">1. Basics</h2>
+<pre><code class="language-yaml">dashboard:
+  enabled: true
+  port: 9999                  # default 9999, listens on all interfaces
+  username: admin
+  password: REPLACE_WITH_STRONG_PASSWORD
+  token: REPLACE_WITH_API_TOKEN   # for automation
+  allowed_origins: []         # extra allowed Origins; empty means same-origin only
+  require_secure_cookie: false    # enable when accessed over HTTPS
+</code></pre>
+<p>The Dashboard listens on all interfaces. In production restrict sources with a firewall or a fronting gateway; never expose it publicly.</p>
+<h3 id="authentication">Authentication</h3>
+<p>Every endpoint except <code>/login</code>, <code>/api/login</code> and static assets requires authentication, checked in this order:</p>
+<ol>
+<li><strong>API token</strong>: header <code>X-API-Key: &lt;dashboard.token&gt;</code>. A correct value is accepted; a wrong value returns 401 immediately without falling back to the cookie.</li>
+<li><strong>Login cookie</strong>: <code>POST /api/login</code> sets a signed cookie valid for 24 hours. POST/PUT/DELETE requests authenticated by cookie must carry a same-origin <code>Origin</code> or <code>Referer</code>, or one matching <code>allowed_origins</code>; otherwise 403.</li>
+</ol>
+<p>Without a configured <code>username</code>, cookie login is always refused. Unauthenticated page requests redirect to <code>/login</code>; JSON endpoints return 401.</p>
+<p><code>/api/scan-protection/toggle</code> and <code>/api/scan-protection/unblock</code> require a valid <code>Origin</code> or <code>Referer</code> regardless of the authentication method.</p>
+<h3 id="response-envelope">Response envelope</h3>
+<p>Most management endpoints return:</p>
+<pre><code class="language-json">{&quot;success&quot;: true, &quot;message&quot;: &quot;Saved successfully&quot;}
+{&quot;success&quot;: true, &quot;data&quot;: {}}
+</code></pre>
+<p>On failure <code>success</code> is <code>false</code>, <code>message</code> carries the reason, and the HTTP status reflects the error class.</p>
+<h3 id="example">Example</h3>
+<pre><code class="language-bash">curl -H &quot;X-API-Key: $TOKEN&quot; http://127.0.0.1:9999/status/json
+</code></pre>
+<h2 id="2-login">2. Login</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/login</code></td>
+<td>Login page</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/login</code></td>
+<td>Body <code>{&quot;username&quot;: &quot;...&quot;, &quot;password&quot;: &quot;...&quot;}</code>; sets the cookie on success</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/logout</code></td>
+<td>Clears the cookie</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-status-and-runtime">3. Status and runtime</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/status</code></td>
+<td>Dashboard page</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/status/json</code></td>
+<td>Gateway status JSON; <code>?service=&lt;name&gt;</code> narrows to one service</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/overview/json</code></td>
+<td>Overview data</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/runtime</code></td>
+<td>Runtime data (memory, goroutines, ...)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/upstreams</code></td>
+<td>Upstreams and health</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/ddns</code></td>
+<td>DDNS and internal DNS sync status</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/stream/traffic</code></td>
+<td>Live traffic (SSE)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/metrics</code></td>
+<td>Prometheus metrics; registered only when <code>metrics.enabled: true</code>, requires login</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-routing-diagnostics">4. Routing diagnostics</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/status/routing</code></td>
+<td>Routing page</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/routing</code></td>
+<td>Current routing table</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/routing/explain</code></td>
+<td>Simulate matching for a request; parameters <code>host</code>, <code>method</code>, <code>path</code>, <code>entrypoint</code>, <code>client_ip</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/routing/pipeline</code></td>
+<td>Middleware pipeline of a route; parameters <code>site</code>, <code>route</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/status/tags</code></td>
+<td>Service tags page</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/service-tags</code></td>
+<td>Parsed service tags</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-configuration">5. Configuration</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/api/config/validate</code></td>
+<td>Validate without saving. Body <code>{&quot;kind&quot;: &quot;site|lite|stream&quot;, &quot;filename&quot;: &quot;...&quot;, &quot;content&quot;: &quot;...&quot;}</code>; <code>kind</code> is inferred from the filename when empty</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/save</code></td>
+<td>Save a file. Body <code>{&quot;type&quot;: &quot;site|stream&quot;, &quot;filename&quot;: &quot;app.yaml&quot;, &quot;content&quot;: &quot;...&quot;}</code>; <code>content</code> may be a YAML string or a JSON object; filenames must end in <code>.yaml</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/delete</code></td>
+<td>Delete a file. Body <code>{&quot;type&quot;: &quot;site|stream&quot;, &quot;filename&quot;: &quot;app.yaml&quot;}</code></td>
+</tr>
+</tbody>
+</table>
+<p>With <code>dashboard.release_control.enabled</code>, <code>/api/save</code> and <code>/api/delete</code> only change the draft and return it; publish it to take effect. Otherwise they write to the configuration store directly and trigger a reload.</p>
+<h2 id="6-release-control">6. Release control</h2>
+<p>These endpoints require <code>dashboard.release_control.enabled</code> and return 400 otherwise. See <a href="../../release_control_guide.html">Configuration release control</a> for the workflow.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/api/releases</code></td>
+<td>List all releases, drafts included</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/releases</code></td>
+<td>Create a draft from an array of configuration artifacts; an empty array is refused while active configuration exists</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/releases/{id}</code></td>
+<td>Release details</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/releases/{id}/validate</code></td>
+<td>Dry run</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/releases/{id}/publish</code></td>
+<td>Publish</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/releases/{id}/diff</code></td>
+<td>Diff of this release against the active configuration</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/releases/{id}/rollback</code></td>
+<td>Roll back to this release; use <code>previous</code> as <code>{id}</code> for the previously active release</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/releases/history</code></td>
+<td>Change history</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/snapshot/export</code></td>
+<td>Download snapshot <code>litegate-snapshot.json</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/snapshot/import</code></td>
+<td>Import a snapshot as a new draft</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/snapshot/resolved-sites</code></td>
+<td>Download resolved sites <code>resolved-sites.json</code> (does not need release control)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-certificates">7. Certificates</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/api/cert/download?file=&lt;name&gt;</code></td>
+<td>Download certificate and key as ZIP</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/cert/dry-run</code></td>
+<td>Check whether a DNS provider can complete a challenge for a domain. Body <code>{&quot;provider&quot;: &quot;...&quot;, &quot;domain&quot;: &quot;...&quot;}</code>; 503 when auto cert is not running</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-security-and-cache">8. Security and cache</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/api/scan-protection/toggle?enabled=true|false</code></td>
+<td>Toggle scan protection until restart</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/scan-protection/unblock?ip=&lt;ip&gt;</code></td>
+<td>Unblock one IP</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/proxy-cache/purge</code></td>
+<td>Purge the proxy cache. Body <code>{&quot;scope&quot;: &quot;all|site|route|key&quot;, &quot;site&quot;: &quot;...&quot;, &quot;route&quot;: &quot;...&quot;, &quot;base_key&quot;: &quot;...&quot;}</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-logs-and-docs">9. Logs and docs</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/status/logs</code></td>
+<td>Logs page</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/logs/tail</code></td>
+<td>Recent log lines; parameters <code>after</code> (cursor), <code>limit</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/status/docs</code></td>
+<td>Built-in configuration docs page</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/docs</code></td>
+<td>Built-in docs index</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/docs/content?slug=&lt;slug&gt;&amp;lang=&lt;zh|en&gt;</code></td>
+<td>Built-in doc body</td>
+</tr>
+</tbody>
+</table>
+<h2 id="10-self-service-publishing">10. Self-service publishing</h2>
+<p>With <code>self_service</code> enabled, <code>/publish</code>, <code>/publish/</code> and <code>/api/publish/</code> are handled by the self-service portal, which has its own account and cookie and does not use the rules above.</p>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="dashboard.html">Dashboard</a></li>
+<li><a href="metrics.html">Metrics</a></li>
+<li><a href="../../release_control_guide.html">Configuration release control</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/08-observability/dashboard-api.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>命名条件：给请求条件起个名字 · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/cookbook/06-matchers.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details open><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html" class="current" aria-current="page">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="命名条件给请求条件起个名字">命名条件：给请求条件起个名字</h1>
+<p>路由条件一复杂，<code>match: {path: [...], method: [...], header: {...}}</code> 就会挤在一行里，读配置时要先在脑子里解析一遍才知道这条路由管什么。命名条件（matchers）把条件单独定义、起一个名字，路由只写 <code>match: &quot;@名字&quot;</code>：</p>
+<pre><code class="language-text">matchers:
+  blocked: {path: [/xmlrpc.php, &quot;*.sql&quot;]}   # 定义：这是什么请求
+routes:
+  - match: &quot;@blocked&quot;                       # 使用：这类请求怎么处理
+    respond: {status: 403}
+</code></pre>
+<p>先记住三条：</p>
+<ol>
+<li><strong>它只是起名字。</strong> <code>match: &quot;@blocked&quot;</code> 和把定义原样写进 <code>match:</code> 完全等价，加载时就地展开，运行时没有区别。</li>
+<li><strong>顺序和书写位置无关。</strong> 优先级按条件本身决定，见 <a href="#3-%E8%B0%81%E5%85%88%E5%8C%B9%E9%85%8D%E4%BC%98%E5%85%88%E7%BA%A7%E8%A7%84%E5%88%99">第 3 节</a>。</li>
+<li><strong><code>@名字</code> 必须加引号。</strong> <code>@</code> 在 YAML 里是保留字符，不加引号会直接报解析错误。</li>
+</ol>
+<hr>
+<h2 id="1-拦截扫描请求写请求和读请求分流">1. 拦截扫描请求，写请求和读请求分流</h2>
+<p>最典型的用法：挡掉常见扫描路径，<code>POST</code> 转到单独的写服务，其余请求走默认后端。</p>
+<!-- case: matchers-basic -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  blocked: {path: [/xmlrpc.php, /.env, &quot;*.sql&quot;]}
+  post: {method: POST}
+routes:
+  - match: &quot;@blocked&quot;
+    respond: {status: 403, body: forbidden}
+  - match: &quot;@post&quot;
+    proxy: localhost:8081
+proxy: localhost:8080
+</code></pre>
+<pre><code class="language-check">GET  http://example.com/xmlrpc.php          =&gt; 403 &quot;forbidden&quot;
+GET  http://example.com/.env                =&gt; 403 &quot;forbidden&quot;
+# * 匹配任意字符，包括 /，所以子目录里的 .sql 也会被拦
+GET  http://example.com/backup/db.sql       =&gt; 403 &quot;forbidden&quot;
+# 通配符匹配整个路径：db.sql.txt 不以 .sql 结尾
+GET  http://example.com/db.sql.txt          =&gt; 8080 /db.sql.txt
+POST http://example.com/orders              =&gt; 8081 /orders
+GET  http://example.com/orders              =&gt; 8080 /orders
+</code></pre>
+<hr>
+<h2 id="2-条件怎么写">2. 条件怎么写</h2>
+<p>一个命名条件里可以写这些字段，和内联 <code>match</code> 完全一样：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>path</code></td>
+<td>单个字符串：精确匹配；列表：任一命中即可，支持 <code>*</code> 通配</td>
+<td><code>/login</code>、<code>[/a, &quot;/b/*&quot;]</code></td>
+</tr>
+<tr>
+<td><code>prefix</code></td>
+<td>前缀匹配，按路径段</td>
+<td><code>/api</code></td>
+</tr>
+<tr>
+<td><code>method</code></td>
+<td>单个或列表</td>
+<td><code>POST</code>、<code>[PUT, DELETE]</code></td>
+</tr>
+<tr>
+<td><code>header</code></td>
+<td>请求头等于指定值</td>
+<td><code>{X-Canary: &quot;1&quot;}</code></td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td>查询参数等于指定值</td>
+<td><code>{debug: &quot;1&quot;}</code></td>
+</tr>
+<tr>
+<td><code>rule</code></td>
+<td>规则表达式，兜底复杂情况</td>
+<td><code>PathRegexp(`(?i)^/admin`)</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>不同字段之间是「并且」，<code>path</code> 列表内部是「或者」。</strong> 下面的 <code>api-write</code> 表示「<code>/api</code> 下的、<code>POST</code>/<code>PUT</code>/<code>DELETE</code> 请求」，<code>canary</code> 表示「带 <code>X-Canary: 1</code> 头的请求」：</p>
+<!-- case: matchers-combine -->
+<pre><code class="language-yaml">site: api.example.com
+matchers:
+  api-write: {prefix: /api, method: [POST, PUT, DELETE]}
+  canary: {header: {X-Canary: &quot;1&quot;}}
+routes:
+  - match: &quot;@canary&quot;
+    proxy: localhost:8082           # 灰度：带头的请求全部进新版本
+  - match: &quot;@api-write&quot;
+    proxy: localhost:8081           # 写请求走主库服务
+/api:
+  proxy: localhost:8080             # 其余 /api 请求走只读服务
+respond: {status: 404, body: not found}
+</code></pre>
+<pre><code class="language-check">PUT  http://api.example.com/api/orders/7             =&gt; 8081 /api/orders/7
+GET  http://api.example.com/api/orders/7             =&gt; 8080 /api/orders/7
+GET  http://api.example.com/api/orders/7 X-Canary: 1 =&gt; 8082 /api/orders/7
+# POST 但不在 /api 下：api-write 两个条件只满足一个
+POST http://api.example.com/upload                   =&gt; 404 &quot;not found&quot;
+</code></pre>
+<p><code>path</code> 通配的细节：</p>
+<ul>
+<li>只有 <code>*</code> 是通配符，匹配零个或多个任意字符（包括 <code>/</code>）；<code>?</code>、<code>[]</code> 是普通字符。</li>
+<li>匹配的是<strong>整个路径</strong>（不含查询参数），所以 <code>&quot;*.sql&quot;</code> 是「以 <code>.sql</code> 结尾」，<code>&quot;/admin/*&quot;</code> 是「<code>/admin/</code> 下的任何路径」。</li>
+<li>以 <code>*</code> 开头的字符串在 YAML 里必须加引号。</li>
+<li><strong>区分大小写</strong>：<code>/xmlrpc.php</code> 拦不住 <code>/XMLRPC.PHP</code>。做安全拦截时建议用 <code>rule</code> 加 <code>(?i)</code>：</li>
+</ul>
+<!-- case: matchers-ignore-case -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  blocked:
+    rule: &quot;PathRegexp(`(?i)^/xmlrpc\\.php$`) || PathRegexp(`(?i)\\.sql$`)&quot;
+routes:
+  - match: &quot;@blocked&quot;
+    respond: {status: 403}
+proxy: localhost:8080
+</code></pre>
+<pre><code class="language-check">GET http://example.com/xmlrpc.php      =&gt; 403
+GET http://example.com/XMLRPC.PHP      =&gt; 403
+GET http://example.com/dump/DB.SQL     =&gt; 403
+GET http://example.com/index.php       =&gt; 8080 /index.php
+</code></pre>
+<hr>
+<h2 id="3-谁先匹配优先级规则">3. 谁先匹配：优先级规则</h2>
+<p>和 Caddy 一样，<strong>带条件的路由比只看路径前缀的路由更具体</strong>。同一站点内按下面的顺序尝试，命中即停止：</p>
+<table>
+<thead>
+<tr>
+<th>顺序</th>
+<th>路由类型</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>显式 <code>priority</code> 更高的路由</td>
+<td><code>priority: 100</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>精确路径</td>
+<td><code>path: /login</code>、<code>path: [/login]</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>没有 <code>path</code> / <code>prefix</code> 的条件路由</td>
+<td><code>@blocked</code>（通配 path）、<code>@post</code>、<code>@canary</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>前缀路由，长的优先</td>
+<td><code>/api/v2</code> 先于 <code>/api</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>站点级动作（兜底）</td>
+<td>顶层的 <code>proxy</code>、<code>spa</code></td>
+</tr>
+</tbody>
+</table>
+<p>所以拦截规则不会被 <code>/api</code> 这样的前缀路由「抢走」：</p>
+<!-- case: matchers-order -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  blocked: {path: [&quot;*.sql&quot;]}
+routes:
+  - match: &quot;@blocked&quot;
+    respond: {status: 403}
+  - match: {path: /export/report.sql}   # 精确路径排在条件路由之前
+    proxy: localhost:8081
+/api:
+  proxy: localhost:8080
+spa: ./dist
+</code></pre>
+<pre><code class="language-check"># /api 前缀路由排在 @blocked 后面
+GET http://example.com/api/backup.sql        =&gt; 403
+GET http://example.com/api/orders            =&gt; 8080 /api/orders
+# 精确路径比 @blocked 更优先
+GET http://example.com/export/report.sql     =&gt; 8081 /export/report.sql
+GET http://example.com/settings              =&gt; 200 &quot;&lt;h1&gt;dist&lt;/h1&gt;&quot;
+</code></pre>
+<p>两点要注意：</p>
+<ul>
+<li><strong><code>@post</code> 这类只看方法的条件，会接走整个站点的该方法请求</strong>，包括 <code>/api</code> 下的。只想管某个路径时，把 <code>prefix</code> 写进条件里（见第 2 节的 <code>api-write</code>）。</li>
+<li>想让条件路由压过精确路径，给它写更高的 <code>priority</code>。</li>
+</ul>
+<hr>
+<h2 id="4-在命名条件上追加条件">4. 在命名条件上追加条件</h2>
+<p><code>match</code> 也可以写成列表，列表里的每一项必须<strong>同时满足</strong>：可以是 <code>&quot;@名字&quot;</code>、内联条件，或 <code>/前缀</code> 简写。这样同一个命名条件就能被多条路由复用，每条路由各自加上自己的条件：</p>
+<!-- case: matchers-compose -->
+<pre><code class="language-yaml">site: api.example.com
+matchers:
+  api: {prefix: /api, header: {X-Tenant: acme}}
+  api-write: [&quot;@api&quot;, {method: [POST, PUT, DELETE]}]   # 定义里也能组合
+routes:
+  - match: &quot;@api-write&quot;
+    proxy: localhost:8081
+  - match: [&quot;@api&quot;, {query: {debug: &quot;1&quot;}}]
+    proxy: localhost:8082
+  - match: &quot;@api&quot;
+    proxy: localhost:8080
+respond: {status: 404, body: not found}
+</code></pre>
+<pre><code class="language-check">PUT  http://api.example.com/api/orders/7 X-Tenant: acme          =&gt; 8081 /api/orders/7
+GET  http://api.example.com/api/orders/7?debug=1 X-Tenant: acme  =&gt; 8082 /api/orders/7?debug=1
+GET  http://api.example.com/api/orders/7 X-Tenant: acme          =&gt; 8080 /api/orders/7
+# 缺少 X-Tenant：三条路由都要求 @api，全部不命中
+PUT  http://api.example.com/api/orders/7                         =&gt; 404 &quot;not found&quot;
+</code></pre>
+<p>合并规则：</p>
+<ul>
+<li><code>rule</code> 用「并且」连接；<code>header</code>、<code>query</code> 合并，但同一个键不能出现两次（<code>header</code> 不区分大小写）。</li>
+<li><code>prefix</code>、<code>path</code>、<code>method</code> 等其余字段只能由一项提供；两项写了相同的值可以，写了不同的值直接报错，而不是悄悄取其中一个。</li>
+<li>列表不能嵌套；需要分层就在 <code>matchers</code> 里定义，再按名字引用。命名条件之间可以互相引用，循环引用会报错。</li>
+</ul>
+<!-- expect-error: composed matchers set conflicting prefix -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  api: {prefix: /api}
+routes:
+  - match: [&quot;@api&quot;, {prefix: /admin}]
+    respond: ok
+proxy: localhost:8080
+</code></pre>
+<hr>
+<h2 id="5-什么时候不用命名条件">5. 什么时候不用命名条件</h2>
+<ul>
+<li><strong>只有一个路径前缀</strong>：直接写路径键 <code>/api:</code>，比 <code>matchers</code> 更短。</li>
+<li><strong>多条路由共用鉴权、限流等策略</strong>：那是治理配置，用 <a href="03-governance.html#5-%E5%A4%9A%E4%B8%AA%E6%8E%A5%E5%8F%A3%E5%85%B1%E7%94%A8%E4%B8%80%E5%A5%97%E7%AD%96%E7%95%A5snippets">snippets</a>，不是 matchers。</li>
+<li><strong>想「所有路由之前统一执行」的安全策略</strong>：<code>@blocked</code> 是一条普通的拒绝路由，只在它排在前面时生效；如果你用 <code>priority</code> 把别的路由排到它前面，那些路由就不受它保护。全站必须执行的拦截应放进 <code>use</code> 中间件。</li>
+</ul>
+<hr>
+<h2 id="6-常见错误">6. 常见错误</h2>
+<h3 id="忘了加引号">忘了加引号</h3>
+<!-- expect-error: found character that cannot start any token -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  post: {method: POST}
+routes:
+  - match: @post
+    proxy: localhost:8081
+proxy: localhost:8080
+</code></pre>
+<p><code>@</code> 不能作为 YAML 未加引号字符串的开头，写成 <code>match: &quot;@post&quot;</code>。</p>
+<h3 id="引用了不存在的名字">引用了不存在的名字</h3>
+<!-- expect-error: undefined matcher reference -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  post: {method: POST}
+routes:
+  - match: &quot;@posts&quot;
+    proxy: localhost:8081
+proxy: localhost:8080
+</code></pre>
+<p>名字区分大小写。引用先找本站点的 <code>matchers</code>，再找 <code>sites/_shared.yaml</code> 里的公共定义；其他站点文件里的定义引用不到。</p>
+<h3 id="定义是空的或字段写错">定义是空的或字段写错</h3>
+<!-- expect-error: at least one match criterion is required -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  empty: {}
+proxy: localhost:8080
+</code></pre>
+<p>没被任何路由引用的定义也会校验，写错字段（例如 <code>methods</code>）同样会报错。</p>
+<h3 id="通配路径没有以--或--开头">通配路径没有以 <code>/</code> 或 <code>*</code> 开头</h3>
+<!-- expect-error: path must start with / -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  blocked: {path: [xmlrpc.php]}
+routes:
+  - match: &quot;@blocked&quot;
+    respond: {status: 403}
+proxy: localhost:8080
+</code></pre>
+<h3 id="同一个条件用在两条路由上">同一个条件用在两条路由上</h3>
+<!-- expect-error: duplicate normalized match -->
+<pre><code class="language-yaml">site: example.com
+matchers:
+  post: {method: POST}
+routes:
+  - match: &quot;@post&quot;
+    proxy: localhost:8081
+  - match: {method: post}      # 展开后和 @post 相同（方法不区分大小写）
+    proxy: localhost:8082
+proxy: localhost:8080
+</code></pre>
+<p>两条路由条件完全相同时，后一条永远不会被命中，所以直接报错。要复用同一个命名条件，用列表给每条路由追加不同的条件（见 <a href="#4-%E5%9C%A8%E5%91%BD%E5%90%8D%E6%9D%A1%E4%BB%B6%E4%B8%8A%E8%BF%BD%E5%8A%A0%E6%9D%A1%E4%BB%B6">第 4 节</a>）。</p>
+<p>完整字段说明见 <a href="../03-configuration/site-config.html#%E5%91%BD%E5%90%8D%E8%AF%B7%E6%B1%82%E6%9D%A1%E4%BB%B6matchers">站点配置参考</a>。</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/cookbook/06-matchers.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

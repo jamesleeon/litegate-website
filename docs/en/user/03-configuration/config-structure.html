@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configuration Structure and Best Practices · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/03-configuration/config-structure.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details open><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html" class="current" aria-current="page">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="configuration-structure-and-best-practices">Configuration Structure and Best Practices</h1>
+<p>This page explains LiteGate configuration as a whole: which files exist, how each file is structured, what each level is responsible for, and how to organize configuration sensibly.</p>
+<p>For field-by-field details see the references: <a href="global-config.html">Global Configuration</a>, <a href="site-config.html">Site Configuration</a>, <a href="services.html">Named Services</a> and <a href="tag-reference.html">Service Tags</a>.</p>
+<hr>
+<h2 id="1-where-configuration-comes-from">1. Where Configuration Comes From</h2>
+<p>LiteGate reads configuration from three kinds of sources, each with one job:</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Location</th>
+<th>Responsible for</th>
+<th>Written by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Global configuration</strong></td>
+<td><code>config.yaml</code></td>
+<td>The gateway process itself: ports, certificates, where services are discovered, logging and monitoring, trust boundaries</td>
+<td>Gateway operators</td>
+</tr>
+<tr>
+<td><strong>Site configuration</strong></td>
+<td><code>sites/*.yaml</code></td>
+<td>Routes of each domain: where a request goes, what processing it passes through, who responds</td>
+<td>Gateway operators / application teams</td>
+</tr>
+<tr>
+<td><strong>Service tags</strong></td>
+<td>On services registered in Consul / LiteMesh / Docker / K8s</td>
+<td>A service declares which domain and path it is exposed on</td>
+<td>The services themselves</td>
+</tr>
+</tbody>
+</table>
+<p><code>streams/*.yaml</code> configures layer-4 TCP/UDP forwarding; see <a href="stream-config.html">Stream Configuration</a>.</p>
+<p>Typical layout:</p>
+<pre><code class="language-text">litegate/
+├── config.yaml              # global configuration (one)
+├── sites/                   # site configuration (one file per site)
+│   ├── www.example.com.yaml
+│   ├── api.example.com.yaml
+│   └── blog.example.com.yaml
+├── streams/                 # layer-4 forwarding (optional)
+└── certs/                   # certificates (automatic or custom)
+</code></pre>
+<p><strong>Choosing a source:</strong></p>
+<ul>
+<li>Stable listeners, certificates and security settings → <code>config.yaml</code>.</li>
+<li>Domains and routes managed centrally by the gateway → <code>sites/*.yaml</code>.</li>
+<li>Many services that come and go, and should declare their own routes → service tags.</li>
+<li>Site files and service tags can target the same domain: for example, a site file serves the frontend with <code>serve</code> while backend services declare <code>/api</code> through tags. Both are merged into one site.</li>
+</ul>
+<hr>
+<h2 id="2-global-configuration-configyaml">2. Global Configuration <code>config.yaml</code></h2>
+<h3 id="21-structure">2.1 Structure</h3>
+<pre><code class="language-text">config.yaml
+├── mode                  runtime mode: observability (default) / performance
+├── entrypoints           listeners: name → address, TLS or not
+├── http                  legacy port and timeout settings (entrypoints take precedence)
+├── tls / auto_cert       static certificates / automatic certificates
+├── sites_dir             site configuration directory
+├── streams_dir           layer-4 configuration directory
+├── consul / litemesh     configuration or registry connections (optional)
+├── service_discovery     discovery catalogs, ports that service tags may open
+├── real_ip               trusted proxies: where the real client IP comes from
+├── ip_restriction        global IP allow / deny lists
+├── scan_protection       scan protection
+├── auth_providers        OIDC / OAuth2 identity providers (referenced by routes)
+├── dashboard / metrics / pprof / mcp    management and monitoring ports
+├── log / tracing         logs, access logs, tracing
+└── passive_health / cache / redis / ... other runtime parameters
+</code></pre>
+<p>The fields fall into five groups:</p>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Fields</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Listeners</td>
+<td><code>entrypoints</code>, <code>http</code></td>
+<td>Which ports the gateway listens on. Sites and routes reference them by name</td>
+</tr>
+<tr>
+<td>Certificates</td>
+<td><code>tls</code>, <code>auto_cert</code></td>
+<td>Where HTTPS certificates come from</td>
+</tr>
+<tr>
+<td>Configuration sources</td>
+<td><code>sites_dir</code>, <code>streams_dir</code>, <code>consul</code>, <code>litemesh</code>, <code>service_discovery</code></td>
+<td>Where sites and services are read from</td>
+</tr>
+<tr>
+<td>Security boundaries</td>
+<td><code>real_ip</code>, <code>ip_restriction</code>, <code>scan_protection</code>, <code>auth_providers</code></td>
+<td>Whom to trust, whom to reject</td>
+</tr>
+<tr>
+<td>Operations</td>
+<td><code>dashboard</code>, <code>metrics</code>, <code>mcp</code>, <code>log</code>, <code>tracing</code></td>
+<td>Management and observability</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-recommended-production-configuration">2.2 Recommended production configuration</h3>
+<pre><code class="language-yaml">mode: observability
+
+# Listeners: names are referenced by sites and tags; web / websecure are the defaults
+entrypoints:
+  web:
+    address: &quot;:80&quot;
+  websecure:
+    address: &quot;:443&quot;
+    tls: true
+
+sites_dir: &quot;./sites&quot;
+streams_dir: &quot;./streams&quot;
+
+# Automatic certificates: enable once DNS points here and port 80 is reachable
+auto_cert:
+  enabled: true
+  email: &quot;ops@example.com&quot;
+  certs_dir: &quot;./certs&quot;
+  default_challenge: &quot;http&quot;
+
+# Required when a load balancer sits in front of the gateway; otherwise the
+# client IP is the load balancer's address
+real_ip:
+  trusted_proxies:
+    - &quot;10.0.0.0/8&quot;
+
+# Service discovery: enable only the sources you use
+service_discovery:
+  catalogs:
+    - enabled: true
+      provider: &quot;consul&quot;
+      url: &quot;127.0.0.1:8500&quot;
+  tag_entrypoints:
+    allowed_ports: []        # service tags may not open new ports by default
+
+dashboard:
+  enabled: true
+  port: 9999
+  username: &quot;admin&quot;
+  password: &quot;$2a$10$...&quot;     # generate with `litegate -hash &lt;password&gt;`; never plain text
+
+log:
+  level: &quot;info&quot;
+  format: &quot;json&quot;             # easier for log pipelines in production
+  access_log:
+    enabled: true
+    stdout: true
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li><strong>Entrypoint names are the contract between sites and the global configuration.</strong> Site <code>entrypoints</code> and tag <code>entrypoints</code> reference these names. For an internal management port, add a new entrypoint (e.g. <code>internal: { address: &quot;:8080&quot; }</code>) instead of changing <code>web</code> / <code>websecure</code>.</li>
+<li><strong><code>real_ip.trusted_proxies</code> lists only the proxies in front of the gateway.</strong> A range that is too wide lets anyone forge <code>X-Forwarded-For</code> and bypass IP restrictions and rate limits.</li>
+<li><strong>Enable only the discovery sources you need.</strong> Every enabled source is scanned periodically.</li>
+<li><strong>Leave <code>tag_entrypoints.allowed_ports</code> empty by default.</strong> Service tags can then only attach to existing entrypoints, not open new ports.</li>
+</ul>
+<hr>
+<h2 id="3-site-configuration-sitesyaml">3. Site Configuration <code>sites/*.yaml</code></h2>
+<h3 id="31-syntax">3.1 Syntax</h3>
+<p>New sites use the v2 syntax with a top-level <code>site:</code>. A simple site takes a few lines, and you add fields to the same file as you need more, without switching formats (full description in <a href="site-config.html">Site Configuration</a>, section 0):</p>
+<pre><code class="language-yaml">site: blog.example.com
+/api: 127.0.0.1:8080
+spa: /var/www/blog
+</code></pre>
+<p>The site examples below use v2. Complex configurations can still use routes, match and action. See <a href="site-config.html">Site Configuration</a> for field details.</p>
+<h3 id="32-structure">3.2 Structure</h3>
+<p>A site file has two parts: <strong>definitions at the top, usage at the bottom.</strong> The definitions give reusable things a name; the routes below reference them by name.</p>
+<pre><code class="language-text">site.yaml
+│
+├── site                 site domain (required)
+├── entrypoints            entrypoints the site is attached to (all by default)
+├── https            redirect HTTP to HTTPS
+├── tls                    custom certificate for this site (optional)
+├── ip_restriction         site-wide IP rules (apply to every route)
+├── max_request_body_size / error_pages / defaults   site-wide defaults
+│
+│ ── definitions: named, referenced by routes ──
+├── transports      upstream transport (TLS / mTLS)
+├── services               backends: how to reach them (discovery, load balancing, timeouts, retries, circuit breaking)
+├── middlewares            middleware: what happens on the way in and out (CORS, auth, rate limits ...)
+│
+│ ── usage ──
+└── routes[]               route list
+    ├── name               route name (shown in logs, the Dashboard and the pipeline)
+    ├── priority           explicit priority (rarely needed)
+    ├── match              where it goes: path / path_prefix / rule / method / header / query
+    ├── ip_restriction     IP rules for this route
+    ├── use        names of middleware from the definitions, run by phase
+    └── action             who responds
+        ├── type           proxy / serve / template / respond / redirect / webdav / list / markdown / status
+        ├── service        (proxy) a Service from the definitions
+        ├── type fields    e.g. root / spa for serve, status / body for respond
+        └── common fields  strip_prefix, headers, res_headers, log_level, on_error
+</code></pre>
+<p><strong>References:</strong></p>
+<pre><code class="language-text">routes[].use    ──by name──▶  middlewares
+routes[].action.service ──by name──▶  services ──references──▶ transports
+entrypoints             ──by name──▶  entrypoints in config.yaml
+</code></pre>
+<p>Every reference is checked at load time. A name that does not exist fails loading instead of going live broken.</p>
+<h3 id="33-a-complete-site">3.3 A complete site</h3>
+<p>A common shape: a static frontend, several API backends and a redirect for old URLs.</p>
+<pre><code class="language-yaml">site: shop.example.com
+https: true
+# ── definitions ─────────────────────────────────────────
+transports:
+  mesh:
+    tls:
+      enabled: true
+      clientcertificate: litemesh # mutual TLS with the backends
+services:
+  orders: # instances found through service discovery
+    discovery:
+      name: orders
+    timeout: 10s
+    loadbalancer:
+      strategy: least_conn
+      serverstransport: mesh
+    healthcheck: {path: /health, interval: 10s}
+    retry: {attempts: 2}
+    circuitbreaker: {enabled: true, tripthreshold: 5}
+  payments:
+    discovery:
+      name: payments
+      selector:
+        match: {env: prod} # production instances only
+    timeout: 30s # payment callbacks are slow
+    loadbalancer: {strategy: round_robin}
+  legacy-cms: # an old system outside service discovery
+    to: [&quot;http://10.0.3.21:8080&quot;, &quot;http://10.0.3.22:8080&quot;]
+    timeout: 5s
+middlewares:
+  api-limit:
+    type: ratelimit
+    config:
+      qps: &quot;200&quot;
+  api-auth:
+    type: jwt_auth
+    config:
+      jwks_url: &quot;https://auth.example.com/.well-known/jwks.json&quot;
+  api-common: # a common bundle; routes reference one name
+    type: chain
+    config:
+      middlewares: &quot;api-limit,api-auth&quot;
+# ── usage ───────────────────────────────────────────────
+routes:
+  - name: orders-api
+    match: {path_prefix: /api/orders}
+    use: [api-common]
+    service: orders
+    strip_prefix: /api
+  - name: payments-callback # third-party callback: no JWT, rate limited only
+    match: {path: /api/payments/callback, method: [POST]}
+    use: [api-limit]
+    service: payments
+    strip_prefix: /api
+  - name: payments-api
+    match: {path_prefix: /api/payments}
+    use: [api-common]
+    service: payments
+    strip_prefix: /api
+  - name: cms
+    match: {path_prefix: /cms}
+    service: legacy-cms
+  - name: old-help # permanent redirect for old URLs
+    match: {path_prefix: /help}
+    redirect:
+      location: &quot;https://help.example.com/&quot;
+      status: 301
+  - name: frontend # catch-all: single-page app
+    match: {path_prefix: /}
+    compress: true
+    spa: /var/www/shop
+</code></pre>
+<p>Why it is organized this way:</p>
+<ul>
+<li><strong>Each backend is defined once.</strong> <code>payments</code> serves two routes; its timeout and load balancing live in the Service, and both routes share its health and circuit-breaker state.</li>
+<li><strong>Middleware is named by purpose, and the common set is bundled with <code>chain</code>.</strong> A new API route only needs <code>use: [api-common]</code>.</li>
+<li><strong>Frontend and API share one domain.</strong> The browser sees a single origin, so calls to <code>/api/...</code> need no CORS.</li>
+<li><strong>Special routes are more specific.</strong> The payment callback uses an exact <code>path</code>, which naturally wins over the <code>/api/payments</code> prefix.</li>
+<li><strong>The catch-all route is <code>/</code>.</strong> Longest-prefix matching makes sure it only receives requests no other route matches.</li>
+</ul>
+<hr>
+<h2 id="4-route-matching">4. Route Matching</h2>
+<h3 id="41-match-fields">4.1 <code>match</code> fields</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>path</code></td>
+<td>Exact path</td>
+<td><code>path: /login</code></td>
+</tr>
+<tr>
+<td><code>path_prefix</code></td>
+<td>Path prefix</td>
+<td><code>path_prefix: /api</code></td>
+</tr>
+<tr>
+<td><code>method</code></td>
+<td>Method list</td>
+<td><code>method: [GET, POST]</code></td>
+</tr>
+<tr>
+<td><code>header</code></td>
+<td>Request header equality</td>
+<td><code>header: { X-Tenant: acme }</code></td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td>Query parameter equality</td>
+<td><code>query: { version: &quot;2&quot; }</code></td>
+</tr>
+<tr>
+<td><code>rule</code></td>
+<td>Rule expression, exclusive with the fields above</td>
+<td><code>rule: 'PathPrefix(&quot;/api&quot;) &amp;&amp; Method(&quot;GET&quot;)'</code></td>
+</tr>
+</tbody>
+</table>
+<p>Note: YAML uses the singular <strong><code>method</code> / <code>header</code> / <code>query</code></strong>. The Dashboard and the JSON API show the plural forms; do not copy those into YAML.</p>
+<h3 id="42-priority">4.2 Priority</h3>
+<p>When several routes match, the winner is decided in this order:</p>
+<ol>
+<li>Higher <code>priority</code> wins.</li>
+<li>An exact <code>path</code> wins over a prefix.</li>
+<li>A longer prefix wins (longest-prefix match).</li>
+<li>Routes from site files win over routes from service tags (only when the first three are equal).</li>
+<li>Otherwise, the order in the file.</li>
+</ol>
+<p><code>priority</code> is rarely needed; the specificity of the path gives the right result. Use it only when paths are identical, routes differ by <code>method</code> / <code>header</code>, and you want an explicit order.</p>
+<p><strong>Note:</strong> a route produced by service tags with a higher <code>priority</code> or a more specific path can override a site-file route on the same domain (for example by declaring <code>/login</code>). Only trusted services should be allowed to register in service discovery.</p>
+<hr>
+<h2 id="5-where-a-capability-belongs">5. Where a Capability Belongs</h2>
+<p>The same need can often be written several ways. Recommended placement:</p>
+<table>
+<thead>
+<tr>
+<th>Need</th>
+<th>Recommended place</th>
+<th>Not recommended</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Backend addresses, load balancing, timeouts</td>
+<td><code>services</code></td>
+<td>Repeating <code>service_name</code> / <code>timeout</code> on several routes</td>
+</tr>
+<tr>
+<td>Retries, circuit breaking, health checks</td>
+<td><code>services</code></td>
+<td><code>retry</code> / <code>circuit_breaker</code> middleware (deprecated)</td>
+</tr>
+<tr>
+<td>Upstream TLS / mTLS</td>
+<td><code>transports</code></td>
+<td><code>mtls</code> / <code>insecure_skip_verify</code> on every route</td>
+</tr>
+<tr>
+<td>CORS, auth, rate limits, IP restriction</td>
+<td><code>middlewares</code>, referenced by routes</td>
+<td>A separate inline copy on every route</td>
+</tr>
+<tr>
+<td>A simple setting used by one route only</td>
+<td>Inline action field (e.g. <code>compress: true</code>)</td>
+<td>Defining a middleware just for it</td>
+</tr>
+<tr>
+<td>Path rewriting</td>
+<td><code>strip_prefix</code> (drop a prefix) or <code>rewrite</code> (regex)</td>
+<td>Adding path compatibility in the backend</td>
+</tr>
+<tr>
+<td>Site-wide IP rules</td>
+<td>Site <code>ip_restriction</code></td>
+<td>Repeating them on every route</td>
+</tr>
+<tr>
+<td>Global IP deny list</td>
+<td><code>ip_restriction</code> in <code>config.yaml</code></td>
+<td>Repeating it in every site</td>
+</tr>
+</tbody>
+</table>
+<p>The rule of thumb is in <a href="services.html">Named Services and Configuration Layers</a>, section 1: <strong>settings that need to know the backend belong to the Service; settings that do not are middleware.</strong></p>
+<p>Whatever order they are listed in, middleware runs in fixed phases: preflight (CORS) → request rewriting → security (IP, WAF) → traffic control (rate limits) → authentication → post-auth (mirroring) → response (compression, caching). So there is no need to worry about &quot;rate limit before or after auth&quot;. Within a phase, middleware is ordered by its type's built-in order first, then by the order written.</p>
+<hr>
+<h2 id="6-recommended-practices">6. Recommended Practices</h2>
+<p><strong>File organization</strong></p>
+<ul>
+<li><strong>One site per file, named after the domain.</strong> The file name leads straight to the configuration when troubleshooting. A file may hold several sites separated by <code>---</code>, but that is harder to maintain.</li>
+<li><strong>Definitions at the top, routes at the bottom.</strong> Readers first see which backends and middleware exist, then how routes combine them.</li>
+<li><strong>Give every route a <code>name</code>.</strong> Route names appear in access logs, the Dashboard and the pipeline; unnamed routes are hard to troubleshoot.</li>
+</ul>
+<p><strong>Backends</strong></p>
+<ul>
+<li><strong>Always use a Service when several routes share a backend.</strong> Otherwise a timeout change must be made in several places, and missing one makes the same backend behave differently.</li>
+<li><strong>Set timeouts per backend, not per route.</strong> Define a separate Service for slow endpoints (like <code>payments</code> above).</li>
+<li><strong>Retry only idempotent requests.</strong> Only idempotent methods are retried by default; do not add POST to <code>retry_methods</code> unless the backend guarantees idempotency.</li>
+</ul>
+<p><strong>Middleware</strong></p>
+<ul>
+<li><strong>Name by purpose</strong>, e.g. <code>api-limit</code>, <code>web-cors</code>, <code>admin-auth</code>, not <code>mw1</code>.</li>
+<li><strong>Bundle common sets with <code>chain</code>.</strong> Changing the security policy of a group of routes then takes one edit.</li>
+<li><strong>Prefer a single domain.</strong> With the frontend and the API on the same domain, no CORS is needed. When cross-origin access is required, list explicit origins in <code>allowed_origins</code>; <code>*</code> combined with credentials fails to load.</li>
+</ul>
+<p><strong>Security</strong></p>
+<ul>
+<li><strong>Configure <code>real_ip.trusted_proxies</code> whenever the gateway sits behind a load balancer.</strong></li>
+<li><strong>Use a hash generated by <code>litegate -hash</code> for the Dashboard password</strong>, and do not expose the Dashboard port to the internet.</li>
+<li><strong>Add <code>ip_restriction</code> to management routes</strong> so that only the internal network can reach them.</li>
+<li><strong>Open <code>tag_entrypoints.allowed_ports</code> one port at a time</strong>; do not open a whole range for convenience.</li>
+</ul>
+<p><strong>Verification before going live</strong></p>
+<ul>
+<li>The startup log shows no errors and no deprecation warnings.</li>
+<li>Check the pipeline of each key route in the Dashboard: <code>GET /api/routing/pipeline?site=&lt;domain&gt;&amp;route=&lt;route name&gt;</code>, and confirm the middleware order and sources are as expected.</li>
+</ul>
+<hr>
+<h2 id="7-common-mistakes">7. Common Mistakes</h2>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Problem</th>
+<th>Instead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>methods: [GET]</code></td>
+<td>The YAML key is singular <code>method</code>; the key is rejected</td>
+<td><code>method: [GET]</code></td>
+</tr>
+<tr>
+<td><code>timeout: 5s</code> on an action</td>
+<td>The inline action <code>timeout</code> is an integer number of seconds</td>
+<td>Inline <code>timeout: 5</code>; in a Service <code>timeout: 5s</code></td>
+</tr>
+<tr>
+<td><code>max_requests</code> in a Service</td>
+<td>Service keys follow the tag spelling</td>
+<td><code>maxrequests</code>, <code>tripthreshold</code></td>
+</tr>
+<tr>
+<td>Referencing a Service and also setting <code>timeout</code> / <code>retry</code></td>
+<td>A route's backend has one source of configuration; loading fails</td>
+<td>Configure it on the Service</td>
+</tr>
+<tr>
+<td><code>allowed_origins: &quot;*&quot;</code> with <code>allow_credentials: true</code></td>
+<td>Any website could read the API as the user; loading fails</td>
+<td>List trusted origins</td>
+</tr>
+<tr>
+<td>Frontend and API on different domains, then CORS everywhere</td>
+<td>Complex and error-prone</td>
+<td>Serve both from one domain, separated by path</td>
+</tr>
+<tr>
+<td>CORS configured in both the backend and the gateway</td>
+<td>Two policies may disagree, and it is unclear which applies</td>
+<td>Once the gateway configures CORS it owns those headers; pick one</td>
+</tr>
+<tr>
+<td><code>priority</code> on the catch-all <code>/</code> route</td>
+<td>It overrides more specific routes</td>
+<td>No <code>priority</code> on the catch-all route</td>
+</tr>
+<tr>
+<td><code>retry</code> middleware</td>
+<td>Deprecated</td>
+<td><code>services.&lt;name&gt;.retry.attempts</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="further-reading">Further Reading</h2>
+<ul>
+<li><a href="global-config.html">Global Configuration Reference</a></li>
+<li><a href="site-config.html">Site Configuration Reference</a></li>
+<li><a href="services.html">Named Services and Configuration Layers</a></li>
+<li><a href="tag-dsl.html">Service Tags Guide</a></li>
+<li><a href="../02-concepts/routing-priority.html">Routing Priority</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/03-configuration/config-structure.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

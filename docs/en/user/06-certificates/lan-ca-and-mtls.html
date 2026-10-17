@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/06-certificates/lan-ca-and-mtls.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details open><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html" class="current" aria-current="page">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="lan-cas-centralized-litemesh-issuance-standalone-litegate-and-service-mtls">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</h1>
+<p>This guide records tests performed on 2026-10-11: LiteGate at <code>192.168.50.24</code>, LiteMesh at <code>192.168.50.32:8787</code>, and a LAN client on <code>.32</code>. Website HTTPS needs a server certificate. Service mTLS additionally needs a caller certificate, workload identity verification and authorization.</p>
+<h2 id="choose-a-certificate-model">Choose a certificate model</h2>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Issuer</th>
+<th>Client trust root</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>https://a.dev.test/</code></td>
+<td>LiteMesh private ACME</td>
+<td>LiteMesh Root CA</td>
+<td>Central issuance and shared gateway certificates</td>
+</tr>
+<tr>
+<td><code>https://b.dev.test:24443/</code></td>
+<td>LiteGate Local CA</td>
+<td>This instance's Local Root CA</td>
+<td>One gateway or development LAN</td>
+</tr>
+<tr>
+<td>LiteGate / service A → service B</td>
+<td>LiteMesh workload CA</td>
+<td>LiteMesh Root CA</td>
+<td>Mutual authentication, SPIFFE and authorization</td>
+</tr>
+</tbody>
+</table>
+<p>DNS SAN identifies a website hostname; SPIFFE URI SAN identifies a workload. Trusting a CA does not configure DNS or grant permission to call a service. Local CA does not automatically register services, issue SPIFFE identities or enable upstream mTLS.</p>
+<pre class="mermaid">flowchart LR
+  C[LAN client: DNS + root CA] --&gt;|HTTPS: DNS SAN| G[LiteGate .24]
+  M[LiteMesh .32] --&gt;|Private ACME + shared KV certificates| G
+  G --&gt;|mTLS: certificates + SPIFFE| B[Backend]
+</pre>
+<h2 id="configure-client-dns-and-root-trust">Configure client DNS and root trust</h2>
+<p>Add LAN DNS A records, or use client hosts entries for a small test:</p>
+<pre><code class="language-text">192.168.50.24 a.dev.test b.dev.test
+</code></pre>
+<p>Windows hosts is <code>C:\Windows\System32\drivers\etc\hosts</code>; Linux/macOS uses <code>/etc/hosts</code>. Hosts entries have no port: include a nonstandard port in the URL. Only <code>.24</code> and <code>.32</code> received the relevant resolution entries in this experiment; other clients still need configuration.</p>
+<p>Obtain the root certificate through a trusted administrative channel and compare its fingerprint with the administrator's value. Distribute public root <code>.crt</code>/PEM files, never CA private keys. Downloading a certificate does not install trust.</p>
+<p>Windows current-user trust:</p>
+<pre><code class="language-powershell">certutil -user -addstore Root .\litemesh-root-ca.crt
+certutil -user -addstore Root .\litegate-local-root-ca.crt
+</code></pre>
+<p>Install only the root needed for your scenario. Ubuntu/Debian system trust:</p>
+<pre><code class="language-bash">sudo install -m 644 litemesh-root-ca.crt /usr/local/share/ca-certificates/litemesh-lan.crt
+sudo update-ca-certificates
+</code></pre>
+<p>Substitute the local root for standalone sites. Browsers, containers, Java and independent trust stores may need their own import; restart the browser afterwards. <code>local_ca_trust: true</code> affects the LiteGate host only, not every LAN client.</p>
+<p>For scoped verification without modifying system trust:</p>
+<pre><code class="language-bash">curl --noproxy '*' --resolve a.dev.test:443:192.168.50.24 \
+  --cacert litemesh-root-ca.crt https://a.dev.test/api
+curl --noproxy '*' --resolve b.dev.test:24443:192.168.50.24 \
+  --cacert litegate-local-root-ca.crt https://b.dev.test:24443/
+</code></pre>
+<p>Use <code>curl.exe</code> on Windows. <code>--resolve</code> preserves the URL hostname, SNI and hostname verification. <code>-k</code> disables verification and cannot demonstrate valid CA trust.</p>
+<h2 id="scenario-1-litemesh-issues-and-distributes-adevtest">Scenario 1: LiteMesh issues and distributes a.dev.test</h2>
+<p>LiteGate creates a site private key and CSR, completes HTTP-01 through private ACME, receives a DNS certificate signed by LiteMesh CA, and saves the certificate and encrypted private key in LiteMesh KV. Gateways with matching configuration can restore it. Issuance and KV distribution are separate operations; the CA private key stays off the gateway.</p>
+<h3 id="litemesh-ca-fragment">LiteMesh CA fragment</h3>
+<p>This belongs to LiteMesh, not LiteGate:</p>
+<pre><code class="language-yaml">ca:
+  acme:
+    enabled: true
+    domain_policies: [&quot;a.dev.test&quot;]
+    disable_challenge: false
+    allow_private_http01: true
+</code></pre>
+<p>Keep domain validation enabled. Private HTTP-01 targets require explicit permission. The CA host must resolve <code>a.dev.test</code> to <code>.24</code> and reach <code>.24:80/.well-known/acme-challenge/&lt;token&gt;</code>. Configure CA-side and client-side DNS separately. HTTP-01 uses port 80; see <a href="https://www.rfc-editor.org/rfc/rfc8555.html#section-8.3">RFC 8555 §8.3</a>.</p>
+<p>The ACME directory must have trusted HTTPS transport. The deployed <code>.32:8787</code> endpoint is HTTP, so this lab uses an HTTPS proxy on <code>.24:18444</code>, preserving Host and <code>X-Forwarded-Proto: https</code>. Its certificate is signed by LiteMesh CA for <code>mtls-echo-demo.default.litemesh</code>; the gateway resolves that name to <code>.24</code>.</p>
+<p>The local LiteMesh source supports <code>http.tls_cert_file</code> / <code>http.tls_key_file</code>, but native HTTPS in the deployed binary was not tested. Do not change an existing HTTP port without migrating its control-plane clients. A stable HTTPS reverse proxy is another deployment option; its public URL, returned ACME URLs and certificate hostname must agree.</p>
+<h3 id="litegate-global-configuration">LiteGate global configuration</h3>
+<p>This is a standalone centralized-HTTPS example; add workload mTLS fields later:</p>
+<pre><code class="language-yaml">entrypoints:
+  web:
+    address: &quot;192.168.50.24:18090&quot;
+  websecure:
+    address: &quot;192.168.50.24:443&quot;
+    tls: true
+sites_dir: ./sites
+streams_dir: ./streams
+http:
+  https_port: 0
+tls:
+  enabled: false
+  certs_dir: ./certs-domain
+auto_cert:
+  enabled: true
+  email: ops@dev.test
+  ca_provider: custom
+  acme_url: &quot;https://mtls-echo-demo.default.litemesh:18444/acme/directory&quot;
+  acme_ca_cert: ./litemesh-root-ca.crt
+  default_challenge: http
+  certs_dir: ./certs-domain
+  renew_days: 30
+  storage_secret: &quot;file:///etc/litegate/cert-storage-secret&quot;
+litemesh:
+  enabled: true
+  address: &quot;http://192.168.50.32:8787&quot;
+  token: &quot;&lt;API_TOKEN&gt;&quot;
+  namespace: default
+  roles:
+    cert_storage: true
+  keys:
+    cert_prefix: &quot;litegate/demo-a-dev-test-v3/certs/&quot;
+dashboard:
+  enabled: false
+mcp:
+  enabled: false
+</code></pre>
+<p>Create <code>sites</code>, <code>streams</code> and <code>www</code>, with <code>www/index.html</code>. The storage-secret file holds at least 32 bytes of random encryption-key material and has mode <code>0600</code>. Sharing gateways need the same secret, namespace, certificate prefix and ACME URL. <code>acme_ca_cert</code> verifies the ACME server; the current certificate-restoration path also uses system roots, so the lab gateway trusts LiteMesh CA in its system store.</p>
+<p><code>sites/a-dev-test.yaml</code>:</p>
+<pre><code class="language-yaml">site: a.dev.test
+entrypoints: [web, websecure]
+https: true
+serve:
+  root: ./www
+  index: index.html
+</code></pre>
+<p>Port 80 already belongs to another LiteGate in this lab. Its new site forwards only <code>a.dev.test</code> to the issuing instance:</p>
+<pre><code class="language-yaml">site: a.dev.test
+https: false
+/:
+  proxy: 192.168.50.24:18090
+</code></pre>
+<p>Without an existing port-80 gateway, let the issuing instance's <code>web</code> listen on <code>:80</code> directly. An HTTPS-only site is insufficient for HTTP-01.</p>
+<h3 id="observed-litemesh-compatibility-defect">Observed LiteMesh compatibility defect</h3>
+<p>The unmodified challenge response lacks <code>Link: &lt;authorization-url&gt;;rel=&quot;up&quot;</code>. LiteGate's lego client reads that header and otherwise fails with <code>authorization[get]: empty URL</code>. <a href="https://www.rfc-editor.org/rfc/rfc8555.html#section-7.1">RFC 8555 §7.1</a> describes the challenge-to-authorization <code>up</code> relation.</p>
+<p>On 2026-10-11, LiteMesh <code>internal/app/acme.go</code> was fixed to return the parent authorization <code>Link</code> directly, with regression coverage. The fixed binary was deployed to the lab control plane. With proxy compensation removed and fresh local certificate storage and a fresh KV prefix, new issuance succeeded and <code>https://a.dev.test/api</code> returned 200. <code>examples/mtls-demo/acme-proxy.py</code> now supplies HTTPS transport only; issuance no longer depends on header compensation. The HTTP-only deployment is a separate transport configuration issue.</p>
+<p>An unconfigured <code>auth.security_admin_token</code> makes intention writes return 503 by design. With user authorization, the experiment configured a dedicated management token and restarted LiteMesh; do not bypass that protection.</p>
+<h2 id="scenario-2-standalone-litegate-local-ca">Scenario 2: standalone LiteGate Local CA</h2>
+<p>This mode needs no LiteMesh, ACME, port-80 validation or public DNS. Tested isolated configuration:</p>
+<pre><code class="language-yaml">entrypoints:
+  web:
+    address: &quot;192.168.50.24:18092&quot;
+  secure:
+    address: &quot;192.168.50.24:24443&quot;
+    tls: true
+sites_dir: ./sites
+streams_dir: ./streams
+http:
+  https_port: 0
+auto_cert:
+  enabled: false
+tls:
+  enabled: false
+  certs_dir: ./certs
+  local_ca: true
+  local_ca_domains: [&quot;b.dev.test&quot;]
+  local_ca_trust: false
+dashboard:
+  enabled: false
+mcp:
+  enabled: false
+</code></pre>
+<p><code>secure.tls: true</code> enables TLS on that listener; <code>tls.enabled: false</code> disables the legacy global listener switch. Site configuration:</p>
+<pre><code class="language-yaml">site: b.dev.test
+entrypoints: [secure]
+https: true
+serve:
+  root: ./www
+  index: index.html
+</code></pre>
+<p>Startup creates <code>certs/local_root_ca.crt</code> and <code>certs/local_root_ca.key</code>. The first handshake for an allowed domain creates its leaf certificate. Trust this instance's root and visit <code>https://b.dev.test:24443/</code>. Port 24443 isolates this experiment from centralized HTTPS on 443; an ordinary standalone deployment can use 443.</p>
+<p>Preserve the CA directory. Restart loads the original root; leaf certificates may change without requiring a new client root import. Independently generated roots on different hosts are unrelated. Local CA is not a multi-node certificate distribution or registration service. Its allow-list restricts normal signing requests, <strong>not an attacker holding a leaked CA private key</strong>.</p>
+<h2 id="scenario-3-litegate--service-a-to-service-b-mtls">Scenario 3: LiteGate / service A to service B mTLS</h2>
+<p>The tested caller is <code>spiffe://litemesh.local/ns/default/sa/litegate-mtls-demo</code>, and the backend is <code>spiffe://litemesh.local/ns/default/sa/mtls-echo-demo</code>. Direct service A → B can use the same workload certificate model without browser certificates or Local CA.</p>
+<h3 id="register-and-provision-the-backend">Register and provision the backend</h3>
+<p>Send this to <code>PUT /v1/registry</code>:</p>
+<pre><code class="language-json">{
+  &quot;service_id&quot;: &quot;litegate-mtls-echo-demo-20261011&quot;,
+  &quot;name&quot;: &quot;mtls-echo-demo&quot;,
+  &quot;namespace&quot;: &quot;default&quot;,
+  &quot;address&quot;: &quot;192.168.50.24&quot;,
+  &quot;port&quot;: 28443,
+  &quot;protocol&quot;: &quot;http&quot;,
+  &quot;tags&quot;: [&quot;mtls&quot;],
+  &quot;meta&quot;: {
+    &quot;mtls_port&quot;: &quot;28443&quot;,
+    &quot;spiffe_id&quot;: &quot;spiffe://litemesh.local/ns/default/sa/mtls-echo-demo&quot;
+  },
+  &quot;check&quot;: {
+    &quot;type&quot;: &quot;tcp&quot;,
+    &quot;target&quot;: &quot;192.168.50.24:28443&quot;,
+    &quot;interval&quot;: &quot;10s&quot;,
+    &quot;timeout&quot;: &quot;2s&quot;
+  }
+}
+</code></pre>
+<p>Declare <code>protocol: http</code> explicitly: a TCP check can otherwise make LiteMesh infer TCP. A TCP check proves port reachability, not mTLS or authorization. <code>mtls_port</code> identifies the TLS port and may differ from the ordinary registration port.</p>
+<p>Keep the registration response's workload bootstrap token private. Generate the private key on the service host and submit <code>public_key</code>, <code>spiffe_id</code>, <code>service_id</code> and <code>workload_token</code> to <code>/v1/ca/sign</code>. Identity must match the registered service, namespace and source address. Retrieve the root from <code>/v1/ca/root</code>. The lab used administrator signing for static backend PEMs; long-running services should use workload credentials and SDK renewal.</p>
+<h3 id="require-caller-certificates-on-the-backend">Require caller certificates on the backend</h3>
+<p>The Go SDK <code>github.com/james/litemesh/sdk</code> provides <code>WatchCertificateWithWorkloadAuth</code> for renewal. This fragment assumes its certificate manager and an <code>x509.CertPool</code> containing only LiteMesh roots:</p>
+<pre><code class="language-go">tlsConfig := &amp;tls.Config{
+    MinVersion:     tls.VersionTLS12,
+    GetCertificate: certManager.GetCertificate,
+    ClientAuth:     tls.RequireAndVerifyClientCert,
+    ClientCAs:      roots,
+    VerifyConnection: func(cs tls.ConnectionState) error {
+        allowed := &quot;spiffe://litemesh.local/ns/default/sa/litegate-mtls-demo&quot;
+        if len(cs.PeerCertificates) == 0 {
+            return fmt.Errorf(&quot;client certificate required&quot;)
+        }
+        for _, uri := range cs.PeerCertificates[0].URIs {
+            if uri.String() == allowed { return nil }
+        }
+        return fmt.Errorf(&quot;client SPIFFE identity not allowed&quot;)
+    },
+}
+server := &amp;http.Server{Addr: &quot;:28443&quot;, Handler: mux, TLSConfig: tlsConfig}
+err := server.ListenAndServeTLS(&quot;&quot;, &quot;&quot;)
+</code></pre>
+<p>An HTTPS listener alone does not demand client certificates; <code>RequireAndVerifyClientCert</code> does. Check the leaf's URI identity after chain validation, not URIs on CA/intermediate certificates.</p>
+<h3 id="configure-litegate-as-caller">Configure LiteGate as caller</h3>
+<p>Merge these fields into the centralized example and configure discovery:</p>
+<pre><code class="language-yaml">litemesh:
+  enabled: true
+  address: &quot;http://192.168.50.32:8787&quot;
+  token: &quot;&lt;API_TOKEN&gt;&quot;
+  namespace: default
+  mtls: true
+  spiffe_id: &quot;spiffe://litemesh.local/ns/default/sa/litegate-mtls-demo&quot;
+service_discovery:
+  catalogs:
+    - enabled: true
+      provider: litemesh
+      url: &quot;http://192.168.50.32:8787&quot;
+      token: &quot;&lt;API_TOKEN&gt;&quot;
+      namespace: default
+</code></pre>
+<p>Preserve <code>roles.cert_storage</code> and <code>keys.cert_prefix</code>. Alternatively, supply <code>workload_service_id</code> and <code>workload_token</code> together for signing; configure policy/discovery read permissions separately.</p>
+<p>The current gateway certificate manager requires global <code>litemesh.mtls: true</code>; a service tag alone does not initialize it. The global switch also forces instances in that discovery source to mTLS. Check this behavior before mixing plaintext and mTLS services. The live test enabled both the switch and tag; it did not prove tag-only initialization.</p>
+<p>Site configuration:</p>
+<pre><code class="language-yaml">site: a.dev.test
+entrypoints: [web, websecure]
+https: true
+services:
+  echo:
+    discovery:
+      name: mtls-echo-demo
+    timeout: 5s
+/api:
+  service: echo
+/:
+  serve:
+    root: ./www
+    index: index.html
+</code></pre>
+<p>Discovery upgrades tagged endpoints to HTTPS, selects <code>mtls_port</code> and verifies the backend CA and SPIFFE identity. This experiment found and fixed a LiteGate pool-construction bug that overwrote discovery mTLS, covered by <code>TestCatalogPoolPreservesDiscoveryMTLS</code>. Older binaries need that fix.</p>
+<h3 id="intentions-and-direct-service-callers">Intentions and direct service callers</h3>
+<p>Write to <code>PUT /v1/authz/intentions</code> with the dedicated administrative header <code>X-Litemesh-Security-Token</code>:</p>
+<pre><code class="language-json">{
+  &quot;source&quot;: &quot;spiffe://litemesh.local/ns/default/sa/litegate-mtls-demo&quot;,
+  &quot;destination&quot;: &quot;spiffe://litemesh.local/ns/default/sa/mtls-echo-demo&quot;,
+  &quot;action&quot;: &quot;allow&quot;
+}
+</code></pre>
+<p>LiteGate maintains intentions and revocations and checks them locally at handshake. No allow rule or an unready policy cache means denial. Its data-plane token needs reads of <code>/v1/authz/intentions</code>, <code>/v1/ca/revocations</code> and <code>/v1/events</code>; do not distribute the administrative token to workloads.</p>
+<p>For direct A → B calls, register A, obtain A's workload certificate, and build its client TLS configuration:</p>
+<pre><code class="language-go">cfg, err := litemesh.BuildDynamicTLSConfigWithSPIFFE(
+    clientCertManager, rootPEM,
+    []string{&quot;spiffe://litemesh.local/ns/default/sa/mtls-echo-demo&quot;},
+    x509.ExtKeyUsageServerAuth,
+)
+// Check err, then assign cfg to http.Transport.TLSClientConfig.
+</code></pre>
+<p>This verifies the CA chain and backend URI identity without requiring an IP SAN; authentication is not skipped. B's leaf-identity allow-list must permit A. The TLS helper and static allow-list do <strong>not</strong> automatically enforce intentions or revocations. Custom services needing dynamic policy should maintain <code>PolicyCache</code>, check <code>Ready()</code>, <code>IsRevoked(leaf)</code> and <code>Authorize(source, destination).Allowed</code>, and handle established connections after updates. LiteGate already integrates this behavior.</p>
+<h2 id="verified-results-and-limitations">Verified results and limitations</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Trusted LiteMesh root → <code>a.dev.test/api</code></td>
+<td>200, backend mTLS succeeds</td>
+</tr>
+<tr>
+<td>Missing LiteMesh root trust</td>
+<td>Chain verification fails</td>
+</tr>
+<tr>
+<td>Move local a.dev.test cert/key aside and restart</td>
+<td>Restored from KV with identical PEM hash, 200</td>
+</tr>
+<tr>
+<td>Trusted standalone root → <code>b.dev.test:24443</code></td>
+<td>200 without LiteMesh/ACME</td>
+</tr>
+<tr>
+<td>Missing root or using LiteMesh root for standalone site</td>
+<td>Both fail chain verification</td>
+</tr>
+<tr>
+<td>Disallowed Local CA domain</td>
+<td>TLS rejection</td>
+</tr>
+<tr>
+<td>Restart standalone gateway</td>
+<td>Same root, client still receives 200</td>
+</tr>
+<tr>
+<td>Missing/untrusted client certificate at backend</td>
+<td>TLS rejection</td>
+</tr>
+<tr>
+<td>Trusted certificate with wrong client SPIFFE</td>
+<td>Backend 403</td>
+</tr>
+<tr>
+<td>Intention deny / restored allow</td>
+<td>LiteGate 403 / 200</td>
+</tr>
+</tbody>
+</table>
+<p>Repository evidence is under <code>artifacts/mtls-demo-20261011/</code>: <code>domain-verification.json</code>, <code>local-ca-verification.json</code> and <code>verification.json</code>. Public roots are <code>litemesh-root-ca.crt</code> and <code>litegate-local-root-ca.crt</code>, without private keys. The standalone test script is <code>examples/mtls-demo/test-local-ca.py</code>; its remote directory is <code>.24:/root/litegate-local-ca-demo-20261011</code>. The centralized/mTLS directory is <code>.24:/root/litegate-mtls-demo-20261011</code>.</p>
+<p>These manually started test services have no boot-time setup. Renewal is configured/implemented, but this experiment did not wait through a year-long validity period or verify long-term rotation. Static backend PEMs require renewal or SDK management. Preserve correct clocks, validity, root backups and private-key permissions.</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<p>Check DNS and port first, then client root trust, DNS SAN and certificate dates. For issuance, check the HTTPS directory, CA-side DNS, port-80 HTTP-01 and challenge responses; <code>authorization[get]: empty URL</code> indicates the compatibility problem above. For mTLS, also check the registration protocol, <code>mtls_port</code>, both SPIFFE identities, intentions and revocations. HTTP 403 and TLS handshake failure are rejections at different stages.</p>
+<p>Allow-lists cannot contain a leaked CA private key. Protect and back up roots/private keys and preserve the certificate-storage encryption key. Do not delete a root CA to fix an ordinary leaf-certificate problem: that would require updating every client trust store.</p>
+<p>See <a href="local-ca.html">Local CA</a>, <a href="auto-cert.html">Auto-Cert</a> and <a href="../07-discovery/litemesh-mtls.html">LiteMesh mTLS</a>.</p>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/06-certificates/lan-ca-and-mtls.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs";
+mermaid.initialize({ startOnLoad: true, theme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default" });
+</script>
+</body>
+</html>

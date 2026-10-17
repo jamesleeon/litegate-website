@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connect 场景与架构指南 · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/09-advanced/connect-scenarios.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details open><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html" class="current" aria-current="page">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="connect-场景与架构指南">Connect 场景与架构指南</h1>
+<p><a href="connect.html">Connect 配置与上线指南</a>讲的是“怎么配”，本文讲的是“什么场景该怎么用、为什么这样设计”。
+如果你正在规划一个需要把数据送进客户内网、却不想让任何一方开放入站端口的系统，建议先读完本文再动手配置。</p>
+<p>本文的核心是第 2 节：<strong>电商订单私有化落地</strong>。这是 Connect 最典型、也最有价值的场景：
+许多团队至今仍靠“开放消息队列端口给客户”或“让客户开防火墙”来解决它，而 Connect 可以把它简化为一次 HTTPS POST。</p>
+<h2 id="1-先选模式">1. 先选模式</h2>
+<p>Connect 有三种发布方式，区别在于 <strong>TLS 在哪里终止</strong>，这直接决定了 Cloud 能否看到明文：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>TLS 终止位置</th>
+<th>Cloud 能否看到明文</th>
+<th>适合场景</th>
+<th>文档</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CLI HTTP 模式（<code>litegate connect http</code>）</td>
+<td>Cloud</td>
+<td><strong>能</strong></td>
+<td>快速发布单个内网网站、演示、内部工具</td>
+<td><a href="connect-cli-http.html">CLI 发布 HTTP 服务</a></td>
+</tr>
+<tr>
+<td>Site 模式（<code>publish_sites</code>）</td>
+<td>Private / Home</td>
+<td><strong>不能</strong>（只按 SNI 转发密文）</td>
+<td>私有化部署、多租户数据通道、对数据保密有要求的场景</td>
+<td><a href="connect.html">配置与上线指南</a></td>
+</tr>
+<tr>
+<td>L4 Stream（<code>publish_streams</code>）</td>
+<td>取决于上层协议</td>
+<td>取决于上层协议</td>
+<td>非 HTTP 的 TCP 服务</td>
+<td><a href="connect.html#6-%E5%8F%91%E5%B8%83-l4-tcp--socks5-stream">配置与上线指南 §6</a></td>
+</tr>
+</tbody>
+</table>
+<p>一句话选择：</p>
+<ul>
+<li>只想把一个内网网站快速放到公网 → <strong>CLI HTTP 模式</strong>；</li>
+<li>数据属于客户、或经过的云环境不应接触明文 → <strong>Site 模式</strong>；</li>
+<li>协议不是 HTTP → <strong>L4 Stream</strong>。</li>
+</ul>
+<blockquote>
+<p>本文后续内容都基于 <strong>Site 模式</strong>。CLI HTTP 模式在 Cloud 终止 TLS，不满足“Cloud 不接触明文”的前提，不要用于私有化数据通道。</p>
+</blockquote>
+<h2 id="2-参考架构电商订单私有化落地">2. 参考架构：电商订单私有化落地</h2>
+<h3 id="21-问题是什么">2.1 问题是什么</h3>
+<p>电商 ISV 通常同时提供 SaaS 和私有化两种交付。订单必须在平台指定的云环境内（例如聚石塔）完成下载和转化，
+而私有化客户要求数据最终落在自己机房的业务库里。于是需要一条 <strong>“云内 → 客户内网”</strong> 的数据通道。</p>
+<p>常见做法和它们的问题：</p>
+<table>
+<thead>
+<tr>
+<th>做法</th>
+<th>问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>对公网开放 RabbitMQ / Kafka 端口，客户自己来消费</td>
+<td>MQ 端口暴露在公网，要为每个客户维护账号和权限；客户需要写 MQ 消费代码；积压发生在客户侧，你看不到</td>
+</tr>
+<tr>
+<td>让客户开放入站端口，由你推送</td>
+<td>每个客户都要走一遍防火墙审批，很多企业根本不允许；客户网络变更就会断</td>
+</tr>
+<tr>
+<td>客户定时调用你的 API 拉取</td>
+<td>实时性差，拉取节奏由客户决定，失败重试和补数逻辑都压在客户开发身上</td>
+</tr>
+<tr>
+<td>VPN / 专线</td>
+<td>成本高、开通慢，运维复杂，不适合几十上百家客户</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-connect-的做法">2.2 Connect 的做法</h3>
+<pre><code class="language-text">【平台云内（如聚石塔）】
+  切片 ──▶ 下载 ──▶ 转化 ──▶ 消息队列（按租户分流）
+                                    │
+                        租户消费者（自带流控、重试）
+                                    │  HTTPS POST  https://tenant-a.example.net/ods/v1/orders
+                                    ▼
+                  Cloud LiteGate A / B（只监听 443，按 SNI 转发密文，不解密）
+                                    │  Connect 隧道（由 Private 主动建立）
+【客户内网 / 私有化机房】             ▼
+                  Private LiteGate（本地终止 TLS，私钥只在这里）
+                                    │  jetstream_publish，等待 PubAck
+                                    ▼
+                  NATS JetStream（3 节点，replicas=3）
+                                    │
+                  ODS Consumer ──▶ 解析 ──▶ 客户业务库
+</code></pre>
+<p>关键变化：</p>
+<ul>
+<li><strong>客户只需要允许出站 443</strong>。Private 主动连接 Cloud，隧道建立后，你的推送沿着这条隧道“反向”进入客户内网。客户不开任何入站端口。</li>
+<li><strong>你只需要开放 443</strong>。消息队列端口不再对外暴露。</li>
+<li><strong>Cloud 看不到明文</strong>。Cloud 只读取 TLS 握手中的 SNI 来决定转发给哪个租户，TLS 在 Private 上终止。</li>
+<li><strong>从“客户拉”变成“你推”</strong>。投递节奏、重试、积压都在你自己的消息队列里，可观测、可控制。</li>
+</ul>
+<h3 id="23-对开发者意味着什么">2.3 对开发者意味着什么</h3>
+<p>这套方案最大的收益在开发侧：<strong>推送方只需要会发 HTTP POST</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>以前需要掌握</th>
+<th>现在需要掌握</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>云内推送方（你的开发）</td>
+<td>MQ 客户端、连接管理、客户侧网络问题排查</td>
+<td>发一个 HTTPS POST，按状态码决定 ack / 重试</td>
+</tr>
+<tr>
+<td>客户侧开发</td>
+<td>MQ 消费、断线重连、TCP 长连接、消息确认</td>
+<td>从本地 JetStream 消费（或直接用你交付的 ODS Consumer）</td>
+</tr>
+<tr>
+<td>运维</td>
+<td>为每个客户开端口、配账号、配防火墙</td>
+<td>为每个客户发一个 Token 和一个子域名</td>
+</tr>
+</tbody>
+</table>
+<p>不需要自己实现 TCP 长连接、心跳、断线重连、内网穿透，这些都由 Connect 负责。</p>
+<h3 id="24-域名规划公共域与租户域分离">2.4 域名规划：公共域与租户域分离</h3>
+<p>建议准备两套独立的注册域名：</p>
+<table>
+<thead>
+<tr>
+<th>域名</th>
+<th>用途</th>
+<th>证书在哪里</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>公共域</td>
+<td>Connect 控制端点、公共 API、静态资源</td>
+<td>Cloud（可用泛域名证书）</td>
+<td><code>connect.example.com</code></td>
+</tr>
+<tr>
+<td>租户域</td>
+<td>每个租户一个子域名，作为该租户的数据通道</td>
+<td>各自的 Private，<strong>每个租户一张精确证书</strong></td>
+<td><code>tenant-a.example.net</code></td>
+</tr>
+</tbody>
+</table>
+<p>分离的原因：</p>
+<ul>
+<li>租户域的证书只放在各自的 Private 上。某个租户的机器被攻破，影响范围只是它自己的子域名。</li>
+<li>公共域的证书和凭据只在 Cloud 上，不会因为租户侧的问题泄露。</li>
+<li>Cookie、CAA 记录、证书签发额度都互不影响。</li>
+</ul>
+<blockquote>
+<p>在本文的实践中，公共域对应 <code>example.com</code>，租户域对应 <code>example.net</code> 下的租户子域名。</p>
+</blockquote>
+<h3 id="25-推送契约">2.5 推送契约</h3>
+<p>推送方与 Private 之间的约定非常简单：</p>
+<p><strong>请求</strong></p>
+<pre><code class="language-http">POST /ods/v1/orders HTTP/1.1
+Host: tenant-a.example.net
+Content-Type: application/json
+Idempotency-Key: tenant-a:batch-20261111-000123
+Authorization: Bearer &lt;推送方凭据&gt;
+
+{ ...一批订单，建议 200～400 单，1MB 以内... }
+</code></pre>
+<ul>
+<li><code>Idempotency-Key</code>：<strong>必须携带</strong>，同一批次重试时保持不变。长度 1–64 个字符，只允许 <code>[A-Za-z0-9_:-]</code>。
+建议使用 <code>租户:批次ID</code>。Private 会以它为基础生成 JetStream 的 <code>Nats-Msg-Id</code>，在去重窗口内重复投递只会被存一次。</li>
+<li>订单数据本身保持平台要求的加密或脱敏状态，Connect 不关心 body 内容。</li>
+</ul>
+<p><strong>响应</strong></p>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>含义</th>
+<th>推送方应该怎么做</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>202</code></td>
+<td>已写入 JetStream 并收到 PubAck（响应体中 <code>jetstream.duplicate: true</code> 表示命中去重）</td>
+<td>ack 上游消息</td>
+</tr>
+<tr>
+<td><code>413</code></td>
+<td>批次超过 <code>max_request_body</code></td>
+<td>不要重试；拆小批次，或调整配置（见 §2.8）</td>
+</tr>
+<tr>
+<td><code>429</code></td>
+<td>Private 端在途请求达到 <code>max_in_flight</code> 上限</td>
+<td>退避后重试</td>
+</tr>
+<tr>
+<td><code>503</code></td>
+<td>隧道离线、租户 Private 不可用，或 NATS 不可用</td>
+<td>退避后重试，不 ack</td>
+</tr>
+<tr>
+<td>其他 <code>5xx</code>、超时、连接错误</td>
+<td>结果未知</td>
+<td>用<strong>同一个</strong> <code>Idempotency-Key</code> 重试，不 ack</td>
+</tr>
+</tbody>
+</table>
+<p>规则只有一条：<strong>只有拿到 2xx 才 ack 上游消息，其他情况一律保留在上游队列里重试。</strong></p>
+<h3 id="26-可靠性语义">2.6 可靠性语义</h3>
+<p>整条链路是 <strong>“至少一次投递 + 两级去重”</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>故障位置</th>
+<th>结果</th>
+<th>由谁兜底</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cloud 宕机</td>
+<td>推送失败</td>
+<td>消息留在云内队列；内网 DNS 或推送方重试切换到另一台 Cloud</td>
+</tr>
+<tr>
+<td>隧道断开 / Private 宕机</td>
+<td>Cloud 返回 503</td>
+<td>消息留在云内队列，Private 恢复后自动追赶</td>
+</tr>
+<tr>
+<td>NATS 不可用</td>
+<td>Private 返回 5xx</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>已写入 JetStream，但响应在返回途中丢失</td>
+<td>推送方看到超时并重试</td>
+<td>JetStream 按 <code>Nats-Msg-Id</code> 去重</td>
+</tr>
+<tr>
+<td>重试间隔超过 JetStream 去重窗口</td>
+<td>可能写入两次</td>
+<td>ODS Consumer 按业务主键做幂等写入</td>
+</tr>
+</tbody>
+</table>
+<p>因此需要满足两个配置约束：</p>
+<ol>
+<li><strong>推送方的 HTTP 超时 &lt; 上游队列的 ack 等待时间</strong>，否则上游会在推送仍在进行时重投，造成不必要的重复。</li>
+<li><strong>JetStream 的 <code>duplicates</code> 窗口 ≥ 推送方最长的重试间隔</strong>。超出窗口的重复由 ODS Consumer 的幂等写入兜底，
+所以入库最好是“按订单号 upsert”，而不是“直接 insert”。</li>
+</ol>
+<p>Cloud 上不需要任何队列或缓冲：它只负责转发，积压永远发生在你可控的云内队列里。</p>
+<h3 id="27-配置示例">2.7 配置示例</h3>
+<h4 id="cloud平台云内">Cloud（平台云内）</h4>
+<pre><code class="language-yaml">connect:
+  server:
+    enabled: true
+    hostname: connect.example.com
+    path: /_litegate/connect/v1
+    state_file: data/connect-registry.json
+    peers:
+      tenant-a:
+        token_file: /etc/litegate/secrets/tenant-a.token
+        # 路由授权：只允许该租户发布自己的子域名
+        allowed_domains:
+          - tenant-a.example.net
+        # 证书授权：只允许为自己的子域名申请证书
+        allowed_cert_domains:
+          - tenant-a.example.net
+        max_sites: 5
+        max_connections: 512
+        sessions: 4
+</code></pre>
+<p>要点：</p>
+<ul>
+<li><strong>每个租户的 <code>allowed_domains</code> 只写它自己的精确子域名</strong>，不要所有租户都写 <code>*.example.net</code>。</li>
+<li>Cloud 直接监听 443，<strong>不要在前面放七层负载均衡或 WAF</strong>：七层设备会在自己身上终止 TLS，Cloud 拿不到原始 SNI，也就无法做密文转发。如果必须有负载均衡，用四层 TCP 透传。</li>
+<li>Cloud 需要持有租户域的 DNS 凭据，才能替 Private 完成 ACME DNS-01 验证（见 §4）。</li>
+</ul>
+<h4 id="private客户内网">Private（客户内网）</h4>
+<p>主配置：</p>
+<pre><code class="language-yaml">entrypoints:
+  websecure:
+    address: &quot;:8443&quot;
+    tls: true
+
+auto_cert:
+  enabled: true
+  email: ops@example.com
+  storage_secret: &quot;env://PRIVATE_STORAGE_SECRET&quot;   # 本地私钥落盘加密，不要写明文
+  certs_dir: ./certs
+  dns_providers:
+    # 证书委托 Cloud 签发：私钥在本机生成，只把 CSR 发给 Cloud
+    - name: cloud-csr-delegate
+      type: connect
+      enabled: true
+      domains:
+        - tenant-a.example.net
+
+connect:
+  client:
+    enabled: true
+    name: tenant-a
+    remotes:
+      - https://connect-a.example.com/_litegate/connect/v1
+      - https://connect-b.example.com/_litegate/connect/v1
+    sessions: 4                  # 至少为 Cloud 数量的 2 倍
+    token_file: /etc/litegate/secrets/tenant-a.token
+    publish_sites: true
+    publish_streams: false
+</code></pre>
+<p>NATS 连接（<code>plugin-config.yaml</code>）：</p>
+<pre><code class="language-yaml">plugins:
+  nats:
+    connections:
+      ods:
+        servers: &quot;nats://10.0.0.11:4222,nats://10.0.0.12:4222,nats://10.0.0.13:4222&quot;
+        connect_timeout: &quot;3s&quot;
+        reconnect_wait: &quot;1s&quot;
+        max_reconnects: &quot;-1&quot;
+</code></pre>
+<p>租户 Site（<code>sites/tenant-a.yaml</code>）：</p>
+<pre><code class="language-yaml">site: tenant-a.example.net
+entrypoints:
+  - websecure
+tls:
+  enabled: true                  # 证书由 auto_cert 的 connect 委托自动获取和续期
+routes:
+  - name: ods-orders
+    match:
+      path: /ods/v1/orders
+      method: [&quot;POST&quot;]
+    action:
+      type: nats
+      mode: jetstream_publish    # 等待 PubAck 后才返回 202
+      connection: ods
+      subject: ods.orders
+      publish_timeout: 3s
+      max_in_flight: 2000
+      max_request_body: 4194304  # 4 MiB，留出余量
+      stream:
+        name: ODS_ORDERS         # 推荐由运维预先创建；以下参数仅用于兜底建流
+        create_if_absent:
+          subjects: [&quot;ods.&gt;&quot;]
+          retention: limits
+          storage: file
+          max_age: 168h
+          duplicates: 30m        # ≥ 推送方最长重试间隔
+          replicas: 3
+</code></pre>
+<blockquote>
+<p>同一个 Private 上可以按路径拆分多个路由，例如订单、退款、商品分别投到不同 subject。</p>
+</blockquote>
+<h4 id="推送方云内消费者">推送方（云内消费者）</h4>
+<p>伪代码：</p>
+<pre><code class="language-text">for msg in 上游队列.按租户消费(tenant):
+    resp = POST https://{tenant}.example.net/ods/v1/orders
+             headers: Idempotency-Key = &quot;{tenant}:{msg.batch_id}&quot;
+             body:    msg.payload
+             timeout: 30s                     # 小于上游 ack 等待时间
+
+    if resp.status 为 2xx:
+        msg.ack()
+    elif resp.status == 413:
+        告警并转人工 / 拆批后重新入队          # 重试不会成功
+    else:
+        msg.nack(延迟重试)                    # 429、503、5xx、超时、连接错误
+</code></pre>
+<p>推送方用内网 DNS 把 <code>*.example.net</code> 解析到 Cloud 的内网地址即可，不需要为每个租户单独配置。</p>
+<h3 id="28-容量与大促">2.8 容量与大促</h3>
+<p>大促的峰值首先由云内的切片、下载和队列吸收，这几层都可以横向扩容。
+<strong>进入隧道的流量取决于每个租户消费者的并发，而不是平台订单的峰值</strong>。所以隧道和 Private 只需要按“消费速度”准备容量，不需要按大促峰值准备。
+某个租户的网络慢或本地解析慢，结果只是它在云内的队列积压，不会报错，也不会拖累其他租户。</p>
+<p>需要提前核算的几个上限：</p>
+<table>
+<thead>
+<tr>
+<th>位置</th>
+<th>配置</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Private NATS 路由</td>
+<td><code>max_request_body</code></td>
+<td>大于最大批次，例如 4 MiB</td>
+</tr>
+<tr>
+<td>NATS Server</td>
+<td><code>max_payload</code></td>
+<td><strong>≥ <code>max_request_body</code></strong>，这是 server 级配置，只调 stream 不够</td>
+</tr>
+<tr>
+<td>JetStream Stream</td>
+<td><code>max_msg_size</code>（如有设置）</td>
+<td>≥ <code>max_request_body</code></td>
+</tr>
+<tr>
+<td>Cloud Peer</td>
+<td><code>max_connections</code></td>
+<td>≥ 该租户推送并发</td>
+</tr>
+<tr>
+<td>Connect 隧道</td>
+<td>每个 stream 的 HTTP/2 流控窗口为 4 MB</td>
+<td>单租户吞吐还受客户上行带宽限制，大租户建议大促前实测</td>
+</tr>
+</tbody>
+</table>
+<p>建议按字节数而不是订单数切批次，避免个别大订单把批次撑过上限。</p>
+<p>估算示例：一个租户大促当天 100 万单，400 单一批，约 2500 批、2.5 GB，分摊到几个小时内，对隧道没有压力。
+需要关注的是<strong>积压时长</strong>而不是积压条数：对发货时效敏感的租户，应该对“最老一条未投递消息的等待时间”设置告警。</p>
+<h2 id="3-安全模型">3. 安全模型</h2>
+<h3 id="31-各方能看到什么">3.1 各方能看到什么</h3>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>能看到</th>
+<th>看不到</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cloud</td>
+<td>SNI（租户域名）、流量大小和时间、来源 IP</td>
+<td>请求路径、头部、body</td>
+</tr>
+<tr>
+<td>平台云网络</td>
+<td>与 Cloud 相同</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Private</td>
+<td>完整明文</td>
+<td>—</td>
+</tr>
+<tr>
+<td>推送方</td>
+<td>完整明文（它是数据的来源）</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>“Cloud 看不到明文”成立的前提：</p>
+<ol>
+<li>使用 <strong>Site 模式</strong>，不是 CLI HTTP 模式；</li>
+<li>租户证书的<strong>私钥只在 Private 上生成和保存</strong>，从未经过 Cloud；</li>
+<li>推送方<strong>严格校验证书</strong>，不能关闭证书校验（例如 <code>InsecureSkipVerify</code>）。</li>
+</ol>
+<p>需要说清楚的边界：推送方本身运行在平台云内，订单在源头就存在于平台环境中。
+Connect 保证的是<strong>转发这一段不经手明文</strong>，而不是“平台完全接触不到数据”。
+订单本身保持平台要求的加密或脱敏状态，是另一层保护。</p>
+<h3 id="32-为什么私钥必须留在-private">3.2 为什么私钥必须留在 Private</h3>
+<p>如果 Cloud 持有某个租户证书的私钥，控制了 Cloud 的人只要改一下配置，把这个域名从“密文透传”改成“在 Cloud 上终止 TLS 再重新加密转发”，就能看到明文，而推送方拿到的仍是合法证书，完全察觉不到。</p>
+<p>TLS 1.3 有前向保密，拿到私钥也解不开<strong>过去</strong>抓下的流量，但足以做<strong>主动中间人</strong>。所以“私钥不经过 Cloud”是整个安全模型的基础，而不是锦上添花。</p>
+<h3 id="33-推送方认证与来源限制">3.3 推送方认证与来源限制</h3>
+<p>TLS 保证了“推送方连到的是真正的 Private”，但 Private 还需要确认“请求来自真正的推送方”：</p>
+<ul>
+<li>在路由上启用认证中间件（例如 <code>api_key</code> 或 <code>jwt_auth</code>），见<a href="../05-middleware/authentication.html">认证概述</a>；</li>
+<li>通过路由级 <code>ip_restriction.allow_ips</code> 只允许推送方的出口网段。Site 模式下 Private 看到的是推送方的真实来源 IP；</li>
+<li>Token、DNS 凭据、<code>storage_secret</code> 一律用 <code>env://</code>、<code>file://</code> 或 <code>vault://</code> 引用，不写进配置文件。</li>
+</ul>
+<h2 id="4-证书策略">4. 证书策略</h2>
+<p>租户证书采用 <strong>CSR 委托签发</strong>：</p>
+<ol>
+<li>Private 在本地生成私钥和 CSR；</li>
+<li>通过 Connect 控制通道把 CSR 发给 Cloud；</li>
+<li>Cloud 校验 CSR 中的每一个域名：不能是通配符、不能是保留域名、必须在 <code>allowed_cert_domains</code> 内、并且<strong>当前由该 Peer 精确注册</strong>；</li>
+<li>Cloud 用自己持有的 DNS 凭据完成 ACME DNS-01 验证，把证书链（不含私钥）返回给 Private；</li>
+<li>Private 校验证书与本地私钥匹配、覆盖所申请的域名后才启用，并在到期前自动续期。</li>
+</ol>
+<p>详细流程、校验规则和配置见 <a href="../06-certificates/connect-csr-delegation.html">Connect 证书委托签发</a>。</p>
+<p>几条原则：</p>
+<ul>
+<li><strong>禁止向 Private 下发泛域名证书和私钥</strong>。泛域名私钥一旦发到客户机器上，任何一个客户都能冒充所有租户。</li>
+<li><strong>每个租户一张精确证书</strong>。一个租户出问题，不影响其他租户。</li>
+<li><strong>注意公网 CA 的签发额度</strong>。Let's Encrypt 对每个注册域名每周约 50 张新证书（续期不计入），整个租户域共享这一额度。
+按 60 天续期估算，可支撑约三四百个租户。</li>
+<li><strong>规模更大时考虑私有 CA</strong>。这条链路只走内网 DNS，唯一需要校验租户证书的是你自己的推送方，完全可以只信任一个专用的私有 CA：
+没有签发额度限制，也不依赖公网 DNS 验证。私有 CA 应与服务网格的 CA 分开，并用 Name Constraints 限制只能签发租户域。</li>
+</ul>
+<h2 id="5-多-cloud-与高可用">5. 多 Cloud 与高可用</h2>
+<h3 id="51-cloud-侧">5.1 Cloud 侧</h3>
+<ul>
+<li>部署两台或以上 Cloud，Private 在 <code>remotes</code> 中列出全部 Cloud，<code>sessions</code> 至少为 Cloud 数量的 2 倍，保证每台 Cloud 上都有不止一条隧道；</li>
+<li>每条 session 固定连接一台 Cloud，某台 Cloud 宕机后，另一台上的 session 仍然可用；</li>
+<li>推送方通过内网 DNS 返回多个 Cloud 地址，或在失败后换地址重试，实现 Cloud 之间的切换；</li>
+<li>每台 Cloud 各自维护注册表，互不依赖；需要确认单台 Cloud 能承担全部租户的连接和流量。</li>
+</ul>
+<h3 id="52-private-侧同名实例自动主备">5.2 Private 侧：同名实例自动主备</h3>
+<p>同一个 Connect 名称在一台 Cloud 上同一时刻只有一个活动实例。已有实例在线时，另一个同名实例连接会收到 <code>409</code>（<code>peer has an active instance; standing by</code>）并保持待命、持续重试；活动实例的所有隧道断开后，待命实例接管，Cloud 上的 <code>epoch</code> 递增。因此两台 Private 用同一个名称、同一组 Token 即可组成主备，不需要 keepalived 等外部切换机制。</p>
+<p>需要注意：</p>
+<ul>
+<li>切换发生在活动实例<strong>全部</strong> session 断开之后，期间到达的请求会得到 503，由推送方重试兜底；</li>
+<li>每台 Cloud 独立判定活动实例，两台 Private 可能分别在不同 Cloud 上成为活动实例，这对 JetStream + 去重的下游是安全的；</li>
+<li>想让两台 Private 同时承接流量（双活），给它们不同的 Connect 名称，分别连接不同的 Cloud，并让推送方在失败后换地址重试。</li>
+</ul>
+<h2 id="6-反模式">6. 反模式</h2>
+<table>
+<thead>
+<tr>
+<th>反模式</th>
+<th>后果</th>
+<th>正确做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>私有化数据通道使用 CLI HTTP 模式</td>
+<td>TLS 在 Cloud 终止，Cloud 看得到明文</td>
+<td>使用 Site 模式</td>
+</tr>
+<tr>
+<td>Cloud 前面放七层 SLB / WAF</td>
+<td>拿不到原始 SNI，密文转发失效；HTTP Upgrade 可能被拦截</td>
+<td>Cloud 直接监听 443，或用四层透传</td>
+</tr>
+<tr>
+<td>向客户下发泛域名证书和私钥</td>
+<td>任何客户都能冒充所有租户</td>
+<td>每个租户精确证书，CSR 委托签发</td>
+</tr>
+<tr>
+<td>所有租户共用 <code>allowed_domains: [&quot;*.example.net&quot;]</code></td>
+<td>租户之间可以抢注、抢签彼此的域名</td>
+<td>每个租户只授权自己的精确子域名</td>
+</tr>
+<tr>
+<td>继续对公网开放 MQ 端口</td>
+<td>攻击面大，账号权限难管理</td>
+<td>推送走 Connect，MQ 只在内网</td>
+</tr>
+<tr>
+<td>推送时不带 <code>Idempotency-Key</code>，或每次重试生成新 key</td>
+<td>超时重试会产生重复数据</td>
+<td>同一批次始终使用同一个 key</td>
+</tr>
+<tr>
+<td>收到超时就 ack 上游消息</td>
+<td>可能丢数据</td>
+<td>只有 2xx 才 ack</td>
+</tr>
+<tr>
+<td>配置文件里写明文凭据</td>
+<td>凭据随配置文件、备份、截图泄露</td>
+<td>使用 <code>env://</code>、<code>file://</code>、<code>vault://</code> 引用</td>
+</tr>
+<tr>
+<td>推送方关闭证书校验</td>
+<td>“Cloud 看不到明文”不再成立</td>
+<td>严格校验；使用私有 CA 时只信任该 CA</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-上线检查清单">7. 上线检查清单</h2>
+<p><strong>Cloud</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> 直接监听 443（或四层透传），公共域证书有效</li>
+<li><input disabled="" type="checkbox"> 每个租户一个 Peer，独立 Token，<code>allowed_domains</code> / <code>allowed_cert_domains</code> 只含该租户的精确子域名</li>
+<li><input disabled="" type="checkbox"> 租户域的 DNS 凭据以引用方式配置，并确认 DNS-01 能正常完成</li>
+<li><input disabled="" type="checkbox"> 至少两台 Cloud，单台可承担全部流量</li>
+</ul>
+<p><strong>Private</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> 只需出站访问 Cloud 的 443，无任何入站端口</li>
+<li><input disabled="" type="checkbox"> <code>storage_secret</code>、Token 均不以明文出现在配置中</li>
+<li><input disabled="" type="checkbox"> <code>auto_cert</code> 使用 <code>type: connect</code> 委托签发，首次启动后证书已就绪</li>
+<li><input disabled="" type="checkbox"> <code>sessions</code> ≥ Cloud 数量 × 2</li>
+<li><input disabled="" type="checkbox"> NATS <code>max_payload</code> ≥ 路由 <code>max_request_body</code> ≥ 最大批次</li>
+<li><input disabled="" type="checkbox"> Stream 已预先创建，<code>duplicates</code> ≥ 推送方最长重试间隔，<code>replicas</code> 与集群规模一致</li>
+<li><input disabled="" type="checkbox"> 路由已启用认证中间件和来源 IP 限制</li>
+</ul>
+<p><strong>推送方</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> 严格校验证书</li>
+<li><input disabled="" type="checkbox"> 每个批次携带稳定的 <code>Idempotency-Key</code></li>
+<li><input disabled="" type="checkbox"> HTTP 超时 &lt; 上游 ack 等待时间</li>
+<li><input disabled="" type="checkbox"> 只在 2xx 时 ack；413 单独处理；其他情况重试</li>
+<li><input disabled="" type="checkbox"> 按租户独立消费和重试，一个租户故障不阻塞其他租户</li>
+<li><input disabled="" type="checkbox"> 对“积压时长”设置告警</li>
+</ul>
+<p><strong>端到端验证</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Dashboard 的 Connect 页面中，该租户在线、域名为 <code>ready</code></li>
+<li><input disabled="" type="checkbox"> 推送一个测试批次，确认返回 202，且 JetStream 中可见</li>
+<li><input disabled="" type="checkbox"> 用同一个 <code>Idempotency-Key</code> 再推一次，确认响应中 <code>duplicate: true</code></li>
+<li><input disabled="" type="checkbox"> 断开 Private 网络，确认推送方收到 503 且消息留在上游；恢复后自动追赶</li>
+</ul>
+<h2 id="8-常见问题">8. 常见问题</h2>
+<p><strong>Q：Private 能不能不开放本地的 8443 端口？</strong>
+Connect 注入的流量不经过本地网络监听。如果本地没有直接访问的需求，可以用主机防火墙限制 8443 只允许本机访问。</p>
+<p><strong>Q：客户已有自己的证书，能不能用？</strong>
+可以。在租户 Site 中直接配置 <code>cert_file</code> / <code>key_file</code> 即可，不需要启用委托签发。但要保证该证书的私钥只在客户的 Private 上。</p>
+<p><strong>Q：同一个客户有多个业务系统，需要多个 Private 吗？</strong>
+不需要。一个 Private 可以发布多个 Site（受 <code>max_sites</code> 限制），也可以在同一个 Site 下按路径分发到不同的 subject 或上游。</p>
+<p><strong>Q：客户要求数据先落到他们自己的 Kafka / RabbitMQ，而不是 NATS？</strong>
+把租户 Site 的路由 action 换成 <code>proxy</code>，转发到客户内网的写入服务即可；可靠性语义由该服务的返回码决定，推送契约（2xx 才 ack、带幂等键重试）保持不变。</p>
+<h2 id="相关文档">相关文档</h2>
+<ul>
+<li><a href="connect.html">Connect 配置与上线指南</a></li>
+<li><a href="connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li>
+<li><a href="../06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li>
+<li><a href="forward-and-connect.html">Forward 与 Connect 总览</a></li>
+<li><a href="../../nats_deployment_guide.html">NATS 部署指南</a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/09-advanced/connect-scenarios.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

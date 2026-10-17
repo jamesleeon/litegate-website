@@ -115,7 +115,7 @@ backends:
   - {upstream: 10.0.0.12:8443}
 ```
 
-`service_name` can also fetch backends dynamically from Consul, LiteMesh and other registries, so instances coming and going need no configuration change; see the [Stream configuration reference](../03-configuration/stream-config.md#dynamic-discovery-upstreams).
+`service_name` can also fetch backends dynamically from Consul, LiteMesh and other registries, so instances coming and going need no configuration change; see the [Stream configuration reference](../03-configuration/stream-config.md#stream-entry-and-upstreams).
 
 ### 3.4 One domain split by protocol (ALPN)
 

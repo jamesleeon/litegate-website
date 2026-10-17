@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Single Callback URL Routing (One OAuth Callback, Several Backends) · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../en/index.html">Home</a>
+      <a href="../../../../en/guide.html">Guide</a>
+      <a href="../../../../en/features.html">Features</a>
+      <a href="../../../../en/ecosystem.html">Ecosystem</a>
+      <a href="../../README.html" aria-current="page">Docs</a>
+      <a href="../../../zh-cn/user/09-advanced/oauth-single-callback.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">Docs home</a></li><li><details open><summary>User guide</summary><ul><li><a href="../../user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="../../user/01-getting-started/build.html">Build from source</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="../../user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="../../user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="../../user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="../../user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="../../user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="../../user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="../../user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="../../user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="../../user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="../../user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="../../user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="../../user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="../../user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="../../user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="../../user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="../../user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="../../user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="../../user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="../../user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="../../user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="../../user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="../../user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="../../user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details open><summary>Advanced</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="../../user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html" class="current" aria-current="page">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="../../user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="../../user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="../../user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="../../user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="../../user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="../../user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="../../user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="../../user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="../../user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="../../user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="../../user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="../../user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="../../user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="../../user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="../../user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details><summary>Topics</summary><ul><li><a href="../../database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="../../discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="../../dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="../../forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="../../ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="../../ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="../../ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="../../ids-recipes.html">IDS Recipes</a></li><li><a href="../../ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="../../ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="../../ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="../../nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="../../nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="../../release_control_guide.html">Configuration Release Control</a></li><li><a href="../../serve_kv_mode.html">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="../../service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="single-callback-url-routing-one-oauth-callback-several-backends">Single Callback URL Routing (One OAuth Callback, Several Backends)</h1>
+<p>Many third-party open platforms (Taobao, WeChat, DingTalk, WeCom, e-commerce and payment platforms) <strong>allow only one OAuth callback URL</strong> per application. In practice the callback often has to go to different handlers, for example:</p>
+<ul>
+<li><strong>main account authorization</strong> and <strong>sub-account authorization</strong> handled by different backend services;</li>
+<li>several tenants or business lines sharing one platform application, each needing its own handler after the callback.</li>
+</ul>
+<p>The platform gives you one callback URL; how do you split it again at the gateway? This page shows LiteGate's standard approach.</p>
+<hr>
+<h2 id="1-core-idea-split-on-state-switch-upstreams-by-matching-rather-than-rewriting">1. Core idea: split on <code>state</code>, switch upstreams by matching rather than rewriting</h2>
+<p>You send a <code>state</code> parameter when starting OAuth, and the platform returns it unchanged. <strong><code>state</code> is the natural routing key</strong> — give each kind of authorization its own prefix when starting:</p>
+<table>
+<thead>
+<tr>
+<th>Authorization type</th>
+<th>state when starting</th>
+<th>Callback URL (the only one the platform accepts)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Main account</td>
+<td><code>main.&lt;nonce&gt;</code></td>
+<td><code>https://cb.example.com/callback?...&amp;state=main.abc</code></td>
+</tr>
+<tr>
+<td>Sub-account</td>
+<td><code>sub.&lt;nonce&gt;</code></td>
+<td><code>https://cb.example.com/callback?...&amp;state=sub.xyz</code></td>
+</tr>
+</tbody>
+</table>
+<p>LiteGate uses the <a href="../03-configuration/site-config.html#9-rule-expression-dsl-reference"><code>QueryPrefix</code></a> rule to match different routes by the <code>state</code> prefix, and <strong>each route decides its own upstream and path</strong>.</p>
+<blockquote>
+<p><strong>The key difference from Nginx</strong></p>
+<p>A common Nginx pattern:</p>
+<pre><code class="language-nginx">location = /callback {
+    if ($arg_state ~ ^sub\.) { rewrite ^/callback$ /sub_callback last; }
+    proxy_pass http://main_backend;
+}
+</code></pre>
+<p>Here <code>rewrite ... last</code> <strong>isn't really meant to change the path; it re-matches locations after the rewrite in order to switch upstreams</strong> — because Nginx's <code>if</code> can't change <code>proxy_pass</code> within one location. Changing the path is a side effect, and the backend is forced to expose an extra <code>/sub_callback</code>.</p>
+<p>LiteGate works the other way round: <strong>switching upstreams is the result of the matching rule itself</strong>, and changing the path is an optional, separate step. In most cases below you don't need <code>rewrite</code> at all.</p>
+</blockquote>
+<hr>
+<h2 id="2-option-a-one-service-different-paths-recommended-simplest">2. Option A: one service, different paths (recommended, simplest)</h2>
+<p>If you are willing to put the main and sub-account handlers in <strong>the same backend service</strong>, listening on different paths (say <code>/oauth/main/callback</code> and <code>/oauth/sub/callback</code>), the gateway only rewrites the path by <code>state</code> prefix and the upstream stays the same:</p>
+<pre><code class="language-yaml">site: cb.example.com
+routes:
+  # Sub-account: state starts with sub. → rewrite to the backend's sub-account path
+  - name: oauth-callback-sub
+    priority: 200
+    match:
+      rule: 'Path(&quot;/callback&quot;) &amp;&amp; QueryPrefix(&quot;state&quot;, &quot;sub.&quot;)'
+    proxy: [&quot;127.0.0.1:8080&quot;]
+    rewrite:
+      path:
+        pattern: &quot;^/callback$&quot;
+        target: &quot;/oauth/sub/callback&quot;
+
+  # Main account (and every other callback) → rewrite to the backend's main-account path
+  - name: oauth-callback-main
+    priority: 100
+    match:
+      rule: 'Path(&quot;/callback&quot;)'
+    proxy: [&quot;127.0.0.1:8080&quot;]
+    rewrite:
+      path:
+        pattern: &quot;^/callback$&quot;
+        target: &quot;/oauth/main/callback&quot;
+</code></pre>
+<p><code>GET /callback?code=...&amp;state=sub.xyz</code> is rewritten to <code>/oauth/sub/callback?code=...&amp;state=sub.xyz</code> and sent to the backend; everything else falls through to the main-account path. The query (including <code>code</code> and <code>state</code>) is kept unchanged.</p>
+<p><strong>When to use it</strong>: one backend service in one repository, where you just want separate functions per type. Least change, simplest operations.</p>
+<hr>
+<h2 id="3-option-b-two-services-switch-upstreams">3. Option B: two services, switch upstreams</h2>
+<p>If main and sub accounts are <strong>two independently deployed services</strong> (different processes or machines), let the matching rule pick different upstreams. Whether you still need <code>rewrite</code> <strong>depends on which path the target backend registers</strong>:</p>
+<h3 id="b-1-the-backend-already-serves-callback--no-rewrite-needed">B-1: the backend already serves <code>/callback</code> — no rewrite needed</h3>
+<pre><code class="language-yaml">site: cb.example.com
+routes:
+  - name: oauth-callback-sub
+    priority: 200
+    match:
+      rule: 'Path(&quot;/callback&quot;) &amp;&amp; QueryPrefix(&quot;state&quot;, &quot;sub.&quot;)'
+    proxy: [&quot;10.0.0.2:9091&quot;]   # sub-account service, handles /callback itself
+
+  - name: oauth-callback-main
+    priority: 100
+    match:
+      rule: 'Path(&quot;/callback&quot;)'
+    proxy: [&quot;10.0.0.1:9091&quot;]   # main-account service, handles /callback itself
+</code></pre>
+<p>The matching rule already sends the request to the right service, and both services receive on <code>/callback</code>, so <strong>no path rewrite is needed</strong>.</p>
+<h3 id="b-2-the-backend-only-serves-sub_callback--rewrite-required">B-2: the backend only serves <code>/sub_callback</code> — rewrite required</h3>
+<p>If the sub-account service only listens on <code>/sub_callback</code> and doesn't know <code>/callback</code>, a direct forward gets 404, so rewrite the path into the form the backend knows:</p>
+<pre><code class="language-yaml">site: cb.example.com
+routes:
+  - name: oauth-callback-sub
+    priority: 200
+    match:
+      rule: 'Path(&quot;/callback&quot;) &amp;&amp; QueryPrefix(&quot;state&quot;, &quot;sub.&quot;)'
+    proxy: [&quot;10.0.0.2:9091&quot;]
+    rewrite:
+      path:
+        pattern: &quot;^/callback$&quot;
+        target: &quot;/sub_callback&quot;      # the path the backend registers
+
+  - name: oauth-callback-main
+    priority: 100
+    match:
+      rule: 'Path(&quot;/callback&quot;)'
+    proxy: [&quot;10.0.0.1:9091&quot;]
+</code></pre>
+<p><strong>The rule in one sentence</strong>: whether you need <code>rewrite</code> depends only on whether &quot;the incoming path&quot; equals &quot;the path the backend listens on&quot; — <strong>not on whether you switch upstreams</strong>.</p>
+<hr>
+<h2 id="4-three-things-to-get-right">4. Three things to get right</h2>
+<h3 id="①-make-the-order-explicit-with-priority-when-several-routes-share-a-path">① Make the order explicit with <code>priority</code> when several routes share a path</h3>
+<p>Routes in a site are tried in a fixed order: higher explicit <code>priority</code> first; at equal priority, exact paths (<code>path:</code>) come before rule routes with extra conditions. Therefore:</p>
+<ul>
+<li>The configuration above gives the sub-account rule <code>priority: 200</code> and the main account <code>priority: 100</code>, so the sub-account rule is tried first, and the main account can be written as either <code>rule: 'Path(&quot;/callback&quot;)'</code> or <code>path: &quot;/callback&quot;</code>;</li>
+<li><strong>if neither route has a <code>priority</code></strong>, the main account's <code>path: &quot;/callback&quot;</code> matches first and <code>state=sub.</code> callbacks also go to the main-account backend.</li>
+</ul>
+<p><strong>Rule</strong>: when the same path is split by query/header conditions, give the more specific route an explicitly higher <code>priority</code>. For the routing order see <a href="../cookbook/06-matchers.html#3-which-route-matches-first-priority-rules">Named matchers and priority</a>.</p>
+<h3 id="②-state-must-be-single-valued-and-the-prefix-is-not-a-security-check">② <code>state</code> must be single-valued, and the prefix is not a security check</h3>
+<ul>
+<li>Query parameters used for matching must have <strong>exactly one value</strong>. Duplicates such as <code>state=sub.x&amp;state=main.x</code> <strong>match none</strong> of the routes above, so the gateway and backend can't read different values of <code>state</code> (query smuggling).</li>
+<li><strong>The prefix only routes; it cannot replace the backend's <code>state</code> validation.</strong> <code>state</code> must still be random, single-use, short-lived and bound to the session that started the authorization. Prefer <code>sub.&lt;nonce&gt;.&lt;signature&gt;</code>, or store a <code>state → authorization type</code> mapping on the server and derive the prefix from it.</li>
+</ul>
+<h3 id="③-rewrite-doesnt-trigger-route-matching-again">③ <code>rewrite</code> doesn't trigger route matching again</h3>
+<p>LiteGate's <code>rewrite</code> only changes the path <strong>within the current route</strong> and <strong>doesn't</strong> return to the routing table like Nginx <code>rewrite ... last</code>. That is what keeps it simple and predictable: a route goes straight from match to upstream with no second hop.</p>
+<hr>
+<h2 id="5-complete-example">5. Complete example</h2>
+<p>One platform application and one callback URL, supporting both main and sub accounts, plus the authorization entry and portal static assets:</p>
+<pre><code class="language-yaml">site: cb.example.com
+defaults:
+  timeout: 600
+routes:
+  # Authorization entry (starts OAuth; business code decides the state=main./sub. prefix)
+  - name: authorize
+    priority: 100
+    match:
+      path: &quot;/authorize&quot;
+    proxy: [&quot;10.0.0.1:9091&quot;]
+
+  # Sub-account callback
+  - name: oauth-callback-sub
+    priority: 200
+    match:
+      rule: 'Path(&quot;/callback&quot;) &amp;&amp; QueryPrefix(&quot;state&quot;, &quot;sub.&quot;)'
+    proxy: [&quot;10.0.0.2:9091&quot;]
+
+  # Main account and other callbacks
+  - name: oauth-callback-main
+    priority: 100
+    match:
+      rule: 'Path(&quot;/callback&quot;)'
+    proxy: [&quot;10.0.0.1:9091&quot;]
+
+  # Authorization portal static assets
+  - name: oauth-portal
+    priority: 50
+    match:
+      path_prefix: &quot;/portal/&quot;
+    proxy: [&quot;10.0.0.2:9091&quot;]
+    strip_prefix: &quot;/portal&quot;
+</code></pre>
+<hr>
+<h2 id="6-verification-and-troubleshooting">6. Verification and troubleshooting</h2>
+<p>Send a callback with the sub-account prefix and check it reaches the sub-account upstream:</p>
+<pre><code class="language-bash">curl -i &quot;https://cb.example.com/callback?code=test&amp;state=sub.abc123&quot;
+</code></pre>
+<ul>
+<li><strong>Wrong upstream (sub-account callbacks reach the main account)</strong>: usually point ① — the sub-account rule doesn't have a higher <code>priority</code> than the main account. Give the sub-account route <code>priority: 200</code>.</li>
+<li><strong>404</strong>: the backend doesn't register the forwarded/rewritten path. Either serve that path in the backend, or rewrite it to a path the backend knows as in option B-2.</li>
+<li><strong>Matched the main account when you expected the sub-account</strong>: check whether <code>state</code> was sent with several values (<code>&amp;state=</code> twice) — multi-valued parameters don't match — and whether the prefix really is <code>sub.</code> (case-sensitive).</li>
+<li>To confirm which route a request will hit, use LiteGate's route lookup (MCP <code>lookup_route</code>) or enable access log <code>routing_detail</code>.</li>
+</ul>
+<hr>
+<h2 id="related-docs">Related docs</h2>
+<ul>
+<li><a href="../04-actions/proxy.html#8-url-rewrite-rewrite">Proxy and <code>rewrite</code> parameters</a></li>
+<li><a href="../03-configuration/site-config.html#9-rule-expression-dsl-reference">Rule expression DSL (<code>Path</code> / <code>QueryPrefix</code>, ...)</a></li>
+<li><a href="../02-concepts/routing-priority.html">Routing priority</a></li>
+<li><a href="../04-actions/serve.html">Fall back to a front controller for clean URLs (WordPress/Laravel/SPA) with <code>try_files</code></a></li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/user/09-advanced/oauth-single-callback.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

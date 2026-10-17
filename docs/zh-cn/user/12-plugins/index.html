@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate 插件体系总览 · LiteGate</title>
+<link rel="stylesheet" href="../../../../style.css">
+<link rel="stylesheet" href="../../../../assets/docs.css">
+<script src="../../../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../../../index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="菜单" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../../../index.html">首页</a>
+      <a href="../../../../guide.html">场景指南</a>
+      <a href="../../../../features.html">功能列表</a>
+      <a href="../../../../ecosystem.html">生态</a>
+      <a href="../../README.html" aria-current="page">文档</a>
+      <a href="../../../en/user/12-plugins/README.html">English</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="文档目录">
+    <input class="docs-filter" type="search" placeholder="筛选文档…" aria-label="筛选文档…">
+    <nav class="docs-nav"><ul><li><a href="../../README.html">文档首页</a></li><li><details open><summary>用户手册</summary><ul><li><a href="../../user/README.html">LiteGate 用户手册</a></li><li><details><summary>上手</summary><ul><li><a href="../../user/01-getting-started/build-environment.html">构建环境安装</a></li><li><a href="../../user/01-getting-started/build.html">源码构建指南</a></li><li><a href="../../user/01-getting-started/cli-reference.html">CLI 命令行参考</a></li><li><a href="../../user/01-getting-started/first-site.html">第一个站点配置示例 (First Site)</a></li><li><a href="../../user/01-getting-started/installation.html">安装指南</a></li><li><a href="../../user/01-getting-started/quick-start.html">快速开始</a></li></ul></details></li><li><details><summary>核心概念</summary><ul><li><a href="../../user/02-concepts/actions.html">Actions 详解：请求处理模型</a></li><li><a href="../../user/02-concepts/discovery.html">服务发现集成原理</a></li><li><a href="../../user/02-concepts/routing-priority.html">路由优先级解析 (Routing Priority)</a></li><li><a href="../../user/02-concepts/sites-and-routes.html">理解 Sites 与 Routes</a></li><li><a href="../../user/02-concepts/tag-architecture.html">LiteGate 服务标签架构</a></li><li><a href="../../user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>配置</summary><ul><li><a href="../../user/03-configuration/api.html">管理接口概览</a></li><li><a href="../../user/03-configuration/config-structure.html">配置结构总览与最佳实践</a></li><li><a href="../../user/03-configuration/entrypoints.html">Entrypoints（监听入口）</a></li><li><a href="../../user/03-configuration/global-config.html">全局配置参考 (config.yaml)</a></li><li><a href="../../user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="../../user/03-configuration/rewrite.html">Rewrite：路径与查询参数改写</a></li><li><a href="../../user/03-configuration/services.html">命名 Service 与配置分层</a></li><li><a href="../../user/03-configuration/site-config.html">站点配置参考 (sites/*.yaml)</a></li><li><a href="../../user/03-configuration/site-yaml-v2-concepts.html">站点 YAML V2：结构与基本概念</a></li><li><a href="../../user/03-configuration/stream-config.html">Stream 配置参考 (L4 代理)</a></li><li><a href="../../user/03-configuration/tag-dsl.html">LiteGate 服务标签使用指南</a></li><li><a href="../../user/03-configuration/tag-reference.html">LiteGate 服务标签参考</a></li><li><a href="../../user/03-configuration/upstream-dns.html">上游自定义 DNS</a></li></ul></details></li><li><details><summary>动作</summary><ul><li><a href="../../user/04-actions/list.html">List Action (目录浏览)</a></li><li><a href="../../user/04-actions/markdown.html">Markdown Action (文档渲染服务)</a></li><li><a href="../../user/04-actions/nats-events.html">可靠事件通知（持久化、离线续推与应用确认）</a></li><li><a href="../../user/04-actions/nats-sse.html">NATS 实时事件订阅</a></li><li><a href="../../user/04-actions/proxy.html">Proxy Action (反向代理)</a></li><li><a href="../../user/04-actions/redirect.html">Redirect Action (重定向处理)</a></li><li><a href="../../user/04-actions/respond.html">Respond Action (直接响应)</a></li><li><a href="../../user/04-actions/serve.html">Serve Action (静态文件服务)</a></li><li><a href="../../user/04-actions/status.html">Status Action (系统状态监控看板)</a></li><li><a href="../../user/04-actions/template.html">Template Action (服务端模板与站点渲染)</a></li><li><a href="../../user/04-actions/webdav.html">WebDAV 文件共享（v2）</a></li></ul></details></li><li><details><summary>中间件</summary><ul><li><a href="../../user/05-middleware/authentication.html">Authentication (网关身份认证与治理概述)</a></li><li><a href="../../user/05-middleware/authentik.html">authentik OIDC 配置样例</a></li><li><a href="../../user/05-middleware/bandwidth.html">大文件传输与请求体保护</a></li><li><a href="../../user/05-middleware/basic-auth.html">Basic Auth (HTTP 基本认证中间件)</a></li><li><a href="../../user/05-middleware/compression.html">Compression (智能压缩)</a></li><li><a href="../../user/05-middleware/cors.html">CORS (跨域资源共享中间件)</a></li><li><a href="../../user/05-middleware/csrf.html">CSRF 中间件</a></li><li><a href="../../user/05-middleware/forward-auth.html">使用 Authelia 为 LiteGate 站点添加统一登录</a></li><li><a href="../../user/05-middleware/ids-governance.html">IDS 请求治理</a></li><li><a href="../../user/05-middleware/ip-restriction.html">IP Restriction (IP 访问控制)</a></li><li><a href="../../user/05-middleware/oidc.html">OIDC / OAuth2 认证配置指南</a></li><li><a href="../../user/05-middleware/path-and-redirect.html">路径改写与重定向中间件</a></li><li><a href="../../user/05-middleware/pipeline.html">Middleware Pipeline 与 Chain</a></li><li><a href="../../user/05-middleware/proxy-cache.html">Proxy Cache（代理响应缓存）</a></li><li><a href="../../user/05-middleware/rate-limit.html">限流（V2 配置）</a></li><li><a href="../../user/05-middleware/remote-auth.html">Remote Auth（OIDC / OAuth2）</a></li><li><a href="../../user/05-middleware/scan-protection.html">Scan Protection (扫描防护 / 治理规则引擎)</a></li><li><a href="../../user/05-middleware/traffic-and-upstream.html">流量控制与上游治理中间件</a></li><li><a href="../../user/05-middleware/waf.html">WAF (Web 应用防火墙)</a></li></ul></details></li><li><details><summary>证书与 HTTPS</summary><ul><li><a href="../../user/06-certificates/auto-cert.html">Auto-Cert (自动化证书管理)</a></li><li><a href="../../user/06-certificates/certificate-application-guide.html">证书申请配置指南</a></li><li><a href="../../user/06-certificates/connect-csr-delegation.html">Connect 证书委托签发与端到端私钥安全管理</a></li><li><a href="../../user/06-certificates/credkeeper.html">LiteGate CredKeeper - DNS 凭证安全托管服务使用指南</a></li><li><a href="../../user/06-certificates/ddns.html">DDNS 动态域名解析</a></li><li><a href="../../user/06-certificates/dns-providers.html">添加 DNS 服务商</a></li><li><a href="../../user/06-certificates/ech.html">ECH：隐藏网站的 TLS ClientHello</a></li><li><a href="../../user/06-certificates/lan-ca-and-mtls.html">局域网 CA：LiteMesh 集中签发、LiteGate 单机签发与服务间 mTLS</a></li><li><a href="../../user/06-certificates/local-ca.html">本地 CA (Local CA / 自签自信任)</a></li><li><a href="../../user/06-certificates/on-demand-cert.html">On-Demand TLS (按需签发证书)</a></li><li><a href="../../user/06-certificates/sealed-secrets.html">密文配置（Sealed Secrets）：配置文件中不出现明文密钥</a></li></ul></details></li><li><details><summary>服务发现</summary><ul><li><a href="../../user/07-discovery/consul.html">Consul 服务发现</a></li><li><a href="../../user/07-discovery/litemesh-mtls.html">Litemesh mTLS 接入指南</a></li><li><a href="../../user/07-discovery/litemesh.html">Litemesh 服务发现</a></li><li><a href="../../user/07-discovery/nomad.html">Nomad 服务发现</a></li><li><a href="../../user/07-discovery/overview.html">服务发现源总览</a></li></ul></details></li><li><details><summary>可观测</summary><ul><li><a href="../../user/08-observability/access-log.html">Access Log (访问日志)</a></li><li><a href="../../user/08-observability/dashboard-api.html">Dashboard API 参考</a></li><li><a href="../../user/08-observability/dashboard.html">Web Dashboard (可视控制面板)</a></li><li><a href="../../user/08-observability/metrics.html">Metrics (监控指标)</a></li><li><a href="../../user/08-observability/trace-id.html">Trace ID (分布式追踪)</a></li></ul></details></li><li><details><summary>进阶</summary><ul><li><a href="../../user/09-advanced/circuit-breaker.html">熔断（V2 配置）</a></li><li><a href="../../user/09-advanced/connect-cli-http.html">使用 CLI 发布内网 HTTP 服务</a></li><li><a href="../../user/09-advanced/connect-scenarios.html">Connect 场景与架构指南</a></li><li><a href="../../user/09-advanced/connect.html">LiteGate Connect 配置与上线指南</a></li><li><a href="../../user/09-advanced/event-notification.html">事件通知：NATS &#43; LiteGate 通知体系</a></li><li><a href="../../user/09-advanced/forward-and-connect.html">Forward 与 Connect：内网穿透总览</a></li><li><a href="../../user/09-advanced/magic-ingress.html">Magic Ingress (零配置服务接入)</a></li><li><a href="../../user/09-advanced/notify-jwt-integration.html">Notify 与业务 JWT 接入：配置、限制和排查</a></li><li><a href="../../user/09-advanced/oauth-single-callback.html">单回调地址分流（OAuth 一个回调地址，多个后端）</a></li><li><a href="../../user/09-advanced/shared-443-l4-stream.html">在同一个 443 端口承载 HTTPS 与 L4 TCP</a></li><li><a href="../../user/09-advanced/sni-routing-recipes.html">443 端口 L4 SNI 分流与 L7 组合实战</a></li><li><a href="../../user/09-advanced/two-layer-routing.html">两层路由：先切上游，再改路径（疑难杂症速查）</a></li><li><a href="../../user/09-advanced/websocket.html">WebSocket 代理</a></li></ul></details></li><li><details><summary>部署</summary><ul><li><a href="../../user/10-deployment/benchmarking.html">压测指南 (Benchmarking)</a></li><li><a href="../../user/10-deployment/ha-state.html">多副本状态与故障隔离</a></li><li><a href="../../user/10-deployment/kubernetes.html">Kubernetes 部署手册</a></li><li><a href="../../user/10-deployment/production.html">生产环境部署建议 (Production Best Practices)</a></li><li><a href="../../user/10-deployment/systemd.html">Systemd 部署指南 (Linux)</a></li></ul></details></li><li><details><summary>排障</summary><ul><li><a href="../../user/11-troubleshooting/debugging.html">故障排查与调试 (Debugging Guide)</a></li><li><a href="../../user/11-troubleshooting/faq.html">常见问题 (FAQ)</a></li></ul></details></li><li><details open><summary>插件</summary><ul><li><a href="../../user/12-plugins/README.html" class="current" aria-current="page">LiteGate 插件体系总览</a></li><li><a href="../../user/12-plugins/authoring-guide.html">插件开发者说明 (Plugin Authoring Guide)</a></li><li><a href="../../user/12-plugins/build-and-cli.html">插件编译构建与管理 CLI</a></li><li><a href="../../user/12-plugins/configuration.html">插件使用与配置参考</a></li></ul></details></li><li><details><summary>案例集</summary><ul><li><a href="../../user/cookbook/README.html">常用场景案例（Cookbook）</a></li><li><a href="../../user/cookbook/01-basics.html">入门：一个站点跑起来</a></li><li><a href="../../user/cookbook/02-paths.html">路径：按路径分流、改路径、跳转</a></li><li><a href="../../user/cookbook/03-governance.html">治理：跨域、响应头、限流、访问控制</a></li><li><a href="../../user/cookbook/04-pitfalls.html">常见错误与报错对照</a></li><li><a href="../../user/cookbook/05-discovery.html">服务发现 &#43; 站点文件：自动合并（Hybrid）</a></li><li><a href="../../user/cookbook/06-matchers.html">命名条件：给请求条件起个名字</a></li><li><a href="../../user/cookbook/07-file-browser.html">文件浏览器：List、图片查看与本地 SSO</a></li></ul></details></li></ul></details></li><li><details><summary>使用专题</summary><ul><li><a href="../../database-proxy-solution.html">LiteGate 数据库安全访问方案</a></li><li><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></li><li><a href="../../dns-provider-plugin-guide.html">DNS Provider 插件开发指南（证书 DNS-01、DDNS 与 ECH HTTPS 记录）</a></li><li><a href="../../docker_catalog_identity_and_transport.html">Docker catalog 标识和连接配置</a></li><li><a href="../../docker_provider_testing_guide.html">Docker Provider 测试指南</a></li><li><a href="../../docker_swarm_capability_matrix.html">Docker 与 Swarm 能力矩阵</a></li><li><a href="../../dynamic-dns-multi-node.html">内网 DNS 自动发布 - 多节点网关支持</a></li><li><a href="../../fastcgi_config.html">LiteGate FastCGI 配置指南</a></li><li><a href="../../forward-vs-forward-proxy.html">LiteGate 双 Forward 辨析：Forward (资产映射隧道) 与 Forward Proxy (正向代理)</a></li><li><a href="../../ids-go-vs-wasm.html">IDS Provider 选型：Go vs WASM</a></li><li><a href="../../ids-overview.html">IDS 是什么，为什么需要它</a></li><li><a href="../../ids-plugin-caveats.html">IDS 插件开发注意事项与避坑指南</a></li><li><a href="../../ids-provider-plugin-guide.html">IDS Provider 插件开发与配置</a></li><li><a href="../../ids-recipes.html">IDS 配方</a></li><li><a href="../../ids-saas-session-guide.html">IDS 实现 SaaS 登录与集群选路</a></li><li><a href="../../ids-wasm-plugin-guide.html">IDS WASM 插件开发指南</a></li><li><a href="../../ids_testing_guide.html">IDS Provider 验收指南</a></li><li><a href="../../ingress-plugin-guide.html">Ingress 入口插件</a></li><li><a href="../../litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider 部署与配置官方指南</a></li><li><a href="../../litegate_k8s_usage_guide.html">Kubernetes 部署与使用</a></li><li><a href="../../litegate_kubernetes_capabilities.html">Kubernetes 当前能力与边界</a></li><li><a href="../../litegate_mcp_capability_matrix.html">LiteGate MCP 能力表</a></li><li><a href="../../nats_capability_matrix.html">LiteGate NATS 能力矩阵与消费者契约</a></li><li><a href="../../nats_deployment_guide.html">LiteGate &#43; NATS 联动部署指南(Linux)</a></li><li><a href="../../on_demand_tls.html">On-Demand TLS (SaaS 按需证书申请)</a></li><li><a href="../../openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider 配置与协议</a></li><li><a href="../../release_control_guide.html">配置发布控制面（Release Control）</a></li><li><a href="../../serve_kv_mode.html">LiteGate 前端 ZIP 托管与 Serve KV 自动化同步模式</a></li><li><a href="../../service_registration_guide.html">服务注册与 LiteGate 标签</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="litegate-插件体系总览">LiteGate 插件体系总览</h1>
+<p>LiteGate 采用 <strong>编译期注册表（Compile-Time Registry）</strong> 插件架构（类似 Caddy / Traefik 的静态集成模式）。
+开发者、架构师与第三方团队无需 Fork 或修改 LiteGate 核心源码，即可在独立代码仓库中编写插件，并编译出专属于企业的定制网关二进制。</p>
+<hr>
+<h2 id="核心设计哲学">核心设计哲学</h2>
+<h3 id="1-为什么坚决采用编译期注册而非动态加载-so">1. 为什么坚决采用编译期注册，而非动态加载 (<code>.so</code>)？</h3>
+<p>许多开发者会好奇为什么 LiteGate 不使用 Go 官方的 <code>plugin</code> 动态链接库（<code>.so</code>）：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">维度</th>
+<th style="text-align:left">Go <code>plugin</code> 动态加载 (<code>.so</code>)</th>
+<th style="text-align:left">LiteGate 编译期注册表 (Compile-Time)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>跨平台支持</strong></td>
+<td style="text-align:left">❌ 仅支持 Linux/macOS，<strong>不支持 Windows</strong></td>
+<td style="text-align:left">✅ 与 Go 交叉编译一致；但插件所用依赖的操作系统、CGO 与 Go 版本约束仍然适用</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>依赖与 ABI 稳定性</strong></td>
+<td style="text-align:left">❌ 极度脆弱：主程序与 <code>.so</code> 的 Go 版本、依赖包版本、编译参数必须 100% 字节级一致，否则运行时直接 SIGSEGV 崩溃</td>
+<td style="text-align:left">✅ 构建期 Go 静态链接，类型与符号由编译器检查，不存在运行时 ABI 不匹配</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>运行时性能</strong></td>
+<td style="text-align:left">⚠️ CGO 跨边界调用与动态符号解析带来开销</td>
+<td style="text-align:left">✅ 与原生代码同样是普通函数调用，没有额外的动态加载开销</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>运维与交付</strong></td>
+<td style="text-align:left">❌ 交付时需要携带一堆 <code>.so</code> 动态库文件，存在环境污染与加载缺失风险</td>
+<td style="text-align:left">✅ <strong>单静态二进制交付</strong>（Single Static Binary），复制即用，符合云原生标准容器化规范</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="alert alert-note"><p>对于部分特殊安全治理场景（如轻量级规则脚本），LiteGate 额外提供了受限的 WASM ABI 选项（详见 <a href="../../ids-wasm-plugin-guide.html">IDS WASM 说明</a>）；但通用数据流核心均采用编译期静态注册。</p>
+</blockquote>
+<h3 id="2-两层契约与解耦设计">2. 两层契约与解耦设计</h3>
+<p>为了让第三方插件生态与核心解耦，LiteGate 严格划分了两层契约：</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                     LiteGate 核心运行时                         │
+│  internal/action · internal/router · internal/middleware ...   │
+│  (包含 heavy-weight 内部类型: loader.Site, proxy.Pool 等)       │
+└──────────────────────────────▲──────────────────────────────────┘
+                               │ 窄适配器层 (Narrow Adapters)
+┌──────────────────────────────┴──────────────────────────────────┐
+│              公共门面契约 (Public Contract API)                 │
+│              github.com/jamesleeon/LiteGate/pkg/plugin          │
+│  - 纯窄接口 (Context, ActionConfig, DiscoveryClient, etc.)     │
+│  - 注入能力依赖: Dependencies (Logger, Discovery, Config)        │
+│  - 统一元数据: Manifest (版本, 描述, 能力标记)                  │
+└──────────────────────────────▲──────────────────────────────────┘
+                               │ 静态注册 (Blank Import)
+┌──────────────────────────────┴──────────────────────────────────┐
+│              外部插件 / 企业私有定制包                          │
+│  github.com/your-org/litegate-plugins (独立代码仓库)             │
+└─────────────────────────────────────────────────────────────────┘
+</code></pre>
+<ul>
+<li><strong>内部层 (<code>internal/...</code>)</strong>：供网关内部模块高速调度。</li>
+<li><strong>公共契约层 (<a href="https://github.com/jamesleeon/LiteGate/blob/master/pkg/plugin"><code>pkg/plugin</code></a>)</strong>：面向所有外部开发者开放。只暴露精简的窄接口与结构体，核心内部重构不需要改动外部插件；公共契约本身的变化通过 Manifest 的 API 版本标识。</li>
+</ul>
+<hr>
+<h2 id="插件扩展点全景">插件扩展点全景</h2>
+<p>LiteGate 在请求生命周期的关键接缝处开放以下扩展点，涵盖 L4 到 L7、控制面与数据面：</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>插件扩展类型</th>
+<th>关键行为接口</th>
+<th>核心注册函数</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Ingress</strong> (入口拦截)</td>
+<td><code>IngressHandler</code></td>
+<td><code>plugin.RegisterIngress</code> / <code>RegisterTypedIngress</code></td>
+<td>在 Site 路由与规范化之前接管端口流量（如正向代理 HTTP CONNECT、特定协议隧道等）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Middleware</strong> (中间件)</td>
+<td><code>MiddlewareHandler</code></td>
+<td><code>plugin.RegisterMiddleware</code></td>
+<td>请求链上穿透加工（安全认证、请求改写、自定义审计、跨域控制等），支持 8 阶段精准编排</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Action</strong> (执行动作)</td>
+<td><code>Handler</code></td>
+<td><code>plugin.RegisterAction</code></td>
+<td>终结型请求处理与响应生成（如 NATS 消息发布、自定义渲染引擎、AI LLM 代理等）</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>LoadBalancer</strong> (负载均衡)</td>
+<td><code>LoadBalancer</code></td>
+<td><code>plugin.RegisterLoadBalancer</code></td>
+<td>自定义上游节点选择策略（如加权最小连接、一致性哈希、金丝雀权重分发等）</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Discovery Provider</strong> (服务发现)</td>
+<td><code>DiscoveryProvider</code></td>
+<td><code>plugin.RegisterDiscoveryProvider</code></td>
+<td>接入非内置注册中心（如 Nacos、Eureka、Zookeeper、自研 CMDB），自动生成服务目录与路由</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>DNS Provider</strong> (DNS 协议)</td>
+<td><code>CertDNSProviderV2</code> / <code>DDNSProvider</code> / <code>HTTPSDNSProvider</code></td>
+<td><code>plugin.RegisterDNSProviderV2</code></td>
+<td>自动化 ACME DNS-01 证书质询、动态公网 DDNS 域名解析、ECH 加密 ClientHello 的 HTTPS 记录发布</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>IDS Provider</strong> (鉴权与治理)</td>
+<td><code>IDSProvider</code></td>
+<td><code>plugin.RegisterIDSProvider</code></td>
+<td>动作前跨 Action 统一安全治理（签名校验、Session 鉴权、机器人拦截、流量选择标签注入）</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>KV Provider</strong> (内容提供源)</td>
+<td><code>KVProvider</code></td>
+<td><code>plugin.RegisterKVProvider</code></td>
+<td>为 <code>serve</code> / <code>template</code> 动作提供动态数据流监听（如 Redis/etcd/S3 资产热推送）</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Template Func</strong> (模板函数)</td>
+<td><code>template.FuncMap</code></td>
+<td><code>plugin.RegisterTemplateFunc</code> / <code>RegisterTemplateFuncs</code></td>
+<td>为网关内置 <code>template</code> 模板动作扩展业务专有函数（脱敏、加密、时间格式化等）</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>Stream / Stream Filter / Datagram</strong> (L4)</td>
+<td><code>StreamHandler</code> / <code>StreamFilter</code> / <code>DatagramHandler</code></td>
+<td><code>plugin.RegisterStream</code> / <code>RegisterStreamFilter</code> / <code>RegisterDatagram</code></td>
+<td>自定义 TCP/UDP 协议处理与连接过滤（如 Redis 只读守卫）</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Response Filter</strong> (响应体变换)</td>
+<td><code>ResponseBodyFilter</code></td>
+<td><code>plugin.RegisterResponseFilter</code></td>
+<td>流式改写代理响应体（脱敏、注入）</td>
+</tr>
+<tr>
+<td>12</td>
+<td><strong>导出器</strong></td>
+<td><code>AccessLogExporter</code> / <code>TraceExporter</code> / <code>MetricsExporter</code></td>
+<td><code>plugin.RegisterAccessLogExporter</code> / <code>RegisterTraceExporter</code> / <code>RegisterMetricsExporter</code></td>
+<td>把访问日志、链路、指标异步推送到外部系统</td>
+</tr>
+<tr>
+<td>13</td>
+<td><strong>Cert Issuer</strong> (证书签发)</td>
+<td><code>CertIssuerProvider</code></td>
+<td><code>plugin.RegisterCertIssuer</code></td>
+<td>对接私有 PKI；签发方只接收 CSR，不接触私钥</td>
+</tr>
+<tr>
+<td>14</td>
+<td><strong>Upstream Transport</strong> (上游传输)</td>
+<td><code>UpstreamTransport</code></td>
+<td><code>plugin.RegisterUpstreamTransport</code></td>
+<td>定制访问上游的 RoundTripper（如企业 mTLS）</td>
+</tr>
+<tr>
+<td>15</td>
+<td><strong>Config Source</strong> (配置源)</td>
+<td><code>ConfigSourceProvider</code></td>
+<td><code>plugin.RegisterConfigSource</code></td>
+<td>从外部系统加载全局与站点配置快照</td>
+</tr>
+<tr>
+<td>16</td>
+<td><strong>Notify Transport</strong> (通知传输)</td>
+<td><code>NotifyTransport</code></td>
+<td><code>plugin.RegisterNotifyTransport</code></td>
+<td>为插件通知总线提供消息通道（NATS 插件已内置）</td>
+</tr>
+</tbody>
+</table>
+<p>第 10–15 项统一在全局 <code>extension_plugins</code> 中绑定实例，见 <a href="configuration.html#8-%E5%85%A8%E5%B1%80%E6%89%A9%E5%B1%95%E6%8F%92%E4%BB%B6%E7%BB%91%E5%AE%9A%E9%85%8D%E7%BD%AE-extension_plugins">用户配置指南</a>。</p>
+<hr>
+<h2 id="内置标准插件">内置标准插件</h2>
+<p>LiteGate 官方发行二进制默认编入了以下参考插件，它们均采用与第三方相同的公共 API 注册机制：</p>
+<ol>
+<li><strong><code>nats</code> (Action)</strong>: HTTP 与 NATS 之间的发布、请求应答、JetStream 可靠发布，以及 SSE 订阅推送。</li>
+<li><strong><code>openapi-md5</code> (IDS)</strong>: 兼容传统企业 API MD5 Body 签名防篡改验证。</li>
+<li><strong><code>forward_proxy</code> (Ingress)</strong>: 正向代理插件，支持 HTTP CONNECT、mTLS 客户端限制、Bcrypt 鉴权与目标 ACL。</li>
+<li><strong><code>forward_auth</code> (Middleware)</strong>: 对接 Authelia 等外部鉴权服务的逐请求认证。</li>
+<li><strong><code>nomad</code> (Discovery)</strong>: HashiCorp Nomad 服务发现，同时是 Discovery 插件的参考实现。</li>
+</ol>
+<hr>
+<h2 id="查看二进制中的已编译插件">查看二进制中的已编译插件</h2>
+<p>你可以在终端运行以下 CLI 命令，快速诊断当前 LiteGate 二进制中已编译并注册的插件：</p>
+<pre><code class="language-bash"># 1. 列出所有已编入的插件清单（含类型、名称、版本、API 契约）
+litegate plugins list
+
+# 2. 查看某个具体插件的元数据详情与标准配置示例
+litegate plugins inspect ingress/forward_proxy
+litegate plugins inspect action/nats
+
+# 3. 运行插件健康度诊断，检查是否存在 Manifest 缺失或 API 版本漂移
+litegate plugins doctor
+</code></pre>
+<p>此外，在 LiteGate 的 Web 可观测性 <strong>Dashboard</strong> 中，打开 <strong>Compiled Plugins</strong> 选项卡亦可直观查看已编译插件卡片，并一键复制其 YAML 配置示例。</p>
+<hr>
+<h2 id="本章导航">本章导航</h2>
+<ul>
+<li><strong><a href="build-and-cli.html">构建与 CLI 工具</a></strong>：掌握 <code>litegate build --with</code> 定制编译、<code>main.go</code> 源码空导入、<code>plugins</code> 诊断排错与 CI 自动化流水线。</li>
+<li><strong><a href="configuration.html">用户配置指南</a></strong>：学习如何在 <code>config.yaml</code> 全局配置与 <code>sites/*.yaml</code> 站点配置中优雅启用并调试各类插件。</li>
+<li><strong><a href="authoring-guide.html">插件开发说明</a></strong>：从零开始编写你的第一个 LiteGate 插件，包含主要扩展点的完整接口骨架、生命周期管理、配置校验、Panic 容错与并发避坑指南。</li>
+<li><strong><a href="../../discovery-provider-plugin-guide.html">Discovery 插件开发：以 Nomad 为例</a></strong>：从开发、编译到接入的完整样例。</li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/zh-cn/user/12-plugins/README.md">查看源文件</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+
+</body>
+</html>

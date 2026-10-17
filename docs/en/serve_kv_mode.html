@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode · LiteGate</title>
+<link rel="stylesheet" href="../../style.css">
+<link rel="stylesheet" href="../../assets/docs.css">
+<script src="../../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav scrolled">
+  <div class="wrap">
+    <a class="brand" href="../../en/index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../en/index.html">Home</a>
+      <a href="../../en/guide.html">Guide</a>
+      <a href="../../en/features.html">Features</a>
+      <a href="../../en/ecosystem.html">Ecosystem</a>
+      <a href="README.html" aria-current="page">Docs</a>
+      <a href="../zh-cn/serve_kv_mode.html">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-layout">
+  <aside class="docs-side" aria-label="Documentation">
+    <input class="docs-filter" type="search" placeholder="Filter docs…" aria-label="Filter docs…">
+    <nav class="docs-nav"><ul><li><a href="README.html">Docs home</a></li><li><details><summary>User guide</summary><ul><li><a href="user/README.html">LiteGate user guide</a></li><li><details><summary>Getting started</summary><ul><li><a href="user/01-getting-started/build-environment.html">Build environment setup</a></li><li><a href="user/01-getting-started/build.html">Build from source</a></li><li><a href="user/01-getting-started/cli-reference.html">CLI Reference</a></li><li><a href="user/01-getting-started/first-site.html">First Site Configuration Example</a></li><li><a href="user/01-getting-started/installation.html">Installation Guide</a></li><li><a href="user/01-getting-started/quick-start.html">Quick Start</a></li></ul></details></li><li><details><summary>Concepts</summary><ul><li><a href="user/02-concepts/actions.html">Actions Detail: Request Processing Model</a></li><li><a href="user/02-concepts/discovery.html">Service Discovery Integration Principles</a></li><li><a href="user/02-concepts/routing-priority.html">Routing Priority</a></li><li><a href="user/02-concepts/sites-and-routes.html">Understanding Sites and Routes</a></li><li><a href="user/02-concepts/tag-architecture.html">LiteGate Service Tag Architecture</a></li><li><a href="user/02-concepts/unified-entry-model.html">Unified Entry Model</a></li></ul></details></li><li><details><summary>Configuration</summary><ul><li><a href="user/03-configuration/api.html">Management Endpoints Overview</a></li><li><a href="user/03-configuration/config-structure.html">Configuration Structure and Best Practices</a></li><li><a href="user/03-configuration/entrypoints.html">Entrypoints</a></li><li><a href="user/03-configuration/global-config.html">Gateway configuration reference (config.yaml)</a></li><li><a href="user/03-configuration/l4-guide.html">L4 Stream Guide</a></li><li><a href="user/03-configuration/rewrite.html">Rewrite: Path and Query Rewriting</a></li><li><a href="user/03-configuration/services.html">Named Services and Configuration Layers</a></li><li><a href="user/03-configuration/site-config.html">Site configuration reference (sites/*.yaml)</a></li><li><a href="user/03-configuration/site-yaml-v2-concepts.html">Site YAML V2: Structure and Core Concepts</a></li><li><a href="user/03-configuration/stream-config.html">Stream and Forward configuration</a></li><li><a href="user/03-configuration/tag-dsl.html">LiteGate Service Tags Guide</a></li><li><a href="user/03-configuration/tag-reference.html">LiteGate Service Tag Reference</a></li><li><a href="user/03-configuration/upstream-dns.html">Upstream DNS</a></li></ul></details></li><li><details><summary>Actions</summary><ul><li><a href="user/04-actions/list.html">List Action (Directory Browsing)</a></li><li><a href="user/04-actions/markdown.html">Markdown Action (Document Rendering Service)</a></li><li><a href="user/04-actions/nats-events.html">Durable events (persistence, offline replay and application ACK)</a></li><li><a href="user/04-actions/nats-sse.html">NATS live event subscriptions</a></li><li><a href="user/04-actions/proxy.html">Proxy Action (Reverse Proxy)</a></li><li><a href="user/04-actions/redirect.html">Redirect Action (HTTP Redirection)</a></li><li><a href="user/04-actions/respond.html">Respond Action (Raw Responses)</a></li><li><a href="user/04-actions/serve.html">Serve Action (Static File Serving)</a></li><li><a href="user/04-actions/status.html">Status Action (System Status Dashboard)</a></li><li><a href="user/04-actions/template.html">Template Action (Server-Side Templates)</a></li><li><a href="user/04-actions/webdav.html">WebDAV file sharing (v2)</a></li></ul></details></li><li><details><summary>Middleware</summary><ul><li><a href="user/05-middleware/authentication.html">Authentication (Gateway Identity and Governance Overview)</a></li><li><a href="user/05-middleware/authentik.html">authentik OIDC configuration example</a></li><li><a href="user/05-middleware/bandwidth.html">Large transfers and request body protection</a></li><li><a href="user/05-middleware/basic-auth.html">Basic Auth (HTTP Basic Authentication Middleware)</a></li><li><a href="user/05-middleware/compression.html">Compression (Smart Compression)</a></li><li><a href="user/05-middleware/cors.html">CORS Middleware (Cross-Origin Resource Sharing)</a></li><li><a href="user/05-middleware/csrf.html">CSRF middleware</a></li><li><a href="user/05-middleware/forward-auth.html">Unified Login for LiteGate Sites with Authelia</a></li><li><a href="user/05-middleware/ids-governance.html">IDS request governance</a></li><li><a href="user/05-middleware/ip-restriction.html">IP Restriction (Access Control List)</a></li><li><a href="user/05-middleware/oidc.html">OIDC / OAuth2 Authentication Guide</a></li><li><a href="user/05-middleware/path-and-redirect.html">Path Rewrite and Redirect Middleware</a></li><li><a href="user/05-middleware/pipeline.html">Middleware Pipeline and Chain</a></li><li><a href="user/05-middleware/proxy-cache.html">Proxy response cache</a></li><li><a href="user/05-middleware/rate-limit.html">Rate limiting (V2 configuration)</a></li><li><a href="user/05-middleware/remote-auth.html">Remote Auth (OIDC / OAuth2)</a></li><li><a href="user/05-middleware/scan-protection.html">Scan Protection (Governance Rule Engine)</a></li><li><a href="user/05-middleware/traffic-and-upstream.html">Traffic Control and Upstream Governance Middleware</a></li><li><a href="user/05-middleware/waf.html">WAF (Web Application Firewall)</a></li></ul></details></li><li><details><summary>Certificates and HTTPS</summary><ul><li><a href="user/06-certificates/auto-cert.html">Auto-Cert (Automated Certificate Management)</a></li><li><a href="user/06-certificates/certificate-application-guide.html">Certificate Issuance Configuration Guide</a></li><li><a href="user/06-certificates/connect-csr-delegation.html">Connect Delegated Certificate Issuance and End-to-End Private Key Security</a></li><li><a href="user/06-certificates/credkeeper.html">LiteGate CredKeeper: Secure Hosting for DNS Credentials</a></li><li><a href="user/06-certificates/ddns.html">DDNS (Dynamic DNS)</a></li><li><a href="user/06-certificates/dns-providers.html">Add a DNS provider</a></li><li><a href="user/06-certificates/ech.html">Encrypted ClientHello (ECH)</a></li><li><a href="user/06-certificates/lan-ca-and-mtls.html">LAN CAs: centralized LiteMesh issuance, standalone LiteGate and service mTLS</a></li><li><a href="user/06-certificates/local-ca.html">Local CA (Self-Signed, Self-Trusted)</a></li><li><a href="user/06-certificates/on-demand-cert.html">On-Demand TLS (Dynamic SSL Generation)</a></li><li><a href="user/06-certificates/sealed-secrets.html">Sealed Secrets: No Plaintext Keys in Configuration Files</a></li></ul></details></li><li><details><summary>Service discovery</summary><ul><li><a href="user/07-discovery/consul.html">Consul Service Discovery</a></li><li><a href="user/07-discovery/litemesh-mtls.html">Litemesh mTLS Integration Guide</a></li><li><a href="user/07-discovery/litemesh.html">Litemesh Service Discovery</a></li><li><a href="user/07-discovery/nomad.html">Nomad Service Discovery</a></li><li><a href="user/07-discovery/overview.html">Service Discovery Sources Overview</a></li></ul></details></li><li><details><summary>Observability</summary><ul><li><a href="user/08-observability/access-log.html">Access Log</a></li><li><a href="user/08-observability/dashboard-api.html">Dashboard API Reference</a></li><li><a href="user/08-observability/dashboard.html">Web Dashboard</a></li><li><a href="user/08-observability/metrics.html">Prometheus Metrics</a></li><li><a href="user/08-observability/trace-id.html">Trace ID (Distributed Tracing)</a></li></ul></details></li><li><details><summary>Advanced</summary><ul><li><a href="user/09-advanced/circuit-breaker.html">Circuit breaking (V2 configuration)</a></li><li><a href="user/09-advanced/connect-cli-http.html">Publish an HTTP Service with the CLI</a></li><li><a href="user/09-advanced/connect-scenarios.html">Connect scenarios and deployment responsibilities</a></li><li><a href="user/09-advanced/connect.html">LiteGate Connect Configuration and Rollout</a></li><li><a href="user/09-advanced/event-notification.html">Event notifications and offline delivery</a></li><li><a href="user/09-advanced/forward-and-connect.html">Forward and Connect: Crossing Networks Overview</a></li><li><a href="user/09-advanced/magic-ingress.html">Magic Ingress (Zero-Configuration Routing)</a></li><li><a href="user/09-advanced/notify-jwt-integration.html">Notify and Business JWT Integration: Configuration, Limits and Troubleshooting</a></li><li><a href="user/09-advanced/oauth-single-callback.html">Single Callback URL Routing (One OAuth Callback, Several Backends)</a></li><li><a href="user/09-advanced/shared-443-l4-stream.html">HTTPS and L4 TCP on One Port 443</a></li><li><a href="user/09-advanced/sni-routing-recipes.html">L4 SNI Routing on Port 443 Combined with L7: Recipes</a></li><li><a href="user/09-advanced/two-layer-routing.html">Two-Layer Routing: Choose the Upstream, Then Rewrite the Path (Troubleshooting Recipes)</a></li><li><a href="user/09-advanced/websocket.html">WebSocket Proxying</a></li></ul></details></li><li><details><summary>Deployment</summary><ul><li><a href="user/10-deployment/benchmarking.html">Benchmarking</a></li><li><a href="user/10-deployment/ha-state.html">Replica state and failure isolation</a></li><li><a href="user/10-deployment/kubernetes.html">Kubernetes Deployment Guide</a></li><li><a href="user/10-deployment/production.html">Production Deployment Best Practices</a></li><li><a href="user/10-deployment/systemd.html">Systemd Deployment Guide (Linux)</a></li></ul></details></li><li><details><summary>Troubleshooting</summary><ul><li><a href="user/11-troubleshooting/debugging.html">Troubleshooting &amp; Debugging Guide</a></li><li><a href="user/11-troubleshooting/faq.html">Frequently Asked Questions (FAQ)</a></li></ul></details></li><li><details><summary>Plugins</summary><ul><li><a href="user/12-plugins/README.html">LiteGate Plugin System Overview</a></li><li><a href="user/12-plugins/authoring-guide.html">Plugin authoring contracts</a></li><li><a href="user/12-plugins/build-and-cli.html">Plugin Builds and the Management CLI</a></li><li><a href="user/12-plugins/configuration.html">Plugin Usage and Configuration Reference</a></li></ul></details></li><li><details><summary>Cookbook</summary><ul><li><a href="user/cookbook/README.html">Cookbook: Common Scenarios</a></li><li><a href="user/cookbook/01-basics.html">Basics: Get a Site Running</a></li><li><a href="user/cookbook/02-paths.html">Paths: Split by Path, Rewrite, Redirect</a></li><li><a href="user/cookbook/03-governance.html">Governance: CORS, Headers, Rate Limits, Access Control</a></li><li><a href="user/cookbook/04-pitfalls.html">Common Errors</a></li><li><a href="user/cookbook/05-discovery.html">Service Discovery &#43; Site Files: Automatic Merge (Hybrid)</a></li><li><a href="user/cookbook/06-matchers.html">Named Matchers: Give Request Conditions a Name</a></li><li><a href="user/cookbook/07-file-browser.html">File browser: List, image viewer, and local SSO</a></li></ul></details></li></ul></details></li><li><details open><summary>Topics</summary><ul><li><a href="database-proxy-solution.html">Secure Database Access with LiteGate</a></li><li><a href="discovery-provider-plugin-guide.html">Developing a Discovery Plugin: the Nomad Example</a></li><li><a href="dns-provider-plugin-guide.html">DNS Provider Plugin Authoring Guide (DNS-01, DDNS and ECH HTTPS Records)</a></li><li><a href="docker_catalog_identity_and_transport.html">Docker catalog identity and transport configuration</a></li><li><a href="docker_provider_testing_guide.html">Docker Provider Test Guide</a></li><li><a href="docker_swarm_capability_matrix.html">Docker and Swarm capability matrix</a></li><li><a href="dynamic-dns-multi-node.html">Internal DNS Publishing - Multi-Node Gateway Support</a></li><li><a href="fastcgi_config.html">LiteGate FastCGI Configuration Guide</a></li><li><a href="forward-vs-forward-proxy.html">Two &#34;Forwards&#34; in LiteGate: Forward (Asset Mapping Tunnel) vs Forward Proxy</a></li><li><a href="ids-go-vs-wasm.html">Choosing an IDS Provider: Go vs WASM</a></li><li><a href="ids-overview.html">What IDS Is and Why You Need It</a></li><li><a href="ids-plugin-caveats.html">IDS Plugin Development: Caveats and Pitfalls</a></li><li><a href="ids-provider-plugin-guide.html">IDS Provider development and deployment</a></li><li><a href="ids-recipes.html">IDS Recipes</a></li><li><a href="ids-saas-session-guide.html">SaaS login and cluster routing with IDS</a></li><li><a href="ids-wasm-plugin-guide.html">IDS WASM Plugin Development Guide</a></li><li><a href="ids_testing_guide.html">IDS Provider acceptance guide</a></li><li><a href="ingress-plugin-guide.html">Ingress Entry Plugins</a></li><li><a href="litegate_docker_provider_deployment_guide.html">LiteGate Docker Provider Deployment &amp; Configuration Guide</a></li><li><a href="litegate_k8s_usage_guide.html">Kubernetes deployment and usage</a></li><li><a href="litegate_kubernetes_capabilities.html">Current Kubernetes capabilities and limits</a></li><li><a href="litegate_mcp_capability_matrix.html">LiteGate MCP Capability Matrix</a></li><li><a href="nats_capability_matrix.html">NATS capabilities and responsibility boundaries</a></li><li><a href="nats_deployment_guide.html">NATS integration deployment</a></li><li><a href="on_demand_tls.html">On-Demand TLS (SaaS certificate issuance on demand)</a></li><li><a href="openapi-md5-ids-plugin.html">OpenAPI MD5 IDS Provider: Configuration and Protocol</a></li><li><a href="release_control_guide.html">Configuration Release Control</a></li><li><a href="serve_kv_mode.html" class="current" aria-current="page">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</a></li><li><a href="service_registration_guide.html">Service Registration and LiteGate Tags</a></li></ul></details></li></ul>
+    </nav>
+  </aside>
+
+  <main class="docs-main">
+    <article class="doc">
+<h1 id="litegate-frontend-zip-hosting--serve-kv-automated-sync-mode">LiteGate Frontend ZIP Hosting &amp; Serve KV Automated Sync Mode</h1>
+<p>This document introduces LiteGate's <strong>Serve KV</strong> feature. It represents an elegant, ultra-simple approach to static frontend asset distribution and multi-node synchronization across server clusters.</p>
+<hr>
+<h2 id="1-pain-points--design-background">1. Pain Points &amp; Design Background</h2>
+<p>In traditional multi-node or VPS web deployments, updating static frontend assets usually involves tedious operations:</p>
+<ul>
+<li>Writing complex <code>rsync</code> scripts to distribute static asset directories to gateway nodes one by one.</li>
+<li>Heavy release and rollback procedures, which easily lead to version mismatches due to network failures or permission issues on individual nodes.</li>
+<li>Requiring dedicated shared network storage mounts or complex CI/CD pipeline integrations.</li>
+</ul>
+<p><strong>Serve KV</strong> changes all of this. It reduces frontend release actions to a simple, declarative pointer update:</p>
+<ol>
+<li><strong>Build &amp; Compress</strong>: Once the frontend build completes, compress the output directory into a <code>.zip</code> package and upload it to OSS/COS or any object storage provider.</li>
+<li><strong>Submit Version</strong>: Write a JSON object containing the new version index, download URL, and SHA256 checksum into Litemesh KV, Consul KV, or any HTTP KV API.</li>
+<li><strong>Nodes Fetch</strong>: All active LiteGate nodes watch for KV changes. They automatically download the ZIP archive in the background, verify the SHA256 checksum, extract it to a local version directory, and <strong>atomically</strong> hot-swap the serving paths in memory without drops in traffic. Outdated historical version directories are cleaned up automatically according to your policy.</li>
+</ol>
+<pre class="mermaid">graph TD
+    CI[&quot;1. CI/CD builds frontend &amp; packs ZIP&quot;] --&gt; OSS[&quot;2. Upload ZIP to OSS/COS&quot;]
+    CI --&gt; KV[&quot;3. Update KV Pointer Version (Version &amp; URL)&quot;]
+    
+    subgraph &quot;LiteGate Cluster&quot;
+        Node1[&quot;LiteGate Node A&quot;]
+        Node2[&quot;LiteGate Node B&quot;]
+    end
+    
+    KV -.-&gt;|KV Watch Event Notification| Node1
+    KV -.-&gt;|KV Watch Event Notification| Node2
+    
+    Node1 --&gt;|4. Download &amp; Extract| OSS
+    Node2 --&gt;|4. Download &amp; Extract| OSS
+    
+    Node1 --&gt;|5. Atomic Memory Swap| ReadyA[&quot;Latest version live (Zero downtime)&quot;]
+    Node2 --&gt;|5. Atomic Memory Swap| ReadyB[&quot;Latest version live (Zero downtime)&quot;]
+</pre>
+<hr>
+<h2 id="2-site-configuration-guide">2. Site Configuration Guide</h2>
+<p>In your LiteGate YAML configurations, a standard <code>serve</code> action route enters <strong>KV Automated Sync Mode</strong> by adding the <code>kv_</code> prefix settings.</p>
+<h3 id="21-full-configuration-example">2.1 Full Configuration Example</h3>
+<p>Specify this in <code>sites/yourdomain.yaml</code>:</p>
+<pre><code class="language-yaml">site: example.com
+routes:
+  - match:
+      path_prefix: /
+    spa:
+      root: /var/www/my-app # Base local directory for storing extracted versions
+      # --- KV Mode Core Fields ---
+      kv_mode: true # Enables KV synchronization mode
+      kv_provider: litemesh # Supports: litemesh, consul, http
+      kv_key: litegate/config/front/main # Watched KV key path or HTTP URL
+      keep_versions: 3 # Max historical versions kept locally (default 3)
+</code></pre>
+<h3 id="22-field-descriptions">2.2 Field Descriptions</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Required</th>
+<th style="text-align:left">Default</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>kv_mode</code></td>
+<td style="text-align:left">bool</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left">Set to <code>true</code> to enable automated KV synchronization.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>kv_provider</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">-</td>
+<td style="text-align:left">Specifies the driver: <code>litemesh</code> (recommended), <code>consul</code>, or <code>http</code>.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>kv_key</code></td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">-</td>
+<td style="text-align:left">The KV key path. If the provider is <code>http</code>, write the full GET API URL.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>keep_versions</code></td>
+<td style="text-align:left">int</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left"><code>3</code></td>
+<td style="text-align:left">Number of historical versions kept locally. Excess directories are purged after a successful swap.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="3-kv-payload-specification--release-steps">3. KV Payload Specification &amp; Release Steps</h2>
+<p>The payload observed by LiteGate in the KV store must be a valid <strong>JSON object</strong>.</p>
+<h3 id="31-json-schema">3.1 JSON Schema</h3>
+<pre><code class="language-json">{
+  &quot;version&quot;: &quot;12&quot;,
+  &quot;url&quot;: &quot;https://oss.example.com/front/main-12.zip&quot;,
+  &quot;sha256&quot;: &quot;2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824&quot;
+}
+</code></pre>
+<ul>
+<li><strong><code>version</code></strong>: Must be a <strong>numeric string that parses to a 64-bit integer</strong> (e.g., <code>&quot;12&quot;</code>). LiteGate evaluates version updates based on value sizes to prevent version rollbacks (unless local folders are deleted), offering split-brain protection.</li>
+<li><strong><code>url</code></strong>: The downloadable HTTP/HTTPS link of the ZIP package.</li>
+<li><strong><code>sha256</code></strong>: (Optional) The SHA256 checksum of the ZIP file. If provided, LiteGate calculates and compares the SHA256 after downloading. Mismatched downloads are rejected to prevent corrupted deploys.</li>
+</ul>
+<h3 id="32-deployment-steps">3.2 Deployment Steps</h3>
+<ol>
+<li><strong>Pack</strong>: Archive your build folder: <code>zip -r main-12.zip dist/</code>, upload it, and get the download link: <code>https://oss.example.com/front/main-12.zip</code>.</li>
+<li><strong>Calculate SHA256</strong>: Run <code>litegate -hashfile main-12.zip</code> to get the checksum, e.g., <code>2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824</code>.</li>
+<li><strong>Write KV</strong>:
+<ul>
+<li><strong>Litemesh KV Users</strong>:
+<pre><code class="language-bash"> curl -X PUT http://127.0.0.1:8787/v1/kv/litegate/config/front/main \
+   -d '{&quot;version&quot;: &quot;12&quot;, &quot;url&quot;: &quot;https://oss.example.com/front/main-12.zip&quot;, &quot;sha256&quot;: &quot;2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824&quot;}'
+</code></pre>
+</li>
+<li><strong>Consul KV Users</strong>:
+<pre><code class="language-bash">consul kv put litegate/config/front/main '{&quot;version&quot;: &quot;12&quot;, &quot;url&quot;: &quot;https://oss.example.com/front/main-12.zip&quot;, &quot;sha256&quot;: &quot;2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824&quot;}'
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="4-key-architectural--security-mechanisms">4. Key Architectural &amp; Security Mechanisms</h2>
+<h3 id="41-elegant-503-warming-up-prevention">4.1 Elegant 503 Warming-Up Prevention</h3>
+<p>When a new node joins the cluster, cold-starts, or a new site is configured, the local physical version directory is usually not ready (downloading or extracting in the background).
+If external user traffic floods the gateway at this point, traditional gateways throw a wave of 404s or deadlock.</p>
+<p>LiteGate implements a <strong>Warming-Up Protection Mechanism</strong>:</p>
+<ol>
+<li>When a request arrives, if the local directory is not yet prepared, LiteGate holds the request in suspension and gracefully polls in the background (up to <code>200ms</code>).</li>
+<li>If extraction completes within <code>200ms</code>, the request is seamlessly and smoothly processed using the latest frontend assets.</li>
+<li>If the timeout expires before extraction finishes, LiteGate routes the client to an elegant <strong>503 Service Unavailable</strong> response depending on the HTTP <code>Accept</code> header and file extension, avoiding coroutine pool exhaustion:
+<ul>
+<li><strong>Web Browser / HTML accesses</strong>: Renders a premium, modern Glassmorphic <strong>Warming Up Page</strong> with loading animations.</li>
+<li><strong>API / JSON accesses</strong>: Returns a clean JSON response: <code>{&quot;status&quot;: 503, &quot;message&quot;: &quot;Site warming up, please retry in 3 seconds&quot;}</code>.</li>
+<li><strong>JS / CSS static dependencies</strong>: Returns a commented script: <code>/* LiteGate: Site warming up, please retry in 3 seconds */</code> to prevent HTML junk data from corrupting the frontend dependency tree.</li>
+</ul>
+</li>
+</ol>
+<h3 id="42-zip-directory-traversal-defense-zip-slip-prevention">4.2 ZIP Directory Traversal Defense (Zip Slip Prevention)</h3>
+<p>Since ZIP files are fetched from network addresses, they can carry risks of <strong>Zip Slip directory traversal attacks</strong> (where files in the archive specify malicious names like <code>../../etc/passwd</code>).
+LiteGate's extractor validates the absolute path of every file before extracting:</p>
+<pre><code class="language-go">if !strings.HasPrefix(fpath, filepath.Clean(dest)+string(os.PathSeparator)) {
+    return fmt.Errorf(&quot;illegal file path in zip: %s&quot;, f.Name)
+}
+</code></pre>
+<p>Any extraction path that resolves outside the designated target folder is strictly rejected and logged, keeping the server secure.</p>
+<h3 id="43-automated-disk-convergence--cleanup">4.3 Automated Disk Convergence &amp; Cleanup</h3>
+<p>LiteGate stores version folders under a directory appended with <code>_versions</code> to your <code>root</code> parameter (e.g., if <code>root</code> is <code>/var/www/my-app</code>, the controller folder will be <code>/var/www/my-app_versions/</code>).</p>
+<p>After each successful upgrade, LiteGate spawns a background cleanup routine:</p>
+<ul>
+<li>Converts all version folders in the directory to numeric values and sorts them in descending order.</li>
+<li>Keeps only the latest <code>keep_versions</code> folders (e.g., 3).</li>
+<li><strong>Safety Shield Protection</strong>: Active physical folders currently referenced by the memory router are scanned and excluded from removal. Even if they are older versions (such as during rollbacks), they are never physically deleted, realizing jitter-free graceful traffic transitions.</li>
+</ul>
+
+    </article>
+    <p class="doc-source"><a href="https://github.com/jamesleeon/LiteGate/blob/master/docs/en/serve_kv_mode.md">View source</a></p>
+  </main>
+</div>
+
+
+
+<script>
+(function () {
+  var input = document.querySelector('.docs-filter');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.docs-nav a'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.docs-nav details'));
+  var initial = groups.map(function (g) { return g.open; });
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    links.forEach(function (a) { a.parentNode.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) < 0; });
+    groups.forEach(function (g, i) {
+      var visible = g.querySelector('li:not([hidden]) > a');
+      g.parentNode.hidden = q !== '' && !visible;
+      g.open = q === '' ? initial[i] : !!visible;
+    });
+  });
+  
+  
+  var current = document.querySelector('.docs-nav a.current');
+  var box = getComputedStyle(document.querySelector('.docs-nav')).overflowY === 'auto'
+    ? document.querySelector('.docs-nav') : document.querySelector('.docs-side');
+  if (current && box) {
+    box.scrollTop = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 2;
+  }
+})();
+</script>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs";
+mermaid.initialize({ startOnLoad: true, theme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default" });
+</script>
+</body>
+</html>

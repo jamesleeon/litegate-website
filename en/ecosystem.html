@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lite ecosystem · LiteGate</title>
+<meta name="description" content="Customer story: how a small e-commerce ISV team runs production on LiteGate, litedeploy, litemesh and LiteDNS. A few single-binary programs cover the entrypoint, deployment, service discovery and internal DNS without Kubernetes, cutting machine and operations costs.">
+<link rel="alternate" hreflang="zh-CN" href="../ecosystem.html">
+<link rel="alternate" hreflang="en" href="ecosystem.html">
+<link rel="stylesheet" href="../style.css">
+<script>document.documentElement.classList.add("js")</script>
+<script src="../main.js" defer></script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="brand-mark">L</span>LiteGate</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="guide.html">Guide</a>
+      <a href="features.html">Features</a>
+      <a href="ecosystem.html" aria-current="page">Ecosystem</a>
+      <a href="../docs/en/">Docs</a>
+      <a href="../ecosystem.html" data-lang-switch="zh">中文</a>
+      <a class="btn-sm" href="https://github.com/jamesleeon/LiteGate">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="kicker">Customer story · Lite ecosystem</p>
+    <h1>How a small e-commerce ISV team <em>runs production on a few single binaries</em></h1>
+    <p class="lead">This team serves a large number of e-commerce merchants as a SaaS and also delivers on-premises deployments for larger customers. With few people, they did not want to run Kubernetes just for deployment and service management. They put LiteGate at the entrypoint and ship services with litedeploy; litemesh joined when service-to-service calls needed encryption, the legacy services on Consul stayed exactly where they were, and office and store users reach the gateway directly through LiteDNS. A few single-binary programs cover the entrypoint, deployment, service discovery and internal DNS, and their machine and operations costs dropped noticeably.</p>
+    <dl class="case-facts">
+      <div><dt>Industry</dt><dd>E-commerce ISV (SaaS + on-premises)</dd></div>
+      <div><dt>Team</dt><dd>Small; developers run operations</dd></div>
+      <div><dt>Starting point</dt><dd>Legacy services on Consul</dd></div>
+      <div><dt>Components</dt><dd>LiteGate · litedeploy · litemesh · LiteDNS</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ── Components ── -->
+<section class="alt" style="padding-top:64px">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">Four components</p>
+      <h2>The four components they use: one job each, added only when needed</h2>
+      <p>Each component is a single Go binary with no external dependencies. LiteGate, litedeploy and litemesh include a web console and MCP; LiteDNS deliberately stays a small resolver. Only LiteGate is required, and most small teams need nothing beyond litedeploy.</p>
+    </div>
+    <div class="eco-cards">
+      <div class="card eco-card" data-animate>
+        <span class="tag ok">Required</span>
+        <h3>LiteGate</h3>
+        <span class="like">Entrypoint · like Nginx / Traefik / Caddy</span>
+        <p>The single entrypoint for outside traffic: routing, automatic certificates, load balancing, authentication, publishing private services (Connect) and real-time push; it reads several discovery sources at once and feeds logs and traces to your monitoring.</p>
+        <a class="card-link" href="index.html">About LiteGate</a>
+      </div>
+      <div class="card eco-card" data-animate>
+        <span class="tag">Recommended</span>
+        <h3>litedeploy</h3>
+        <span class="like">Deployment and scheduling · like Nomad</span>
+        <p>Ships binary packages or Docker images to your machines, with batched rollouts, health checks and failure recovery. Service instances register with litedeploy and LiteGate subscribes directly, <strong>so no separate registry is needed</strong>.</p>
+        <ul>
+          <li>Raft consensus with automatic leader election</li>
+          <li>Agents receive commands over long-lived gRPC streams</li>
+        </ul>
+      </div>
+      <div class="card eco-card" data-animate>
+        <span class="tag need">As needed</span>
+        <h3>litemesh</h3>
+        <span class="like">Service mesh control plane · like Consul</span>
+        <p>Add it when service-to-service calls need mTLS, or you need a configuration store, distributed locks or cross-site discovery. Just as Nomad can do service discovery on its own and Consul is added for more.</p>
+        <ul>
+          <li>Built-in CA and sidecar-free service mTLS</li>
+          <li>KV, sessions and locks; gossip cluster with no leader</li>
+        </ul>
+      </div>
+      <div class="card eco-card" data-animate>
+        <span class="tag need">As needed</span>
+        <h3>LiteDNS</h3>
+        <span class="like">Internal resolution · a small local DNS</span>
+        <p>Users in offices, stores and data centers reach the gateway's internal address for the same domain, with one certificate inside and out. It can also bring an existing registry such as Nacos to LiteGate.</p>
+        <ul>
+          <li>Intercepts only gateway and service names; everything else goes to CamoDNS or your existing DNS</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Architecture ── -->
+<section>
+  <div class="wrap">
+    <div class="section-head center" data-animate>
+      <p class="kicker">Together</p>
+      <h2>How they fit together</h2>
+      <p>Dashed boxes are added as needed. LiteGate can discover services from litedeploy, litemesh and an existing Consul at the same time, and send access logs and traces to the monitoring platform you already run.</p>
+    </div>
+    <div class="flow eco-diagram" data-animate>
+      <svg viewBox="0 0 740 440" role="img" aria-label="Lite ecosystem architecture: external and internal users reach LiteGate; LiteGate discovers services from litedeploy, litemesh and an existing Consul at the same time, and sends access logs and OTLP traces to the company's log and tracing platform; litemesh provides service mTLS; LiteDNS resolves gateway names for internal users and forwards other names to the company DNS">
+        <defs>
+          <marker id="ea" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 z"/></marker>
+          <marker id="eat" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow tls" d="M0,0 L8,4 L0,8 z"/></marker>
+        </defs>
+        <g class="node"><rect x="10" y="64" width="110" height="44" rx="8"/><text x="65" y="91" text-anchor="middle">Internet users</text></g>
+        <g class="node"><rect x="10" y="274" width="110" height="44" rx="8"/><text x="65" y="301" text-anchor="middle">Internal users</text></g>
+        <g class="node"><rect x="250" y="12" width="150" height="56" rx="8"/><text x="325" y="36" text-anchor="middle">Logs · tracing</text><text class="sub" x="325" y="55" text-anchor="middle">ELK / Loki · Jaeger / Tempo</text></g>
+        <g class="node hub"><rect x="250" y="140" width="150" height="70" rx="10"/><text x="325" y="171" text-anchor="middle">LiteGate</text><text class="sub" x="325" y="191" text-anchor="middle">entry · certs · multi-source</text></g>
+        <g class="node opt"><rect x="250" y="300" width="150" height="56" rx="8"/><text x="325" y="324" text-anchor="middle">LiteDNS</text><text class="sub" x="325" y="343" text-anchor="middle">internal DNS (optional)</text></g>
+        <g class="node"><rect x="520" y="16" width="200" height="56" rx="8"/><text x="620" y="40" text-anchor="middle">litedeploy</text><text class="sub" x="620" y="59" text-anchor="middle">deploy · registration</text></g>
+        <g class="node"><rect x="520" y="148" width="200" height="56" rx="8"/><text x="620" y="172" text-anchor="middle">Services</text><text class="sub" x="620" y="191" text-anchor="middle">instances run by agents</text></g>
+        <g class="node opt"><rect x="520" y="246" width="200" height="56" rx="8"/><text x="620" y="270" text-anchor="middle">litemesh</text><text class="sub" x="620" y="289" text-anchor="middle">discovery · mTLS (optional)</text></g>
+        <g class="node"><rect x="520" y="318" width="200" height="44" rx="8"/><text x="620" y="345" text-anchor="middle">Consul (legacy services)</text></g>
+        <g class="node"><rect x="520" y="386" width="200" height="44" rx="8"/><text x="620" y="413" text-anchor="middle">CamoDNS / company DNS</text></g>
+        <path class="edge tls" d="M120,86 C190,86 190,160 248,160" marker-end="url(#eat)"/>
+        <text class="lbl" x="184" y="104" text-anchor="middle">HTTPS</text>
+        <path class="edge tls" d="M120,286 C200,272 200,204 248,198" marker-end="url(#eat)"/>
+        <text class="lbl" x="196" y="250" text-anchor="middle">direct, internal</text>
+        <path class="edge" d="M120,304 C180,310 200,328 248,328" marker-end="url(#ea)"/>
+        <text class="lbl" x="182" y="334" text-anchor="middle">DNS</text>
+        <path class="edge" d="M400,334 C470,344 470,408 518,408" marker-end="url(#ea)"/>
+        <text class="lbl" x="458" y="392" text-anchor="middle">other names</text>
+        <path class="edge" d="M325,140 L325,70" marker-end="url(#ea)"/>
+        <text class="lbl" x="325" y="110" text-anchor="middle">access log · OTLP</text>
+        <path class="edge" d="M400,176 L518,176" marker-end="url(#ea)"/>
+        <text class="lbl" x="459" y="170" text-anchor="middle">forward</text>
+        <path class="edge" d="M620,72 L620,146" marker-end="url(#ea)"/>
+        <text class="lbl" x="644" y="114" text-anchor="middle">deploy</text>
+        <path class="edge" d="M520,44 C450,44 400,90 382,138" marker-end="url(#ea)"/>
+        <text class="lbl" x="458" y="38" text-anchor="middle">instance changes (SSE)</text>
+        <path class="edge tls" d="M620,246 L620,206" marker-end="url(#eat)"/>
+        <text class="lbl" x="644" y="230" text-anchor="middle">mTLS</text>
+        <path class="edge" d="M520,268 C470,268 440,232 402,204" marker-end="url(#ea)"/>
+        <text class="lbl" x="478" y="250" text-anchor="middle">discovery</text>
+        <path class="edge" d="M520,340 C450,340 420,262 390,212" marker-end="url(#ea)"/>
+        <text class="lbl" x="462" y="318" text-anchor="middle">legacy discovery</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ── Multi-source and monitoring ── -->
+<section class="alt">
+  <div class="wrap">
+    <div class="split" data-animate>
+      <div>
+        <p class="kicker">Multi-source discovery</p>
+        <h2>Old and new services side by side, no big-bang migration</h2>
+        <p>That is exactly what this team did: new services register in litemesh, while a set of older services stays in Consul untouched. LiteGate subscribes to several discovery sources at once; every instance becomes the same kind of service endpoint and the same <code>litegate.*</code> tags produce its routes. Migrate one service at a time without changing gateway configuration.</p>
+        <p>litedeploy, Docker, Kubernetes and Nomad can join as sources at the same time too.</p>
+        <a class="card-link" href="../docs/en/user/07-discovery/overview.html">Service discovery sources</a>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml</div>
+<pre><span class="k">service_discovery</span>:
+  <span class="k">catalogs</span>:
+    - <span class="k">enabled</span>: <span class="s">true</span>
+      <span class="k">provider</span>: <span class="s">litemesh</span>     <span class="c"># new services</span>
+      <span class="k">url</span>: <span class="s">http://10.0.0.6:8080</span>
+    - <span class="k">enabled</span>: <span class="s">true</span>
+      <span class="k">provider</span>: <span class="s">consul</span>       <span class="c"># legacy services</span>
+      <span class="k">url</span>: <span class="s">http://10.0.0.7:8500</span></pre>
+      </div>
+    </div>
+
+    <div class="split reverse" data-animate>
+      <div>
+        <p class="kicker">Your monitoring stack</p>
+        <h2>Logs and traces go straight into the platform you already run</h2>
+        <ul class="checklist">
+          <li><strong>Access logs</strong>: JSON to stdout or a rotated file, collected by Filebeat, Vector or Promtail into ELK or Loki; at high volume, batch them to a message queue over a webhook. A template can also emit Nginx-style lines.</li>
+          <li><strong>Distributed tracing</strong>: spans go over OTLP/HTTP to an OpenTelemetry Collector and on to Jaeger, Tempo and others, with a sampling ratio; access logs carry <code>trace_id</code> so logs and traces line up.</li>
+          <li><strong>Metrics</strong>: Prometheus format, with the official Grafana dashboard.</li>
+        </ul>
+        <a class="card-link" href="../docs/en/user/08-observability/access-log.html">Access log</a>
+        <a class="card-link" href="../docs/en/user/08-observability/trace-id.html" style="margin-left:16px">Trace ID and tracing</a>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>config.yaml</div>
+<pre><span class="k">log</span>:
+  <span class="k">format</span>: <span class="s">json</span>
+  <span class="k">access_log</span>:
+    <span class="k">enabled</span>: <span class="s">true</span>
+    <span class="k">file_enabled</span>: <span class="s">true</span>
+    <span class="k">file</span>: <span class="s">./logs/access.log</span>   <span class="c"># for your collector</span>
+<span class="k">tracing</span>:
+  <span class="k">enabled</span>: <span class="s">true</span>
+  <span class="k">endpoint</span>: <span class="s">http://otel-collector:4318</span>
+  <span class="k">sample_ratio</span>: <span class="s">0.1</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Adoption path ── -->
+<section>
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">Adoption</p>
+      <h2>Grow with the business, one component at a time</h2>
+    </div>
+    <div class="path">
+      <div class="path-step" data-animate>
+        <span class="time">One server</span>
+        <h3>LiteGate only</h3>
+        <p>A website, an admin panel and a few APIs fit on one cloud server. Sites, reverse proxy, certificates and the status page all live on the gateway.</p>
+      </div>
+      <div class="path-step" data-animate>
+        <span class="time">More services</span>
+        <h3>+ litedeploy</h3>
+        <p>You need to deploy, scale and roll back across machines. When a service comes up, LiteGate adds its route. <strong>Most small teams stop here.</strong></p>
+      </div>
+      <div class="path-step" data-animate>
+        <span class="time">Encrypt service calls</span>
+        <h3>+ litemesh</h3>
+        <p>Service-to-service calls need mTLS, or you need a configuration store, distributed locks or several sites.</p>
+      </div>
+      <div class="path-step" data-animate>
+        <span class="time">Internal users too</span>
+        <h3>+ LiteDNS</h3>
+        <p>Users in offices, stores and customer data centers should reach the gateway directly; or you already run Nacos and want LiteGate to use it.</p>
+      </div>
+    </div>
+
+    <div class="split" style="margin-top:56px" data-animate>
+      <div>
+        <h3>The common combination is one block of configuration</h3>
+        <p>LiteGate subscribes to litedeploy's service registry. Services that register with tags such as <code>litegate.http.path</code> appear on the gateway automatically, and instances that go away are removed.</p>
+        <a class="card-link" href="../docs/en/user/07-discovery/overview.html">Service discovery sources</a>
+      </div>
+      <div class="code-window">
+        <div class="code-head"><span class="dots"><i></i><i></i><i></i></span>LiteGate · config.yaml</div>
+<pre><span class="k">service_discovery</span>:
+  <span class="k">catalogs</span>:
+    - <span class="k">enabled</span>: <span class="s">true</span>
+      <span class="k">provider</span>: <span class="s">litedeploy</span>
+      <span class="k">url</span>: <span class="s">http://10.0.0.5:8080</span>  <span class="c"># litedeploy server</span>
+      <span class="k">token</span>: <span class="s">"replace-with-token"</span>
+      <span class="k">default_domain</span>: <span class="s">example.com</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Cost ── -->
+<section class="alt">
+  <div class="wrap">
+    <div class="section-head" data-animate>
+      <p class="kicker">Cost</p>
+      <h2>Where the savings come from</h2>
+      <p>The usual way to meet the same needs stitches together several systems, each needing machines, upgrades and someone who knows it. This team covers them with four single-binary programs.</p>
+    </div>
+    <div class="table-scroll" data-animate>
+      <table class="cmp">
+        <thead><tr><th>Need</th><th>Usual approach</th><th>Lite ecosystem</th></tr></thead>
+        <tbody>
+          <tr><td>Entrypoint and certificates</td><td>Nginx + Certbot, or Ingress + cert-manager</td><td>LiteGate, with automatic issue and renewal</td></tr>
+          <tr><td>Deployment and scheduling</td><td>A Kubernetes cluster, or Jenkins + scripts</td><td>litedeploy</td></tr>
+          <tr><td>Service discovery</td><td>A Nacos / Consul / etcd cluster</td><td>Built into litedeploy; add litemesh for mTLS</td></tr>
+          <tr><td>Configuration and locks</td><td>Nacos / Apollo, Redis locks</td><td>litemesh KV and locks (as needed)</td></tr>
+          <tr><td>Private access and on-premises</td><td>frp, VPNs, opening ports at customer sites</td><td>LiteGate Connect, with no inbound ports at the customer</td></tr>
+          <tr><td>Internal DNS</td><td>Hand-maintained hosts files, internal DNS</td><td>LiteDNS (as needed)</td></tr>
+          <tr><td>Real-time push</td><td>MQTT, a home-grown WebSocket service</td><td>LiteGate notifications</td></tr>
+          <tr><td>Logs and tracing</td><td>Parsing Nginx logs, instrumenting every service</td><td>LiteGate JSON access logs + OTLP traces into your existing platform</td></tr>
+          <tr><td>Monitoring</td><td>A full Prometheus + Grafana stack</td><td>Built-in console and status page, with Grafana if you want it</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="savings">
+      <div class="reason" data-animate>
+        <h3>Fewer machines</h3>
+        <p>No Kubernetes control plane nodes or managed cluster fees, and no dedicated machines for a registry or configuration center. A few ordinary cloud servers run the whole business.</p>
+      </div>
+      <div class="reason" data-animate>
+        <h3>Lighter on-premises delivery</h3>
+        <p>Customer deployments ship a few binaries. The customer site dials out through Connect, so no inbound ports are opened, and remote operations use the same encrypted tunnel.</p>
+      </div>
+      <div class="reason" data-animate>
+        <h3>Fewer people on operations</h3>
+        <p>Single files, YAML and hot reload, with a console and status page for troubleshooting. LiteGate, litedeploy and litemesh include MCP, so routine releases, configuration and troubleshooting can go to an AI assistant.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap" data-animate>
+    <h2>Start with LiteGate</h2>
+    <p>However many components you end up using, the first step is handing the entrypoint to LiteGate.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="index.html#quickstart">Running in 5 minutes</a>
+      <a class="btn btn-ghost" href="guide.html">Start with a use case</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="index.html"><span class="brand-mark">L</span>LiteGate</a>
+      <p class="note">An HTTP / TCP gateway in a single binary. This site is served by LiteGate.</p>
+    </div>
+    <div>
+      <h4>Learn</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="guide.html">Guide</a></li>
+        <li><a href="features.html">All features</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Docs</h4>
+      <ul>
+        <li><a href="../docs/en/">Docs home</a></li>
+        <li><a href="../docs/en/user/07-discovery/overview.html">Service discovery sources</a></li>
+        <li><a href="../docs/en/user/07-discovery/litemesh-mtls.html">litemesh mTLS</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Community</h4>
+      <ul>
+        <li><a href="https://github.com/jamesleeon/LiteGate">GitHub</a></li>
+        <li><a href="https://github.com/jamesleeon/LiteGate/issues">Issues</a></li>
+        <li><a href="../ecosystem.html" data-lang-switch="zh">中文</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
